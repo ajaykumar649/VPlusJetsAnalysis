@@ -205,20 +205,21 @@ void ewk::VplusJetsAnalysis::analyze(const edm::Event& iEvent,
 
 
   /////////// GenMET information //////////
-  edm::Handle<reco::GenMETCollection> genMETs;
-  iEvent.getByLabel("genMetTrue",genMETs);
-  if ( genMETs->size() == 0) {
-    genMET   = -1.0;
-    genSumET = -1.0;
-    genMETSign  = -1.0;
-    genMETPhi   = -10.0;
-  } else {
-    genMET = (*genMETs)[0].et();
-    genSumET = (*genMETs)[0].sumEt();  
-    genMETSign = (*genMETs)[0].significance();  
-    genMETPhi = (*genMETs)[0].phi();
+  if ( runningOverMC_ ){
+    edm::Handle<reco::GenMETCollection> genMETs;
+    iEvent.getByLabel("genMetTrue",genMETs);
+    if ( genMETs->size() == 0) {
+      genMET   = -1.0;
+      genSumET = -1.0;
+      genMETSign  = -1.0;
+      genMETPhi   = -10.0;
+    } else {
+      genMET = (*genMETs)[0].et();
+      genSumET = (*genMETs)[0].sumEt();  
+      genMETSign = (*genMETs)[0].significance();  
+      genMETPhi = (*genMETs)[0].phi();
+    }
   }
- 
 
   // fill jet branches
   edm::Handle<reco::CandidateView> boson;
@@ -299,11 +300,12 @@ void ewk::VplusJetsAnalysis::declareTreeBranches() {
   myTree->Branch("event_BeamSpot_z"       ,&mBSz              ,"event_BeamSpot_z/F");
   myTree->Branch(("num"+VBosonType_).c_str(),&mNVB ,("num"+VBosonType_+"/I").c_str());
 
-  myTree->Branch("event_met_genmet",    &genMET,  "event_met_genmet/F"); 
-  myTree->Branch("event_met_gensumet",  &genSumET,"event_met_gensumet/F"); 
-  myTree->Branch("event_met_genmetsignificance", &genMETSign,  "event_met_genmetsignificance/F"); 
-  myTree->Branch("event_met_genmetPhi",    &genMETPhi,  "event_met_genmetPhi/F"); 
-
+  if ( runningOverMC_ ){
+    myTree->Branch("event_met_genmet",    &genMET,  "event_met_genmet/F"); 
+    myTree->Branch("event_met_gensumet",  &genSumET,"event_met_gensumet/F"); 
+    myTree->Branch("event_met_genmetsignificance", &genMETSign,  "event_met_genmetsignificance/F"); 
+    myTree->Branch("event_met_genmetPhi",    &genMETPhi,  "event_met_genmetPhi/F"); 
+  }
 
 }  
 

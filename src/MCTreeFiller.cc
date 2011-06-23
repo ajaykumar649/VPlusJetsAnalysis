@@ -47,13 +47,24 @@ ewk::MCTreeFiller::MCTreeFiller(const char *name, TTree* tree,
 void ewk::MCTreeFiller::SetBranches()
 {
   // Declare jet branches
-  std::string lept1 = "eplus";
-  std::string lept2 = "eminus";
-  if( !(Vtype_=="Z") ) lept1 = "electron";
-  if(ptype_=="muon") {
-    lept1 = "muplus";
-    lept2 = "muminus";
-    if( !(Vtype_=="Z") ) lept1 = "muon";
+  std::string lept1;
+  std::string lept2;
+  if( Vtype_=="Z" ) {
+    if(ptype_=="muon") {
+      lept1 = "muplus";
+      lept2 = "muminus";
+    } else {
+      lept1 = "eplus";
+      lept2 = "eminus";
+    } 
+  } else {
+    if(ptype_=="muon") {
+      lept1 = "muon";
+      lept2 = "neutino";
+    } else {
+      lept1 = "electron";
+      lept2 = "neutrino";
+    }
   }
 
   SetBranch( &V_mass,      "mass_gen");
@@ -86,24 +97,21 @@ void ewk::MCTreeFiller::SetBranches()
   SetBranch( &l1Y,              lept1+"_y_gen" );
 	  
   ////////////////////////////////////////////////////////
-  //////  in case of Z, fill the second lepton info //////
-
-  if(Vtype_=="Z") {	  
-    SetBranch( &l2px,             lept2+"_px_gen" );
-    SetBranch( &l2py,             lept2+"_py_gen" );
-    SetBranch( &l2pz,             lept2+"_pz_gen" );
-    SetBranch( &l2E,              lept2+"_e_gen" );
-    SetBranch( &l2Pt,             lept2+"_pt_gen" );
-    SetBranch( &l2Et,             lept2+"_et_gen" );
-    SetBranch( &l2Eta,            lept2+"_eta_gen" ); 
-    SetBranch( &l2Theta,          lept2+"_theta_gen" );    
-    SetBranch( &l2Phi,            lept2+"_phi_gen" );
-    SetBranch( &l2Charge,         lept2+"_charge_gen" );
-    SetBranch( &l2Vx,             lept2+"_vx_gen" );
-    SetBranch( &l2Vy,             lept2+"_vy_gen" );
-    SetBranch( &l2Vz,             lept2+"_vz_gen" );
-    SetBranch( &l2Y,              lept2+"_y_gen" );
-  }	  
+  SetBranch( &l2px,             lept2+"_px_gen" );
+  SetBranch( &l2py,             lept2+"_py_gen" );
+  SetBranch( &l2pz,             lept2+"_pz_gen" );
+  SetBranch( &l2E,              lept2+"_e_gen" );
+  SetBranch( &l2Pt,             lept2+"_pt_gen" );
+  SetBranch( &l2Et,             lept2+"_et_gen" );
+  SetBranch( &l2Eta,            lept2+"_eta_gen" ); 
+  SetBranch( &l2Theta,          lept2+"_theta_gen" );    
+  SetBranch( &l2Phi,            lept2+"_phi_gen" );
+  SetBranch( &l2Charge,         lept2+"_charge_gen" );
+  SetBranch( &l2Vx,             lept2+"_vx_gen" );
+  SetBranch( &l2Vy,             lept2+"_vy_gen" );
+  SetBranch( &l2Vz,             lept2+"_vz_gen" );
+  SetBranch( &l2Y,              lept2+"_y_gen" );
+    
 }
 /////////////////////////////////////////////////////////////////////////
 
@@ -190,20 +198,18 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
 
     V = &((*genParticles)[i]);
 
-    // The vector boson must have stutus==3 and 
-    // two partons as mothers 
-    if( !(abs(V->status())==3 && V->numberOfMothers()==2) )
-      continue;
+    // The vector boson must have stutus==3  
+    if( !(abs(V->status())==3) ) continue;
 
     size_t ndau = 0;
     if(!(V==NULL)) ndau = V->numberOfDaughters();
 
     // The vector boson must decay to leptons
     if(ndau<1) continue;
-    if( (Vtype_=="Z") && 
-	!( V->pdgId()==22 || V->pdgId()==23) ) continue;
+    if( (Vtype_=="Z") && !( V->pdgId()==22 || V->pdgId()==23) ) continue;
     if( (Vtype_=="W") && !(abs(V->pdgId())==24) ) continue;
 
+    // Loop over daugthers
     for(size_t j = 0; j < ndau; ++ j) {
       const reco::Candidate *d = V->daughter( j );
       // first look for Z --> l+l-
@@ -213,11 +219,10 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
       } // if not, then look for W-->lnu
       else if( !(d==NULL) && abs(V->pdgId())==24) {
         if ( abs(d->pdgId())==pdgIdDau_ )  lepton1  = d;
+        if ( abs(d->pdgId())==(pdgIdDau_+1) )  lepton2  = d;
       } 
     } // end ndaughter loop
-    if( (V->pdgId()==22 || V->pdgId()==23) && 
-	!(lepton1==NULL || lepton2==NULL) ) break;
-    if(abs(V->pdgId())==24 && !(lepton1==NULL)) break;
+
   } // end nGen loop
 
   if( V==NULL ) return;

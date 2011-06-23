@@ -115,6 +115,7 @@ namespace ewk {
     float l2Vy;
     float l2Vz;
     float l2Y;	  
+
   };
 
 } //namespace
