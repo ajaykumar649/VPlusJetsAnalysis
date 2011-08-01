@@ -6,27 +6,39 @@ from time import gmtime, localtime, strftime
 physMode   = "WenuJets_"
 ConfigFile = "WenuJetsAnalysis_cfg.py"
 dataset    = [
-    "/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/Spring11-PU_S1_START311_V1G1-v1/AODSIM",    
-    "/WWtoAnything_TuneZ2_7TeV-pythia6-tauola/Spring11-PU_S1_START311_V1G1-v1/AODSIM",    
-    "/WZtoAnything_TuneZ2_7TeV-pythia6-tauola/Spring11-PU_S1_START311_V1G1-v1/AODSIM",    
-    "/TTToLNu2Q2B_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-120_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-130_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-140_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-150_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM ",   
-    "/GluGluToHToWWToLNuQQ_M-160_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-170_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-180_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-190_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",    
-    "/GluGluToHToWWToLNuQQ_M-200_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-250_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-300_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-350_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",   
-    "/GluGluToHToWWToLNuQQ_M-400_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-450_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",   
-    "/GluGluToHToWWToLNuQQ_M-500_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",
-    "/GluGluToHToWWToLNuQQ_M-550_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM",   
-    "/GluGluToHToWWToLNuQQ_M-600_7TeV-powheg-pythia6/Spring11-PU_S1_START311_V1G1-v1/AODSIM"
+    "/WJetsToLNu_TuneZ2_7TeV-madgraph-tauola/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/WW_TuneZ2_7TeV_pythia6_tauola/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/WZ_TuneZ2_7TeV_pythia6_tauola/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/TTJets_TuneZ2_7TeV-madgraph-tauola/Summer11-PU_S4_START42_V11-v2/AODSIM",     "/GluGluToHToWWToLNuQQ_M-120_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-130_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-140_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-150_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-160_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-170_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-180_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-190_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-200_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-250_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-300_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-350_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-400_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-450_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-500_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-550_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/GluGluToHToWWToLNuQQ_M-600_7TeV-powheg-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/QCD_Pt-30to80_EMEnriched_TuneZ2_7TeV-pythia/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/QCD_Pt-80to170_EMEnriched_TuneZ2_7TeV-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/QCD_Pt-30to80_BCtoE_TuneZ2_7TeV-pythia6/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/QCD_Pt-80to170_BCtoE_TuneZ2_7TeV-pythia/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/WJetsToLNu_TuneD6T_7TeV-madgraph-tauola/Fall10-START38_V12-v1/AODSIM",
+    "/WJets_TuneD6T_scaleup_7TeV-madgraph-tauola/Fall10-START38_V12-v1/AODSIM",
+    "/WJets_TuneD6T_scaledown_7TeV-madgraph-tauola/Fall10-START38_V12-v1/GEN-SIM-RECO"
+    "/DYJetsToLL_TuneZ2_M-50_7TeV-madgraph-tauola/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/DYToTauTau_M-20_CT10_TuneZ2_7TeV-powheg-pythia-tauola/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/Tbar_TuneZ2_s-channel_7TeV-powheg-tauola/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/Tbar_TuneZ2_t-channel_7TeV-powheg-tauola/Summer11-PU_S4_START42_V11-v1/AODSIM",
+    "/Tbar_TuneZ2_tW-channel-DS_7TeV-powheg-tauola/Summer11-PU_S4_START42_V11-v1/AODSIM"
+    
     ]
 channels   = [
     "WJets",
@@ -50,9 +62,21 @@ channels   = [
     "WWToLNuQQ_M-500",
     "WWToLNuQQ_M-550",
     "WWToLNuQQ_M-600"    
-    ]
-condor   = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
-MyResilientArea = "/kalanand/" + physMode +"CMSSW415-Spring11MC"
+    "QCD_Pt-30to80_EMEnriched",
+    "QCD_Pt-80to170_EMEnriched",
+    "QCD_Pt-30to80_BCtoE",
+    "QCD_Pt-80to170_BCtoE"
+    "WJetsToLNu_TuneD6T_Fall10",
+    "WJets_TuneD6T_scaleup",
+    "WJets_TuneD6T_scaledown"
+    "DYJetsToLL",
+    "DYToTauTau",
+    "Tbar_schannel",
+    "Tbar_tchannel",
+    "Tbar_twchannel"
+]
+condor   = [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1]
+MyResilientArea = "/pratima/" + physMode +"CMSSW423-Summer11MC"
 
 
 def changeMainConfigFile(trigpath):
