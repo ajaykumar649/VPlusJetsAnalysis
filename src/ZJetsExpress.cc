@@ -13,7 +13,7 @@
 //
 // Original Author:  A. Marini, K. Kousouris,  K. Theofilatos
 //         Created:  Mon Oct 31 07:52:10 CDT 2011
-// $Id: ZJetsExpress.cc,v 1.13 2011/12/15 14:45:55 kkousour Exp $
+// $Id: ZJetsExpress.cc,v 1.16 2012/01/12 18:49:42 theofil Exp $
 //
 //
 
@@ -65,6 +65,8 @@
 #include "DataFormats/TrackReco/interface/TrackFwd.h"
 #include "DataFormats/EgammaCandidates/interface/GsfElectron.h" 
 #include "DataFormats/EgammaCandidates/interface/GsfElectronFwd.h"
+#include "DataFormats/EgammaCandidates/interface/Photon.h"
+#include "DataFormats/EgammaCandidates/interface/PhotonFwd.h"
 #include "DataFormats/MuonReco/interface/Muon.h"
 #include "DataFormats/MuonReco/interface/MuonFwd.h"
 #include "DataFormats/MuonReco/interface/MuonIsolation.h" 
@@ -120,12 +122,13 @@ class ZJetsExpress : public edm::EDAnalyzer {
       virtual void beginRun(edm::Run const &, edm::EventSetup const& iSetup);
       virtual void analyze(const edm::Event&, const edm::EventSetup&);
       virtual void endJob();
+      virtual bool checkTriggerName(string,std::vector<string>); //checks if string belongs to any of the vector<string>
       // ---- method that builds the tree -------------------------------
       void buildTree();
       // ---- method that re-initializes the tree branches --------------
       void clearTree();
       // ---- structures for temporary object storage -------------------
-      struct LEPTON {
+      struct PARTICLE {
         // ---- momentum 4-vector ---------------------------------------
         TLorentzVector p4; 
         // ---- standard isolation --------------------------------------
@@ -138,8 +141,12 @@ class ZJetsExpress : public edm::EDAnalyzer {
         int chid; 
         // ---- tight id ------------------------------------------------
         int id;
+        // --- flag bit
+        int bit;
+        // --- float parameters
+        std::vector<float> parameters;
       };
-      struct GENLEPTON {
+      struct GENPARTICLE {
         // ---- momentum 4-vector ---------------------------------------
         TLorentzVector p4;  
         // ---- pdgid ---------------------------------------------------
@@ -172,8 +179,8 @@ class ZJetsExpress : public edm::EDAnalyzer {
         float elf;
       };
       // ---- sorting rules ---------------------------------------------
-      static bool lepSortingRule(LEPTON x, LEPTON y)                {return x.p4.Pt() > y.p4.Pt();}
-      static bool lepSortingRuleGEN(GENLEPTON x, GENLEPTON y)       {return x.p4.Pt() > y.p4.Pt();}
+      static bool lepSortingRule(PARTICLE x, PARTICLE y)                {return x.p4.Pt() > y.p4.Pt();}
+      static bool lepSortingRuleGEN(GENPARTICLE x, GENPARTICLE y)       {return x.p4.Pt() > y.p4.Pt();}
       static bool jetSortingRule(JET x, JET y)                      {return x.p4.Pt() > y.p4.Pt();}
       static bool p4SortingRule(TLorentzVector x, TLorentzVector y) {return x.Pt() > y.Pt();}
       // ---------- member data -----------------------------------------
@@ -193,6 +200,10 @@ class ZJetsExpress : public edm::EDAnalyzer {
       // ---- trigger ---------------------------------------------------
       std::string   processName_;
       std::vector<std::string> triggerNames_,triggerNamesFull_;
+      std::vector<std::string> triggerFamily1_;
+      std::vector<std::string> triggerFamily2_;
+      std::vector<std::string> triggerFamily3_;
+      std::vector<std::string> triggerFamily4_;
       std::vector<unsigned int> triggerIndex_;
       edm::InputTag triggerResultsTag_;
       edm::InputTag triggerEventTag_;
@@ -207,7 +218,7 @@ class ZJetsExpress : public edm::EDAnalyzer {
       edm::InputTag mJetsName,mSrcRho;
       // ---- tree variables --------------------------------------------
       // ---- event number ----------------------------------------------
-      int eventNum_;
+      ULong64_t eventNum_;
       // ---- run number ------------------------------------------------  
       int runNum_; 
       // ---- lumi section ----------------------------------------------
@@ -216,6 +227,7 @@ class ZJetsExpress : public edm::EDAnalyzer {
       int isRealData_;
       // ---- trigger decisions -----------------------------------------
       std::vector<int> *fired_;
+      int isTriggered_;
       // ---- L1 prescale -----------------------------------------------
       std::vector<int> *prescaleL1_;
       // ---- HLT prescale -----------------------------------------------
@@ -224,6 +236,8 @@ class ZJetsExpress : public edm::EDAnalyzer {
       float llM_,llMGEN_;
       // ---- dilepton rapidity -----------------------------------------  
       float llY_,llYGEN_;
+      // ---- dilepton pseudorapidity -----------------------------------------  
+      float llEta_,llEtaGEN_;
       // ---- dilepton pt -----------------------------------------------
       float llPt_,llPtGEN_;
       // ---- dilepton phi ----------------------------------------------
@@ -235,10 +249,25 @@ class ZJetsExpress : public edm::EDAnalyzer {
       // ---- lepton kinematics -----------------------------------------
       vector<float> *lepPt_,*lepEta_,*lepPhi_,*lepE_,*lepPtGEN_,*lepEtaGEN_,*lepPhiGEN_,*lepEGEN_;
       // ---- lepton properties ----------------------------------------- 
-      vector<int>   *lepChId_,*lepId_,*lepChIdGEN_;
+      vector<int>   *lepChId_,*lepId_,*lepChIdGEN_,*lepMatchedIndex_;
       vector<float> *lepIso_,*lepIsoPF_,*lepIsoRho_;
       // ---- number of leptons -----------------------------------------
       int nLeptons_,nLeptonsGEN_;
+      // ---- photon variables
+      int nPhotons_;
+      int isPhotonlead_;
+      float photonE_;
+      float photonPt_;
+      float photonEta_;
+      float photonPhi_;
+      float photonIso_;
+      float photonID_;
+      int   photonBit_;
+      float pfhadPhoPt_; // hadronic recoil computed for photon+jet interpretation
+      float mPhotonj1_;
+      float ptPhotonj1_;
+      vector<float> *jetPhotonDPhi_;
+      vector<float> *photonPar_;
       // ---- jet kinematics --------------------------------------------
       vector<float> *jetPt_,*jetEta_,*jetY_,*jetPhi_,*jetE_,*jetPtGEN_,*jetEtaGEN_,*jetYGEN_,*jetPhiGEN_,*jetEGEN_;
       // ---- jet composition fractions ---------------------------------
@@ -269,14 +298,18 @@ class ZJetsExpress : public edm::EDAnalyzer {
       float pfmetPhi_;
       // ---- pt of the hadronic recoil ---------------------------------
       float pfhadPt_; 
-      // ---- invariant mass of the Z and the leading jet --------------- 
+      // ---- invariant mass of the Z and the leading jets -------------- 
       float mZj1_,mZj1GEN_;
+      float mZj1j2_;
+      float mZj1j2j3_;
       // ---- transverse momentum of Z and the leading jet -------------- 
       float ptZj1_,ptZj1GEN_;
       // ---- transverse momentum of Z and the leading jet -------------- 
       float costhetaZj1_,costhetaZj1GEN_;
+      float costhetaPhotonj1_;
       // ---- invariant mass of the two leading jets --------------------
       float mj1j2_,mj1j2GEN_;
+      float mj1j2j3_;
       // ---- invariant mas of all leptons ------------------------------
       float mLep_,mLepGEN_;
       // ---- pf pt density ---------------------------------------------
@@ -313,6 +346,10 @@ ZJetsExpress::ZJetsExpress(const ParameterSet& iConfig)
   mPayloadName       = iConfig.getParameter<std::string>               ("payload");
   processName_       = iConfig.getParameter<std::string>               ("processName");
   triggerNames_      = iConfig.getParameter<std::vector<std::string> > ("triggerName");
+  triggerFamily1_    = iConfig.getParameter<std::vector<std::string> > ("triggerFamily1");
+  triggerFamily2_    = iConfig.getParameter<std::vector<std::string> > ("triggerFamily2");
+  triggerFamily3_    = iConfig.getParameter<std::vector<std::string> > ("triggerFamily3");
+  triggerFamily4_    = iConfig.getParameter<std::vector<std::string> > ("triggerFamily4");
   triggerResultsTag_ = iConfig.getParameter<edm::InputTag>             ("triggerResults");
   triggerEventTag_   = iConfig.getParameter<edm::InputTag>             ("triggerEvent");   
 }
@@ -320,6 +357,17 @@ ZJetsExpress::ZJetsExpress(const ParameterSet& iConfig)
 ZJetsExpress::~ZJetsExpress()
 {
 }
+// ---
+bool ZJetsExpress::checkTriggerName(string aString,std::vector<string> aFamily)
+{
+  bool result(false);	
+  for(unsigned int i=0;i<aFamily.size();i++) // checks if any of the aFamily strings contains aString
+  {
+    size_t found = aFamily[i].find(aString);
+    if(found!=string::npos)result=true;
+  }
+  return result;
+} 
 // ---- method called once each job just before starting event loop -----
 void ZJetsExpress::beginJob()
 {
@@ -392,48 +440,10 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
   // ---- initialize the tree branches ----------------------------------
   clearTree();
   isRealData_ = iEvent.isRealData() ? 1:0;
-  // ----  Trigger block ------------------------------------------------
-  iEvent.getByLabel(triggerResultsTag_,triggerResultsHandle_);
-  if (!triggerResultsHandle_.isValid()) {
-    cout << "ProcessedTreeProducer::analyze: Error in getting TriggerResults product from Event!" << endl;
-    return;
-  }
-  iEvent.getByLabel(triggerEventTag_,triggerEventHandle_);
-  if (!triggerEventHandle_.isValid()) {
-    cout << "ProcessedTreeProducer::analyze: Error in getting TriggerEvent product from Event!" << endl;
-    return;
-  }
-  // sanity check
-  assert(triggerResultsHandle_->size() == hltConfig_.size());
-  //------ loop over all trigger names ---------
-  for(unsigned itrig=0;itrig<triggerNames_.size();itrig++) {
-    bool accept(false);
-    int preL1(-1);
-    int preHLT(-1);
-    int tmpFired(-1); 
-    
-    if (triggerIndex_[itrig] < hltConfig_.size()) {
-      accept = triggerResultsHandle_->accept(triggerIndex_[itrig]);
-      if (triggerNamesFull_[itrig] != "") {
-        //const std::pair<int,int> prescales(hltConfig_.prescaleValues(iEvent,iSetup,triggerNamesFull_[itrig]));
-        //preL1  = prescales.first;
-        //preHLT = prescales.second;
-      }  
-      if (!accept)
-        tmpFired = 0;
-      else { 
-        std::string ss(triggerNames_[itrig]); 
-        hTriggerPass_->Fill((ss.erase(ss.find("v")-1,ss.find("v"))).c_str(),1);
-        tmpFired = 1;
-      }
-    }
-    
-    fired_      ->push_back(tmpFired);
-    prescaleL1_ ->push_back(preL1);
-    prescaleHLT_->push_back(preHLT);
-  }
+
+
   // ----  MC truth block -----------------------------------------------
-  vector<GENLEPTON>      myGenLeptons;
+  vector<GENPARTICLE>      myGenLeptons;
   vector<TLorentzVector> myGenJets;  
   if (!isRealData_) {
     hGenLeptons_->Fill(-1);
@@ -470,7 +480,7 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
         if (abs(i_gen->pdgId()) == 11 || abs(i_gen->pdgId()) == 13) {
            // ---- apply geometric and kinematic acceptance -------------
           if ((i_gen->pt() > mMinLepPt) && (fabs(i_gen->eta())) < mMaxLepEta) {
-            GENLEPTON aGenLepton;
+            GENPARTICLE aGenLepton;
             TLorentzVector lepP4GEN(i_gen->p4().Px(),i_gen->p4().Py(),i_gen->p4().Pz(),i_gen->p4().E());
             aGenLepton.p4    = lepP4GEN; 
             aGenLepton.pdgId = i_gen->pdgId();
@@ -519,7 +529,7 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
   iEvent.getByLabel("gsfElectrons", electrons_);
   Handle<View<Muon> > muons_;
   iEvent.getByLabel("muons",muons_);
-  vector<LEPTON> myLeptons;
+  vector<PARTICLE> myLeptons;
   // ---- loop over muons -----------------------------------------------
   for(View<Muon>::const_iterator i_mu = muons_->begin(); i_mu != muons_->end(); ++i_mu) {
     //---- apply kinematic and geometric acceptance 
@@ -553,13 +563,13 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
     float muonIsoRho = (i_mu->isolationR03().sumPt + max(0.,i_mu->isolationR03().emEt -Aecal*(*rho)) 
                        + max(0.,i_mu->isolationR03().hadEt-Ahcal*(*rho)))/i_mu->pt();
 
-    if (muonIso > mMaxCombRelIso03)                                    continue;
+    if (muonIsoRho > mMaxCombRelIso03)                                 continue;
     if (i_mu->innerTrack()->hitPattern().numberOfValidHits() < 11)     continue;
     if (i_mu->innerTrack()->hitPattern().numberOfValidPixelHits() < 1) continue;
     if (i_mu->numberOfMatches() < 2)                                   continue;
     if (i_mu->innerTrack()->ptError()/i_mu->pt() > 0.1)                continue;
       
-    LEPTON aLepton;
+    PARTICLE aLepton;
     TLorentzVector lepP4(i_mu->p4().Px(),i_mu->p4().Py(),i_mu->p4().Pz(),i_mu->p4().E());
     aLepton.p4   = lepP4;
     aLepton.chid = 2*i_mu->charge();
@@ -618,7 +628,7 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
               isTight = true;
       } 
     }
-    LEPTON aLepton;
+    PARTICLE aLepton;
     TLorentzVector lepP4(i_el->p4().Px(),i_el->p4().Py(),i_el->p4().Pz(),i_el->p4().E());
     aLepton.p4   = lepP4;
     aLepton.chid = i_el->charge();
@@ -648,6 +658,140 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
     float isoPF = (sumPt-myLeptons[il].p4.Pt()-(*rho)*0.2827434)/myLeptons[il].p4.Pt();
     myLeptons[il].isoPF = isoPF;
   }
+  //---- photons block --------------------------------------------------
+  vector<PARTICLE> myPhotons;
+
+  //---- consider single event interpretation, exclusive di-lepton/photon interpretation aka if the event has a di-lepton don't bother to read the photons
+  if(myLeptons.size()==0) {
+    Handle<reco::PhotonCollection> photons_;
+    iEvent.getByLabel("photons",photons_);
+
+    std::vector<std::string> photonIDCollectionTags_;
+    photonIDCollectionTags_.push_back("PhotonCutBasedIDLoose");
+    photonIDCollectionTags_.push_back("PhotonCutBasedIDLooseEM");
+    photonIDCollectionTags_.push_back("PhotonCutBasedIDTight");
+
+    const int nPhoIDC = photonIDCollectionTags_.size();
+    std::vector< const edm::ValueMap<Bool_t>* > phoIds;
+
+    for(int j=0; j<nPhoIDC; j++) {
+      edm::Handle<edm::ValueMap<Bool_t> > phoIDValueMap_;
+      iEvent.getByLabel("PhotonIDProd",photonIDCollectionTags_[j], phoIDValueMap_);
+      phoIds.push_back( phoIDValueMap_.product() );
+    }
+
+  //---- loop over the photon collection ---------------------------------
+    int ipho = 0;
+    for(reco::PhotonCollection::const_iterator it = photons_->begin();it != photons_->end(); it++) {
+  //---- don't bother if it has pt less than 70 GeV ----------------------
+      if(it->pt() < 70) continue;
+
+      reco::PhotonRef phoRef(photons_,ipho++);
+      int photonID=0;
+
+      TLorentzVector aPhoton(it->p4().Px(),it->p4().Py(),it->p4().Pz(),it->p4().E());
+
+      std::map<TString,UChar_t> idPairs;
+      for(int k=0; k<nPhoIDC; k++) {
+        idPairs[ TString(photonIDCollectionTags_[k].c_str()) ] = (*phoIds[k])[phoRef];
+        if(photonIDCollectionTags_[k] == "PhotonCutBasedIDLoose")photonID += 3*(*phoIds[k])[phoRef];
+        if(photonIDCollectionTags_[k] == "PhotonCutBasedIDTight")photonID += 4*(*phoIds[k])[phoRef];
+        //std::cout << photonIDCollectionTags_[k].c_str() << " " << (*phoIds[k])[phoRef] << " photonID = " << photonID << endl;
+      }// for id
+  //---- don't bother if it has not even loose ID ------------------------
+      if(photonID==0)continue;
+
+
+      float hcalTowerSumEtConeDR03            = it->hcalTowerSumEtConeDR03(); // hcalTowerSumEtConeDR03
+      float ecalRecHitSumEtConeDR03           = it->ecalRecHitSumEtConeDR03(); // ecalRecHitSumEtConeDR03
+      float nTrkSolidConeDR03                 = it->nTrkSolidConeDR03();
+      float trkSumPtSolidConeDR03             = it->trkSumPtSolidConeDR03();
+      float nTrkHollowConeDR03                = it->nTrkHollowConeDR03();
+      float trkSumPtHollowConeDR03            = it->trkSumPtHollowConeDR03();
+      float sigmaIetaIeta                     = it->sigmaIetaIeta();
+      float phoHasConvTrks                    = it->hasConversionTracks();
+      float r9                                = it->r9();
+      float hadronicOverEm                    = it->hadronicOverEm();
+
+      bool  isPhotonISO = false;
+      float gammaPt = aPhoton.Pt();
+
+      //if(ecalRecHitSumEtConeDR04 < 4.2 + 0.006*gammaPt)  
+      //if(hcalTowerSumEtConeDR04  < 2.2 + 0.0025*gammaPt)
+      //if(nTrkHollowConeDR04      < 3.5 + 0.001*gammaPt)isPhotonISO=true;
+
+      if(ecalRecHitSumEtConeDR03 < 6.0 + 0.012*gammaPt) // requirement of _IsoVL_ type photon triggers 
+      if(hcalTowerSumEtConeDR03  < 4.0 + 0.005*gammaPt)
+      if(trkSumPtHollowConeDR03  < 4.0 + 0.002*gammaPt)isPhotonISO=true;
+
+      // photon near masked region
+      float gammaEta = aPhoton.Eta();
+      float gammaPhi = aPhoton.Phi();
+      bool mask_0  = ( gammaEta>=-2.72 && gammaEta<=-2.61 && gammaPhi>=-1.33 && gammaPhi<=-1.25 );
+      bool mask_1  = ( gammaEta<=-3.05 && gammaPhi<=-1.40 );
+      bool mask_2  = ( gammaEta<=-3.05 && gammaPhi>=1.04 && gammaPhi<=1.15 );
+      bool mask_3  = ( gammaEta>=-2.64 && gammaEta<=-2.52 && gammaPhi>=-0.20 && gammaPhi<=-0.08 );
+      bool mask_4  = ( gammaEta>=-2.64 && gammaEta<=-2.52 && gammaPhi>=1.38 && gammaPhi<=1.46 );
+      bool mask_5  = ( gammaEta>=-2.03 && gammaEta<=-1.91 && gammaPhi>=-0.47 && gammaPhi<=-0.3 );
+      bool mask_6  = ( gammaEta>=-1.25 && gammaEta<=-1.12 && gammaPhi>=-1.25 && gammaPhi<=-1.13 );
+      bool mask_7  = ( gammaEta>=-0.81 && gammaEta<=-0.69 && gammaPhi>=-0.82 && gammaPhi<=-0.69 );
+      bool mask_8  = ( gammaEta>=-0.55 && gammaEta<=-0.42 && gammaPhi>=1.21 && gammaPhi<=1.33 );
+      bool mask_9  = ( gammaEta>=-0.29 && gammaEta<=-0.16  && gammaPhi>=1.38 );
+      bool mask_10 = ( gammaEta>=0.07 && gammaEta<=0.19 && gammaPhi>=-0.29 && gammaPhi<=-0.16 );
+      bool mask_11 = ( gammaEta>=0.15 && gammaEta<=0.28 && gammaPhi>=-0.37 && gammaPhi<=-0.25 );
+      bool mask_12 = ( gammaEta>=0.69 && gammaEta<=0.79 && gammaPhi>=-0.20 && gammaPhi<=-0.07 );
+      bool mask_13 = ( gammaEta>=0.86 && gammaEta<=0.97 && gammaPhi>=-0.11 && gammaPhi<=0.02 );
+      bool mask_14 = ( gammaEta>=0.60 && gammaEta<=0.70 && gammaPhi>=0.96 && gammaPhi<=1.06 );
+      bool mask_15 = ( gammaEta>=1.74 && gammaEta<=1.84 && gammaPhi>=0.08 && gammaPhi<=0.19 );
+      bool mask_16 = ( gammaEta>=1.65 && gammaEta<=1.75 && gammaPhi>=0.87 && gammaPhi<=0.97 );
+      bool mask_17 = ( gammaEta>=1.99 && gammaEta<=2.10 && gammaPhi>=-0.97 && gammaPhi<=-0.87 );
+      bool mask_18 = ( gammaEta>=2.95 && gammaEta<=3.05 && gammaPhi>=-0.98 && gammaPhi<=-0.87 );
+      bool mask_19 = ( gammaEta>=2.78 && gammaEta<=2.89 && gammaPhi>=0.86 && gammaPhi<=0.98);
+      bool mask_20 = ( gammaEta>=2.69 && gammaEta<=2.81 && gammaPhi>= 3.19);
+      
+      bool isMasked = mask_0 || mask_1 || mask_2 || mask_3 || mask_4 || mask_5 || mask_6 || mask_7 || mask_8 || mask_9 || mask_10 || mask_11;
+      isMasked      = isMasked || mask_12 || mask_13 || mask_14 || mask_15 || mask_16 || mask_17 || mask_18 || mask_19 || mask_20;
+      
+
+
+
+      int photonBit=0;
+      photonBit |= (it->isEB()          << 0);
+      photonBit |= (it->isEE()          << 1);
+      photonBit |= (it->isEBEtaGap()    << 2);
+      photonBit |= (it->isEBPhiGap()    << 3);
+      photonBit |= (it->isEERingGap()   << 4);
+      photonBit |= (it->isEEDeeGap()    << 5);
+      photonBit |= (it->isEBEEGap()     << 6);
+      photonBit |= (it->hasPixelSeed()  << 7);
+      photonBit |= (isPhotonISO         << 8);
+      photonBit |= (isMasked            << 9);
+
+
+
+
+      PARTICLE gamma; // define pseudo lepton half of the p4 of the real photon
+      gamma.p4    = aPhoton;
+      gamma.chid  = 0;
+      gamma.id    = photonID;
+      gamma.iso   = isPhotonISO;    // this bool 0/1
+      gamma.isoPF = 0; 
+      gamma.bit   = photonBit;
+      // ok, now close your eyes what follows is a scandal
+      gamma.parameters.push_back(hcalTowerSumEtConeDR03);     // 0   need to remember the ordering offline
+      gamma.parameters.push_back(ecalRecHitSumEtConeDR03);    // 1  
+      gamma.parameters.push_back(nTrkSolidConeDR03);          // 2  
+      gamma.parameters.push_back(trkSumPtSolidConeDR03);      // 3 
+      gamma.parameters.push_back(nTrkHollowConeDR03);         // 4 
+      gamma.parameters.push_back(trkSumPtHollowConeDR03);     // 5
+      gamma.parameters.push_back(sigmaIetaIeta);              // 6  
+      gamma.parameters.push_back(phoHasConvTrks);             // 7  
+      gamma.parameters.push_back(r9);                         // 8  
+      gamma.parameters.push_back(hadronicOverEm);             // 9  
+      myPhotons.push_back(gamma);
+    }
+  }
+  sort(myPhotons.begin(),myPhotons.end(),lepSortingRule);
   //---- jets block -----------------------------------------------------
   Handle<PFJetCollection> jets_;
   iEvent.getByLabel(mJetsName,jets_);
@@ -675,6 +819,14 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
       }
     }// lepton loop 
     if (jetIsDuplicate) continue; 
+    //----- remove the leading photon ------------------------------------ (reminder nPhotons>0 only IF nLeptons==0)
+    for(unsigned int i_pho = 0; i_pho < myPhotons.size(); i_pho++) {
+      float DR = myPhotons[i_pho].p4.DeltaR(jetP4);
+      if (DR < mJetLepIsoR) {
+        jetIsDuplicate = true;
+      }
+    }// photon loop
+    if (jetIsDuplicate) continue;
     // ---- get the jec and the uncertainty -----------------------------    
     int index = i_jet - jets_->begin();
     edm::RefToBase<reco::Jet> jetRef(edm::Ref<PFJetCollection>(jets_,index));
@@ -758,6 +910,7 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
   // ---- counters ------------------------------------------------------
   nVtx_        = int(vtxZ_->size());
   nLeptons_    = int(myLeptons.size()); 
+  nPhotons_    = int(myPhotons.size());
   nJets_       = int(myJets.size());
   nLeptonsGEN_ = int(myGenLeptons.size()); 
   nJetsGEN_    = int(myGenJets.size()); 
@@ -772,6 +925,7 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
   }
   // ---- keep only selected events -------------------------------------
   bool selectionRECO = ((nVtx_ > 0) && (nLeptons_ > 1) && (nJets_ >= mMinNjets) && llP4.M()>mMinLLMass);
+  selectionRECO = selectionRECO || ((nVtx_ > 0) &&  nPhotons_>0 && (nJets_ >= mMinNjets)); // add photon logic for RECO
   bool selection(selectionRECO);
   bool selectionGEN(false);
   selRECO_ = 0;
@@ -793,12 +947,16 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
       selRECO_ = 1;
       // ---- hadronic recoil vector --------------------------------------
       TLorentzVector pfmetP4(pfmetPx,pfmetPy,0,sqrt(pfmetPx * pfmetPx + pfmetPy * pfmetPy));
-      TLorentzVector pfhadP4 = -pfmetP4 - llP4;      
-      llM_        = llP4.M();
-      llPt_       = llP4.Pt();
-      llPhi_      = llP4.Phi();
-      llY_        = llP4.Rapidity();
-      llDPhi_     = fabs(myLeptons[0].p4.DeltaPhi(myLeptons[1].p4));
+      TLorentzVector pfhadP4(0,0,0,0);
+      if(myLeptons.size()>1) { 
+	llM_                   = llP4.M();
+	llPt_                  = llP4.Pt();
+	llPhi_                 = llP4.Phi();
+	if(llPt_>0)llY_        = llP4.Rapidity();
+	if(llPt_>0)llEta_      = llP4.Eta();
+	llDPhi_     = fabs(myLeptons[0].p4.DeltaPhi(myLeptons[1].p4));
+        pfhadP4     = -pfmetP4 - llP4;      
+      }
       TLorentzVector lepP4(0,0,0,0); 
       for(unsigned l = 0; l < myLeptons.size(); l++) {
         lepP4 += myLeptons[l].p4;
@@ -814,14 +972,32 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
       }      
       pfhadPt_    = pfhadP4.Pt();
       mLep_       = lepP4.M(); 
+      // ---- store photon variables ------------------------------------
+      nPhotons_                 = myPhotons.size();
+      if(nPhotons_>0) {
+        photonE_   = myPhotons[0].p4.Energy();
+        photonPt_  = myPhotons[0].p4.Pt();
+        photonEta_ = myPhotons[0].p4.Eta();
+        photonPhi_ = myPhotons[0].p4.Phi();
+        photonIso_ = myPhotons[0].iso;
+        photonID_  = myPhotons[0].id;
+        photonBit_ = myPhotons[0].bit;
+        *photonPar_= myPhotons[0].parameters;
+        pfhadPhoPt_=  (-pfmetP4 - myPhotons[0].p4).Pt();
+      }
+
+
       vector<TLorentzVector> allP4;
-      allP4.push_back(llP4);
+      if(myLeptons.size()>1)allP4.push_back(llP4);
+      if(myPhotons.size()>0)allP4.push_back(myPhotons[0].p4);
       double prod(1.0),sum(0.0);
       for(unsigned j = 0; j < myJets.size(); j++) {
         prod *= myJets[j].p4.Pt();
         sum  += myJets[j].p4.Pt();
         allP4.push_back(myJets[j].p4); 
         jetllDPhi_   ->push_back(fabs(llP4.DeltaPhi(myJets[j].p4)));
+        if(nLeptons_ > 1) jetllDPhi_     ->push_back(fabs(llP4.DeltaPhi(myJets[j].p4)));
+        if(nPhotons_ > 0) jetPhotonDPhi_ ->push_back(fabs(myPhotons[0].p4.DeltaPhi(myJets[j].p4)));
         jetPt_       ->push_back(myJets[j].p4.Pt()); 
         jetEta_      ->push_back(myJets[j].p4.Eta()); 
         jetPhi_      ->push_back(myJets[j].p4.Phi()); 
@@ -839,21 +1015,45 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
         jetELF_      ->push_back(myJets[j].elf);
         jetId_       ->push_back(myJets[j].id);  
       }
-      isZlead_ = 1;
+      if(nLeptons_>1) isZlead_ = 1;
+      if(nPhotons_>0) isPhotonlead_ = 1;
       if (nJets_ > 0) {
-        mZj1_        = (llP4+myJets[0].p4).M();
-        ptZj1_       = (llP4+myJets[0].p4).Pt();
-        costhetaZj1_ = tanh(0.5*(llP4.Rapidity() - myJets[0].p4.Rapidity()));
+        if(nLeptons_ > 1) {
+	  mZj1_        = (llP4+myJets[0].p4).M();
+	  ptZj1_       = (llP4+myJets[0].p4).Pt();
+	  costhetaZj1_ = tanh(0.5*(llP4.Rapidity() - myJets[0].p4.Rapidity()));
+	}
+
+        if(nPhotons_>0) {
+	  mPhotonj1_        = (myJets[0].p4 + myPhotons[0].p4).M();
+	  ptPhotonj1_       = (myJets[0].p4 + myPhotons[0].p4).Pt();
+	  costhetaPhotonj1_ = tanh(0.5*(myPhotons[0].p4.Rapidity() - myJets[0].p4.Rapidity()));
+	}
+
         jetPtGeMean_ = pow(prod,1./nJets_);
         jetPtArMean_ = sum/nJets_;
         if (nJets_ > 1) {
-          mj1j2_    = (myJets[0].p4+myJets[1].p4).M();
+	  if(nLeptons_ > 1) mZj1j2_   = (llP4 + myJets[0].p4 + myJets[1].p4).M();
+          mj1j2_    = (myJets[0].p4 + myJets[1].p4).M();
           j1j2DPhi_ = fabs(myJets[0].p4.DeltaPhi(myJets[1].p4));
           j1j2DR_   = myJets[0].p4.DeltaR(myJets[1].p4);
-          if (llPt_ < myJets[1].p4.Pt()) {
-            isZlead_ = 0;
-          }
+
+          if(nLeptons_>1) {
+  	    if (llPt_ < myJets[1].p4.Pt()) {
+  	      isZlead_ = 0;
+	    }
+	  }
+
+          if(nPhotons_>0) {
+       	    if (myPhotons[0].p4.Pt() < myJets[1].p4.Pt()) {
+     	      isPhotonlead_ = 0;
+   	    }
+ 	  }
+
+
           if (nJets_ > 2) {
+	    if(nLeptons_ > 1) mZj1j2j3_ = (llP4+myJets[0].p4 + myJets[1].p4 + myJets[2].p4).M();
+	    mj1j2j3_  = (myJets[0].p4 + myJets[1].p4 + myJets[2].p4).M();
             j1j3DPhi_ = fabs(myJets[0].p4.DeltaPhi(myJets[2].p4));
             j2j3DPhi_ = fabs(myJets[1].p4.DeltaPhi(myJets[2].p4));
             j1j3DR_   = myJets[0].p4.DeltaR(myJets[2].p4);
@@ -866,14 +1066,68 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
       for(int i=0;i<TMath::Min(int(allP4.size()),2);i++) {
         htLead_ += allP4[i].Pt();
       }
+
+      // ----  Trigger block: Bother for trigger info only if event is selected (saves time)-------------
+      iEvent.getByLabel(triggerResultsTag_,triggerResultsHandle_);
+      if (!triggerResultsHandle_.isValid()) {
+        cout << "ProcessedTreeProducer::analyze: Error in getting TriggerResults product from Event!" << endl;
+        return;
+      }
+      iEvent.getByLabel(triggerEventTag_,triggerEventHandle_);
+      if (!triggerEventHandle_.isValid()) {
+        cout << "ProcessedTreeProducer::analyze: Error in getting TriggerEvent product from Event!" << endl;
+        return;
+      }
+      // sanity check
+      assert(triggerResultsHandle_->size() == hltConfig_.size());
+      //------ loop over all trigger names ---------
+      for(unsigned itrig=0;itrig<triggerNames_.size();itrig++) {
+        bool accept(false);
+        int preL1(-1);
+        int preHLT(-1);
+        int tmpFired(-1); 
+        
+    
+        if (triggerIndex_[itrig] < hltConfig_.size()) {
+          accept = triggerResultsHandle_->accept(triggerIndex_[itrig]);
+          if (triggerNamesFull_[itrig] != "") {
+            const std::pair<int,int> prescales(hltConfig_.prescaleValues(iEvent,iSetup,triggerNamesFull_[itrig]));
+            preL1  = prescales.first;
+            preHLT = prescales.second;
+          }  
+          if (!accept) {
+            tmpFired = 0;
+          }
+          else { 
+            std::string ss(triggerNames_[itrig]); 
+            hTriggerPass_->Fill((ss.erase(ss.find("v")-1,ss.find("v"))).c_str(),1);
+            tmpFired = 1;
+            // save trigger bit (0001) if family1 has fired, (0100) if family 3 has triggered
+            isTriggered_ |= checkTriggerName(triggerNames_[itrig],triggerFamily1_) << 0; // if true 0001
+            isTriggered_ |= checkTriggerName(triggerNames_[itrig],triggerFamily2_) << 1; // if true 0010
+            isTriggered_ |= checkTriggerName(triggerNames_[itrig],triggerFamily3_) << 2; // if true 0100
+            isTriggered_ |= checkTriggerName(triggerNames_[itrig],triggerFamily4_) << 3; // if true 1000
+//          std::cout << "f1 " << checkTriggerName(triggerNames_[itrig],triggerFamily1_) << " " <<triggerNames_[itrig] << " " << isTriggered_ << std::endl;
+//          std::cout << "f2 " << checkTriggerName(triggerNames_[itrig],triggerFamily2_) << " " <<triggerNames_[itrig] << " " << isTriggered_ << std::endl;
+//          std::cout << "f3 " << checkTriggerName(triggerNames_[itrig],triggerFamily3_) << " " <<triggerNames_[itrig] << " " << isTriggered_ << std::endl;
+//          std::cout << "f4 " << checkTriggerName(triggerNames_[itrig],triggerFamily4_) << " " <<triggerNames_[itrig] << " " << isTriggered_ << std::endl;
+          }
+        }
+        
+        fired_      ->push_back(tmpFired);
+        prescaleL1_ ->push_back(preL1);
+        prescaleHLT_->push_back(preHLT);
+      }
+    
     }// if selection GEN 
     if (selectionGEN) {
       selGEN_ = 1;
-      llMGEN_        = llP4GEN.M();
-      llPtGEN_       = llP4GEN.Pt();
-      llPhiGEN_      = llP4GEN.Phi();
-      llYGEN_        = llP4GEN.Rapidity();
-      llDPhiGEN_     = fabs(myGenLeptons[0].p4.DeltaPhi(myGenLeptons[1].p4));
+      llMGEN_                      = llP4GEN.M();
+      llPtGEN_                     = llP4GEN.Pt();
+      llPhiGEN_                    = llP4GEN.Phi();
+      if(llPtGEN_>0)llYGEN_        = llP4GEN.Rapidity();
+      if(llPtGEN_>0)llEtaGEN_      = llP4GEN.Eta();
+      llDPhiGEN_                   = fabs(myGenLeptons[0].p4.DeltaPhi(myGenLeptons[1].p4));
       TLorentzVector lepP4GEN(0,0,0,0); 
       for(unsigned l = 0; l < myGenLeptons.size(); l++) {
         lepP4GEN += myGenLeptons[l].p4;
@@ -883,6 +1137,14 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
         lepEGEN_      ->push_back(myGenLeptons[l].p4.Energy());
         lepChIdGEN_   ->push_back(myGenLeptons[l].pdgId);
       }   
+      for(unsigned r=0; r < myLeptons.size(); r++)lepMatchedIndex_->push_back(99); //initialize array to the size of reco leptons    
+      for(unsigned r=0; r < myLeptons.size(); r++) {                               //find matched reco lepton, if there's one
+	for(unsigned l = 0; l < myGenLeptons.size(); l++) {
+            float DR = myLeptons[r].p4.DeltaR(myGenLeptons[l].p4);
+            bool isSameFlavor = (abs(myGenLeptons[l].pdgId) == 11 && abs(myLeptons[r].chid)==1) || (abs(myGenLeptons[l].pdgId) == 13 && abs(myLeptons[r].chid)==2);
+    	    if(DR<0.3 && isSameFlavor)lepMatchedIndex_->at(r) = l;                              //store genlepton matched index
+	}
+      }
       mLepGEN_ = lepP4GEN.M(); 
       vector<TLorentzVector> allP4GEN;
       allP4GEN.push_back(llP4GEN);
@@ -947,6 +1209,7 @@ void ZJetsExpress::buildTree()
   lepIsoPF_          = new std::vector<float>();
   lepIsoRho_         = new std::vector<float>();
   lepChId_           = new std::vector<int>();
+  lepMatchedIndex_   = new std::vector<int>();
   lepId_             = new std::vector<int>();
   jetPt_             = new std::vector<float>(); 
   jetEta_            = new std::vector<float>();
@@ -959,6 +1222,8 @@ void ZJetsExpress::buildTree()
   jetJEC_            = new std::vector<float>();
   jetUNC_            = new std::vector<float>();
   jetllDPhi_         = new std::vector<float>();
+  jetPhotonDPhi_     = new std::vector<float>();
+  photonPar_         = new std::vector<float>();
   jetCHF_            = new std::vector<float>();
   jetPHF_            = new std::vector<float>();
   jetNHF_            = new std::vector<float>();
@@ -981,18 +1246,24 @@ void ZJetsExpress::buildTree()
   // ---- global event variables ----------------------------------------
   myTree_->Branch("isRealData"       ,&isRealData_        ,"isRealData/I");
   myTree_->Branch("selRECO"          ,&selRECO_           ,"selRECO/I");
-  myTree_->Branch("eventNum"         ,&eventNum_          ,"eventNum/I");
+  myTree_->Branch("eventNum"         ,&eventNum_          ,"eventNum/l"); // 64 bit unsigned integer (ULong64_t)
   myTree_->Branch("runNum"           ,&runNum_            ,"runNum/I");
   myTree_->Branch("lumi"             ,&lumi_              ,"lumi/I");
   myTree_->Branch("nVtx"             ,&nVtx_              ,"nVtx/I");
   myTree_->Branch("nLeptons"         ,&nLeptons_          ,"nLeptons/I");
+  myTree_->Branch("nPhotons"         ,&nPhotons_          ,"nPhotons/I");
   myTree_->Branch("nJets"            ,&nJets_             ,"nJets/I"); 
   myTree_->Branch("isZlead"          ,&isZlead_           ,"isZlead/I");
+  myTree_->Branch("isPhotonlead"     ,&isPhotonlead_      ,"isPhotonlead/I");
   myTree_->Branch("rho"              ,&rho_               ,"rho/F");
   myTree_->Branch("mZj1"             ,&mZj1_              ,"mZj1/F");
+  myTree_->Branch("mZj1j2"           ,&mZj1j2_            ,"mZj1j2/F");
+  myTree_->Branch("mZj1j2j3"         ,&mZj1j2j3_          ,"mZj1j2j3/F");
   myTree_->Branch("ptZj1"            ,&ptZj1_             ,"ptZj1/F");
   myTree_->Branch("costhetaZj1"      ,&costhetaZj1_       ,"costhetaZj1/F");
+  myTree_->Branch("costhetaPhotonj1" ,&costhetaPhotonj1_  ,"costhetaPhotonj1/F");
   myTree_->Branch("mj1j2"            ,&mj1j2_             ,"mj1j2/F");
+  myTree_->Branch("mj1j2j3"          ,&mj1j2j3_           ,"mj1j2j3/F");
   myTree_->Branch("mLep"             ,&mLep_              ,"mLep/F");
   myTree_->Branch("htLead"           ,&htLead_            ,"htLead/F");
   myTree_->Branch("j1j2DPhi"         ,&j1j2DPhi_          ,"j1j2DPhi/F");
@@ -1006,7 +1277,7 @@ void ZJetsExpress::buildTree()
   // ---- met variables -------------------------------------------------
   myTree_->Branch("pfmet"            ,&pfmet_             ,"pfmet/F");
   myTree_->Branch("pfmetPhi"         ,&pfmetPhi_          ,"pfmetPhi/F");
-  myTree_->Branch("pfhadPt"          ,&pfhadPt_           ,"pfhadPt_/F");
+  myTree_->Branch("pfhadPt"          ,&pfhadPt_           ,"pfhadPt/F");
   myTree_->Branch("pfSumEt"          ,&pfSumEt_           ,"pfSumEt/F");  
   // ---- dilepton variables --------------------------------------------
   myTree_->Branch("llM"              ,&llM_               ,"llM/F");
@@ -1014,10 +1285,25 @@ void ZJetsExpress::buildTree()
   myTree_->Branch("llPhi"            ,&llPhi_             ,"llPhi/F");
   myTree_->Branch("llDPhi"           ,&llDPhi_            ,"llDPhi/F");
   myTree_->Branch("llY"              ,&llY_               ,"llY/F");
+  myTree_->Branch("llEta"            ,&llEta_             ,"llEta/F");
+  // ---- photon variables ----------------------------------------------
+  myTree_->Branch("photonPt"         ,&photonPt_          ,"photonPt/F");
+  myTree_->Branch("photonE"          ,&photonE_           ,"photonE/F");
+  myTree_->Branch("photonEta"        ,&photonEta_         ,"photonEta/F");
+  myTree_->Branch("photonPhi"        ,&photonPhi_         ,"photonPhi/F");
+  myTree_->Branch("photonIso"        ,&photonIso_         ,"photonIso/F");
+  myTree_->Branch("photonID"         ,&photonID_          ,"photonID/F");
+  myTree_->Branch("photonBit"        ,&photonBit_         ,"photonBit/I");
+  myTree_->Branch("pfhadPhoPt"       ,&pfhadPhoPt_        ,"pfhadPhoPt/F");
+  myTree_->Branch("mPhotonj1"        ,&mPhotonj1_         ,"mPhotonj1/F");
+  myTree_->Branch("ptPhotonj1"       ,&ptPhotonj1_        ,"ptPhotonj1/F");
+  myTree_->Branch("jetPhotonDPhi"    ,"vector<float>"     ,&jetPhotonDPhi_);
+  myTree_->Branch("photonPar"        ,"vector<float>"     ,&photonPar_);
   // ---- trigger variables ---------------------------------------------
   myTree_->Branch("fired"            ,"vector<int>"       ,&fired_);
   myTree_->Branch("prescaleL1"       ,"vector<int>"       ,&prescaleL1_);
   myTree_->Branch("prescaleHLT"      ,"vector<int>"       ,&prescaleHLT_);
+  myTree_->Branch("isTriggered"      ,&isTriggered_        ,"isTriggered/I");
   // ---- lepton variables ----------------------------------------------
   myTree_->Branch("lepPt"            ,"vector<float>"     ,&lepPt_);
   myTree_->Branch("lepEta"           ,"vector<float>"     ,&lepEta_);
@@ -1027,6 +1313,7 @@ void ZJetsExpress::buildTree()
   myTree_->Branch("lepIsoPF"         ,"vector<float>"     ,&lepIsoPF_);
   myTree_->Branch("lepIsoRho"        ,"vector<float>"     ,&lepIsoRho_);
   myTree_->Branch("lepChId"          ,"vector<int>"       ,&lepChId_);
+  myTree_->Branch("lepMatchedIndex"  ,"vector<int>"       ,&lepMatchedIndex_);
   myTree_->Branch("lepId"            ,"vector<int>"       ,&lepId_);
   // ---- jet variables -------------------------------------------------
   myTree_->Branch("jetPt"            ,"vector<float>"     ,&jetPt_);
@@ -1049,6 +1336,8 @@ void ZJetsExpress::buildTree()
   // ---- vertex variables ----------------------------------------------
   myTree_->Branch("vtxZ"             ,"vector<float>"     ,&vtxZ_);
   myTree_->Branch("vtxNdof"          ,"vector<float>"     ,&vtxNdof_);
+  // ---- gen variables ----------------------------------------------
+  myTree_->Branch("selGEN"           ,&selGEN_            ,"selGEN/I");
   myTree_->Branch("pu"               ,&pu_                ,"pu/I");
   myTree_->Branch("puINT"            ,&puINT_             ,"puINT/I");
   myTree_->Branch("puOOT"            ,&puOOT_             ,"puOOT/I");
@@ -1074,6 +1363,7 @@ void ZJetsExpress::buildTree()
   myTree_->Branch("llPhiGEN"         ,&llPhiGEN_          ,"llPhiGEN/F");
   myTree_->Branch("llDPhiGEN"        ,&llDPhiGEN_         ,"llDPhiGEN/F");
   myTree_->Branch("llYGEN"           ,&llYGEN_            ,"llYGEN/F");
+  myTree_->Branch("llEtaGEN"         ,&llEtaGEN_          ,"llEtaGEN/F");
   myTree_->Branch("lepPtGEN"         ,"vector<float>"     ,&lepPtGEN_);
   myTree_->Branch("lepEtaGEN"        ,"vector<float>"     ,&lepEtaGEN_);
   myTree_->Branch("lepPhiGEN"        ,"vector<float>"     ,&lepPhiGEN_);
@@ -1091,22 +1381,28 @@ void ZJetsExpress::clearTree()
 {
   selRECO_           = -999;
   isRealData_        = -999;
-  eventNum_          = -999;
+  eventNum_          = 0; //ULong64_t can't be negative
   runNum_            = -999;
   lumi_              = -999;
   nVtx_              = -999;
   nLeptons_          = -999;
+  nPhotons_          = -999;
   nJets_             = -999;
   isZlead_           = -999;
+  isPhotonlead_      = -999;
   rho_               = -999;
   pfmet_             = -999;
   pfmetPhi_          = -999;
   pfhadPt_           = -999;
   pfSumEt_           = -999;
   mZj1_              = -999; 
+  mZj1j2_            = -999; 
+  mZj1j2j3_          = -999; 
   ptZj1_             = -999; 
   costhetaZj1_       = -999; 
+  costhetaPhotonj1_  = -999; 
   mj1j2_             = -999;
+  mj1j2j3_           = -999;
   mLep_              = -999;
   htLead_            = -999;
   jetPtGeMean_       = -999;
@@ -1122,6 +1418,20 @@ void ZJetsExpress::clearTree()
   llPhi_             = -999;
   llDPhi_            = -999;
   llY_               = -999;
+  llEta_             = -999;
+  photonE_           = -999;
+  photonPt_          = -999;
+  photonEta_         = -999;
+  photonPhi_         = -999;
+  photonIso_         = -999;
+  photonID_          = -999;
+  photonBit_         =    0; // please keep this 0
+  pfhadPhoPt_        = -999;
+  mPhotonj1_         = -999;
+  ptPhotonj1_        = -999;
+  isTriggered_       =    0; // please keep this 0
+  jetPhotonDPhi_     ->clear();
+  photonPar_         ->clear();
   fired_             ->clear();
   prescaleL1_        ->clear();
   prescaleHLT_       ->clear();
@@ -1133,6 +1443,7 @@ void ZJetsExpress::clearTree()
   lepIsoPF_          ->clear();
   lepIsoRho_         ->clear();
   lepChId_           ->clear();
+  lepMatchedIndex_   ->clear();
   lepId_             ->clear();
   jetPt_             ->clear();
   jetEta_            ->clear();
@@ -1180,6 +1491,7 @@ void ZJetsExpress::clearTree()
   llPhiGEN_          = -999;
   llDPhiGEN_         = -999;
   llYGEN_            = -999;
+  llEtaGEN_          = -999;
   lepPtGEN_          ->clear();
   lepEtaGEN_         ->clear();
   lepPhiGEN_         ->clear();
