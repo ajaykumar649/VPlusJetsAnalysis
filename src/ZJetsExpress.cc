@@ -13,7 +13,7 @@
 //
 // Original Author:  A. Marini, K. Kousouris,  K. Theofilatos
 //         Created:  Mon Oct 31 07:52:10 CDT 2011
-// $Id: ZJetsExpress.cc,v 1.22 2012/03/20 23:02:14 theofil Exp $
+// $Id: ZJetsExpress.cc,v 1.23 2012/03/21 22:01:05 theofil Exp $
 //
 //
 
@@ -1048,6 +1048,7 @@ void ZJetsExpress::analyze(const Event& iEvent, const EventSetup& iSetup)
     edm::RefToBase<reco::Jet> jetRef(edm::Ref<PFJetCollection>(jets_,index));
     double jec = mJEC->correction(*i_jet,jetRef,iEvent,iSetup);
     // ---- only keep jets within the kinematic acceptance --------------
+    if ((jec * jetP4.Pt() < 15) || (fabs(jetP4.Eta()) > 3.0)) continue;// apply first a hardcode preselection
     if ((jec * jetP4.Pt() < mMinJetPt) || (fabs(jetP4.Eta()) > mMaxJetEta)) jetIsInAcceptance = false;
     mJECunc->setJetEta(i_jet->eta());
     // ---- the unc is a function of the corrected pt -------------------
