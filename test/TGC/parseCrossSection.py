@@ -15,6 +15,12 @@ def change(change1, change2):
 
 
 ###################
-for i in range(-3,4):
+for i in range(-10,11):
     for j in range(-3,4):
-        change(0.2*i, 0.2*j)
+        change(0.04*i, 0.2*j)
+
+
+for j in range(-3,4):
+    change(-0.6, 0.2*j)
+    change(0.6, 0.2*j)
+    
