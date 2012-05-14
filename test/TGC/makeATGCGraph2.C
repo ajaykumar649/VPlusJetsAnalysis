@@ -3,13 +3,13 @@ void makeATGCGraph2() {
   float x7[7]= {-0.6, -0.4, -0.2, 0.0, 0.2, 0.4, 0.6};
   float errx7[7] = {0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0};
 
-  float Lambda_Z_m06_val[7] = {2049.823, 2001.091, 1971.554, 1959.936, 1964.816, 1987.817, 2028.575};
+  float Lambda_Z_m06_val[7] = {2009.016, 1960.101, 1928.489, 1915.580, 1920.435, 1943.721, 1986.124};
   float Lambda_Z_m06_err[7] = { 1.385, 1.351, 1.372, 1.355, 1.343, 1.350, 1.372 };
   GetCrossSectionChange(Lambda_Z_m06_val, Lambda_Z_m06_err);
 
-
   float Lambda_Z_m04_val[7] = {1417.959, 1369.149, 1340.213, 1326.794, 1331.933, 1354.890, 1394.851};
   float Lambda_Z_m04_err[7] = {1.024, 0.946, 0.991, 0.958, 1.004, 0.968, 0.972};
+
   GetCrossSectionChange(Lambda_Z_m04_val, Lambda_Z_m04_err);
 
   float Lambda_Z_m02_val[7] = {1053.221, 1004.695, 974.390, 960.664, 965.478, 987.523, 1026.728 };
@@ -28,9 +28,11 @@ void makeATGCGraph2() {
   float Lambda_Z_04_err[7] = {1.040, 1.037, 1.009, 1.028, 1.035, 1.006, 1.017};
   GetCrossSectionChange(Lambda_Z_04_val, Lambda_Z_04_err);
 
-  float Lambda_Z_06_val[7] = {2224.066, 2174.382, 2141.274, 2127.033, 2129.372, 2150.308, 2188.084 };
+  float Lambda_Z_06_val[7] = {2172.604, 2122.149, 2088.321, 2072.907, 2074.902, 2097.831, 2138.094};
   float Lambda_Z_06_err[7] = {1.492, 1.432, 1.451, 1.443, 1.448, 1.436, 1.431};
   GetCrossSectionChange(Lambda_Z_06_val, Lambda_Z_06_err);
+
+
 
 
   TGraphErrors* Lambda_Z_m06 = new TGraphErrors(7, x7, Lambda_Z_m06_val, 
@@ -79,8 +81,8 @@ void makeATGCGraph2() {
   TGraphErrors* Lambda_Z_06 = new TGraphErrors(7, x7, Lambda_Z_06_val, 
 						 errx7, Lambda_Z_06_err);
   Lambda_Z_06->GetXaxis()->SetTitle("#Delta#kappa_{#gamma}");
-  Lambda_Z_06->GetYaxis()->SetTitle("Change in cross section");
-  Lambda_Z_06->GetYaxis()->SetRangeUser(-0.3, 2.3);
+  Lambda_Z_06->GetYaxis()->SetTitle("Cross section ratio (#sigma/#sigma_{SM})");
+  Lambda_Z_06->GetYaxis()->SetRangeUser(0., 3.7);
   Lambda_Z_06->SetLineWidth(2);
 
 
@@ -134,11 +136,11 @@ void cmsPrelim()
 
 
 void GetCrossSectionChange(float y[], float yerr[]) {
-  const float xsec0 = 856.199;  // +- 1.045 fb
-  int N = 10;
+  const float xsec0 = 871.;  // +- 1.045 fb
+  int N = 7;
 
   for (int i=0; i< N; ++i) {
-    y[i] = y[i]/xsec0 - 1.0;
+    y[i] = y[i]/xsec0;
     yerr[i] /= xsec0;
   }
 
