@@ -253,7 +253,6 @@ void ewk::VplusJetsAnalysis::analyze(const edm::Event& iEvent,
   lepIsoRhoCHS  = fastJetRho;
 
   /////////// GenMET information & MC Pileup Summary Info  //////////
-  mcPUtrueInteractions = 0;
   mcPUtotnvtx = 0;
   mcPUbx[0]   = -999; mcPUbx[1]   = -999; mcPUbx[2]   = -999;
   mcPUnvtx[0] = -999; mcPUnvtx[1] = -999; mcPUnvtx[2] = -999;
@@ -284,7 +283,6 @@ void ewk::VplusJetsAnalysis::analyze(const edm::Event& iEvent,
       mcPUbx[ctid]   =  PVI->getBunchCrossing();
       mcPUnvtx[ctid] =  PVI->getPU_NumInteractions();
       mcPUtotnvtx   +=  PVI->getPU_NumInteractions();
-      if(PVI->getBunchCrossing() == 0)mcPUtrueInteractions = PVI->getTrueNumInteractions();
       ctid++;
     }
   }
@@ -386,7 +384,6 @@ void ewk::VplusJetsAnalysis::declareTreeBranches() {
     myTree->Branch("event_met_genmetPhi",    &genMETPhi,  "event_met_genmetPhi/F"); 
 	  
     myTree->Branch("event_mcPU_totnvtx",    &mcPUtotnvtx,  "event_mcPU_totnvtx/F"); 
-    myTree->Branch("event_mcPU_trueInteractions",    &mcPUtrueInteractions,  "event_mcPU_trueInteractions/F"); 
     myTree->Branch("event_mcPU_bx",         mcPUbx ,       "event_mcPU_bx[3]/F"); 
     myTree->Branch("event_mcPU_nvtx",       mcPUnvtx,      "event_mcPU_nvtx[3]/F"); 
 
