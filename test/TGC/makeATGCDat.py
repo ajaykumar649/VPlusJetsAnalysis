@@ -37,8 +37,8 @@ def changeConfigFile(change1, change2):
 
     
 ###################
-for i in range(-10,11):
+for i in range(-3,4):
     for j in range(-3,4):
-        changeConfigFile(0.04*i, 0.2*j)
+        changeConfigFile(0.2*i, 0.2*j)
 
 #changeConfigFile(0.9, 0.9)

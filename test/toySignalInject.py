@@ -2,24 +2,16 @@ def curveToHist(curve, hist, debug = False):
     from math import sqrt
     #hist.Sumw2()
     for binx in range(1, hist.GetNbinsX()+1):
-        low = hist.GetBinLowEdge(binx)
-        high = low + hist.GetBinWidth(binx)
-        hist.SetBinContent(binx, curve.average(low,high))
-        #hist.SetBinError(binx, sqrt(hist.GetBinContent(binx)))
+        pt = hist.GetBinCenter(binx)
+        hist.SetBinContent(binx, curve.Eval(pt)*hist.GetBinWidth(binx)+0.5)
+        hist.SetBinError(binx, sqrt(hist.GetBinContent(binx)))
     if debug:
         print 'drawing background histogram...'
-        curve.Draw('al')
-        hist.Draw('same')
+        hist.Draw()
         gPad.Update()
         gPad.WaitPrimitive()
 
     return hist
-
-def RooHistToHist(hist_in, hist_out, debug = False):
-    for binx in range(1, hist_out.GetNbinsX()+1):
-        hist_out.SetBinContent(binx, hist_in.GetY()[binx-1])
-
-    return hist_out
     
 def intHist(hist):
     
@@ -88,7 +80,6 @@ everything else : same as zero
         RooCurve, TH1D, RooAbsData
     import re
     import HWWSignalShapes
-    import templateMorph
 
     
     RooMsgService.instance().setGlobalKillBelow(RooFit.WARNING)
@@ -118,8 +109,7 @@ everything else : same as zero
     SignalHist = HWWSignalShapes.makeHiggsHist(opts.mH, pars4, 'HWW')
     SignalHist.Scale(otherdata[1]*otherdata[2]*pars4.intLumi* \
                          opts.factor/otherdata[0])
-    print "signal only"
-    SignalHist.Print()
+
     if opts.debug:
         print 'drawing signal histogram...'
         SignalHist.Draw()
@@ -132,46 +122,19 @@ everything else : same as zero
     bfile = TFile(basisFilename)
     bgCurve = bfile.Get('h_total')
     theData = bfile.Get('theData')
-    if opts.debug:
-        oldDataHist = TH1D(SignalHist)
-        oldDataHist.Reset('ices')
-        oldDataHist.SetName('oldDataHist')
-        oldDataHist.SetTitle('oldDataHist')
-        oldDataHist = RooHistToHist(theData, oldDataHist, opts.debug)
-
-        print 'drawing old data...'
-        oldDataHist.Draw()
-        theData.Draw("pz")
-        gPad.Update()
-        gPad.WaitPrimitive()
-
-        oldDataHist = templateMorph.scaleUnwidth(oldDataHist)
-
-        oldDataHist.Print()
-
+    datapts = [ theData.GetX()[xbin] for xbin in range(0, theData.GetN()) ]
     bgHist = TH1D(SignalHist)
     bgHist.Reset('ices')
     bgHist.SetName(theData.GetName())
     bgHist.SetTitle(theData.GetTitle())
+    if opts.debug:
+        print 'zeroed bgHist...'
+        bgHist.Print()
     bgHist = curveToHist(bgCurve, bgHist, debug = opts.debug)
-
-    tmpData = RooHist(bgHist, 0, 1, RooAbsData.SumW2)
-    tmpHist = TH1D(bgHist)
-
-    # if opts.debug:
-    #     print 'drawing toy data bg residuals before signal addition...'
-    #     resid = tmpData.makeResidHist(bfile.Get('h_total'))
-    #     resid.Draw('apz')
-    #     gPad.Update()
-    #     gPad.WaitPrimitive()
-
-    bgHist = templateMorph.scaleUnwidth(bgHist)
-    print 'background only'
-    bgHist.Print()
 
     bgHist.Add(SignalHist)
 
-    #intHist(bgHist)
+    intHist(bgHist)
 
     if opts.debug:
         print 'drawing background + signal histogram...'
@@ -179,23 +142,14 @@ everything else : same as zero
         gPad.Update()
         gPad.WaitPrimitive()
 
-    print 'background + signal injection'
-    bgHist.Print()
     bgHist.Scale(1., 'width')
     tmpfilename = 'tmp_H%i_%s_%iJets.root' % (opts.mHbasis, modeString, opts.Nj)
     foutput = TFile(tmpfilename, 'recreate')
 
-    newData = RooHist(bgHist, 0, 1, RooAbsData.SumW2)
-    #newData = RooHist(bgHist)
+    #newData = RooHist(bgHist, 0, 1, RooAbsData.SumW2)
+    newData = RooHist(bgHist)
     newData.SetName(theData.GetName())
     newData.SetTitle(theData.GetTitle())
-
-    if opts.debug:
-        print 'drawing toy data bg residuals...'
-        tmpHist.Add(bgHist, -1)
-        tmpHist.Draw()
-        gPad.Update()
-        gPad.WaitPrimitive()
 
     newData.Write()
     bfile.Get('h_total').Write()

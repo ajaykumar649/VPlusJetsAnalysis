@@ -11,6 +11,6 @@ def clean_up_output(change1, change2):
     print "The .rz files have been converted.\n"
 
 ###################
-for i in range(-10,11):
+for i in range(-3,4):
     for j in range(-3,4):
-        clean_up_output(0.04*i, 0.2*j)
+        clean_up_output(0.2*i, 0.2*j)

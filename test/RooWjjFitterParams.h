@@ -88,9 +88,6 @@ public:
   TString ToyDatasetDirectory;
   TString toydataFile;
 
-  ///Use when performing TTbar systematics tests
-  int implementTTbarScaleMatchingSystOption;
-
   ///External Parameters
   bool useExternalMorphingPars;
   double e_fSU;
@@ -98,8 +95,6 @@ public:
   double e_minT;
   double e_maxT;
 
-  //Use the Wbb rather than W+jets default pdf
-  bool useWbbPDF;
   //histogram smoothing
   int smoothingOrder;
 
@@ -126,10 +121,8 @@ RooWjjFitterParams::RooWjjFitterParams() :
   doEffCorrections(false), 
   minFit(minMass), maxFit(maxMass),
   fitToyDataset(false), ToyDatasetDirectory(""), toydataFile(""),
-  implementTTbarScaleMatchingSystOption(0),
   useExternalMorphingPars(false), e_fSU(-100.0), e_fMU(-100.0),
   e_minT(-1.0), e_maxT(-1.0),
-  useWbbPDF(false),
   smoothingOrder(0)
 {
 }

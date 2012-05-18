@@ -3,7 +3,7 @@ from ROOT import gROOT
 gROOT.ProcessLine('.L RooWjjFitterParams.h+');
 from ROOT import RooWjjFitterParams
 
-def theConfig(Nj, mcdir = '', initFile = '', btag = False, toydataFile=""):
+def theConfig(Nj, mcdir = '', initFile = '', btag = False):
     fitterPars = RooWjjFitterParams()
     fitterPars.smoothingOrder = 1
     # fitterPars.MCDirectory = "/uscms_data/d2/kalanand/WjjTrees/Full2011DataFall11MC/ReducedTree_PAT/RD_"
@@ -22,9 +22,8 @@ def theConfig(Nj, mcdir = '', initFile = '', btag = False, toydataFile=""):
     fitterPars.includeMuons = True    
     fitterPars.electronData = 'WenuJets_DataAllSingleElectronTrigger_GoldenJSON_4p7invfb.root'
     fitterPars.includeElectrons = True
+   
     fitterPars.NewPhysicsDirectory = fitterPars.MCDirectory
-    fitterPars.toydataFile = toydataFile
-    
     fitterPars.minMass = 40.
     fitterPars.maxMass = 150.
     fitterPars.nbins = 32
@@ -114,7 +113,6 @@ def theConfig(Nj, mcdir = '', initFile = '', btag = False, toydataFile=""):
 ##         jetCut = '((ggdevt == 2) || (ggdevt == 3))'
 
     btagCut = 1.74
-
     fitterPars.cuts = '(sqrt(JetPFCor_Pt[0]**2+JetPFCor_Pt[1]**2+2*JetPFCor_Pt[0]*JetPFCor_Pt[1]*cos(JetPFCor_Phi[0]-JetPFCor_Phi[1]))>20.) ' + \
                       '&& (abs(JetPFCor_Eta[0]-JetPFCor_Eta[1])<1.5) ' + \
                       '&& (abs(JetPFCor_dphiMET[0])>0.4) '
@@ -122,11 +120,9 @@ def theConfig(Nj, mcdir = '', initFile = '', btag = False, toydataFile=""):
     #fitterPars.cuts += '&& (fit_status==0) '
 
     if btag:
-        fitterPars.useWbbPDF = False
         fitterPars.cuts += '&& ( (JetPFCor_bDiscriminator[0]>%.2f) || (JetPFCor_bDiscriminator[1]>%.2f) ) ' % (btagCut,btagCut)
         fitterPars.cuts += '&& (JetPFCor_Pt[1]>35) '
     else:
-        fitterPars.useWbbPDF = False
         fitterPars.cuts += '&& (JetPFCor_bDiscriminator[0]<%.2f) && (JetPFCor_bDiscriminator[1]<%.2f) ' % (btagCut,btagCut)
         fitterPars.cuts += '&& (JetPFCor_Pt[1]>35.) '
 

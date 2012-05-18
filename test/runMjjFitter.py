@@ -13,8 +13,6 @@ parser.add_option('--maxT', dest='e_maxT', default=-1.0, type='float',
                   help='Externally set maximum for the region to exclude from the fit')
 parser.add_option('--TD', dest='toydataFile', default='',
                   help='a file corresponding to a toy dataset')
-parser.add_option('--TTbarMUSUsystopt', dest='TTbarMUSUsystopt', default=0, type='int',
-                  help='The choice of TTbar MC file. Use non-default options when evaluating Matching/Scaling TTbar systematics.')
 parser.add_option('-i', '--init', dest='startingFile',
                   default='',
                   help='File to use as the initial template')
@@ -49,7 +47,7 @@ from math import sqrt
 
 RooMsgService.instance().setGlobalKillBelow(RooFit.WARNING)
 
-fitterPars = config.theConfig(opts.Nj, opts.mcdir, opts.startingFile, opts.toydataFile, opts.TTbarMUSUsystopt, opts.e_minT, opts.e_maxT)
+fitterPars = config.theConfig(opts.Nj, opts.mcdir, opts.startingFile, opts.toydataFile, opts.e_minT, opts.e_maxT)
 if fitterPars.includeMuons and fitterPars.includeElectrons:
     modeString = ''
 elif fitterPars.includeMuons:

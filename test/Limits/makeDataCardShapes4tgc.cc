@@ -26,6 +26,39 @@ using namespace std;
 
 #include "atgcinputs.h"
 
+
+//================================================================================
+
+bool calcEstimatedLimit(const CardData_t& card)
+{
+  double totback = 0.0, totsig=0.0;
+
+  std::map<TString,int>::const_iterator it;
+  for (it= card.pname2index.begin(); it != card.pname2index.end(); it++)  {
+    const ProcData_t& pd = card.processes[it->second];
+    std::map<TString,double>::const_iterator itchan;
+    if (pd.procindex > 0) { // background
+      for (itchan = pd.channels.begin(); itchan != pd.channels.end(); itchan++)
+	totback += itchan->second;
+    } else {
+      for (itchan = pd.channels.begin(); itchan != pd.channels.end(); itchan++) {
+	if (itchan->second < 0.005) {
+	  cerr << "signal contribution for channel " << itchan->first << " is too small, skipping" << endl;
+	  return false;
+	}
+	totsig += itchan->second;
+      }
+    }
+  }
+
+  double estlimit = 1.92 * sqrt(totback)/totsig;
+
+  printf("%7.1f %7.2f %5.2f %5.2f\n", 
+	 totback,totsig,estlimit,estlimit*3);
+
+  return (true);
+}                                                            // calcEstimatedLimit
+
 //================================================================================
 
 CardData_t 
@@ -33,7 +66,8 @@ makeNewCard(TH1           *inhist,
 	    const TString& procname,
 	    const TString& systname,
 	    const int      ichan,
-	    const int      nchan
+	    const int      nchan,
+	    bool           doshape
 	    )
 {
   CardData_t card;
@@ -41,7 +75,10 @@ makeNewCard(TH1           *inhist,
   card.nbackproc = 0;
   card.nsigproc  = 0;
 
-  cout << "\tmake new card ";
+  //cout << "\tmake new card ";
+
+  // cannot start a new card with a systematic histo
+  assert(!systname.Length());
 
   const pair<double,double> zeropair(0.0,0.0);
 
@@ -61,7 +98,12 @@ makeNewCard(TH1           *inhist,
 
   pd.name        = procname;
   channel.first  = channames[ichan];
-  channel.second = inhist->Integral(); // the yield for this channel
+
+  if (doshape)
+    channel.second = inhist->Integral(); // the yield for this channel
+  else
+    channel.second = inhist->Integral(inhist->FindFixBin(dijetptmingev),
+				      inhist->GetNbinsX()+1);
 
   pd.channels.insert(channel);
 
@@ -77,8 +119,6 @@ makeNewCard(TH1           *inhist,
 
       pd.procindex = 1-card.nsigproc; /* process index for signal processes required to be distinct,
 					 as well as 0 or negative */
-
-      assert(!systname.Length()); // shape based systematics for signal not implemented yet
 
       // insert signal lumi and xsec systematics now
 
@@ -118,10 +158,11 @@ addToCard(CardData_t&    card,
 	  const TString& procname, // process name 
 	  const TString& systname, // name of (shape) systematic applied
 	  const int      ichan,    // channel index
-	  const int      nchan     // number of channels in card
+	  const int      nchan,    // number of channels in card
+	  bool           doshape=true
 	  )
 {
-  cout << "\tadd to card ";
+  //cout << "\tadd to card ";
 
   // With each input histogram one must:
   // 1. If a new process, update the process info in the card: "card.processes", "card.pname2index",
@@ -134,10 +175,15 @@ addToCard(CardData_t&    card,
 
   const pair<double,double> zeropair(0.0,0.0);
 
-   TString channame(channames[ichan]);
+  TString channame(channames[ichan]);
 
   channel.first  = channame;
-  channel.second = inhist->Integral();
+
+  if (doshape)
+    channel.second = inhist->Integral(); // the yield for this channel
+  else
+    channel.second = inhist->Integral(inhist->FindFixBin(dijetptmingev),
+				      inhist->GetNbinsX()+1);
 
   char elormu = channame[0];
   TString trigsyst   = "CMS_trigger_"+TString(elormu);
@@ -225,6 +271,9 @@ addToCard(CardData_t&    card,
     map<TString,int>::iterator pit;
     pit = card.pname2index.find(procname);
     if (pit == card.pname2index.end()) {    // first channel of this background process encountered
+
+      assert(!systname.Length()); // cannot encounter systematic histo before nominal histo
+
       card.nbackproc++;
 
       ProcData_t pd;
@@ -240,9 +289,28 @@ addToCard(CardData_t&    card,
 					       systematic for an existing channel */
       ProcData_t& pd = card.processes[pit->second];
 
-      assert(pd.name.Length());             // process should exist here
-      assert(!pd.name.CompareTo(procname)); // and be named the same
-      pd.channels.insert(channel);
+      if (systname.Length()) {
+	if (doshape) {
+	  // a shape-based limit, all channels get a factor of 0.0
+	  card.systematics[systname] = "shape";
+	  pd.systrates[systname].resize(nchan,zeropair);
+	  pd.systrates[systname][ichan].second = 1.0; // except the current channel
+	} else {
+	  // convert shape histo to a normal systematic
+	  std::map<TString,double>::const_iterator itchan;
+	  itchan = pd.channels.find(channame);
+	  assert(itchan != pd.channels.end());
+	  double nomrate = itchan->second;
+	  card.systematics[systname] = "lnN";
+	  pd.systrates[systname].resize(nchan,zeropair);
+	  pd.systrates[systname][ichan].second = 1+((channel.second-nomrate)/nomrate);
+	}
+      }
+      else {
+	assert(pd.name.Length());             // process should exist here
+	assert(!pd.name.CompareTo(procname)); // and be named the same
+	pd.channels.insert(channel);
+      }
     }
   }
 }                                                                     // addToCard
@@ -250,25 +318,31 @@ addToCard(CardData_t&    card,
 //================================================================================
 
 void
-makeDataCardFiles(int argc, char*argv[])
+makeDataCardFiles(bool doshape) // int argc, char*argv[])
 {
   TFile *fps[NUMCHAN];
 
+  TString fnames[NUMCHAN];
+
+#if 0
   if (argc != NUMCHAN+1) {
     cerr << "Need " << NUMCHAN << " input root files, one for each channel" << endl;
     exit(-1);
   }
+#endif
 
-  for (int i=0; i<NUMCHAN; i++) {
-    fps[i] = new TFile(argv[i+1]);
-    if (fps[i]->IsZombie()) {
-      cerr << "Couldn't open file " << string(argv[i+1]) << endl;
+  for (int ichan=0; ichan<NUMCHAN; ichan++) {
+    fnames[ichan] = TString(dir)+TString(inputfiles[ichan]); // TString(argv[ichan+1]);
+    fps[ichan] = new TFile(fnames[ichan]);
+    if (fps[ichan]->IsZombie()) {
+      cerr << "Couldn't open file " << fnames[ichan] << endl;
       exit(-1);
     }
   }
 
   TH1 *datahists[NUMCHAN];
   TH1 *backhists[NUMCHAN];
+  TH1 *shapehists[NUMCHAN];
 
   for (int ichan=0; ichan<NUMCHAN; ichan++) {
     datahists[ichan] = (TH1 *)fps[ichan]->Get("data_obs");
@@ -281,6 +355,12 @@ makeDataCardFiles(int argc, char*argv[])
       cerr << "Couldn't get background histogram from file for channel " << ichan << endl;
       exit(-1);
     }
+
+    shapehists[ichan] = (TH1 *)fps[ichan]->Get(Form("background_%s_backshapeUp",channames[ichan]));
+    if (!shapehists[ichan]) {
+      cerr << "Couldn't get background histogram from file for channel " << ichan << endl;
+      exit(-1);
+    }
   }
 
   // loop through objects in the input root file and find histograms
@@ -289,33 +369,42 @@ makeDataCardFiles(int argc, char*argv[])
   for (float lambdaz=LAMBDAZ_MIN; lambdaz<=LAMBDAZ_MAX; lambdaz+= LAMBDAZ_INC) {
     for (float deltaKappaGamma=dKG_MIN; deltaKappaGamma<=dKG_MAX; deltaKappaGamma += dKG_INC) {
 
-      TString cfgtag = Form("lambdaZ_%.1f_deltaKappaGamma_%.1f",lambdaz+0.001,deltaKappaGamma+0.001);
+      TString cfgtag = Form(signalfmtstr,lambdaz+0.001,deltaKappaGamma+0.001);
       TString signame = "signal_"+cfgtag;
 
-      CardData_t card = makeNewCard(datahists[0],"data","",0,NUMCHAN);
+      CardData_t card = makeNewCard(datahists[0],"data","",0,NUMCHAN,doshape);
 
       for (int ichan=0; ichan<NUMCHAN; ichan++) {
 	TH1 *sighist = (TH1 *)fps[ichan]->Get(signame);
 
+	TString channame(channames[ichan]);
+
 	if (!sighist) {
-	  cerr << "Couldn't get signal histogram " << signame << " from file for channel "<<ichan<<endl;
+	  cerr<<"Couldn't get signal histogram "<<signame<<" from file for channel "<<channame<<endl;
 	  exit(-1);
 	}
 
-	// assumes the channel filenames are in the same order as the channels!!
-	card.shapespecs.push_back(ShapeFiles_t("signal",channames[ichan],TString(argv[ichan+1]),signame));
-	card.shapespecs.push_back(ShapeFiles_t("data_obs",channames[ichan],TString(argv[ichan+1]),"data_obs"));
-	card.shapespecs.push_back(ShapeFiles_t("background",channames[ichan],TString(argv[ichan+1]),"background"));
+	if (doshape) {
+	  // assumes the channel filenames are in the same order as the channels!!
+	  card.shapespecs.push_back(ShapeFiles_t("signal",channame,fnames[ichan],signame));
+	  card.shapespecs.push_back(ShapeFiles_t("data_obs",channame,fnames[ichan],"data_obs"));
+	  card.shapespecs.push_back(ShapeFiles_t("background",channame,fnames[ichan],
+						 "background","background_$SYSTEMATIC"));
+	}
 
 	if (ichan)
-	  addToCard(card,datahists[ichan],"data","",ichan,NUMCHAN);
+	  addToCard(card,datahists[ichan],"data","",ichan,NUMCHAN,doshape);
 
-	addToCard(card,backhists[ichan],"background","",ichan,NUMCHAN);
-	addToCard(card,sighist,"signal","",ichan,NUMCHAN);
+	addToCard(card,backhists[ichan],"background","",ichan,NUMCHAN,doshape);
+	addToCard(card,shapehists[ichan],"background",
+		  Form("%s_backshape",channame.Data()),ichan,NUMCHAN,doshape);
+	addToCard(card,sighist,"signal","",ichan,NUMCHAN,doshape);
       }
 
-
-      fmtDataCardFile(0,card,cfgtag);
+      if (calcEstimatedLimit(card)) {
+	cfgtag = Form("lz%.2f_dkg%.1f",lambdaz+0.001,deltaKappaGamma+0.001);
+	fmtDataCardFile(0,card,cfgtag);
+      }
 
     } // dKG loop
   } // lambdaz loop
@@ -328,16 +417,23 @@ makeDataCardFiles(int argc, char*argv[])
 #define DEBUG 1
 
 int main(int argc, char* argv[]) {
+
+#if 0
   if (argc<2) {
-    printf("Usage: %s input.root\n",argv[0]);
+    printf("Usage: %s [do-cut-and-count]\n",argv[0]);
     return 1;
   }
+#endif
 #ifdef DEBUG
   for (int i=0; i<argc; i++) printf("%s ", argv[i]);
   printf ("\n");
 #endif
 
-  makeDataCardFiles(argc, argv);
+  // exactly one arg is nominal,
+  // more than one means suppress shape info in the card
+  // for a cut-and-count limit
+  //
+  makeDataCardFiles(argc <= 1);
   return 0;
 }
 #endif

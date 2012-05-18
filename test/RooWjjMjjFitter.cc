@@ -573,20 +573,6 @@ RooAbsPdf * RooWjjMjjFitter::makeDibosonPdf(int parameterize) {
       th1diboson->Add(tmpHist, VBFWmWpweight);
       delete tmpHist;
     }
-    if (params_.includeElectrons) {
-      double fakeSampleCorrFactor=0.7329;
-      tmpHist = utils_.File2Hist(params_.MCDirectory+"el_qiangli-WpWmEW_CMSSW428_FakeFromMuon.root",
-				 "hist_ww_el", true, 0, false, dibosonScale);
-      sumVBFWpWm += fakeSampleCorrFactor*tmpHist->Integral();
-      th1diboson->Add(tmpHist, fakeSampleCorrFactor*VBFWpWmweight);
-      delete tmpHist;
-
-      tmpHist = utils_.File2Hist(params_.MCDirectory+"el_qiangli_qed6_CMSSW428_FakeFromMuon.root",
-				 "hist_ww_el", true, 0, false, dibosonScale);
-      sumVBFWmWp += fakeSampleCorrFactor*tmpHist->Integral();
-      th1diboson->Add(tmpHist, fakeSampleCorrFactor*VBFWmWpweight);
-      delete tmpHist;
-    }
   } else {
     if (params_.includeMuons) {
       tmpHist  = utils_.File2Hist(params_.MCDirectory+"mu_WW_CMSSW428.root",
@@ -629,11 +615,11 @@ RooAbsPdf * RooWjjMjjFitter::makeDibosonPdf(int parameterize) {
 	 << th1diboson->Integral() << " x " << params_.intLumi 
 	 << " = " <<  initDiboson_ << '\n';
 
-    cout <<"----------- VBFWpWm: acc x eff = " << sumVBFWpWm*VBFWpWmweight*params_.intLumi 
-	 << "/" << NgenVBFWpWm*VBFWpWmweight*params_.intLumi << " = " <<sumVBFWpWm/NgenVBFWpWm
+    cout <<"----------- VBFWpWm: acc x eff = " << sumVBFWpWm*WWweight*params_.intLumi 
+	 << "/" << NgenVBFWpWm*WWweight*params_.intLumi << " = " <<sumVBFWpWm/NgenVBFWpWm
 	 << '\n';
-    cout <<"----------- VBFWmWp: acc x eff = " << sumVBFWmWp*VBFWmWpweight*params_.intLumi 
-	 << "/" << NgenVBFWmWp*VBFWmWpweight*params_.intLumi << " = " <<sumVBFWmWp/NgenVBFWmWp
+    cout <<"----------- VBFWmWp: acc x eff = " << sumVBFWmWp*WWweight*params_.intLumi 
+	 << "/" << NgenVBFWmWp*WWweight*params_.intLumi << " = " <<sumVBFWmWp/NgenVBFWmWp
 	 << '\n';
     cout << "----------- VBFWW: acc x eff = " << (sumVBFWpWm/NgenVBFWpWm*VBFWpWmxsec + sumVBFWmWp/NgenVBFWmWp*VBFWmWpxsec)/(VBFWpWmxsec + VBFWmWpxsec)
 	 << '\n';
@@ -718,22 +704,12 @@ RooAbsPdf * RooWjjMjjFitter::makeWpJPdf(bool allOne) {
 
   TH1 * tmpHist;
   if (params_.includeMuons) {
-    if ( params_.useWbbPDF ) {
-      cout << "Using the Wbb sample as WJets" << endl;
-      tmpHist = utils_.File2Hist("/uscms_data/d2/kalanand/WjjTrees/FromPATTuples/mu_WbbMG_CMSSW428.root",
-				 "hist_wpj_mu", false, 1, params_.toyWpJ);
-      th1WpJ->Add(tmpHist);
-      cout << "NWJetDefaultHistEntries=" << th1WpJ->GetEntries() << endl;
-      delete tmpHist;
-    } else {
-      tmpHist = utils_.File2Hist(params_.WpJDirectory + 
-				 //"mu_W4Jets_CMSSW428.root",
-				 "mu_WpJ_CMSSW428.root",
-				 "hist_wpj_mu", false, 1, params_.toyWpJ);
-      th1WpJ->Add(tmpHist);
-      cout << "NWJetDefaultHistEntries=" << th1WpJ->GetEntries() << endl;
-      delete tmpHist;
-    }
+    tmpHist = utils_.File2Hist(params_.WpJDirectory + 
+			       //"mu_W4Jets_CMSSW428.root",
+			       "mu_WpJ_CMSSW428.root",
+			       "hist_wpj_mu", false, 1, params_.toyWpJ);
+    th1WpJ->Add(tmpHist);
+    delete tmpHist;
     tmpHist = utils_.File2Hist(params_.WpJDirectory + 
 			       "mu_WpJmatchingup_CMSSW428.root",
 			       "hist_wpj_mu_mu", false, 1, params_.toyWpJ);
@@ -757,22 +733,12 @@ RooAbsPdf * RooWjjMjjFitter::makeWpJPdf(bool allOne) {
   }
 
   if (params_.includeElectrons) {
-    if ( params_.useWbbPDF ) {
-      cout << "Using the Wbb sample as WJets" << endl;
-      tmpHist = utils_.File2Hist(params_.WpJDirectory + 
-				 //"el_W4Jets_CMSSW428.root",
-				 "el_WbbMG_CMSSW428.root",
-				 "hist_wpj_el", true, 1, params_.toyWpJ);
-      th1WpJ->Add(tmpHist);
-      delete tmpHist;
-    } else {
-      tmpHist = utils_.File2Hist(params_.WpJDirectory + 
-				 //"el_W4Jets_CMSSW428.root",
-				 "el_WpJ_CMSSW428.root",
-				 "hist_wpj_el", true, 1, params_.toyWpJ);
-      th1WpJ->Add(tmpHist);
-      delete tmpHist;
-    }
+    tmpHist = utils_.File2Hist(params_.WpJDirectory + 
+			       //"el_W4Jets_CMSSW428.root",
+			       "el_WpJ_CMSSW428.root",
+			       "hist_wpj_el", true, 1, params_.toyWpJ);
+    th1WpJ->Add(tmpHist);
+    delete tmpHist;
     tmpHist = utils_.File2Hist(params_.WpJDirectory + 
 			       "el_WpJmatchingup_CMSSW428.root",
 			       "hist_wpj_el_mu", true, 1, params_.toyWpJ);
@@ -795,14 +761,7 @@ RooAbsPdf * RooWjjMjjFitter::makeWpJPdf(bool allOne) {
     delete tmpHist;
   }
 
-  double WJetsCrossX=31314.;
-  double WJetsNGen=81352581.;
-  if ( params_.useWbbPDF ) {
-    WJetsCrossX=85.6;
-    WJetsNGen=22503418;
-  }
-
-  initWjets_ = (WJetsCrossX/WJetsNGen) * 
+  initWjets_ = (31314./81352581.) * 
     (th1WpJ->Integral(th1WpJ->FindBin(params_.minFit),
 		      th1WpJ->FindBin(params_.maxFit)-1)) * 
     params_.intLumi;
@@ -844,7 +803,8 @@ RooAbsPdf * RooWjjMjjFitter::makeWpJPdf(bool allOne) {
   RooFormulaVar NMD("NMD", "@0*@1*(-1)*(@1 < 0.)", RooArgList(nWjets,fMU));
   RooFormulaVar NSU("NSU", "@0*@1*(@1 >= 0.)", RooArgList(nWjets,fSU));
   RooFormulaVar NSD("NSD", "@0*@1*(-1)*(@1 < 0.)", RooArgList(nWjets,fSU));
-  RooFormulaVar NNom("NNom", "@0*(1.-abs(@1)-abs(@2))",RooArgList(nWjets,fMU,fSU));
+  RooFormulaVar NNom("NNom", "@0*(1.-abs(@1)-abs(@2))",
+		     RooArgList(nWjets,fMU,fSU));
 
   RooRealVar * mass = ws_.var(params_.var);
   RooRealVar turnOn("turnOn","turnOn", 40.);
@@ -943,11 +903,12 @@ RooAbsPdf * RooWjjMjjFitter::makeWpJPdf(bool allOne) {
     }
     ws_.import(nWjets);
   } else {
-      RooAddPdf WpJPdf("WpJPdf","WpJPdf", RooArgList(*WpJPdfMU,*WpJPdfMD,
-						     *WpJPdfSU,*WpJPdfSD,
-						     *WpJPdfNom),
-		       RooArgList(NMU, NMD, NSU, NSD, NNom));
-      ws_.import(WpJPdf);
+
+    RooAddPdf WpJPdf("WpJPdf","WpJPdf", RooArgList(*WpJPdfMU,*WpJPdfMD,
+						   *WpJPdfSU,*WpJPdfSD,
+						   *WpJPdfNom),
+		     RooArgList(NMU, NMD, NSU, NSD, NNom));
+    ws_.import(WpJPdf);
   }
 
 
@@ -967,56 +928,25 @@ RooAbsPdf * RooWjjMjjFitter::makettbarPdf() {
     return ws_.pdf("ttPdf");
 
   int ttScale = 1;
-  double NttbarGenerated = 3701947.0;
   TH1 * th1tt = utils_.newEmptyHist("th1tt", ttScale);
 
   TH1 * tmpHist;
-  TString TTbarFileSuffix="TTbar_CMSSW428.root";
-
-  switch ( params_.implementTTbarScaleMatchingSystOption ) {
-
-  case 1:
-    cout << "Fitting Using TTbar : MatchingUp" << endl;
-    TTbarFileSuffix="TTbarMatchingUp_CMSSW428.root";
-    NttbarGenerated=4029823;
-    break;
-
-  case -1:
-    cout << "Fitting Using TTbar : MatchingDown" << endl;
-    TTbarFileSuffix="TTbarMatchingDown_CMSSW428.root";
-    NttbarGenerated=207317;
-    break;
-
-  case 2:
-    cout << "Fitting Using TTbar : ScaleUp" << endl;
-    TTbarFileSuffix="TTbarScaleUp_CMSSW428.root";
-    NttbarGenerated=3696269;
-    break;
-
-  case -2:
-    cout << "Fitting Using TTbar : ScaleDown" << endl;
-    TTbarFileSuffix="TTbarScaleDown_CMSSW428.root";
-    NttbarGenerated=4004587;
-    break;
-  }
-
   if (params_.includeMuons) {
     tmpHist = utils_.File2Hist(params_.MCDirectory + 
-			       "mu_" + TTbarFileSuffix,
+			       "mu_TTbar_CMSSW428.root",
 			       "hist_tt_mu", false, 1, false, ttScale);
     th1tt->Add(tmpHist);
     delete tmpHist;
   }
   if (params_.includeElectrons) {
     tmpHist = utils_.File2Hist(params_.MCDirectory + 
-			       "el_" + TTbarFileSuffix,
+			       "el_TTbar_CMSSW428.root",
 			       "hist_tt_el", true, 1, false, ttScale);
     th1tt->Add(tmpHist);
     delete tmpHist;
   }
 
-
-  ttbarNorm_ = (163./NttbarGenerated) * 
+  ttbarNorm_ = (163./3701947) * 
     th1tt->Integral(th1tt->FindBin(params_.minFit),
 		    th1tt->FindBin(params_.maxFit)-1) * 
     params_.intLumi;
