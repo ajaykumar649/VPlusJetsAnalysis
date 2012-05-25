@@ -93,33 +93,29 @@ theFitter = RooWjjMjjFitter(fitterPars)
 #theFitter.getWorkSpace().Print()
 theFitter.makeFitter((opts.ParamWpJ>=0))
 
-totalPdf = theFitter.getWorkSpace().pdf('totalPdf')
 #theFitter.getWorkSpace().Print()
 theFitter.getWorkSpace().var('nDiboson').setConstant(False)
 
-# if opts.ParamWpJ < 0:
-#     theFitter.getWorkSpace().var('fMU').setConstant(True)
-#     theFitter.getWorkSpace().var('fSU').setConstant(True)
-
 fr = theFitter.fit()
 
-# tries = 1
-# while (fr.covQual() != 3) and (tries < 2):
-#     print "Fit didn't converge well.  Will try again."
-#     fr = theFitter.fit(True)
-#     tries += 1
+tries = 1
+while (fr.covQual() != 3) and (tries < 2):
+    print "Fit didn't converge well.  Will try again."
+    fr = theFitter.fit(True)
+    tries += 1
 
 mass = theFitter.getWorkSpace().var(fitterPars.var)
 iset = RooArgSet(mass)
 nexp = theFitter.makeFitter().expectedEvents(iset)
 
+#chi2 = Double(0.)
+#ndf = Long(2)
 ndf = Long(fr.floatParsFinal().getSize()-5)
 ndf2 = Long(ndf)
+#chi2Raw = Double(0.)
 print 'Corrected chi2'
-#chi2 = ndf*1.0
 chi2 = theFitter.computeChi2(ndf)
 print 'Raw chi2'
-#chi2Raw = ndf2*1.0
 chi2Raw = theFitter.computeChi2(ndf2, False)
 #dataHist.Print()
 #dataHist.Scale(1., 'width')
@@ -187,8 +183,6 @@ if (TMath.Prob(chi2Raw,  ndf2) < 0.05):
     print '**DANGER** The fit probability is low **DANGER**'
     if opts.debug:
         assert(False)
-
-# assert(False)
 
 mass.setRange('signal', fitterPars.minTrunc, fitterPars.maxTrunc)
 #yields = theFitter.makeFitter().coefList()

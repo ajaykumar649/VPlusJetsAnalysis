@@ -70,8 +70,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) 
 #process.options = cms.untracked.PSet( SkipEvent = cms.untracked.vstring('ProductNotFound')
 #)
 process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
-    '/store/user/lnujj/PATtuples/sboutle/SingleElectron/SQWaT_PAT_52X_2012A-PromptReco-v1_v3/6fdb4470d5dd47a73d67ddfb6436b825/pat_52x_test_252_1_tQy.root'
-    #'/store/user/lnujj/PATtuples/sboutle/WW_TuneZ2star_8TeV_pythia6_tauola/SQWaT_PATtup_52X_notrig_v2/368fd2e0a75a42231defe3e16c847509/pat_52x_test_1_1_cmX.root'
+    '/store/user/lnujj/PATtuples/sboutle/WW_TuneZ2star_8TeV_pythia6_tauola/SQWaT_PATtup_52X_notrig_v2/368fd2e0a75a42231defe3e16c847509/pat_52x_test_1_1_cmX.root'
 ) )
 
 
@@ -80,7 +79,7 @@ process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
 ##-------- Electron events of interest --------
 process.HLTEle =cms.EDFilter("HLTHighLevel",
      TriggerResultsTag = cms.InputTag("TriggerResults","","HLT"),
-     HLTPaths = cms.vstring('HLT_Photon15_Cleaned_L1R','HLT_Ele15_*','HLT_Ele17_*','HLT_Ele22_*','HLT_Ele25_*','HLT_Ele27_*','HLT_Ele32_*'),
+     HLTPaths = cms.vstring("HLT_Photon15_Cleaned_L1R", "HLT_Ele15_*", "HLT_Ele17_*", "HLT_Ele22_*", "HLT_Ele25_*","HLT_Ele27_*", "HLT_Ele32_*"),
      eventSetupPathsKey = cms.string(''),
      andOr = cms.bool(True), #----- True = OR, False = AND between the HLTPaths
      throw = cms.bool(False) # throw exception on unknown path names

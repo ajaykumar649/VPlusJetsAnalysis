@@ -86,7 +86,7 @@ def the4BodyConfig(twoBodyConfig, mH=400, syst=0, alphaOverride = None):
     fitterPars.model = 1
     if (mH <= 200) and (twoBodyConfig.njets == 2):
         fitterPars.model = 4
-    # if (mH == 190) and (twoBodyConfig.njets == 2):
-    #     fitterPars.model = 5
+    if (mH == 190) and (twoBodyConfig.njets == 2):
+        fitterPars.model = 5
 
     return fitterPars

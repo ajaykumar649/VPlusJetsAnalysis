@@ -9,29 +9,26 @@ maxMlvjj = 780.
 def theConfig(Nj, mcdir = '', initFile = ''):
     fitterPars = RooWjjFitterParams()
     fitterPars.smoothingOrder = 1
-    #fitterPars.MCDirectory = "root://cmseos:1094//eos/uscms/store/user/lnujj/2012_RDTrees_PAT/RD_"
-    fitterPars.MCDirectory = '/uscms_data/d2/andersj/Wjj/2012/data/RDTrees_PAT/RD_'
+    fitterPars.MCDirectory = "/uscms_data/d2/kalanand/WjjTrees/Full2011DataFall11MC/ReducedTree_PAT/RD_"
 ##     fitterPars.WpJDirectory = str(fitterPars.MCDirectory).replace("PAT", "AOD")
     fitterPars.WpJDirectory = fitterPars.MCDirectory
     if (len(mcdir) > 0):
         fitterPars.WpJDirectory = mcdir
         fitterPars.toyWpJ = False
     fitterPars.QCDDirectory = fitterPars.MCDirectory[:-3]
-    # fitterPars.QCDDirectory = '/uscms_data/d2/kalanand/WjjTrees/Full2011DataFall11MC/ReducedTree_PAT/'
     fitterPars.initParamsFile = initFile
     # fitterPars.constraintParamsFile = "HWWConstraints2Jets.txt";
     fitterPars.DataDirectory = fitterPars.MCDirectory
-    fitterPars.muonData = 'SingleMu_0p56fb_Golden.root'
+    fitterPars.muonData = 'WmunuJets_DataAll_GoldenJSON_4p7invfb.root'
     fitterPars.includeMuons = True    
-    fitterPars.electronData = 'WenuJets_DataSingleElectron_GoldenJSON_2012_xxpxinvfb.root'
+    fitterPars.electronData = 'WenuJets_DataAllSingleElectronTrigger_GoldenJSON_4p7invfb.root'
     fitterPars.includeElectrons = True
    
     fitterPars.NewPhysicsDirectory = fitterPars.MCDirectory
     fitterPars.minMass = 40.
     fitterPars.maxMass = 200.
     fitterPars.nbins = 30
-    fitterPars.intLumi = 539.385+21.297
-    # fitterPars.intLumi = 297.848+21.297+48.465
+    fitterPars.intLumi = 5020.
     
     fitterPars.binEdges.push_back(fitterPars.minMass)
     #fitterPars.binEdges.push_back(40.)
@@ -106,7 +103,7 @@ def theConfig(Nj, mcdir = '', initFile = ''):
     
     fitterPars.njets = Nj
     fitterPars.constrainDiboson = True
-    fitterPars.externalConstraints = False
+
     
     fitterPars.doEffCorrections = True
     fitterPars.muIdEffFiles.push_back("EffTableDir/muonEffsRecoToIso_ScaleFactors.txt")

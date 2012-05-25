@@ -19,6 +19,10 @@ parser.add_option('-b', action='store_true', dest='noX', default=False,
                   help='no X11 windows')
 parser.add_option('-j', '--Njets', dest='Nj', default=2, type='int',
                   help='Number of jets.')
+parser.add_option('--fSU', dest='e_FSU', default=-100.0, type='float',
+                  help='Externally set scaling up fraction. Floating when set fSU<-10.0.')
+parser.add_option('--fMU', dest='e_FMU', default=-100.0, type='float',
+                  help='Externally set matching up fraction. Floating when set fMU<-10.0.')
 parser.add_option('--TD', dest='toydataFile', default='',
                   help='a file corresponding to a toy dataset')
 parser.add_option('-i', '--init', dest='startingFile',
@@ -55,7 +59,7 @@ from math import sqrt
 
 RooMsgService.instance().setGlobalKillBelow(RooFit.WARNING)
 
-fitterPars = config.theConfig(opts.Nj, opts.mcdir, opts.startingFile, opts.btag, opts.toydataFile)
+fitterPars = config.theConfig(opts.Nj, opts.mcdir, opts.startingFile, opts.btag, opts.toydataFile, opts.e_FSU, opts.e_FMU)
 
 fitterPars.WpJfunction = opts.ParamWpJ
 #fitterPars.truncRange = True

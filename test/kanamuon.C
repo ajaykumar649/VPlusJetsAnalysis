@@ -50,7 +50,7 @@
 #include "EffTableReader.h"
 #include "EffTableLoader.h"
 
-//#include "PhysicsTools/Utilities/interface/Lumi3DReWeighting.h"
+#include "PhysicsTools/Utilities/interface/Lumi3DReWeighting.h"
 
 #include "ElectroWeakAnalysis/VPlusJets/interface/QGLikelihoodCalculator.h"
 
@@ -725,7 +725,6 @@ void kanamuon::Loop(int wda, int runflag, const char *outfilename, bool isQCD)
 
 
   // Pile up Re-weighting
-/*
   edm::Lumi3DReWeighting LumiWeights_ = edm::Lumi3DReWeighting("PUMC_dist.root", "PUData_dist.root", "pileup", "pileup", "Weight_3D.root");
   LumiWeights_.weight3D_init( 1.08 );
   
@@ -734,84 +733,6 @@ void kanamuon::Loop(int wda, int runflag, const char *outfilename, bool isQCD)
   
   edm::Lumi3DReWeighting dn_LumiWeights_ = edm::Lumi3DReWeighting("PUMC_dist.root", "PUData_dist.root", "pileup", "pileup", "Weight_3D_down.root");
   dn_LumiWeights_.weight3D_init( 1.00 );
-*/  
-// S7 MC PU True profile - hardcoded, wow
-// https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupMCReweightingUtilities
- TFile *dataFile_      = new TFile( "PileupHistogramGold_190456-193557_8TeV_PromptReco_Collisions12_true.root" );
- TH1F* PU_intended = new TH1F(  *(static_cast<TH1F*>(dataFile_->Get( "pileup" )->Clone() )) );
- TH1F* PU_generated = new TH1F("PU_generated","Generated pileup distribution (i.e., MC)",60,0.,60);
-Double_t Summer2012[60] = {
-    2.344E-05,
-    2.344E-05,
-    2.344E-05,
-    2.344E-05,
-    4.687E-04,
-    4.687E-04,
-    7.032E-04,
-    9.414E-04,
-    1.234E-03,
-    1.603E-03,
-    2.464E-03,
-    3.250E-03,
-    5.021E-03,
-    6.644E-03,
-    8.502E-03,
-    1.121E-02,
-    1.518E-02,
-    2.033E-02,
-    2.608E-02,
-    3.171E-02,
-    3.667E-02,
-    4.060E-02,
-    4.338E-02,
-    4.520E-02,
-    4.641E-02,
-    4.735E-02,
-    4.816E-02,
-    4.881E-02,
-    4.917E-02,
-    4.909E-02,
-    4.842E-02,
-    4.707E-02,
-    4.501E-02,
-    4.228E-02,
-    3.896E-02,
-    3.521E-02,
-    3.118E-02,
-    2.702E-02,
-    2.287E-02,
-    1.885E-02,
-    1.508E-02,
-    1.166E-02,
-    8.673E-03,
-    6.190E-03,
-    4.222E-03,
-    2.746E-03,
-    1.698E-03,
-    9.971E-04,
-    5.549E-04,
-    2.924E-04,
-    1.457E-04,
-    6.864E-05,
-    3.054E-05,
-    1.282E-05,
-    5.081E-06,
-    1.898E-06,
-    6.688E-07,
-    2.221E-07,
-    6.947E-08,
-    2.047E-08
-   };   
-  for (int i=1;i<=60;i++)  {
-    PU_generated->SetBinContent(i,Summer2012[i-1]);
-  }
-  PU_intended->Scale( 1.0/ PU_intended->Integral() );
-  PU_generated->Scale( 1.0/ PU_generated->Integral() );
-
-  TH1F *weights_ = new TH1F( *(PU_intended)) ;
-
-  weights_->Divide(PU_generated);
-
   
   //Re-calculate Q/G Likelihood
   //QGLikelihoodCalculator *qglikeli_Spring11    = new QGLikelihoodCalculator("./QG_QCD_Pt_15to3000_TuneZ2_Flat_7TeV_pythia6_Spring11-PU_S1_START311_V1G1-v1.root");  
@@ -831,7 +752,7 @@ Double_t Summer2012[60] = {
     nb = newtree->GetEntry(jentry);   nbytes += nb;
     // Cut variable definitions
     double jess    = 1.00; // control the jet energy scale
-    double muoniso = (W_muon_pfiso_sumChargedHadronPt+W_muon_pfiso_sumNeutralHadronEt+W_muon_pfiso_sumPhotonEt-event_RhoForLeptonIsolation*3.141592653589*0.09)/W_muon_pt;
+    double muoniso = (W_muon_trackiso+W_muon_hcaliso+W_muon_ecaliso-event_RhoForLeptonIsolation*3.141592653589*0.09)/W_muon_pt;
     double dijetpt = sqrt(JetPFCor_Pt[0]*JetPFCor_Pt[0]+
 			  JetPFCor_Pt[1]*JetPFCor_Pt[1]+
 			  2*JetPFCor_Pt[0]*JetPFCor_Pt[1]*cos(JetPFCor_Phi[0]-JetPFCor_Phi[1]));
@@ -886,12 +807,9 @@ Double_t Summer2012[60] = {
 
     // Pile up Re-weighting
     if (wda>20110999) {
-//      puwt      =    LumiWeights_.weight3D(event_mcPU_nvtx[0], event_mcPU_nvtx[1], event_mcPU_nvtx[2]);   
-      puwt      =    weights_->GetBinContent(int(event_mcPU_trueInteractions+0.01)+1);   
-//      puwt_up   = up_LumiWeights_.weight3D(event_mcPU_nvtx[0], event_mcPU_nvtx[1], event_mcPU_nvtx[2]);   
-      puwt_up   = puwt;
-//      puwt_down = dn_LumiWeights_.weight3D(event_mcPU_nvtx[0], event_mcPU_nvtx[1], event_mcPU_nvtx[2]);   
-      puwt_down = puwt;   
+      puwt      =    LumiWeights_.weight3D(event_mcPU_nvtx[0], event_mcPU_nvtx[1], event_mcPU_nvtx[2]);   
+      puwt_up   = up_LumiWeights_.weight3D(event_mcPU_nvtx[0], event_mcPU_nvtx[1], event_mcPU_nvtx[2]);   
+      puwt_down = dn_LumiWeights_.weight3D(event_mcPU_nvtx[0], event_mcPU_nvtx[1], event_mcPU_nvtx[2]);   
     } else {effwt=1.0;puwt=1.0;puwt_up=1.0;puwt_down=1.0;} // if data, always put 1 as the weighting factor
 
     // Jet Loop

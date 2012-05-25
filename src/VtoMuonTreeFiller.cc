@@ -404,11 +404,11 @@ void ewk::VtoMuonTreeFiller::fill(const edm::Event& iEvent, int vecBosonIndex)
     //mu1_pfiso_chargedHadronIso = muon1->pfIsolationVariables().chargedHadronIso;
     //mu1_pfiso_photonIso        = muon1->pfIsolationVariables().photonIso;
     //mu1_pfiso_neutralHadronIso = muon1->pfIsolationVariables().neutralHadronIso;
-    mu1pfiso_sumChargedHadronPt   = muon1->pfIsolationR04().sumChargedHadronPt;
-    mu1pfiso_sumChargedParticlePt = muon1->pfIsolationR04().sumChargedParticlePt;
-    mu1pfiso_sumNeutralHadronEt   = muon1->pfIsolationR04().sumNeutralHadronEt;
-    mu1pfiso_sumPhotonEt          = muon1->pfIsolationR04().sumPhotonEt;
-    mu1pfiso_sumPUPt              = muon1->pfIsolationR04().sumPUPt;
+//     mu1pfiso_sumChargedHadronPt   = muon1->pfIsolationR04().sumChargedHadronPt;
+//     mu1pfiso_sumChargedParticlePt = muon1->pfIsolationR04().sumChargedParticlePt;
+//     mu1pfiso_sumNeutralHadronEt   = muon1->pfIsolationR04().sumNeutralHadronEt;
+//     mu1pfiso_sumPhotonEt          = muon1->pfIsolationR04().sumPhotonEt;
+//     mu1pfiso_sumPUPt              = muon1->pfIsolationR04().sumPUPt;
   }
 
   ////////// muon #2 quantities //////////////

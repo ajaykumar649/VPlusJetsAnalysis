@@ -3,7 +3,7 @@ from ROOT import gROOT
 gROOT.ProcessLine('.L RooWjjFitterParams.h+');
 from ROOT import RooWjjFitterParams
 
-def theConfig(Nj, mcdir = '', initFile = '', btag = False, toydataFile=""):
+def theConfig(Nj, mcdir = '', initFile = '', btag = False, toydataFile="", e_FSU=-10.0, e_FMU=-10.0):
     fitterPars = RooWjjFitterParams()
     fitterPars.smoothingOrder = 1
     # fitterPars.MCDirectory = "/uscms_data/d2/kalanand/WjjTrees/Full2011DataFall11MC/ReducedTree_PAT/RD_"
@@ -27,6 +27,7 @@ def theConfig(Nj, mcdir = '', initFile = '', btag = False, toydataFile=""):
     
     fitterPars.minMass = 40.
     fitterPars.maxMass = 150.
+##    fitterPars.maxMass = 120.
     fitterPars.nbins = 32
     fitterPars.intLumi = 5020.
     
@@ -104,8 +105,10 @@ def theConfig(Nj, mcdir = '', initFile = '', btag = False, toydataFile=""):
     fitterPars.eleWMtEffFiles.push_back("EffTableDir/WMt50TriggerEfficiency.txt")
     fitterPars.lumiPerEpochElectron.push_back(fitterPars.intLumi)
 
-    fitterPars.useExternalMorphingPars = False
-
+    fitterPars.useExternalMorphingPars = True
+    fitterPars.e_fSU = e_FSU
+    fitterPars.e_fMU = e_FMU
+    
 ##     jetCut = '(jetPFCor_Pt[%i] < 2) ' % (Nj)
 ##     for j in range(0, Nj):
 ##         jetCut += '&& (JetPFCor_Pt[%i] > 30) ' % (j)
@@ -123,7 +126,7 @@ def theConfig(Nj, mcdir = '', initFile = '', btag = False, toydataFile=""):
 
     if btag:
         fitterPars.useWbbPDF = False
-        fitterPars.cuts += '&& ( (JetPFCor_bDiscriminator[0]>%.2f) || (JetPFCor_bDiscriminator[1]>%.2f) ) ' % (btagCut,btagCut)
+        fitterPars.cuts += '&& ( (JetPFCor_bDiscriminator[0]>%.2f) && (JetPFCor_bDiscriminator[1]>%.2f) ) ' % (btagCut,btagCut)
         fitterPars.cuts += '&& (JetPFCor_Pt[1]>35) '
     else:
         fitterPars.useWbbPDF = False

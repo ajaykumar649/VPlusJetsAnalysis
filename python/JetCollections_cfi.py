@@ -1,6 +1,6 @@
 import FWCore.ParameterSet.Config as cms
 
-mcFlag = False
+mcFlag = True
                  
 
 print "################### Reading Jet Collections ##################"

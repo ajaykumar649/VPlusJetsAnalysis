@@ -76,16 +76,13 @@ def makeHiggsHist(mH, pars, mode):
 
     hist = fitUtils.newEmptyHist('%s%i_%s_shape' % (mode, mH,modeString))
 
-    # higgsDir = '/uscms_data/d2/kalanand/WjjTrees/Full2011DataFall11MC/ReducedTree_PAT/RD_'
-    higgsDir = pars.MCDirectory
-
     if pars.includeMuons:
-        thehist = fitUtils.File2Hist(higgsDir + \
+        thehist = fitUtils.File2Hist(pars.MCDirectory + \
                                          'mu_%sMH%i_CMSSW428.root' % (mode, mH),
                                      '%s%i_mu' % (mode, mH), False, 1, False)
         hist.Add(thehist)
     if pars.includeElectrons:
-        thehist = fitUtils.File2Hist(higgsDir + \
+        thehist = fitUtils.File2Hist(pars.MCDirectory + \
                                          'el_%sMH%i_CMSSW428.root' % (mode, mH),
                                      '%s%i_mu' % (mode, mH), True, 1, False)
         hist.Add(thehist)

@@ -1,7 +1,7 @@
 from ROOT import gROOT, gStyle, gSystem, TLatex
 import subprocess
 
-def cmsLabel(canvas, lumi, prelim = False, lumiLabel = 'fb', s = 8.):
+def cmsLabel(canvas, lumi, prelim = False, lumiLabel = 'fb'):
     l = TLatex();
     l.SetNDC();
     l.SetTextFont(42);
@@ -13,8 +13,8 @@ def cmsLabel(canvas, lumi, prelim = False, lumiLabel = 'fb', s = 8.):
     if prelim:
         prelimText = ' preliminary'
     l.DrawLatex(1. - canvas.GetRightMargin(), 1. - canvas.GetTopMargin() + 0.01,
-                'CMS%s, #scale[0.5]{#lower[-0.15]{#it{#int}}}#it{L} dt = %0.1f#kern[0.2]{%s}^{-1}, #sqrt{#it{s}} = %.0f#kern[0.1]{TeV}' % \
-                (prelimText, lumi, lumiLabel, s)
+                'CMS%s, #scale[0.5]{#lower[-0.15]{#it{#int}}}#it{L} dt = %0.1f#kern[0.2]{%s}^{-1}, #sqrt{#it{s}} = 7#kern[0.1]{TeV}' % \
+                (prelimText, lumi, lumiLabel)
                 )
     canvas.Update()
 
@@ -65,24 +65,24 @@ gStyle.SetLabelOffset(0.007, "XYZ")
 gStyle.SetLabelSize(0.06, "XYZ")
 gStyle.SetNdivisions(505, "XYZ")
 
-# if (gSystem.DynamicPathName("libFWCoreFWLite.so",True)):
-#     print "adding RooFit ...",
-#     scramCmd = ['scram','tool','info','roofitcore']
-#     grepCmd = ['grep', 'INCLUDE']
-#     pscram = subprocess.Popen(scramCmd, stdout = subprocess.PIPE)
-#     pgrep = subprocess.Popen(grepCmd, stdin=pscram.stdout,
-#                              stdout=subprocess.PIPE)
-#     pscram.stdout.close()
-#     output = pgrep.communicate()[0]
-#     if (pgrep.returncode == 0):
-#         roofitinc = output.split("=")[1].rstrip()
-#         ## print roofitinc
-#         gROOT.GetInterpreter().AddIncludePath(roofitinc)
-#         roofitinc = '-I"' + roofitinc + '"'
-#         gSystem.AddIncludePath(roofitinc)
-#         print "done"
-#     else:
-#         print "failed"
-#         print 'scram returned:',pscram.returncode,'grep:',pgrep.returncode
+## if (gSystem.DynamicPathName("libFWCoreFWLite.so",True)):
+##     print "adding RooFit ...",
+##     scramCmd = ['scram','tool','info','roofitcore']
+##     grepCmd = ['grep', 'INCLUDE']
+##     pscram = subprocess.Popen(scramCmd, stdout = subprocess.PIPE)
+##     pgrep = subprocess.Popen(grepCmd, stdin=pscram.stdout,
+##                              stdout=subprocess.PIPE)
+##     pscram.stdout.close()
+##     output = pgrep.communicate()[0]
+##     if (pgrep.returncode == 0):
+##         roofitinc = output.split("=")[1].rstrip()
+##         ## print roofitinc
+##         gROOT.GetInterpreter().AddIncludePath(roofitinc)
+##         roofitinc = '-I"' + roofitinc + '"'
+##         gSystem.AddIncludePath(roofitinc)
+##         print "done"
+##     else:
+##         print "failed"
+##         print 'scram returned:',pscram.returncode,'grep:',pgrep.returncode
 
-print 'end of pyroot_logon'
+#print 'end of pyroot_logon'

@@ -20,7 +20,7 @@ end
 
 foreach mH ( 190 200 )
     echo "Higgs mass: $mH muons 2 jets"
-    python runHWWFitter.py -b -m HWWMuonsConfig -j 2 -H $mH -W -1 -s $syst >&! H"$mH"_Muon_2jets_FitterOutput.out
+    python runHWWFitter.py -b -m HWWMuonsConfig -j 2 -H $mH -W 1 -s $syst >&! H"$mH"_Muon_2jets_FitterOutput.out
 end
 
 foreach mH ( 350 400 450 500 550 600 )
@@ -50,7 +50,7 @@ end
 
 foreach mH ( 190 200 )
     echo "Higgs mass: $mH electrons 2 jets"
-    python runHWWFitter.py -b -m HWWElectronsConfig -j 2 -H $mH -W -1 -s $syst >&! H"$mH"_Electron_2jets_FitterOutput.out
+    python runHWWFitter.py -b -m HWWElectronsConfig -j 2 -H $mH -W 1 -s $syst >&! H"$mH"_Electron_2jets_FitterOutput.out
 end
 
 foreach mH ( 350 400 450 500 550 600 )

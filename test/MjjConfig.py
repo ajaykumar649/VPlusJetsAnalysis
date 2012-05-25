@@ -3,7 +3,7 @@ from ROOT import gROOT
 gROOT.ProcessLine('.L RooWjjFitterParams.h+');
 from ROOT import RooWjjFitterParams
 
-def theConfig(Nj, mcdir = '', initFile = '', toydataFile = '', implementTTbarScaleMatchingSystOption = 0, e_minT = -1.0, e_maxT = -1.0):
+def theConfig(Nj, mcdir = '', initFile = '', toydataFile = '', e_minT = -1.0, e_maxT = -1.0):
     fitterPars = RooWjjFitterParams()
 
     fitterPars.smoothingOrder = 0
@@ -27,12 +27,11 @@ def theConfig(Nj, mcdir = '', initFile = '', toydataFile = '', implementTTbarSca
     fitterPars.fitToyDataset = False
     fitterPars.ToyDatasetDirectory = '/uscms_data/d1/ilyao/KinematicFitterS11/ErrorScans/1KMCSets/'
     fitterPars.toydataFile = toydataFile
-    fitterPars.implementTTbarScaleMatchingSystOption = implementTTbarScaleMatchingSystOption
 
     fitterPars.minMass = 30.
     fitterPars.maxMass = 400.
     fitterPars.nbins = 34
-    fitterPars.intLumi = 5020.
+    fitterPars.intLumi = 4700. #5030.
 
     fitterPars.binEdges.push_back(fitterPars.minMass)
 
