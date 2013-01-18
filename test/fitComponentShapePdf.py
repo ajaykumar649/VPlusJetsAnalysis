@@ -19,6 +19,10 @@ parser.add_option('--electrons', dest='isElectron', action='store_true',
                   default=False, help='do electrons instead of muons')
 parser.add_option('--makeFree', dest='makeConstant', action='store_false',
                   default=True, help='make parameters free in output')
+parser.add_option('--sideband', dest='sb', type='int',
+                  default=0, help='use sideband model instead')
+parser.add_option('--signal', dest='sig', action='store_true',
+                  default=False, help='use signal model instead')
 parser.add_option('-i', '--interference', dest='interference', default=0, 
                   type='int', help='ggH interference to use.  '+\
                       '(0): none [default]  (1): nominal'+\
@@ -48,6 +52,8 @@ pars = config.theConfig(Nj = opts.Nj, mH = opts.mH,
 
 files = getattr(pars, '%sFiles' % opts.component)
 models = getattr(pars, '%sModels' % opts.component)
+if opts.sb or opts.sig:
+    models = getattr(pars, '%sSidebandModels' % opts.component)
 
 # print 'eff lumi WW: %.1f invpb' % (pars.dibosonFiles[0][1]/pars.dibosonFiles[0][2])
 # print 'eff lumi WZ: %.1f invpb' % (pars.dibosonFiles[1][1]/pars.dibosonFiles[1][2])
@@ -92,9 +98,14 @@ for (ifile, (filename, ngen, xsec)) in enumerate(files):
 
 print opts.component,'total expected yield: %.1f' % sumNExp
 hist2d = None
+try:
+    obs = [ pars.varNames[x] for x in pars.var ]
+except AttributeError:
+    obs = pars.var
+
 if (len(pars.var) > 1):
-    hist2d = data.createHistogram(fitter.ws.var(pars.var[0]),
-                                  fitter.ws.var(pars.var[1]), '',
+    hist2d = data.createHistogram(fitter.ws.var(obs[0]),
+                                  fitter.ws.var(obs[1]), '',
                                   'hist2d')
     print 'correlation between the first two observables:', hist2d.GetCorrelationFactor()
 
@@ -217,7 +228,7 @@ chi2s = []
 ndfs = []
 
 for (i,m) in enumerate(models):
-    par = pars.var[i]
+    par = obs[i]
     c1 = TCanvas('c%i' % i, par)
     sigPlot = fitter.ws.var(par).frame(RooFit.Name('%s_Plot' % par))
     # dataHist = RooAbsData.createHistogram(data,'dataHist_%s' % par,
@@ -277,17 +288,32 @@ if fr:
     finalPars.writeToFile("%s.txt" % opts.bn)
 
     if opts.component != 'multijet':
-        paramsFile = open('%s.txt' % opts.bn, 'a')
+        paramsFile = open('%s.txt' % opts.bn)
+        lines = paramsFile.readlines()
+        paramsFile.close()
+        outfile = open('%s.txt' % opts.bn, 'w')
+        for line in lines:
+            if opts.sb or opts.sig:
+                tag = '_side ' if opts.sb else '_sig '
+                if opts.sb == 2:
+                    tag = '_low '
+                elif opts.sb == 3:
+                    tag = '_high '
+                words = line.split()
+                outfile.write(words[0] + tag + ' '.join(words[1:]) + '\n')
+            else:
+                outfile.write(line)
         compName = opts.component
         if opts.interference == 2:
             compName += '_interf_%sUp' % compName
         elif opts.interference == 3:
             compName += '_interf_%sDown' % compName
-
-        paramsFile.write('n_%s = %.1f +/- %.1f C\n' % (compName, sumNExp, 
-                                                       TMath.Sqrt(sumNExp))
-                         )
-        paramsFile.close()
+        if opts.sb:
+            compName = 'dummy'
+        outfile.write('n_%s = %.1f +/- %.1f C\n' % (compName, sumNExp, 
+                                                    TMath.Sqrt(sumNExp))
+                      )
+        outfile.close()
 
     ndf = fr.floatParsFinal().getSize()
     finalPars.IsA().Destructor(finalPars)

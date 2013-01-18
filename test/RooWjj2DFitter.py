@@ -23,9 +23,16 @@ class Wjj2DFitter:
         self.useImportPars = False
 
         self.rangeString = None
+        obs = []
         for v in self.pars.var:
+            
+            try:
+                vName = self.pars.varNames[v]
+            except AttributeError:
+                vName = v
 
-            var1 = self.ws.factory('%s[%f,%f]' % (v, 
+            obs.append(vName)
+            var1 = self.ws.factory('%s[%f,%f]' % (vName, 
                                                   self.pars.varRanges[v][1], 
                                                   self.pars.varRanges[v][2])
                                    )
@@ -38,18 +45,20 @@ class Wjj2DFitter:
             if len(self.pars.varRanges[v][3]) > 1:
                 vbinning = RooBinning(len(self.pars.varRanges[v][3]) - 1, 
                                    array('d', self.pars.varRanges[v][3]),
-                                   '%sBinning' % v)
+                                   '%sBinning' % vName)
                 var1.setBinning(vbinning)
             else:
                 var1.setBins(self.pars.varRanges[v][0])
             var1.Print()
             if v in self.pars.exclude:
+                var1.setRange('signalRegion', self.pars.exclude[v][0],
+                              self.pars.exclude[v][1])
                 var1.setRange('lowSideband', var1.getMin(), 
                               self.pars.exclude[v][0])
                 var1.setRange('highSideband', self.pars.exclude[v][1],
                               var1.getMax())
                 self.rangeString = 'lowSideband,highSideband'
-        self.ws.defineSet('obsSet', ','.join(self.pars.var))
+        self.ws.defineSet('obsSet', ','.join(obs))
 
     def loadDataFromWorkspace(self, other, cut = None):
         #pull unbinned data from other workspace
@@ -115,6 +124,12 @@ class Wjj2DFitter:
                                     
         self.ws.factory('r_signal[0., -200., 200.]')
         self.ws.var('r_signal').setConstant(False)
+
+        try:
+            obs = [ self.pars.varNames[x] for x in self.pars.var ]
+        except AttributeError:
+            obs = self.pars.var
+
         for component in self.pars.signals:
             compFile = getattr(self.pars, '%sFiles' % component)
             compModels = getattr(self.pars, '%sModels' % component)
@@ -136,13 +151,13 @@ class Wjj2DFitter:
                 getattr(self.ws, 'import') \
                     (pdf, RooFit.RenameAllNodes('interf_%sUp' % component),
                      RooFit.RenameAllVariablesExcept('interf_%sUp' % component,
-                                                     ','.join(self.pars.var)),
+                                                     ','.join(obs)),
                      RooFit.Silence()
                      )
                 getattr(self.ws, 'import') \
                     (pdf, RooFit.RenameAllNodes('interf_%sDown' % component),
                      RooFit.RenameAllVariablesExcept('interf_%sDown'%component,
-                                                     ','.join(self.pars.var)),
+                                                     ','.join(obs)),
                      RooFit.Silence()
                      )
             if self.pars.includeSignal:
@@ -324,10 +339,19 @@ class Wjj2DFitter:
         pdfList = []
         for (idx,model) in enumerate(models):
             var = self.pars.var[idx]
-            pdfList.append(self.utils.analyticPdf(self.ws, var, model, 
-                                                  '%s_%s' % \
-                                                      (component,var), 
-                                                  '%s_%s'%(component,var)
+            try:
+                vName = self.pars.varNames[var]
+            except AttributeError:
+                vName = var
+
+            if hasattr(self.pars, '%sAuxModels' % component):
+                auxModel = getattr(self.pars, '%sAuxModels' % component)[idx]
+            else:
+                auxModel = None
+            pdfList.append(self.utils.analyticPdf(self.ws, vName, model, 
+                                                  '%s_%s'%(component,vName), 
+                                                  '%s_%s'%(component,vName),
+                                                  auxModel
                                                   )
                            )
         
@@ -381,9 +405,10 @@ class Wjj2DFitter:
 
         if nexp < 1:
             nexpt = data.sumEntries()
-        theComponents = list(self.pars.backgrounds)
+        theComponents = [] 
         if self.pars.includeSignal:
             theComponents += self.pars.signals
+        theComponents += self.pars.backgrounds
         data.plotOn(sframe, RooFit.Invisible())
         # dataHist = RooAbsData.createHistogram(data,'dataHist_%s' % var, xvar,
         #                                       RooFit.Binning('%sBinning' % var))
@@ -441,14 +466,26 @@ class Wjj2DFitter:
             sframe.SetMaximum(sframe.GetMaximum()*1.25)
             pass
 
-        if self.pars.blind and (var in self.pars.exclude):
-            blinder = TBox(self.pars.exclude[var][0], sframe.GetMinimum(),
-                           self.pars.exclude[var][1], sframe.GetMaximum())
+        excluded = (var in self.pars.exclude)
+        bname = var
+        if not excluded:
+            for v in self.pars.exclude:
+                if self.pars.varNames[v] == var:
+                    excluded = True
+                    bname = v
+        if self.pars.blind and excluded:
+            blinder = TBox(self.pars.exclude[bname][0], sframe.GetMinimum(),
+                           self.pars.exclude[bname][1], sframe.GetMaximum())
             # blinder.SetName('blinder')
             # blinder.SetTitle('signal region')
             blinder.SetFillColor(kBlack)
             blinder.SetFillStyle(1001)
             sframe.addObject(blinder)
+        elif self.pars.blind:
+            print "blind but can't find exclusion region for", var
+            print 'excluded',excluded,self.pars.varNames,self.pars.exclude
+            print 'hiding data points'
+            sframe.setInvisible('theData', True)
 
         #sframe.GetYaxis().SetTitle('Events / GeV')
         # dataHist.IsA().Destructor(dataHist)

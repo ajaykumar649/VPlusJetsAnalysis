@@ -110,6 +110,7 @@ if (gSystem.DynamicPathName("libFWCoreFWLite.so",True)):
         gROOT.ProcessLine('.L RooErfExpPdf.cxx+')
         gROOT.ProcessLine('.L RooErfPdf.cxx+')
         gROOT.ProcessLine('.L RooTH1DPdf.cxx+')
+        gROOT.ProcessLine('.L alphaFunction.cxx+')
     else:
         print "failed"
         print 'scram returned:',pscram.returncode,'grep:',pgrep.returncode

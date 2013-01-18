@@ -198,8 +198,13 @@ class Wjj2DFitterUtils:
         if ws.pdf(pdfName):
             return ws.pdf(pdfName)
 
+        try:
+            obs = [ self.pars.varNames[x] for x in self.pars.var ]
+        except AttributeError:
+            obs = self.pars.var
+
         varList = RooArgList()
-        for v in self.pars.var:
+        for v in obs:
             varList.add(ws.var(v))
         newHist = RooDataHist(pdfName + '_hist', pdfName + '_hist',
                               varList, hist)
@@ -234,6 +239,12 @@ class Wjj2DFitterUtils:
             
         if not (type(fnames) == type([])):
             fnames = [fnames]
+
+        try:
+            obs = [ self.pars.varNames[x] for x in self.pars.var ]
+        except AttributeError:
+            obs = self.pars.var
+
         for fname in fnames:
             for (row, effWgt, cpw, iwt) in \
                     self.TreeLoopFromFile(fname, noCuts,
@@ -241,7 +252,7 @@ class Wjj2DFitterUtils:
                                           cutOverride = cutOverride,
                                           interference = interference):
                 inRange = True
-                for (i,v) in enumerate(self.pars.var):
+                for (i,v) in enumerate(obs):
                     inRange = (inRange and ws.var(v).inRange(row[i], ''))
                     cols.setRealValue(v, row[i])
                 if CPweight:
@@ -298,7 +309,8 @@ class Wjj2DFitterUtils:
         return eff
 
     # various analytic models that can be selected easily.
-    def analyticPdf(self, ws, var, model, pdfName, idString = None):
+    def analyticPdf(self, ws, var, model, pdfName, idString = None, 
+                    auxModel = None):
         if ws.pdf(pdfName):
             return ws.pdf(pdfName)
 
@@ -487,6 +499,32 @@ class Wjj2DFitterUtils:
             p3.setConstant(False)
             ws.factory("EXPR::%s('TMath::Power(1.-@0/@3,@4)/TMath::Power(@0/@3,@1+@2*log(@0/@3))', %s, power_%s, power2_%s, 8000, power3_%s)" % \
                            (pdfName, var, idString, idString, idString)
+                       )
+        elif model == 19:
+            #alpha function morphed pdf where the pdf is passed as auxModel
+            self.analyticPdf(ws, var, auxModel[0], '%s_side' % pdfName, 
+                             idString + '_side')
+            self.analyticPdf(ws, var, auxModel[1], '%s_sig' % pdfName, 
+                             idString + '_sig')
+            ws.factory("alphaFunction::%s_alpha(%s, %s_side, %s_sig)" % \
+                           (pdfName, var, pdfName, pdfName)
+                       )
+            self.analyticPdf(ws, var, auxModel[2], '%s_pdf' % pdfName, idString)
+            ws.factory("RooEffProd::%s(%s_pdf, %s_alpha)" % (pdfName, pdfName,
+                                                            pdfName)
+                       )
+        elif model == 20:
+            #alpha combination of two pdfs high and low
+            lowPdf = self.analyticPdf(ws,var,auxModel[0],'%s_low' % pdfName,
+                                      idString + '_low')
+            lowPdf.getParameters(ws.set('obsSet')).setAttribAll(
+                'Constant', True)
+            highPdf = self.analyticPdf(ws,var,auxModel[1],'%s_high' % pdfName,
+                                       idString + '_high')
+            highPdf.getParameters(ws.set('obsSet')).setAttribAll(
+                'Constant', True)
+            ws.factory("SUM::%s(alpha_comb_%s[0.5, 0., 1.]*%s_low, %s_high)" % \
+                           (pdfName, pdfName,pdfName,idString)
                        )
         else:
             # this is what will be returned if there isn't a model implemented
