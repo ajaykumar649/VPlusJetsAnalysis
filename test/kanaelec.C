@@ -128,16 +128,9 @@
 #include "ElectroWeakAnalysis/VPlusJets/interface/QGLikelihoodCalculator.h"
 #include "MMozer/powhegweight/interface/pwhg_wrapper.h"
 
-//const TString inDataDir  = "/eos/uscms/store/user/pdudero/lnujj/ICHEP12/MergedNtuples/";
-//const TString inDataDir  = "/eos/uscms/store/user/lnujj/HCP2012METfix/MergedNtuples/";
-//const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/weizountuple/";
-const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples/";
-//const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/HCPlnjj/MergedNtuples/";
-//const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/weizountuple/";
-const TString inQCDDir   = "/eos/uscms/store/user/lnujj/HCP2012METfix/MergedNtuples/";
-//const TString outDataDir = "/uscms_data/d3/weizou/MakeNtuple/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/";
-//const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/ttHsample/";
-const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/ttHsample_New_v13/";
+const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
+const TString inQCDDir   = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
+const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/RD/";
 const std::string fDir   = "EffTable2012/";
 const std::string fInterferenceDir   = "InterferenceTable2012/";
 
@@ -148,6 +141,13 @@ bool large(const double &a, const double &b)
 
 void kanaelec::myana(double myflag, bool isQCD, int runflag)
 {
+
+  gROOT->ProcessLine(".L Resolution.cc+");
+  gROOT->ProcessLine(".L ../src/METzCalculator.cc+");
+  gROOT->ProcessLine(".L ../src/QGLikelihoodCalculator.C+");
+  gROOT->ProcessLine(".L EffTableReader.cc+");
+  gROOT->ProcessLine(".L EffTableLoader.cc+");
+   
    //Prepare the histogram for the cut-flow control : 8 presel + 7 sel
    const int n_step = 15;
    TH1F* h_events          = new TH1F("h_events", "h_events", n_step, 0, n_step);
@@ -331,10 +331,10 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
       }
 
       if (myflag == 20121009 || myflag == -500){
-         InitCounters( inDataDir + "el_WpJ_CMSSW532.root", h_events, h_events_weighted);
+         InitCounters( inDataDir + "el_WJets_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "el_WpJ_CMSSW532.root"); 
-         Init(myChain);Loop( h_events, h_events_weighted, 20121009,runflag, outDataDir + "RD_el_WpJ_CMSSW532");
+         myChain->Add(                    inDataDir + "el_WJets_CMSSW532.root"); 
+         Init(myChain);Loop( h_events, h_events_weighted, 20121009,runflag, outDataDir + "RD_el_WJets_CMSSW532");
       }
 
       if (myflag == 20111010 || myflag == -200){
@@ -1077,11 +1077,11 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    fChain->SetBranchStatus("JetPFCorVBFTag_bDiscriminator",    1);
    fChain->SetBranchStatus("JetPFCorVBFTag_bDiscriminatorCSV",    1);
    // Drop gen jet information
-   fChain->SetBranchStatus("*Gen*",    0);
+   //fChain->SetBranchStatus("*Gen*",    0);
    //fChain->SetBranchStatus("W_H_*",    0);
-   fChain->SetBranchStatus("W_Parton_*",    0);
-   fChain->SetBranchStatus("W_Lepton_*",    0);
-   fChain->SetBranchStatus("W_Met_*",    0);
+   //fChain->SetBranchStatus("W_Parton_*",    0);
+   //fChain->SetBranchStatus("W_Lepton_*",    0);
+   //fChain->SetBranchStatus("W_Met_*",    0);
 
    //Drop Some Groomed information
    fChain->SetBranchStatus("GroomedJet_*_pt_uncorr" , 0);
