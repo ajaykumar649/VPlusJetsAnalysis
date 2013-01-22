@@ -334,7 +334,7 @@ class Wjj2DFitterUtils:
                        )
         elif model==3:
             # a CrystalBall model
-            ws.factory("RooCBShape::%s(%s,mean_%s[180,0,1000],sigma_%s[28,0,500]," %\
+            ws.factory("RooCBShape::%s(%s,mean_%s[84,0,1000],sigma_%s[10.,0,500]," %\
                            (pdfName, var, idString, idString) + \
                            'alpha_%s[-0.5, -10., 10], npow_%s[10, -10, 100])' %\
                            (idString, idString)
@@ -347,11 +347,11 @@ class Wjj2DFitterUtils:
         elif model==5:
             # a double gaussian
             ws.factory("RooGaussian::%s_core" % pdfName + \
-                           "(%s, mean_%s_core[0,1000],sigma_%s_core[0,500])" %\
+                           "(%s, mean_%s_core[84.,0,1000],sigma_%s_core[10.,0,500])" %\
                            (var, idString, idString)
                        )
             ws.factory("RooGaussian::%s_tail" % pdfName + \
-                           "(%s, mean_%s_tail[0,1000],sigma_%s_tail[0,500])" %\
+                           "(%s, mean_%s_tail[100.,0,1000],sigma_%s_tail[50.,0,500])" %\
                            (var, idString, idString)
                        )
             ws.factory("SUM::%s(f_%s_core[0.5,0,1] * %s_core, %s_tail)" % \
@@ -360,13 +360,13 @@ class Wjj2DFitterUtils:
         elif model==6:
             # a CB + gaussian with same means
             ws.factory("RooCBShape::%s_core" % pdfName + \
-                           "(%s, mean_%s[0,1000],sigma_%s_core[0,500]," %\
+                           "(%s, mean_%s[84.,0,1000],sigma_%s_core[10.,0,500]," %\
                            (var, idString, idString) + \
                            "alpha_%s[2.,-10,10], npow_%s[2.])" %\
                            (idString, idString)
                        )
             ws.factory("RooGaussian::%s_tail" % pdfName + \
-                           "(%s, mean_%s,sigma_%s_tail[0,500])" %\
+                           "(%s, mean_%s,sigma_%s_tail[50.,0,500])" %\
                            (var, idString, idString)
                        )
             ws.factory("SUM::%s(f_%s_core[0.5,0,1] * %s_core, %s_tail)" % \
@@ -375,7 +375,7 @@ class Wjj2DFitterUtils:
         elif model==7:
             # a CB + exp
             ws.factory("RooCBShape::%s_core" % pdfName + \
-                           "(%s, mean_%s_core[0,1000],sigma_%s_core[0,500]," %\
+                           "(%s, mean_%s_core[84.,0,1000],sigma_%s_core[10.,0,500]," %\
                            (var, idString, idString) + \
                            "alpha_%s[2.,-10,10], npow_%s[2.])" % \
                            (idString, idString)
@@ -397,9 +397,9 @@ class Wjj2DFitterUtils:
                        )
         elif model == 9:
             # voitian pdf + gaussian
-            ws.factory("RooVoigtian::%s_core(%s,mean_%s[0,1000], " %\
+            ws.factory("RooVoigtian::%s_core(%s,mean_%s[84.,0,1000], " %\
                            (pdfName, var, idString) + \
-                           "width_%s[15.], resolution_%s[40,0,500])" %\
+                           "width_%s[15.], resolution_%s[10.,0,500])" %\
                            (idString, idString)
                        )
             ws.factory("RooGaussian::%s_tail" % (pdfName) + \
@@ -435,7 +435,7 @@ class Wjj2DFitterUtils:
         elif model == 13:
             # gaussian + erf*exp
             ws.factory("RooGaussian::%s_core" % pdfName + \
-                           "(%s, mean_%s_core[0,1000],sigma_%s_core[0,500])" %\
+                           "(%s, mean_%s_core[84.,0,1000],sigma_%s_core[10.,0,500])" %\
                            (var, idString, idString)
                        )
             ws.factory("c_%s[-0.015, -10, 10]" % idString)
@@ -493,9 +493,9 @@ class Wjj2DFitterUtils:
                        )
         elif model == 18:
             # QCD inspired power law
-            ws.factory("power_%s[2, -200, 200]" % idString)
-            ws.factory("power2_%s[0, -200, 200]" % idString)
-            p3 = ws.factory("power3_%s[0]" % idString)
+            ws.factory("power_%s[-100, -300, 300]" % idString)
+            ws.factory("power2_%s[-15, -200, 200]" % idString)
+            p3 = ws.factory("power3_%s[450.]" % idString)
             p3.setConstant(False)
             ws.factory("EXPR::%s('TMath::Power(1.-@0/@3,@4)/TMath::Power(@0/@3,@1+@2*log(@0/@3))', %s, power_%s, power2_%s, 8000, power3_%s)" % \
                            (pdfName, var, idString, idString, idString)

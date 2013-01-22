@@ -10,13 +10,14 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.isElectron = isElectron
     pars.initialParametersFile = initFile
 
-    pars.backgrounds = ['diboson', 'WpJ', 'top']
+    pars.backgrounds = ['diboson', 'top', 'WpJ']
     pars.includeSignal = includeSignal
     pars.signals = []
     pars.yieldConstraints = {'top' : 0.07, 
                              'WpJ' : 0.05 
                              }
     #pars.yieldConstraints = {}
+    #pars.constrainShapes = []
     pars.constrainShapes = ['WpJ']
 
     pars.Njets = Nj
@@ -99,6 +100,8 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
                       }
     pars.varTitles = {'Mass2j_PFCor': 'm_{jj}',
                       }
+    pars.exclude = {}
+    pars.blind = False
     # pars.v1binEdges = [50, 55.,60.,65.,70.,75.,80.,85.,95.,
     #                    105.,115.,125.,135.,150.,165.,180.,200.]
     # pars.v1nbins = len(pars.v1binEdges)-1
