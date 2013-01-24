@@ -1,0 +1,4 @@
+offset_WpJ_fit_mlvjj =  163.82 +/- 7.1568 L(0 - 1000) 
+power_WpJ_fit_mlvjj =  4.1535 +/- 0.76201 L(-30 - 30) 
+width_WpJ_fit_mlvjj =  34.354 +/- 10.767 L(0 - 1000) 
+n_WpJ = 64525.2 +/- 254.0 C

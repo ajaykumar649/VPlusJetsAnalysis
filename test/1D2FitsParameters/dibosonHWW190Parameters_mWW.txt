@@ -1,0 +1,4 @@
+a1_diboson_fit_mlvjj = -0.277351 +/- 0.013617 C L(-10 - 10) 
+a2_diboson_fit_mlvjj = -0.111855 +/- 0.012491 C L(-10 - 10) 
+a3_diboson_fit_mlvjj =  0.065613 +/- 0.011877 C L(-10 - 10) 
+n_diboson = 2353.4 +/- 48.5 C

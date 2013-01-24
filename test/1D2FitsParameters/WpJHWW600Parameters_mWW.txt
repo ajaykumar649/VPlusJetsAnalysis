@@ -1,0 +1,4 @@
+power2_WpJ_fit_mlvjj = -13.6506 +/- 4.3256 L(-INF - +INF) 
+power3_WpJ_fit_mlvjj =  533.82 +/- 127.00 L(-INF - +INF) 
+power_WpJ_fit_mlvjj = -105.590 +/- 32.454 L(-INF - +INF) 
+n_WpJ = 12134.8 +/- 110.2 C

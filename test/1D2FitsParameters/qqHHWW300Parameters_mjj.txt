@@ -1,0 +1,7 @@
+alpha_qqH_Mass2j_PFCor =  3.2921 +/- 2.1969 C L(-10 - 10) 
+c_qqH_Mass2j_PFCor_tail = -0.0118429 +/- 0.0029224 C L(-10 - 10) 
+f_qqH_Mass2j_PFCor_core =  0.69652 +/- 0.032522 C L(0 - 1) 
+mean_qqH_Mass2j_PFCor_core =  81.745 +/- 0.50077 C L(0 - 1000) 
+npow_qqH_Mass2j_PFCor =  2.0000 C L(-INF - +INF) 
+sigma_qqH_Mass2j_PFCor_core =  8.8841 +/- 0.48560 C L(0 - 500) 
+n_qqH = 10.8 +/- 3.3 C

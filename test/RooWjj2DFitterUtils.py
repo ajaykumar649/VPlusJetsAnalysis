@@ -209,7 +209,7 @@ class Wjj2DFitterUtils:
         newHist = RooDataHist(pdfName + '_hist', pdfName + '_hist',
                               varList, hist)
         
-        thePdf = RooHistPdf(pdfName, pdfName, ws.set('obsSet'), 
+        thePdf = RooHistPdf(pdfName, pdfName, RooArgSet(varList), 
                             newHist, order)
         getattr(ws, 'import')(thePdf)
 

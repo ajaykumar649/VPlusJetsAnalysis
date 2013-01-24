@@ -1,0 +1,5 @@
+offset_top_fit_mlvjj =  220.78 +/- 5.8254 C L(0 - 1000) 
+power2_top_fit_mlvjj = -0.727692 +/- 1.0537 C L(-20 - 20) 
+power_top_fit_mlvjj =  6.3771 +/- 2.7286 C L(-30 - 30) 
+width_top_fit_mlvjj =  39.372 +/- 2.7110 C L(0 - 1000) 
+n_top = 6903.5 +/- 83.1 C
