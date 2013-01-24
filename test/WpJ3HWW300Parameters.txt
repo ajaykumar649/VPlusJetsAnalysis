@@ -1,6 +1,0 @@
-offset_WpJ_Mass2j_PFCor =  72.105 +/- 28.473 C L(0 - 1000) 
-power2_WpJ_Mass2j_PFCor = -1.27787 +/- 2.0390 C L(-10 - 10) 
-power_WpJ_Mass2j_PFCor =  2.7229 +/- 2.0582 C L(-10 - 10) 
-power_WpJ_fit_mlvjj = -3.60468 +/- 0.30246 C L(-10 - 10) 
-width_WpJ_Mass2j_PFCor =  30.566 +/- 8.3570 C L(0 - 1000) 
-n_WpJ = 10798.9 +/- 103.9
