@@ -8,16 +8,16 @@ import HWWSignalShapes
 #  each of the two components of the fit)
 mu2Pars = {
     170: ( "mva2j170mu", 0.500, 165.0, 245.0, 10,
-           {'diboson':(13, 8),'top':(13, 8),'WpJ':(15, 18),
+           {'diboson':(13, 8),'top':(13, 8),'WpJ':(15, 14),
             'ggH':(13, 5),'qqH':(13, 5)} ),
     180: ( "mva2j180mu", 0.600, 165.0, 245.0, 10,
-           {'diboson': (13, 11),'top':(13, 8),'WpJ':(10, 18),
+           {'diboson': (13, 11),'top':(13, 8),'WpJ':(15, 14),
             'ggH':(13, 5),'qqH':(13, 5)} ),
     190: ( "mva2j190mu", 0.600, 165.0, 245.0, 10,
-           {'diboson': (13, 11), 'top': (13, 8), 'WpJ': (10, 18), 
+           {'diboson': (13, 11), 'top': (13, 8), 'WpJ': (15, 14), 
             'ggH': (13, 5), 'qqH': (13, 5)} ),
     200: ( "mva2j200mu", 0.600, 165.0, 245.0, 10,
-           {'diboson': (13, 11), 'top': (13, 8), 'WpJ': (10, 18), 
+           {'diboson': (13, 11), 'top': (13, 8), 'WpJ': (15, 14), 
             'ggH': (13, 5), 'qqH': (13, 5)} ),
     250: ( "mva2j250mu", 0.650, 200.0, 400.0, 20,
            {'diboson': (13, 11), 'top': (13, 10), 'WpJ': (10, 18), 
@@ -26,7 +26,7 @@ mu2Pars = {
            {'diboson': (13, 11), 'top': (5, 10), 'WpJ': (10, 18), 
             'ggH': (13, 5), 'qqH': (7, 5)} ),
     350: ( "mva2j350mu", 0.600, 250., 475., 15,
-           {'diboson': (7, 11),'top':(5, 11),'WpJ':(10, 18),
+           {'diboson': (7, 11),'top':(5, 11),'WpJ':(10, 12),
             'ggH':(13, 5),'qqH':(7, 5)} ),
     400: ( "mva2j400mu", 0.550, 300.0, 600, 15,
            {'diboson':(7, 11),'top':(5, 10),'WpJ':(10, 18),
@@ -101,6 +101,8 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.yieldConstraints = { 'diboson' : 0.034, 'top' : 0.07 }
     #pars.yieldConstraints = {}
     pars.constrainShapes = ['WpJ']
+    if mH > 200:
+        pars.constrainShapes = ['WpJ']
 
     pars.Njets = Nj
     pars.mHiggs = mH
@@ -212,7 +214,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
                       'fit_mlvjj' : 'm_{l#nujj}'
                       }
     pars.exclude = {'Mass2j_PFCor' : (66., 66.+32.)}
-    pars.blind = False
+    pars.blind = True
 
     pars.binData = False
     # pars.binData = True

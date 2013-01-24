@@ -493,8 +493,10 @@ class Wjj2DFitterUtils:
                        )
         elif model == 18:
             # QCD inspired power law
-            ws.factory("power_%s[-100, -300, 300]" % idString)
-            ws.factory("power2_%s[-15, -200, 200]" % idString)
+            p1 = ws.factory("power_%s[-100]" % idString)
+            p1.setConstant(False)
+            p2 = ws.factory("power2_%s[-15]" % idString)
+            p2.setConstant(False)
             p3 = ws.factory("power3_%s[450.]" % idString)
             p3.setConstant(False)
             ws.factory("EXPR::%s('TMath::Power(1.-@0/@3,@4)/TMath::Power(@0/@3,@1+@2*log(@0/@3))', %s, power_%s, power2_%s, 8000, power3_%s)" % \

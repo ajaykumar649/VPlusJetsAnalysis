@@ -69,6 +69,7 @@ class Wjj2DFitter:
         if cut:
             unbinnedData = unbinnedData.reduce(cut)
 
+        unbinnedData.Print()
         if self.pars.binData:
             #bin and import data
             unbinnedData.SetName('data_unbinned')
@@ -86,6 +87,18 @@ class Wjj2DFitter:
                               getFloatPars = True):
         print 'loading data workspace %s from file %s' % (wsname, filename)
         fin = TFile.Open(filename)
+        if not fin:
+            print 'failed to open the file',filename
+            import os
+            print 'cwd:',os.getcwd()
+            print 'access of',filename,os.access(filename, os.R_OK)
+            print 'list of root files in cwd'
+            for f in os.listdir(os.getcwd()):
+                if f[-5:] == '.root':
+                    print f,len(f),len(filename)
+            fin = TFile.Open(os.getcwd() + '/' + filename)
+            assert(fin)
+
         other = fin.Get(wsname)
 
         #pull unbinned data from other workspace
@@ -222,7 +235,7 @@ class Wjj2DFitter:
             self.ws.var('n_multijet').setVal(self.multijetExpected)
 
     # fit the data using the pdf
-    def fit(self):
+    def fit(self, keepParameterValues = False):
         print 'construct fit pdf ...'
         fitter = self.makeFitter()
 
@@ -235,7 +248,8 @@ class Wjj2DFitter:
 
         constraintSet = self.makeConstraints()
 
-        self.readParametersFromFile()
+        if not keepParameterValues:
+            self.readParametersFromFile()
 
         self.resetYields()
         # print constraints, self.pars.yieldConstraints
@@ -251,9 +265,11 @@ class Wjj2DFitter:
         constraintCmd = RooCmdArg.none()
         if constraintSet.getSize() > 0:
             constraints.append(fitter.GetName())
-            fitter = self.ws.factory('PROD::totalFit_const(%s)' % \
-                                         (','.join(constraints))
-                                     )
+            fitter = self.ws.pdf('totalFit_const')
+            if not fitter:
+                fitter = self.ws.factory('PROD::totalFit_const(%s)' % \
+                                             (','.join(constraints))
+                                         )
             constraintCmd = RooFit.Constrained()
             # constraintCmd = RooFit.ExternalConstraints(self.ws.set('constraintSet'))
 
@@ -483,7 +499,7 @@ class Wjj2DFitter:
             sframe.addObject(blinder)
         elif self.pars.blind:
             print "blind but can't find exclusion region for", var
-            print 'excluded',excluded,self.pars.varNames,self.pars.exclude
+            print 'excluded',excluded,self.pars.exclude
             print 'hiding data points'
             sframe.setInvisible('theData', True)
 

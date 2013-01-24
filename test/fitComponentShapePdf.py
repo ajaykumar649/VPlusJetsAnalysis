@@ -127,70 +127,24 @@ if opts.interference in [1,2,3]:
 else:
     sigPdf = fitter.makeComponentPdf(opts.component, files, models)
 
-# if fitter.ws.var('c_diboson_%s' % pars.var[1]):
-#     fitter.ws.var('c_diboson_%s' % pars.var[1]).setVal(-0.012)
-# if fitter.ws.var('c_diboson_%s_tail' % pars.var[0]):
-#     fitter.ws.var('c_diboson_%s_tail' % pars.var[0]).setVal(-0.015)
-# if fitter.ws.var('f_diboson_%s_core' % pars.var[0]):
-#     fitter.ws.var('f_diboson_%s_core' % pars.var[0]).setVal(0.6)
-# if fitter.ws.var('mean_diboson_%s_core' % pars.var[0]):
-#     fitter.ws.var('mean_diboson_%s_core' % pars.var[0]).setVal(86)
-# if fitter.ws.var('mean_diboson_%s_tail' % pars.var[0]):
-#     fitter.ws.var('mean_diboson_%s_tail' % pars.var[0]).setVal(40)
-# if fitter.ws.var('sigma_diboson_%s_core' % pars.var[0]):
-#     fitter.ws.var('sigma_diboson_%s_core' % pars.var[0]).setVal(10)
-# if fitter.ws.var('sigma_diboson_%s_tail' % pars.var[0]):
-#     fitter.ws.var('sigma_diboson_%s_tail' % pars.var[0]).setVal(55)
-# if fitter.ws.var('mean_top_%s_core' % pars.var[0]):
-#     fitter.ws.var('mean_top_%s_core' % pars.var[0]).setVal(84.)
-# if fitter.ws.var('mean_top_%s_tail' % pars.var[0]):
-#     fitter.ws.var('mean_top_%s_tail' % pars.var[0]).setVal(130.)
-# if fitter.ws.var('sigma_top_%s_core' % pars.var[0]):
-#     fitter.ws.var('sigma_top_%s_core' % pars.var[0]).setVal(11.)
-# if fitter.ws.var('sigma_top_%s_tail' % pars.var[0]):
-#     fitter.ws.var('sigma_top_%s_tail' % pars.var[0]).setVal(40.)
-# if fitter.ws.var('f_top_%s_core' % pars.var[0]):
-#     fitter.ws.var('f_top_%s_core' % pars.var[0]).setVal(0.25)
-# if fitter.ws.var('c_top_%s' % pars.var[1]):
-#     fitter.ws.var('c_top_%s' % pars.var[1]).setVal(-0.01)
-# if fitter.ws.var('c_WpJ_%s' % pars.var[1]):
-#     fitter.ws.var('c_WpJ_%s' % pars.var[1]).setVal(-0.014)
-# if fitter.ws.var('power_WpJ_%s' % pars.var[0]):
-#     fitter.ws.var('power_WpJ_%s' % pars.var[0]).setVal(5.1)
-# if fitter.ws.var('c_WpJ_%s' % pars.var[0]):
-#     fitter.ws.var('c_WpJ_%s' % pars.var[0]).setVal(-0.02)
-# if fitter.ws.var('offset_WpJ_%s' % pars.var[0]):
-#     fitter.ws.var('offset_WpJ_%s' % pars.var[0]).setVal(65)
-# if fitter.ws.var('width_WpJ_%s' % pars.var[0]):
-#     fitter.ws.var('width_WpJ_%s' % pars.var[0]).setVal(25)
-# if fitter.ws.var('c_ggH_%s_tail' % pars.var[0]):
-#     fitter.ws.var('c_ggH_%s_tail' % pars.var[0]).setVal(-0.015)
-# if fitter.ws.var('f_ggH_%s_core' % pars.var[0]):
-#     fitter.ws.var('f_ggH_%s_core' % pars.var[0]).setVal(0.9)
-# if fitter.ws.var('mean_ggH_%s_core' % pars.var[0]):
-#     fitter.ws.var('mean_ggH_%s_core' % pars.var[0]).setVal(85)
-# if fitter.ws.var('sigma_ggH_%s_core' % pars.var[0]):
-#     fitter.ws.var('sigma_ggH_%s_core' % pars.var[0]).setVal(10)
-# if fitter.ws.var('sigma_ggH_%s_tail' % pars.var[0]):
-#     fitter.ws.var('sigma_ggH_%s_tail' % pars.var[0]).setVal(50)
-# if fitter.ws.var('sigma_ggH_%s_core' % pars.var[1]):
-#     fitter.ws.var('sigma_ggH_%s_core' % pars.var[1]).setVal(10)
-# if fitter.ws.var('sigma_ggH_%s_tail' % pars.var[1]):
-#     fitter.ws.var('sigma_ggH_%s_tail' % pars.var[1]).setVal(100)
-# if fitter.ws.var('f_ggH_%s_core' % pars.var[1]):
-#     fitter.ws.var('f_ggH_%s_core' % pars.var[1]).setVal(0.7)
-# if fitter.ws.var('mean_ggH_%s' % pars.var[0]):
-#     fitter.ws.var('mean_ggH_%s' % pars.var[0]).setVal(84)
-# if fitter.ws.var('mean_ggH_%s' % pars.var[1]):
-#     fitter.ws.var('mean_ggH_%s' % pars.var[1]).setVal(opts.mH)
-# if fitter.ws.var('mean_ggH_%s_core' % pars.var[1]):
-#     fitter.ws.var('mean_ggH_%s_core' % pars.var[1]).setVal(opts.mH)
-# if fitter.ws.var('mean_ggH_%s_tail' % pars.var[1]):
-#     fitter.ws.var('mean_ggH_%s_tail' % pars.var[1]).setVal(opts.mH)
-# if fitter.ws.var('width_ggH_%s' % pars.var[1]):
-#     fitter.ws.var('width_ggH_%s' % pars.var[1]).setVal(HWWSignalShapes.HiggsWidth[opts.mH])
-# if fitter.ws.var('resolution_ggH_%s_tail' % pars.var[1]):
-#     fitter.ws.var('resolution_ggH_%s_tail' % pars.var[1]).setVal(opts.mH*0.11)
+extraTag = ''
+if opts.interference == 2:
+    extraTag = '_interf_%sUp' % opts.component
+if opts.interference == 3:
+    extraTag = '_interf_%sDown' % opts.component
+
+if fitter.ws.var('mean_%s_fit_mlvjj_core%s' % (opts.component,extraTag)):
+    fitter.ws.var('mean_%s_fit_mlvjj_core%s' % \
+                      (opts.component,extraTag)).setVal(opts.mH)
+if fitter.ws.var('mean_%s_fit_mlvjj_tail%s' % (opts.component,extraTag)):
+    fitter.ws.var('mean_%s_fit_mlvjj_tail%s' % \
+                      (opts.component,extraTag)).setVal(opts.mH)
+if fitter.ws.var('sigma_%s_fit_mlvjj_tail%s' % (opts.component,extraTag)):
+    fitter.ws.var('sigma_%s_fit_mlvjj_tail%s' % \
+                      (opts.component,extraTag)).setVal(opts.mH*0.25)
+if fitter.ws.var('sigma_%s_fit_mlvjj_core%s' % (opts.component,extraTag)):
+    fitter.ws.var('sigma_%s_fit_mlvjj_core%s' % \
+                      (opts.component,extraTag)).setVal(opts.mH*0.1)
 
 params = sigPdf.getParameters(data)
 parCopy = params.snapshot()

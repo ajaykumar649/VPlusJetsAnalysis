@@ -97,9 +97,9 @@ fnamePats = {
 
 import os
 if not os.access('Limits/qqHtable8tev.txt', os.R_OK):
-    os.symlink('Limits/vbfHtable8tev.txt', 'Limits/qqHtable8tev.txt')
-# else:
-#     print 'link found'
+    os.symlink('./vbfHtable8tev.txt', 'Limits/qqHtable8tev.txt')
+else:
+    print 'link found for qqHtable8tev.txt'
 del os
 
 def makeSignalFilename(mH, mode, isElectron):
