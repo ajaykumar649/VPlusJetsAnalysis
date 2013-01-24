@@ -12,6 +12,8 @@
 //#define DO_INTERP
 #undef DO_INTERP
 
+namespace{ // makes all constants contained herein "file-private" to avoid link errors from multiple linked includes
+
 //================================================================================
 // High-level variables
 
@@ -33,10 +35,12 @@ const bool BLINDING = false;
 
 //const double intlumipbinv_mu = 5100.0;
 //const double intlumipbinv_el = 5100.0;
-const double intlumipbinv_mu = 12000.0;
-const double intlumipbinv_el = 11900.0;
 //const double intlumipbinv_mu = 6900.0;
 //const double intlumipbinv_el = 6800.0;
+//const double intlumipbinv_mu = 12000.0;
+//const double intlumipbinv_el = 11900.0;
+const double intlumipbinv_mu = 19300.0;
+const double intlumipbinv_el = 19200.0;
 
 const int beamcomenergytev = 8;
 
@@ -68,7 +72,9 @@ const char *dir =
   //"/uscms_data/d2/andersj/Wjj/2012/CMSSW_4_2_3_patch5/src/ElectroWeakAnalysis/VPlusJets/test/HWWHCP26OctWithInterp";
   //"/uscms_data/d2/pdudero/oldCMSSW/CMSSW_4_2_8/src/ElectroWeakAnalysis/VPlusJets/test/HWWHCPOct26withInterp";
   //"/uscms_data/d2/andersj/Wjj/2012/CMSSW_4_2_3_patch5/src/ElectroWeakAnalysis/VPlusJets/test/HWW2012C";
-  "/uscms_data/d2/andersj/Wjj/2012/CMSSW_4_2_3_patch5/src/ElectroWeakAnalysis/VPlusJets/test/HWW2012AB";
+  //"/uscms_data/d2/andersj/Wjj/2012/CMSSW_4_2_3_patch5/src/ElectroWeakAnalysis/VPlusJets/test/HWW2012AB";
+  "/uscms_data/d2/andersj/Wjj/2012/CMSSW_5_3_3_patch2/src/ElectroWeakAnalysis/VPlusJets/test/";
+  //  "..";
 
 const double global_scale = 1.0;
 //const double global_scale = 5000.0/intlumipbinv;
@@ -99,7 +105,7 @@ const char *channames2[NUMCHAN] = {
 };
 //----------------------------------------
 #else
-#define NUMCHAN 4
+#define NUMCHAN 2
 
 // must be put in lexicographical order
 //
@@ -107,26 +113,26 @@ const char *channames2[NUMCHAN] = {
 // for combination:
 const char *channames[NUMCHAN] = {
   "hwwelnu2j"
-  ,"hwwelnu3j"
+  //,"hwwelnu3j"
   ,"hwwmunu2j"
-  ,"hwwmunu3j"
+  //,"hwwmunu3j"
 };
 #define ELORMUCHAR 3
 #else
 const char *channames[NUMCHAN] = {
   "el2jetCMS"
-  ,"el3jetCMS"
+  //,"el3jetCMS"
   ,"mu2jetCMS"
-  ,"mu3jetCMS"
+  //,"mu3jetCMS"
 };
 #define ELORMUCHAR 0
 #endif
 
 const char *channames2[NUMCHAN] = {
   "Electron"
-  ,"Electron"
+  //,"Electron"
   ,"Muon"
-  ,"Muon"
+  //,"Muon"
 };
 #endif
 //----------------------------------------
@@ -194,10 +200,10 @@ const char *inputfilesfmtstr[NUMCHAN] = {
 };
 #else
 const char *inputfilesfmtstr[NUMCHAN] = {
-  "H%d_Electron_2Jets_Fit_Shapes.root",
-  "H%d_Electron_3Jets_Fit_Shapes.root",
-  "H%d_Muon_2Jets_Fit_Shapes.root",
-  "H%d_Muon_3Jets_Fit_Shapes.root",
+  "HWWlnujjH%d_electron_2jets_output.root",
+  //"HWWlnujjH%d_electron_3jets_output.root",
+  "HWWlnujjH%d_muon_2jets_output.root",
+  //"HWWlnujjH%d_muon_3jets_output.root",
 };
 #endif
 
@@ -205,6 +211,8 @@ const char *dataobjname = "theData";
 const char *bkgdobjname = "h_total";
 
 #ifndef SEVENTEV
+
+#if 0
 
 // Run2012A+B ran Nov08, 5.1/fb 
 double backnormerr[NUMMASSPTS*NUMCHAN] = {
@@ -222,8 +230,6 @@ double backnormerr[NUMMASSPTS*NUMCHAN] = {
   /*550*/ 1.030, 1.030, 1.026, 1.036,
   /*600*/ 1.034, 1.038, 1.028, 1.035,
 };
-
-#if 0
 
 // Run2012C ran Nov06, 6.8/6.9/fb 
 double backnormerr[NUMMASSPTS*NUMCHAN] = {
@@ -543,5 +549,7 @@ double qqsigaccptsyst[NUMMASSPTS] = {
   //  /*800*/ 1.010,
   //  /*900*/ 1.010,
 };
+
+} // end unnamed namespace
 
 #endif // _HWWCHANNELS_H
