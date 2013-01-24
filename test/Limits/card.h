@@ -30,6 +30,11 @@ struct ShapeFiles_t {
   TString histo_with_syst;
 };
 
+struct ModelParam_t {
+  TString name;
+  TString type;
+};
+
 class Card {
  public:
 
@@ -39,29 +44,37 @@ class Card {
   Card(double         procchanyield,
        const TString& procname,
        const TString& systname,
-       const TString& channame
+       const TString& channame,
+       const bool     issignal
        );
 
   void
-    addToCard(double         procchanyield,// process/channel yield
-	      const TString& procname,     // process name 
-	      const TString& systname,     // name of (shape) systematic applied
-	      const int      ichanref,     // channel reference index
-	      const int      ichan,        // channel index
-	      const int      nchan         // number of channels in card
-	      );
+    addProcessChannel(double         procchanyield,// process/channel yield
+		      const TString& procname,     // process name 
+		      const TString& systname,     // name of (shape) systematic applied
+		      const int      ichanref,     // channel reference index
+		      const int      ichan,        // channel index
+		      const int      nchan,        // number of channels in card
+		      const bool     issignal
+		      );
   
   void
-    addSystematics(int massgev,
-		   const std::vector<int>& channellist
-		   );
+    addSystematic(const TString& systname,     // systematic name 
+		  const TString& procname,     // process name 
+		  int            ichan,        // channel index
+		  double         uncval
+		  );
+
+  void
+    addModelParam(const TString& paramname,
+		  const TString& paramtype
+		  );
 
   void
     addShapeFiles(const ShapeFiles_t& shapesfile) { shapespecs.push_back(shapesfile); }
 
   void
-    Print(int massgev,
-	  const TString& cfgtag=""
+    Print(const TString& dcardname=""
 	  );
 
  private:
@@ -70,6 +83,7 @@ class Card {
   std::set<TString> channels;
   ProcData_t data;   // data is identified separately as "observation"
   std::vector<ShapeFiles_t> shapespecs;
+  std::vector<ModelParam_t> modelparams;
   std::deque<ProcData_t> processes; // push_front for signal, push_back for background
   std::map<TString,int> pname2index;  // map from process name to the deque index in "processes"
   std::map<TString,TString> systematics; // name, pdf function
