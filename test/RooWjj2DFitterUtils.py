@@ -48,8 +48,7 @@ class Wjj2DFitterUtils:
                                           self.pars.varRanges[v][1],
                                           self.pars.varRanges[v][2])
         histCmd += ')'
-        print 'histCmd='
-        print histCmd
+        print 'histCmd=',histCmd
         newHist = eval(histCmd)
 
         return newHist

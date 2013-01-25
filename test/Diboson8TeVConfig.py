@@ -80,7 +80,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.WpJModels = [-2]
 
     pars.WpJNomFiles = pars.WpJFiles
-    pars.WpJNomModels = [17]
+    pars.WpJNomModels = [-1]
     pars.WpJMUFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingup_CMSSW532.root' % (flavorString), 20976007, 36257.2), ]
     pars.WpJMUModels = [-1]
     pars.WpJMDFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingdown_CMSSW532.root' % (flavorString), 21364575, 36257.2), ]

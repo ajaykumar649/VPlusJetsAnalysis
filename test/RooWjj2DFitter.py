@@ -121,22 +121,9 @@ class Wjj2DFitter:
             print 'getting compModels'
             compModels = getattr(self.pars, '%sModels' % component)
             print 'compModels = %s' % compModels
-            if (compModels[0] == -2):
-                filesNom = getattr(self.pars, '%sNomFiles' % component)
-                modelsNom = getattr(self.pars, '%sNomModels' % component)
-                filesMU = getattr(self.pars, '%sMUFiles' % component)
-                modelsMU = getattr(self.pars, '%sMUModels' % component)
-                filesMD = getattr(self.pars, '%sMDFiles' % component)
-                modelsMD = getattr(self.pars, '%sMDModels' % component)
-                filesSU = getattr(self.pars, '%sSUFiles' % component)
-                modelsSU = getattr(self.pars, '%sSUModels' % component)
-                filesSD = getattr(self.pars, '%sSDFiles' % component)
-                modelsSD = getattr(self.pars, '%sSDModels' % component)
-                compPdf = self.makeMorphingPdf(component, filesNom, modelsNom, filesMU, modelsMU, filesMD, modelsMD, filesSU, modelsSU, filesSD, modelsSD)
-            else:
-                compFiles = getattr(self.pars, '%sFiles' % component)
-                compPdf = self.makeComponentPdf(component, compFiles, 
-                                                compModels)
+            compFiles = getattr(self.pars, '%sFiles' % component)
+            compPdf = self.makeComponentPdf(component, compFiles, 
+                                            compModels)
                 
             norm = self.ws.factory('prod::f_%s_norm' % component + \
                                        '(n_%s[0.,1e6],' % component + \
@@ -319,9 +306,10 @@ class Wjj2DFitter:
         print 'making ComponentPdf %s' % component
         print 'models = %s' % models
         print 'files = %s' % files
-        # the MorphingPdf itself will never be ComponentPdf (though components of the MorphingPdf are ComponentPdfs).
         if (models[0] == -1):
             thePdf = self.makeComponentHistPdf(component, files)
+        elif (models[0] == -2):
+            thePdf = self.makeMorphingPdf(component)
         else:
             thePdf = self.makeComponentAnalyticPdf(component, models)
         return thePdf
@@ -360,10 +348,21 @@ class Wjj2DFitter:
                                    self.ws, self.pars.order)
 
     # create a pdf using the "template morphing" technique
-    def makeMorphingPdf(self, component, filesNom, modelsNom, filesMU, modelsMU, filesMD, modelsMD, filesSU, modelsSU, filesSD, modelsSD):
+    def makeMorphingPdf(self, component):
         if self.ws.pdf(component):
             return self.ws.pdf(component)
         
+        filesNom = getattr(self.pars, '%sNomFiles' % component)
+        modelsNom = getattr(self.pars, '%sNomModels' % component)
+        filesMU = getattr(self.pars, '%sMUFiles' % component)
+        modelsMU = getattr(self.pars, '%sMUModels' % component)
+        filesMD = getattr(self.pars, '%sMDFiles' % component)
+        modelsMD = getattr(self.pars, '%sMDModels' % component)
+        filesSU = getattr(self.pars, '%sSUFiles' % component)
+        modelsSU = getattr(self.pars, '%sSUModels' % component)
+        filesSD = getattr(self.pars, '%sSDFiles' % component)
+        modelsSD = getattr(self.pars, '%sSDModels' % component)
+
         # Adds five (sub)components for the component with suffixes Nom, MU, MD, SU, SD
         NomPdf = self.makeComponentPdf('%sNom' % component, filesNom, modelsNom)
         MUPdf = self.makeComponentPdf('%sMU' % component, filesMU, modelsMU)
@@ -374,12 +373,19 @@ class Wjj2DFitter:
         fMU_comp = self.ws.factory("fMU_%s[0., -1., 1.]" % component)
         fSU_comp = self.ws.factory("fSU_%s[0., -1., 1.]" % component)
 
-        fMU = RooFormulaVar("fMU", "1.0*@0*(@0 >= 0.)", RooArgList( fMU_comp ) )
-        fMD = RooFormulaVar("fMD", "-1.0*@0*(@0 < 0.)", RooArgList( fMU_comp ) )
-        fSU = RooFormulaVar("fSU", "@0*(@0 >= 0.)", RooArgList( fSU_comp ) )
-        fSD = RooFormulaVar("fSD", "@0*(-1)*(@0 < 0.)", RooArgList( fSU_comp ) )
-        fNom = RooFormulaVar("fNom","fNom", "(1.-abs(@0)-abs(@1))", RooArgList(fMU_comp,fSU_comp) )
-        morphPdf = RooAddPdf(component,component, RooArgList(MUPdf,MDPdf,SUPdf,SDPdf,NomPdf),RooArgList(fMU, fMD, fSU, fSD, fNom))
+        fMU = RooFormulaVar("fMU_%s" % component, "1.0*@0*(@0 >= 0.)", 
+                            RooArgList( fMU_comp ) )
+        fMD = RooFormulaVar("fMD_%s" % component, "-1.0*@0*(@0 < 0.)", 
+                            RooArgList( fMU_comp ) )
+        fSU = RooFormulaVar("fSU_%s" % component, "@0*(@0 >= 0.)", 
+                            RooArgList( fSU_comp ) )
+        fSD = RooFormulaVar("fSD_%s" % component, "@0*(-1)*(@0 < 0.)", 
+                            RooArgList( fSU_comp ) )
+        fNom = RooFormulaVar("fNom","fNom", "(1.-abs(@0)-abs(@1))", 
+                             RooArgList(fMU_comp,fSU_comp) )
+        morphPdf = RooAddPdf(component,component, 
+                             RooArgList(MUPdf,MDPdf,SUPdf,SDPdf,NomPdf),
+                             RooArgList(fMU, fMD, fSU, fSD, fNom))
         morphPdf.SetName(component)
         getattr(self.ws, 'import')(morphPdf)
         return self.ws.pdf(component)
@@ -496,6 +502,7 @@ class Wjj2DFitter:
                            RooFit.VLines(),
                            RooFit.Range('plotRange'),
                            RooFit.NormRange('plotRange'),
+                           RooFit.Normalization(nexp, RooAbsReal.NumEvent),
                            compCmd
                            )
                 tmpCurve = sframe.getCurve()
