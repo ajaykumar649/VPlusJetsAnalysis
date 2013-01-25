@@ -70,8 +70,27 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         (pars.MCDirectory + 'RD_%s_ZpJ_CMSSW532.root' % (flavorString),
          30209426, 3503.71),
         ]
-    pars.WpJModels = [17]
+    
+    ##pars.WpJModels = [17]
+    
+    ### To implement Template Morphing set pars.WpJModels=[-2] and be sure to edit the WpJ*InputParameters.txt file so that the naming scheme corresponds to the correct components/subcomponents. E.g. the parameters from the shape fit to WpJ default MC should contain the suffix Nom, while the overall yield shouldn't, and the lines
+    ###     fMU_WpJ = 0.0 +/- 100.0 L(-1 - 1)
+    ### fSU_WpJ = 0.0 +/- 100.0 L(-1 - 1)
+    ### should be added to the .txt file
+    pars.WpJModels = [-2]
 
+    pars.WpJNomFiles = pars.WpJFiles
+    pars.WpJNomModels = [17]
+    pars.WpJMUFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingup_CMSSW532.root' % (flavorString), 20976007, 36257.2), ]
+    pars.WpJMUModels = [-1]
+    pars.WpJMDFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingdown_CMSSW532.root' % (flavorString), 21364575, 36257.2), ]
+    pars.WpJMDModels = [-1]
+    pars.WpJSUFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaleup_CMSSW532.root' % (flavorString), 20784694, 36257.2), ]
+    pars.WpJSUModels = [-1]
+    pars.WpJSDFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaledown_CMSSW532.root' % (flavorString), 20760830, 36257.2), ]
+    pars.WpJSDModels = [-1]
+
+    
     pars.topFiles = [
         (pars.MCDirectory + 'RD_%s_TTbar_CMSSW532.root' % (flavorString),
          6893735, 225.197),

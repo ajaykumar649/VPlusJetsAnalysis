@@ -38,7 +38,7 @@ class Wjj2DFitterUtils:
     # create a new empty 2D histogram with the appropriate binning
     def newEmptyHist(self, histName):
         newHist = None
-        histCmd = 'TH%iD(%s,%s' % (len(self.pars.var), histName, histName)
+        histCmd = 'TH%iD("%s","%s"' % (len(self.pars.var), histName, histName)
         for v in self.pars.var:
             if len(self.pars.varRanges[v][3]) > 1:
                 histCmd += ',%i,%s' % (len(self.pars.varRanges[v][3])-1,
@@ -48,6 +48,7 @@ class Wjj2DFitterUtils:
                                           self.pars.varRanges[v][1],
                                           self.pars.varRanges[v][2])
         histCmd += ')'
+        print 'histCmd='
         print histCmd
         newHist = eval(histCmd)
 

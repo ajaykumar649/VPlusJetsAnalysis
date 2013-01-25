@@ -35,7 +35,7 @@ import pyroot_logon
 config = __import__(opts.modeConfig)
 import RooWjj2DFitter
 
-from ROOT import TCanvas, RooFit, RooLinkedListIter, TMath, RooRandom, TFile, \
+from ROOT import TCanvas, TLegend, RooFit, RooLinkedListIter, TMath, RooRandom, TFile, \
     RooDataHist, RooMsgService, TStopwatch
 import pulls
 
@@ -113,6 +113,25 @@ c1 = TCanvas('c1', fitter.ws.var(pars.var[0]).GetTitle() + ' plot')
 plot1.Draw()
 leg1.Draw('same')
 c1.Update()
+
+#Make the Data-NonDiboson subtracted plot
+print 'plot1 : '
+plot1.Print()
+xvar = fitter.ws.var(pars.var[0])
+xvar.setRange('plotRange', xvar.getMin(), xvar.getMax())
+dibosonSubtractedFrame = xvar.frame()
+dibosonSubtractedFrame.SetName("%s_subtracted" % pars.var[0])
+dibosonResidual = plot1.residHist('theData', pars.backgrounds[1], False, True)#The first background is the diboson
+dibosonSubtractedFrame.addPlotable(dibosonResidual, 'p', False, True)
+fitter.ws.pdf('diboson').plotOn(dibosonSubtractedFrame)
+c2 = TCanvas('c2', fitter.ws.var(pars.var[0]).GetTitle() + ' Subtracted')
+dibosonSubtractedFrame.GetYaxis().SetTitle(plot1.GetYaxis().GetTitle())
+dibosonSubtractedFrame.Draw()
+dibosonSubtractedLegend = TLegend(0.65, 0.72, 0.92, 0.89, '', 'NDC')
+dibosonSubtractedLegend.AddEntry('diboson_Norm[Mass2j_PFCor]','Diboson Projection','l')
+dibosonSubtractedLegend.AddEntry('resid_theData_top','Data - NonDiboson','p')
+dibosonSubtractedLegend.Draw('same')
+c2.Update()
 
 ndf = 0
 
@@ -199,12 +218,16 @@ output = TFile("Dibosonlnujj_%s_%ijets_output.root" % (mode, opts.Nj),
                "recreate")
 
 plot1.Write()
+dibosonSubtractedFrame.Write()
 pull1.Write()
 fitter.ws.SetName("w")
 fitter.ws.Write()
 #fitter.ws.Print()
 output.Close()
 
+c1.SaveAs("Dibosonlnujj_%s_%ijets_Stacked.png" % (mode, opts.Nj))
+c2.SaveAs("Dibosonlnujj_%s_%ijets_Subtracted.png" % (mode, opts.Nj))
+cp1.SaveAs("Dibosonlnujj_%s_%ijets_Pull.png" % (mode, opts.Nj))
 print 'Time elapsed: %.1f sec' % timer.RealTime()
 print 'CPU time used: %.1f sec' % timer.CpuTime()
 
