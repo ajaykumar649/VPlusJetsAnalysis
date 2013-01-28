@@ -40,7 +40,7 @@ import RooWjj2DFitter
 import HWWSignalShapes
 #from RooWjj2DFitterUtils import Wjj2DFitterUtils
 
-from ROOT import RooFit, TCanvas, RooArgSet, TFile, RooAbsReal, RooAbsData, \
+from ROOT import RooFit, TCanvas, TLegend, RooArgSet, TFile, RooAbsReal, RooAbsData, \
     RooHist, TMath, kRed, kDashed, kOrange, RooMsgService
 
 import pulls
@@ -218,6 +218,17 @@ for (i,m) in enumerate(models):
     chi2s.append(chi2_1)
     ndfs.append(ndf_1)
 
+mode = 'muon'
+if opts.isElectron:
+    mode = 'electron'
+
+lgnd = TLegend(0.65, 0.72, 0.92, 0.89, '', 'NDC')
+lgnd.AddEntry('fitCurve', '%s fit pdf' % opts.component, 'l')
+lgnd.AddEntry('theData','%s MC' % opts.component,'p')
+lgnd.Draw('same')
+
+c1.SaveAs("Dibosonlnujj_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
+#c1.SaveAs("DibosonBoostedlnuJ_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
 
 ndf = 0
 # print chi2s

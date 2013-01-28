@@ -36,7 +36,8 @@ config = __import__(opts.modeConfig)
 import RooWjj2DFitter
 
 from ROOT import TCanvas, TLegend, RooFit, RooLinkedListIter, TMath, RooRandom, TFile, \
-    RooDataHist, RooMsgService, TStopwatch
+         RooDataHist, RooMsgService, TStopwatch, RooAbsPdf, TBox, kBlack, kRed, \
+         kBlue, kOrange, kDashed, RooAbsCollection
 import pulls
 
 timer = TStopwatch()
@@ -106,10 +107,10 @@ fitter.ws.var('r_signal').setError(0.04)
 fr = None
 fr = fitter.fit()
 
-plot1 = fitter.stackedPlot(pars.var[0])
+plot1 = fitter.stackedPlot(pars.varNames[pars.var[0]])
 leg1 = RooWjj2DFitter.Wjj2DFitter.legend4Plot(plot1)
 
-c1 = TCanvas('c1', fitter.ws.var(pars.var[0]).GetTitle() + ' plot')
+c1 = TCanvas('c1', fitter.ws.var(pars.varNames[pars.var[0]]).GetTitle() + ' plot')
 plot1.Draw()
 leg1.Draw('same')
 c1.Update()
@@ -117,19 +118,19 @@ c1.Update()
 #Make the Data-NonDiboson subtracted plot
 #print 'plot1 : '
 #plot1.Print()
-xvar = fitter.ws.var(pars.var[0])
+xvar = fitter.ws.var(pars.varNames[pars.var[0]])
 xvar.setRange('plotRange', xvar.getMin(), xvar.getMax())
 dibosonSubtractedFrame = xvar.frame()
-dibosonSubtractedFrame.SetName("%s_subtracted" % pars.var[0])
+dibosonSubtractedFrame.SetName("%s_subtracted" % pars.varNames[pars.var[0]])
 dibosonResidual = plot1.residHist('theData', pars.backgrounds[1], False, True)#The first background is the diboson
 dibosonSubtractedFrame.addPlotable(dibosonResidual, 'p', False, True)
 fitter.ws.pdf('diboson').plotOn(dibosonSubtractedFrame)
-c2 = TCanvas('c2', fitter.ws.var(pars.var[0]).GetTitle() + ' Subtracted')
+c2 = TCanvas('c2', fitter.ws.var(pars.varNames[pars.var[0]]).GetTitle() + ' Subtracted')
 dibosonSubtractedFrame.GetYaxis().SetTitle(plot1.GetYaxis().GetTitle())
 dibosonSubtractedFrame.Draw()
 dibosonSubtractedLegend = TLegend(0.65, 0.72, 0.92, 0.89, '', 'NDC')
-dibosonSubtractedLegend.AddEntry('diboson_Norm[Mass2j_PFCor]','Diboson Projection','l')
-dibosonSubtractedLegend.AddEntry('resid_theData_top','Data - NonDiboson','p')
+dibosonSubtractedLegend.AddEntry('diboson_Norm[%s]' % pars.varNames[pars.var[0]] ,'Diboson Projection','l')
+dibosonSubtractedLegend.AddEntry('resid_theData_%s' % pars.backgrounds[1],'Data - NonDiboson','p')
 dibosonSubtractedLegend.Draw('same')
 c2.Update()
 
@@ -155,14 +156,14 @@ pull1 = pulls.createPull(plot1.getHist('theData'), firstCurve1)
 chi2 = chi2_1
 ndf = ndf_1-ndf
 
-cp1 = TCanvas("cp1", fitter.ws.var(pars.var[0]).GetTitle() + ' pull')
+cp1 = TCanvas("cp1", fitter.ws.var(pars.varNames[pars.var[0]]).GetTitle() + ' pull')
 pull1.Draw('ap')
-pull1.SetName(pars.var[0] + "_pull")
+pull1.SetName(pars.varNames[pars.var[0]] + "_pull")
 cp1.SetGridy()
 cp1.Update()
 pull1.GetXaxis().SetLimits(pars.varRanges[pars.var[0]][1], 
                            pars.varRanges[pars.var[0]][2])
-pull1.GetXaxis().SetTitle(fitter.ws.var(pars.var[0]).getTitle(True).Data())
+pull1.GetXaxis().SetTitle(fitter.ws.var(pars.varNames[pars.var[0]]).getTitle(True).Data())
 pull1.GetYaxis().SetTitle("pull (#sigma)")
 cp1.Update()
 
@@ -214,7 +215,7 @@ if opts.isElectron:
 #                           floatVar.getVal()+floatVar.getError()*5)
 
 
-output = TFile("Dibosonlnujj_%s_%ijets_output.root" % (mode, opts.Nj),
+output = TFile("DibosonBoostedlnuJ_%s_%ijets_output.root" % (mode, opts.Nj),
                "recreate")
 
 plot1.Write()
@@ -225,9 +226,9 @@ fitter.ws.Write()
 #fitter.ws.Print()
 output.Close()
 
-c1.SaveAs("Dibosonlnujj_%s_%ijets_Stacked.png" % (mode, opts.Nj))
-c2.SaveAs("Dibosonlnujj_%s_%ijets_Subtracted.png" % (mode, opts.Nj))
-cp1.SaveAs("Dibosonlnujj_%s_%ijets_Pull.png" % (mode, opts.Nj))
+c1.SaveAs("DibosonBoostedlnuJ_%s_%ijets_Stacked.png" % (mode, opts.Nj))
+c2.SaveAs("DibosonBoostedlnuJ_%s_%ijets_Subtracted.png" % (mode, opts.Nj))
+cp1.SaveAs("DibosonBoostedlnuJ_%s_%ijets_Pull.png" % (mode, opts.Nj))
 print 'Time elapsed: %.1f sec' % timer.RealTime()
 print 'CPU time used: %.1f sec' % timer.CpuTime()
 

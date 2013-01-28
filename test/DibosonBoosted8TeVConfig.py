@@ -5,49 +5,41 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars = Wjj2DFitterPars()
 
     pars.MCDirectory = '/uscms_data/d2/andersj/Wjj/2012/data/Moriond2013/ReducedTrees/'
-    # pars.MCDirectory = "root://cmseos:1094//eos/uscms/store/user/lnujj/Moriond2013/RD_includingDiboson/"
-    # pars.MCDirectory = "root://cmseos:1094//eos/uscms/store/user/lnujj/HCP2012METfix/ReducedTrees/"
     pars.isElectron = isElectron
     pars.initialParametersFile = initFile
 
     pars.backgrounds = ['diboson', 'top', 'WpJ']
     pars.includeSignal = includeSignal
     pars.signals = []
-    pars.yieldConstraints = {'top' : 0.07, 
-                             'WpJ' : 0.05 
-                             }
+    pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.05 }
     #pars.yieldConstraints = {}
-    #pars.constrainShapes = []
-    pars.constrainShapes = ['WpJ']
+    pars.constrainShapes = []
+    #pars.constrainShapes = ['WpJ']
 
     pars.Njets = Nj
-    pars.mHiggs = 126.
+    pars.mHiggs = mH
 
     if isElectron:
         flavorString = 'el'
     else:
         flavorString = 'mu'
 
-    pars.cuts = '(sqrt(JetPFCor_Pt[0]**2+JetPFCor_Pt[1]**2+2*JetPFCor_Pt[0]*JetPFCor_Pt[1]*cos(JetPFCor_Phi[0]-JetPFCor_Phi[1]))>70.)' + \
-        '&&(abs(JetPFCor_Eta[0]-JetPFCor_Eta[1])<1.5)' + \
-        '&&(abs(JetPFCor_dphiMET[0])>0.4)' + \
-        '&&(event_met_pfmet>25)' + \
-        '&&(W_mt>30.)'
-    # pars.cuts += '&&(JetPFCor_Pt[1]>35.)' + \
-    #     '&&(JetPFCor_Pt[0]>40.)' + \
-    #     '&&(JetPFCor_Pt[2]<30.)'
-    pars.cuts += '&&(JetPFCor_Pt[1]>35.)' + \
-        '&&(JetPFCor_Pt[0]>40.)'
+
+    pars.cuts = \
+        '(W_pt>200.)&&(GroomedJet_CA8_pt[0]>200)&&(ggdboostedWevt==1)' +\
+        '&&(event_metMVA_met>50.)&&(GroomedJet_CA8_deltaphi_METca8jet>2.0)' +\
+        '&&(GroomedJet_CA8_mass_pr[0]>40)&&(numPFCorJetBTags==0)' +\
+        '&&(GroomedJet_CA8_tau2tau1[0]<0.53)'
     #btag veto
     pars.btagVeto = False
-    for i in range(0, 6):
-        pars.cuts += '&&((abs(JetPFCor_Eta[%i])>2.4)||' % i + \
-            '(JetPFCor_Pt[%i]<30.)||' % i + \
-            '(JetPFCor_bDiscriminatorCSV[%i]<0.244))' % i
+    # for i in range(0, 6):
+    #     pars.cuts += '&&((abs(JetPFCor_Eta[%i])>2.4)||' % i + \
+    #         '(JetPFCor_Pt[%i]<30.)||' % i + \
+    #         '(JetPFCor_bDiscriminatorCSV[%i]<0.679))' % i
 
     # veto boosted topology
-    # pars.cuts += '&&(ggdboostedWevt==0)&&(W_pt<200.)'
-    pars.cuts += '&&(W_pt<200.)'
+    # if mH >= 600:
+    #     pars.cuts += '&&(W_pt<200.)'
 
     # veto vbf
     pars.cuts += '&&(vbf_event==0)'
@@ -55,40 +47,52 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     # you need a files entry and a models entry for each of the fit 
     # compoents in backgrounds and signals
     # the files should a list with entries like (filename, Ngen, xsec)
+
     pars.dibosonFiles = [
         (pars.MCDirectory + 'RD_%s_WW_CMSSW532.root' % (flavorString),
          9450414, 57.1097),
         (pars.MCDirectory + 'RD_%s_WZ_CMSSW532.root' % (flavorString),
          10000267, 32.3161),
         ]
-    pars.dibosonModels = [13]
- 
+    pars.dibosonModels = [5]
+    ## or
+    ## pars.dibosonModels = [7]
+
+
+##     pars.WpJFiles = [
+##         (pars.MCDirectory + 'RD_%s_WpJ_CMSSW532.root' % (flavorString),
+##          18353019+50768992, 36257.2),
+##          # 18353019, 36257.2),
+##         (pars.MCDirectory + 'RD_%s_ZpJ_CMSSW532.root' % (flavorString),
+##          30209426, 3503.71),
+##         ]
+    
     pars.WpJFiles = [
-        (pars.MCDirectory + 'RD_%s_WpJ_CMSSW532.root' % (flavorString),
-         18353019+50768992, 36257.2),
-         # 18353019, 36257.2),
-        (pars.MCDirectory + 'RD_%s_ZpJ_CMSSW532.root' % (flavorString),
-         30209426, 3503.71),
+        (pars.MCDirectory + 'RD_%s_WJets_madgraph_CMSSW532.root' % (flavorString),
+         8955318, 1.3*228.9),
         ]
+    pars.WpJModels = [8]
+ 
+
     
     ##pars.WpJModels = [17]
-    
-    ### To implement Template Morphing set pars.WpJModels=[-2] and be sure to edit the WpJ*InputParameters.txt file so that the naming scheme corresponds to the correct components/subcomponents. E.g. the parameters from the shape fit to WpJ default MC should contain the suffix Nom, while the overall yield shouldn't, and the lines
-    ###     fMU_WpJ = 0.0 +/- 100.0 L(-1 - 1)
-    ### fSU_WpJ = 0.0 +/- 100.0 L(-1 - 1)
-    ### should be added to the .txt file
-    pars.WpJModels = [-2]
+##     ### Template morphing can not be implemented due to limited statistics in the systematics MC files    
+##     ### To implement Template Morphing set pars.WpJModels=[-2] and be sure to edit the WpJ*InputParameters.txt file so that the naming scheme corresponds to the correct components/subcomponents. E.g. the parameters from the shape fit to WpJ default MC should contain the suffix Nom, while the overall yield shouldn't, and the lines
+##     ###     fMU_WpJ = 0.0 +/- 100.0 L(-1 - 1)
+##     ### fSU_WpJ = 0.0 +/- 100.0 L(-1 - 1)
+##     ### should be added to the .txt file
+##     pars.WpJModels = [-2]
 
-    pars.WpJNomFiles = pars.WpJFiles
-    pars.WpJNomModels = [17]
-    pars.WpJMUFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingup_CMSSW532.root' % (flavorString), 20976007, 36257.2), ]
-    pars.WpJMUModels = [-1]
-    pars.WpJMDFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingdown_CMSSW532.root' % (flavorString), 21364575, 36257.2), ]
-    pars.WpJMDModels = [-1]
-    pars.WpJSUFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaleup_CMSSW532.root' % (flavorString), 20784694, 36257.2), ]
-    pars.WpJSUModels = [-1]
-    pars.WpJSDFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaledown_CMSSW532.root' % (flavorString), 20760830, 36257.2), ]
-    pars.WpJSDModels = [-1]
+##     pars.WpJNomFiles = pars.WpJFiles
+##     pars.WpJNomModels = [17]
+##     pars.WpJMUFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingup_CMSSW532.root' % (flavorString), 20976007, 36257.2), ]
+##     pars.WpJMUModels = [-1]
+##     pars.WpJMDFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingdown_CMSSW532.root' % (flavorString), 21364575, 36257.2), ]
+##     pars.WpJMDModels = [-1]
+##     pars.WpJSUFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaleup_CMSSW532.root' % (flavorString), 20784694, 36257.2), ]
+##     pars.WpJSUModels = [-1]
+##     pars.WpJSDFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaledown_CMSSW532.root' % (flavorString), 20760830, 36257.2), ]
+##     pars.WpJSDModels = [-1]
 
     
     pars.topFiles = [
@@ -114,12 +118,18 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.topPlotting = {'color' : kGreen+2, 'title' : 'top'}
     pars.ggHPlotting = {'color' : kBlue, 'title' : "ggH(%i) #rightarrow WW" % mH}
 
-    pars.var = ['Mass2j_PFCor']
-    pars.varRanges = {'Mass2j_PFCor': (12, 50., 146., []),
+##     pars.var = ['Mass2j_PFCor']
+##     pars.varRanges = {'Mass2j_PFCor': (12, 50., 146., []),
+##                       }
+##     pars.varTitles = {'Mass2j_PFCor': 'm_{jj}',
+##                       }
+
+    pars.var = ['GroomedJet_CA8_mass_pr[0]']
+    pars.varRanges = {'GroomedJet_CA8_mass_pr[0]': (20, 40., 140., []),}
+    pars.varTitles = {'GroomedJet_CA8_mass_pr[0]': 'm_{J}',
                       }
-    pars.varTitles = {'Mass2j_PFCor': 'm_{jj}',
-                      }
-    pars.varNames = {'Mass2j_PFCor': 'Mass2j_PFCor' }
+    pars.varNames = {'GroomedJet_CA8_mass_pr[0]': 'GroomedJet_CA8_mass_pr' }
+
     
     pars.exclude = {}
     pars.blind = False
@@ -162,7 +172,8 @@ def customizeElectrons(pars):
         }
     pars.lumiPerEpoch = [pars.integratedLumi]
 
-    pars.cuts += '&&(W_electron_pt>30)'
+##     pars.cuts += '&&(W_electron_pt>30)'
+    pars.cuts += '&&(event_metMVA_met>70)&&(W_electron_pt>35)'
     return pars
 
 def customizeMuons(pars):
@@ -176,6 +187,6 @@ def customizeMuons(pars):
         }
     pars.lumiPerEpoch = [pars.integratedLumi]
 
-    pars.cuts += '&&(abs(W_muon_eta)<2.1)&&(W_muon_pt>25.)'
+##    pars.cuts += '&&(abs(W_muon_eta)<2.1)&&(W_muon_pt>25.)'
     
     return pars

@@ -25,6 +25,7 @@ class Wjj2DFitterPars:
                                     115.,125.,135.,150.]),
                   'fit_mlvjj': (20, 200., 400., [])
                   }
+    varNames = {'GroomedJet_CA8_mass_pr[0]': 'GroomedJet_CA8_mass_pr' }
   
     # lumi
     integratedLumi = 3500.

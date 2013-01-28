@@ -373,15 +373,15 @@ class Wjj2DFitter:
         fMU_comp = self.ws.factory("fMU_%s[0., -1., 1.]" % component)
         fSU_comp = self.ws.factory("fSU_%s[0., -1., 1.]" % component)
 
-        fMU = RooFormulaVar("fMU_%s" % component, "1.0*@0*(@0 >= 0.)", 
+        fMU = RooFormulaVar("f_fMU_%s" % component, "1.0*@0*(@0 >= 0.)", 
                             RooArgList( fMU_comp ) )
-        fMD = RooFormulaVar("fMD_%s" % component, "-1.0*@0*(@0 < 0.)", 
+        fMD = RooFormulaVar("f_fMD_%s" % component, "-1.0*@0*(@0 < 0.)", 
                             RooArgList( fMU_comp ) )
-        fSU = RooFormulaVar("fSU_%s" % component, "@0*(@0 >= 0.)", 
+        fSU = RooFormulaVar("f_fSU_%s" % component, "@0*(@0 >= 0.)", 
                             RooArgList( fSU_comp ) )
-        fSD = RooFormulaVar("fSD_%s" % component, "@0*(-1)*(@0 < 0.)", 
+        fSD = RooFormulaVar("f_fSD_%s" % component, "@0*(-1)*(@0 < 0.)", 
                             RooArgList( fSU_comp ) )
-        fNom = RooFormulaVar("fNom","fNom", "(1.-abs(@0)-abs(@1))", 
+        fNom = RooFormulaVar("f_fNom","fNom", "(1.-abs(@0)-abs(@1))", 
                              RooArgList(fMU_comp,fSU_comp) )
         morphPdf = RooAddPdf(component,component, 
                              RooArgList(MUPdf,MDPdf,SUPdf,SDPdf,NomPdf),
