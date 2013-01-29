@@ -128,9 +128,20 @@
 #include "ElectroWeakAnalysis/VPlusJets/interface/QGLikelihoodCalculator.h"
 #include "MMozer/powhegweight/interface/pwhg_wrapper.h"
 
+//const TString inDataDir  = "/eos/uscms/store/user/pdudero/lnujj/ICHEP12/MergedNtuples/";
+//const TString inDataDir  = "/eos/uscms/store/user/lnujj/HCP2012METfix/MergedNtuples/";
+//const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/weizountuple/";
+//const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples/";
+//const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
 const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
-const TString inQCDDir   = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
-const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/RD/";
+//const TString inDataDir  = "/uscms_data/d2/andersj/Wjj/2012/data/Moriond2013/trees/";
+//const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/HCPlnjj/MergedNtuples/";
+//const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/weizountuple/";
+const TString inQCDDir   = "/eos/uscms/store/user/lnujj/HCP2012METfix/MergedNtuples/";
+//const TString outDataDir = "/uscms_data/d3/weizou/MakeNtuple/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/";
+//const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/ttHsample/";
+const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/BoostedWSample_v2/";
+//const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/ttHsample_New_v14/";
 const std::string fDir   = "EffTable2012/";
 const std::string fInterferenceDir   = "InterferenceTable2012/";
 
@@ -141,13 +152,6 @@ bool large(const double &a, const double &b)
 
 void kanaelec::myana(double myflag, bool isQCD, int runflag)
 {
-
-  gROOT->ProcessLine(".L Resolution.cc+");
-  gROOT->ProcessLine(".L ../src/METzCalculator.cc+");
-  gROOT->ProcessLine(".L ../src/QGLikelihoodCalculator.C+");
-  gROOT->ProcessLine(".L EffTableReader.cc+");
-  gROOT->ProcessLine(".L EffTableLoader.cc+");
-   
    //Prepare the histogram for the cut-flow control : 8 presel + 7 sel
    const int n_step = 15;
    TH1F* h_events          = new TH1F("h_events", "h_events", n_step, 0, n_step);
@@ -192,7 +196,6 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
       }
    }
 
-
    if (myflag == 20120000 || myflag == -100){
       myChain = new TChain("WJet"); 
 
@@ -200,9 +203,16 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          //InitCounters( inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_9p3invfb.root", h_events, h_events_weighted);
          //myChain->Add(                    inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_9p3invfb.root"); 
          //Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_9p3invfb");
-         InitCounters( inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_11p9invfb.root", h_events, h_events_weighted);
-         myChain->Add(                    inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_11p9invfb.root"); 
-         Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_11p9invfb");
+         //InitCounters( inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_11p9invfb.root", h_events, h_events_weighted);
+         //myChain->Add(                    inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_11p9invfb.root"); 
+         //Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_11p9invfb");
+         //InitCounters( inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_13p9invfb.root", h_events, h_events_weighted);
+         //myChain->Add(                    inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_13p9invfb.root"); 
+         //InitCounters( inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_18p65invfb.root", h_events, h_events_weighted);
+         //myChain->Add(                    inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_18p65invfb.root"); 
+         InitCounters( inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root", h_events, h_events_weighted);
+         myChain->Add(                    inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root"); 
+         Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb");
       } else {
          InitCounters( inDataDir + "QCD_WenuJets_DataAll_GoldenJSON_9p3invfb.root", h_events, h_events_weighted);
          myChain->Add(                    inQCDDir +     "QCD_WenuJets_DataAll_GoldenJSON_9p3invfb.root");
@@ -332,9 +342,10 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
 
       if (myflag == 20121009 || myflag == -500){
          InitCounters( inDataDir + "el_WJets_CMSSW532.root", h_events, h_events_weighted);
+         //InitCounters( inDataDir + "el_WpJ_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_WJets_CMSSW532.root"); 
-         Init(myChain);Loop( h_events, h_events_weighted, 20121009,runflag, outDataDir + "RD_el_WJets_CMSSW532");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121009,runflag, outDataDir + "RD_el_WpJ_CMSSW532");
       }
 
       if (myflag == 20111010 || myflag == -200){
@@ -487,6 +498,18 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          myChain = new TChain("WJet");
          myChain->Add(                    inDataDir + "el_ttW_CMSSW532.root");
          Init(myChain);Loop(  h_events, h_events_weighted,20121030,runflag, outDataDir + "RD_el_ttW_CMSSW532");
+      }
+      if (myflag == 20121031 || myflag == -200){
+         InitCounters( inDataDir + "el_WJets_herwig_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add(                    inDataDir + "el_WJets_herwig_CMSSW532.root");
+         Init(myChain);Loop(  h_events, h_events_weighted,20121030,runflag, outDataDir + "RD_el_WJets_herwig_CMSSW532");
+      }
+      if (myflag == 20121032 || myflag == -200){
+         InitCounters( inDataDir + "el_WJets_madgraph_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add(                    inDataDir + "el_WJets_madgraph_CMSSW532.root");
+         Init(myChain);Loop(  h_events, h_events_weighted,20121030,runflag, outDataDir + "RD_el_WJets_madgraph_CMSSW532");
       }
 
       // Higgs Signal Samples
@@ -1077,11 +1100,11 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    fChain->SetBranchStatus("JetPFCorVBFTag_bDiscriminator",    1);
    fChain->SetBranchStatus("JetPFCorVBFTag_bDiscriminatorCSV",    1);
    // Drop gen jet information
-   //fChain->SetBranchStatus("*Gen*",    0);
+   fChain->SetBranchStatus("*Gen*",    0);
    //fChain->SetBranchStatus("W_H_*",    0);
-   //fChain->SetBranchStatus("W_Parton_*",    0);
-   //fChain->SetBranchStatus("W_Lepton_*",    0);
-   //fChain->SetBranchStatus("W_Met_*",    0);
+   fChain->SetBranchStatus("W_Parton_*",    0);
+   fChain->SetBranchStatus("W_Lepton_*",    0);
+   fChain->SetBranchStatus("W_Met_*",    0);
 
    //Drop Some Groomed information
    fChain->SetBranchStatus("GroomedJet_*_pt_uncorr" , 0);
@@ -1375,8 +1398,23 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    Int_t   ggdboostedWevt =0;
    TBranch *branch_ggdboostedWevt = newtree->Branch("ggdboostedWevt", &ggdboostedWevt, "ggdboostedWevt/I");
 
-   Int_t   GroomedJet_numberbjets = 0;
-   TBranch *branch_GroomedJet_numberbjets = newtree->Branch("GroomedJet_numberbjets", &GroomedJet_numberbjets,"GroomedJet_numberbjets/I");
+   Int_t   GroomedJet_numberbjets_csvl = 0; 
+   TBranch *branch_GroomedJet_numberbjets_csvl = newtree->Branch("GroomedJet_numberbjets_csvl", &GroomedJet_numberbjets_csvl,"GroomedJet_numberbjets_csvl/I");
+
+   Int_t   GroomedJet_numberbjets_csvm = 0; 
+   TBranch *branch_GroomedJet_numberbjets_csvm = newtree->Branch("GroomedJet_numberbjets_csvm", &GroomedJet_numberbjets_csvm,"GroomedJet_numberbjets_csvm/I");
+
+   Int_t   GroomedJet_numberbjets_ssvhem = 0; 
+   TBranch *branch_GroomedJet_numberbjets_ssvhem = newtree->Branch("GroomedJet_numberbjets_ssvhem", &GroomedJet_numberbjets_ssvhem,"GroomedJet_numberbjets_ssvhem/I");
+
+   Int_t   GroomedJet_numberbjets_csvl_veto = 0; 
+   TBranch *branch_GroomedJet_numberbjets_csvl_veto = newtree->Branch("GroomedJet_numberbjets_csvl_veto", &GroomedJet_numberbjets_csvl_veto,"GroomedJet_numberbjets_csvl_veto/I");
+
+   Int_t   GroomedJet_numberbjets_csvm_veto = 0; 
+   TBranch *branch_GroomedJet_numberbjets_csvm_veto = newtree->Branch("GroomedJet_numberbjets_csvm_veto", &GroomedJet_numberbjets_csvm_veto,"GroomedJet_numberbjets_csvm_veto/I");
+
+   Int_t   GroomedJet_numberbjets_ssvhem_veto = 0; 
+   TBranch *branch_GroomedJet_numberbjets_ssvhem_veto = newtree->Branch("GroomedJet_numberbjets_ssvhem_veto", &GroomedJet_numberbjets_ssvhem_veto,"GroomedJet_numberbjets_ssvhem_veto/I");
 
    Int_t   GroomedJet_numberjets = 0;
    TBranch *branch_GroomedJet_numberjets = newtree->Branch("GroomedJet_numberjets", &GroomedJet_numberjets,"GroomedJet_numberjets/I");
@@ -1472,8 +1510,23 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    Int_t   ggdboostedWevt_ak7 =0;
    TBranch *branch_ggdboostedWevt_ak7 = newtree->Branch("ggdboostedWevt_ak7", &ggdboostedWevt_ak7, "ggdboostedWevt_ak7/I"); 
 
-   Int_t   GroomedJet_numberbjets_ak7 = 0;
-   TBranch *branch_GroomedJet_numberbjets_ak7 = newtree->Branch("GroomedJet_numberbjets_ak7", &GroomedJet_numberbjets_ak7,"GroomedJet_numberbjets_ak7/I");
+   Int_t   GroomedJet_numberbjets_csvl_ak7 = 0;
+   TBranch *branch_GroomedJet_numberbjets_csvl_ak7 = newtree->Branch("GroomedJet_numberbjets_csvl_ak7", &GroomedJet_numberbjets_csvl_ak7,"GroomedJet_numberbjets_csvl_ak7/I");
+
+   Int_t   GroomedJet_numberbjets_csvm_ak7 = 0;
+   TBranch *branch_GroomedJet_numberbjets_csvm_ak7 = newtree->Branch("GroomedJet_numberbjets_csvm_ak7", &GroomedJet_numberbjets_csvm_ak7,"GroomedJet_numberbjets_csvm_ak7/I");
+
+   Int_t   GroomedJet_numberbjets_ssvhem_ak7 = 0;
+   TBranch *branch_GroomedJet_numberbjets_ssvhem_ak7 = newtree->Branch("GroomedJet_numberbjets_ssvhem_ak7", &GroomedJet_numberbjets_ssvhem_ak7,"GroomedJet_numberbjets_ssvhem_ak7/I");
+
+   Int_t   GroomedJet_numberbjets_csvl_veto_ak7 = 0;
+   TBranch *branch_GroomedJet_numberbjets_csvl_veto_ak7 = newtree->Branch("GroomedJet_numberbjets_csvl_veto_ak7", &GroomedJet_numberbjets_csvl_veto_ak7,"GroomedJet_numberbjets_csvl_veto_ak7/I");
+
+   Int_t   GroomedJet_numberbjets_csvm_veto_ak7 = 0;
+   TBranch *branch_GroomedJet_numberbjets_csvm_veto_ak7 = newtree->Branch("GroomedJet_numberbjets_csvm_veto_ak7", &GroomedJet_numberbjets_csvm_veto_ak7,"GroomedJet_numberbjets_csvm_veto_ak7/I");
+
+   Int_t   GroomedJet_numberbjets_ssvhem_veto_ak7 = 0;
+   TBranch *branch_GroomedJet_numberbjets_ssvhem_veto_ak7 = newtree->Branch("GroomedJet_numberbjets_ssvhem_veto_ak7", &GroomedJet_numberbjets_ssvhem_veto_ak7,"GroomedJet_numberbjets_ssvhem_veto_ak7/I");
 
    Int_t   GroomedJet_numberjets_ak7 = 0;
    TBranch *branch_GroomedJet_numberjets_ak7 = newtree->Branch("GroomedJet_numberjets_ak7", &GroomedJet_numberjets_ak7,"GroomedJet_numberjets_ak7/I");
@@ -1924,6 +1977,9 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    //EffTableLoader eleRecoEff(       fDir + "scaleFactor-2012A-PromptReco-v1-SCToElectron.txt");
    //EffTableLoader eleHLTEff(        fDir + "efficiency-2012A_PromptReco_v1-WP80ToHLTEle.txt");
 
+   //EffTableLoader eleIdEff(         fDir + "scaleFactor-Run2012ABC-GsfElectronToId.txt");
+   //EffTableLoader eleRecoEff(       fDir + "scaleFactor-Run2012ABC-SCToElectron.txt");
+   //EffTableLoader eleHLTEff(        fDir + "efficiency-Run2012ABC-WP80ToHLTEle.txt");
    EffTableLoader eleIdEff(         fDir + "scaleFactor-Run2012ABCD-GsfElectronToId.txt");
    EffTableLoader eleRecoEff(       fDir + "scaleFactor-Run2012ABCD-SCToElectron.txt");
    EffTableLoader eleHLTEff(        fDir + "efficiency-Run2012ABCD-WP80ToHLTEle.txt");
@@ -1985,7 +2041,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    // S7 MC PU True profile - hardcoded, wow
    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupMCReweightingUtilities
    //TFile *dataFile_      = new TFile( "PileupHistogramGold_190456-196531_8TeV_PromptReco_Collisions12_true.root" );
-   TFile *dataFile_      = new TFile( "Data190456-208686_PileupHistogram.root" );
+   TFile *dataFile_      = new TFile( "Data190389-200041_PileupHistogram.root" );
    TH1F* PU_intended = new TH1F(  *(static_cast<TH1F*>(dataFile_->Get( "pileup" )->Clone() )) );
    TH1F* PU_generated = new TH1F("PU_generated","Generated pileup distribution (i.e., MC)",60,0.,60);
    Double_t Summer2012[60] = {
@@ -2209,7 +2265,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       //Average Complex Pole Weight for normalization
       avecomplexpolewtggH180 = 1.0; avecomplexpolewtggH190 = 1.0; avecomplexpolewtggH200 = 1.0; avecomplexpolewtggH250 = 1.0; avecomplexpolewtggH300 = 1.0; avecomplexpolewtggH350 = 1.0; avecomplexpolewtggH400 = 1.0; avecomplexpolewtggH450 = 1.0; avecomplexpolewtggH500 = 1.0; avecomplexpolewtggH550 = 1.0; avecomplexpolewtggH600 = 1.0; avecomplexpolewtggH700 = 1.0; avecomplexpolewtggH800 = 1.0; avecomplexpolewtggH900 = 1.0; avecomplexpolewtggH1000 = 1.0;
 
-      isgengdboostedWevt = 0; ggdboostedWevt = 0; GroomedJet_numberbjets = 0; GroomedJet_numberjets = 0;
+      isgengdboostedWevt = 0; ggdboostedWevt = 0;  GroomedJet_numberbjets_csvm = 0; GroomedJet_numberbjets_csvl = 0; GroomedJet_numberbjets_ssvhem = 0; GroomedJet_numberbjets_csvl_veto = 0; GroomedJet_numberbjets_csvm_veto = 0; GroomedJet_numberbjets_ssvhem_veto = 0; GroomedJet_numberjets = 0;
 
       GroomedJet_CA8_deltaR_lca8jet = -999; GroomedJet_CA8_deltaphi_METca8jet = -999; GroomedJet_CA8_deltaphi_Vca8jet = -999;
 
@@ -2237,7 +2293,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       boostedW_wjj_ang_ha = 999; boostedW_wjj_ang_hb = 999; boostedW_wjj_ang_hs = 999; boostedW_wjj_ang_phi = 999; boostedW_wjj_ang_phia = 999; boostedW_wjj_ang_phib = 999;
 
       //AK7
-      ggdboostedWevt_ak7 = 0; GroomedJet_numberbjets_ak7 = 0; GroomedJet_numberjets_ak7 = 0;
+      ggdboostedWevt_ak7 = 0; GroomedJet_numberbjets_csvm_ak7 = 0; GroomedJet_numberbjets_csvl_ak7 = 0; GroomedJet_numberbjets_ssvhem_ak7 = 0; GroomedJet_numberbjets_csvl_veto_ak7 = 0; GroomedJet_numberbjets_csvm_veto_ak7 = 0; GroomedJet_numberbjets_ssvhem_veto_ak7 = 0; GroomedJet_numberjets_ak7 = 0;
 
       GroomedJet_AK7_deltaR_lak7jet = -999; GroomedJet_AK7_deltaphi_METak7jet = -999; GroomedJet_AK7_deltaphi_Vak7jet = -999;
 
@@ -2798,20 +2854,55 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
                double tmpdelatR = ca8jetp4.DeltaR(ajp);
 
+               //cout << "Error 11" <<endl;
+               double tmpdeltaRlj = ajp.DeltaR(mup);
+               //cout << "Error 12" <<endl;
+
                if(tmpdelatR > 0.8)//Veto the AK5 jet in the CA8 jet cone
                {
                   GroomedJet_numberjets = GroomedJet_numberjets + 1;
                }
 
                //if(JetPFCor_bDiscriminator[i] > btssv && tmpdelatR > 0.8)//Veto the AK5 jet in the CA8 jet cone
-               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR > 0.8)//Veto the AK5 jet in the CA8 jet cone and Move to CSVM tagger
+               /*if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR > 0.8)//Veto the AK5 jet in the CA8 jet cone and Move to CSVM tagger
+                 {
+                 GroomedJet_numberbjets = GroomedJet_numberbjets + 1;
+                 }
+                */
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR > 0.8 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the CA8 jet cone and Move to CSVM tagger and leptonic and hadronic top should be in the different hemisphere for ttbar control
                {
-                  GroomedJet_numberbjets = GroomedJet_numberbjets + 1;
+                  GroomedJet_numberbjets_csvm = GroomedJet_numberbjets_csvm + 1;
+               }
+
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl && tmpdelatR > 0.8 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the CA8 jet cone and Move to CSVM tagger and leptonic and hadronic top should be in the different hemisphere for ttbar control
+               {
+                  GroomedJet_numberbjets_csvl = GroomedJet_numberbjets_csvl + 1;
+               }
+
+               if(JetPFCor_bDiscriminator[i] > btssv && tmpdelatR > 0.8 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the CA8 jet cone and Move to CSVM tagger and leptonic and hadronic top should be in the different hemisphere for ttbar control
+               {
+                  GroomedJet_numberbjets_ssvhem = GroomedJet_numberbjets_ssvhem + 1;
+               }
+
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl)//ttbar veto
+               {
+                  GroomedJet_numberbjets_csvl_veto = GroomedJet_numberbjets_csvl_veto + 1;
+               }
+
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm)//ttbar veto
+               {
+                  GroomedJet_numberbjets_csvm_veto = GroomedJet_numberbjets_csvm_veto + 1;
+               }
+
+               if(JetPFCor_bDiscriminator[i] > btssv)//ttbar veto
+               {
+                  GroomedJet_numberbjets_ssvhem_veto = GroomedJet_numberbjets_ssvhem_veto + 1;
                }
             }
          }
 
-         if(deltaR_lca8jet > 1.0 && deltaphi_METca8jet > 0.4 && deltaphi_Vca8jet > 2.0)
+         //if(deltaR_lca8jet > 1.0 && deltaphi_METca8jet > 0.4 && deltaphi_Vca8jet > 2.0)
+         if(deltaR_lca8jet > TMath::Pi()/ 2.0 && deltaphi_METca8jet > 2.0 && deltaphi_Vca8jet > 2.0)//Tighter Angular Cuts 
          {
             ggdboostedWevt = 1;
          }
@@ -2935,7 +3026,14 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                TLorentzVector  ajp;
                ajp.SetPtEtaPhiE(jess * JetPFCor_Pt[i], JetPFCor_Eta[i], JetPFCor_Phi[i], jess * JetPFCor_E[i]  );
 
+               //cout<<"Error 13"<< endl;
                double tmpdelatR = ak7jetp4.DeltaR(ajp);
+
+               //double tmpdelatR = 0.5; //Current Sample doesn't have the AK7 informatio in the electron channel
+
+               //cout<<"Error 14"<< endl;
+               double tmpdeltaRlj = ajp.DeltaR(mup);
+               //cout<<"Error 15"<< endl;
 
                if(tmpdelatR > 0.7)//Veto the AK5 jet in the AK7 jet cone
                {
@@ -2943,14 +3041,40 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                }
 
                //if(JetPFCor_bDiscriminator[i] > btssv && tmpdelatR > 0.8)//Veto the AK5 jet in the AK7 jet cone
-               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR > 0.8)//Veto the AK5 jet in the AK7 jet cone and Move to CSVM tagger
+               /*if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR > 0.8)//Veto the AK5 jet in the AK7 jet cone and Move to CSVM tagger
+                 {
+                 GroomedJet_numberbjets_ak7 = GroomedJet_numberbjets_ak7 + 1;
+                 }
+                */
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm && tmpdelatR > 0.7 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the AK7 jet cone and Move to CSVM tagger
                {
-                  GroomedJet_numberbjets_ak7 = GroomedJet_numberbjets_ak7 + 1;
+                  GroomedJet_numberbjets_csvm_ak7 = GroomedJet_numberbjets_csvm_ak7 + 1;
+               }
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl && tmpdelatR > 0.7 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the AK7 jet cone and Move to CSVM tagger
+               {
+                  GroomedJet_numberbjets_csvl_ak7 = GroomedJet_numberbjets_csvl_ak7 + 1;
+               }
+               if(JetPFCor_bDiscriminator[i] > btssv && tmpdelatR > 0.7 && tmpdeltaRlj > TMath::Pi()/2.0)//Veto the AK5 jet in the AK7 jet cone and Move to CSVM tagger
+               {
+                  GroomedJet_numberbjets_ssvhem_ak7 = GroomedJet_numberbjets_ssvhem_ak7 + 1;
+               }
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvl)//ttbar veto
+               {
+                  GroomedJet_numberbjets_csvl_veto_ak7 = GroomedJet_numberbjets_csvl_veto_ak7 + 1;
+               }
+               if(JetPFCor_bDiscriminatorCSV[i] > btcsvm)//ttbar veto
+               {
+                  GroomedJet_numberbjets_csvm_veto_ak7 = GroomedJet_numberbjets_csvm_veto_ak7 + 1;
+               }
+               if(JetPFCor_bDiscriminator[i] > btssv)//ttbar veto
+               {
+                  GroomedJet_numberbjets_ssvhem_veto_ak7 = GroomedJet_numberbjets_ssvhem_veto_ak7 + 1;
                }
             }
          }
 
-         if(deltaR_lak7jet > 1.0 && deltaphi_METak7jet > 0.4 && deltaphi_Vak7jet > 2.0) 
+         //if(deltaR_lak7jet > 1.0 && deltaphi_METak7jet > 0.4 && deltaphi_Vak7jet > 2.0) 
+         if(deltaR_lak7jet > TMath::Pi()/2.0 && deltaphi_METak7jet > 2.0 && deltaphi_Vak7jet > 2.0)//Tighter Angular Cuts 
          {
             ggdboostedWevt_ak7 = 1;
          }
@@ -3897,7 +4021,12 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
          branch_GroomedJet_CA8_deltaR_lca8jet->Fill();
          branch_GroomedJet_CA8_deltaphi_METca8jet->Fill();
          branch_GroomedJet_CA8_deltaphi_Vca8jet->Fill();
-         branch_GroomedJet_numberbjets->Fill();
+         branch_GroomedJet_numberbjets_csvl->Fill();
+         branch_GroomedJet_numberbjets_csvm->Fill();
+         branch_GroomedJet_numberbjets_ssvhem->Fill();
+         branch_GroomedJet_numberbjets_csvl_veto->Fill();
+         branch_GroomedJet_numberbjets_csvm_veto->Fill();
+         branch_GroomedJet_numberbjets_ssvhem_veto->Fill();
          branch_GroomedJet_numberjets->Fill();
          branch_GroomedJet_CA8_rcores01->Fill();
          branch_GroomedJet_CA8_rcores02->Fill();
@@ -3963,7 +4092,12 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
          branch_GroomedJet_AK7_deltaR_lak7jet->Fill();
          branch_GroomedJet_AK7_deltaphi_METak7jet->Fill();
          branch_GroomedJet_AK7_deltaphi_Vak7jet->Fill();
-         branch_GroomedJet_numberbjets_ak7->Fill();
+         branch_GroomedJet_numberbjets_csvl_ak7->Fill();
+         branch_GroomedJet_numberbjets_csvm_ak7->Fill();
+         branch_GroomedJet_numberbjets_ssvhem_ak7->Fill();
+         branch_GroomedJet_numberbjets_csvl_veto_ak7->Fill();
+         branch_GroomedJet_numberbjets_csvm_veto_ak7->Fill();
+         branch_GroomedJet_numberbjets_ssvhem_veto_ak7->Fill();
          branch_GroomedJet_numberjets_ak7->Fill();
          branch_GroomedJet_AK7_rcores01->Fill();
          branch_GroomedJet_AK7_rcores02->Fill();
