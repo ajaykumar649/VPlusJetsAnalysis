@@ -86,6 +86,9 @@ void ewk::PhotonTreeFiller::SetBranches()
   SetBranch( PFisocharged03, "PFisocharged03");
   SetBranch( PFisophoton03, "PFisophoton03");
   SetBranch( PFisoneutral03, "PFisoneutral03");
+  SetBranch( trkSumPtHollConeDR04_Pho11, "trkSumPtHollowConeDR04_Photon11");
+  SetBranch( ecalRecHitSumEtConeDR04_Pho11, "ecalRecHitSumEtConeDR04_Photon11");
+  SetBranch( hcalTowSumEtConeDR04_Pho11, "hcalTowerSumEtConeDR04_Photon11");
 
   SetBranch( HoverE, "Photon_HoverE");
   SetBranch( HoverE2011, "Photon_HoverE2011");
@@ -219,6 +222,9 @@ void ewk::PhotonTreeFiller::init()
     PFisocharged03[j] = -1;
     PFisophoton03[j]  = -1;
     PFisoneutral03[j] = -1;
+    trkSumPtHollConeDR04_Pho11[j] = -1;
+    ecalRecHitSumEtConeDR04_Pho11[j] = -1;
+    hcalTowSumEtConeDR04_Pho11[j] = -1;
 
     HoverE[j] = -1.; 
     SigmaIetaIeta[j] = -1.; 
@@ -302,7 +308,11 @@ void ewk::PhotonTreeFiller::fill(const edm::Event& iEvent)
          PFisocharged03[NumPhotons] =  max((*(*photonIsoVals)[0])[myPhotonRef] - fastJetRho*EAch(fabs(myPhotonRef->eta())),0.);
          PFisophoton03[NumPhotons]  = max((*(*photonIsoVals)[1])[myPhotonRef] - fastJetRho*EAnh(fabs(myPhotonRef->eta())),0.);
          PFisoneutral03[NumPhotons] = max((*(*photonIsoVals)[2])[myPhotonRef] - fastJetRho*EApho(fabs(myPhotonRef->eta())),0.);
-         
+
+         trkSumPtHollConeDR04_Pho11[NumPhotons] = myPhotonRef->trkSumPtHollowConeDR04();
+         ecalRecHitSumEtConeDR04_Pho11[NumPhotons] = myPhotonRef->ecalRecHitSumEtConeDR04();
+         hcalTowSumEtConeDR04_Pho11[NumPhotons] = myPhotonRef->hcalTowerSumEtConeDR04();
+
          SC_Et[NumPhotons] = (myPhotonRef->superCluster()->energy())/(cosh(myPhotonRef->superCluster()->position().eta()));
          SC_E[NumPhotons] = myPhotonRef->superCluster()->energy();
          SC_Eta[NumPhotons] = myPhotonRef->superCluster()->position().eta();

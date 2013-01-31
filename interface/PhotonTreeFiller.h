@@ -117,6 +117,9 @@ namespace ewk {
     float PFisocharged03[NUM_PHO_MAX];
     float PFisophoton03[NUM_PHO_MAX];
     float PFisoneutral03[NUM_PHO_MAX];
+    float trkSumPtHollConeDR04_Pho11[NUM_PHO_MAX];
+    float ecalRecHitSumEtConeDR04_Pho11[NUM_PHO_MAX];
+    float hcalTowSumEtConeDR04_Pho11[NUM_PHO_MAX];
 
     float HoverE[NUM_PHO_MAX];
     float HoverE2011[NUM_PHO_MAX];
