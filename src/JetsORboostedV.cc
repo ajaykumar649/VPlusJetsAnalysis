@@ -13,7 +13,7 @@
 //
 // Original Author:  Jordan Damgov
 //         Created:  Tue Sep 11 19:16:16 CDT 2012
-// $Id$
+// $Id: JetsORboostedV.cc,v 1.1 2012/09/12 03:41:35 jdamgov Exp $
 //
 //
 
@@ -30,6 +30,8 @@
 
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 #include "DataFormats/PatCandidates/interface/Jet.h"
+
+#include "DataFormats/PatCandidates/interface/Photon.h"
 
 //
 // class declaration
@@ -59,6 +61,7 @@ class JetsORboostedV : public edm::EDFilter {
       unsigned int minNumberJets;
       unsigned int maxNumberJets;
       double minVPt;
+      unsigned int minNumberPhotons;
 };
 }
 //
@@ -76,7 +79,8 @@ class JetsORboostedV : public edm::EDFilter {
 ewk::JetsORboostedV::JetsORboostedV(const edm::ParameterSet& iConfig):
 minNumberJets (iConfig.getUntrackedParameter<int>("minNumber")),
 maxNumberJets (iConfig.getUntrackedParameter<int>("maxNumber")),
-minVPt (iConfig.getUntrackedParameter<double>("minVpt"))
+minVPt (iConfig.getUntrackedParameter<double>("minVpt")),
+minNumberPhotons (iConfig.getUntrackedParameter<int>("minNumberPhotons"))
 {
    //now do what ever initialization is needed
   if(  iConfig.existsAs<edm::InputTag>("srcVectorBoson"))
@@ -100,8 +104,7 @@ ewk::JetsORboostedV::~JetsORboostedV()
 //
 
 // ------------ method called on each new Event  ------------
-bool
-ewk::JetsORboostedV::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
+bool ewk::JetsORboostedV::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 {
 //  using namespace edm;
 
@@ -126,7 +129,12 @@ ewk::JetsORboostedV::filter(edm::Event& iEvent, const edm::EventSetup& iSetup)
 
   if(jets->size() >= minNumberJets && jets->size() <=maxNumberJets) result = true;
   
+////////////////////////////////////
+// Photon counting
+  edm::Handle<reco::PhotonCollection> photonH;
+  iEvent.getByLabel("photons",photonH);
 
+  if(photonH->size() < minNumberPhotons ) result = false;
   return result;
 }
 

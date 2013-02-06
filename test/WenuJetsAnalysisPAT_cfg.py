@@ -100,7 +100,8 @@ process.RequireTwoJetsORboostedV = cms.EDFilter("JetsORboostedV",
     maxNumber = cms.untracked.int32(100),
     srcJets = cms.InputTag("ak5PFJetsLooseId"),
     srcVectorBoson = cms.InputTag("bestWToEnu"),
-    minVpt = cms.untracked.double(100.)
+    minVpt = cms.untracked.double(100.),
+    minNumberPhotons = cms.untracked.int32(0)
 )
 process.RequireTwoJetsORboostedVStep = process.AllPassFilter.clone()
 
