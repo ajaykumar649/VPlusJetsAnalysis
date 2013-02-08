@@ -1,4 +1,4 @@
-/*****************************************************************************
+/******************************************************************************
  * Project: CMS detector at the CERN
  *
  * Package: ElectroWeakAnalysis/VPlusJets
@@ -48,10 +48,13 @@
 #include "FWCore/ParameterSet/interface/ParameterSet.h"
 
 
+#include "CMGTools/External/interface/PileupJetIdentifier.h"
 
 namespace ewk {
+
   class JetTreeFiller {
   public:
+
     /// specify the name of the TTree, and the configuration for it
     JetTreeFiller(const char *name, TTree* tree, 
 		  const std::string jetType,
@@ -69,7 +72,7 @@ namespace ewk {
 
 
     /// To be called once per event to fill the values for jets
-    void fill(const edm::Event &iEvent);
+     void fill(const edm::Event &iEvent);
 
     static const int NUM_JET_MAX = 8;
 
@@ -81,8 +84,10 @@ namespace ewk {
     void SetBranches(); 
     void SetBranch( float* x, std::string name);
     void SetBranch( int* x, std::string name);
+    void SetBranch( bool* x, std::string name);
     void SetBranchSingle( float* x, std::string name);
     void SetBranchSingle( int* x, std::string name);
+    void SetBranchSingle( bool* x, std::string name);
 
     void FillBranches() const;
     void init();
@@ -95,8 +100,12 @@ namespace ewk {
 				const reco::MET met); 
     template<typename T1> 
       void fillEnergyFractionsPFjets(const T1& pfjet, int iJet);
+
     void fillQGLH(int iJet, float fastjet_rho, 
 		  std::vector<reco::PFCandidatePtr> pfCandidates);
+
+    template<typename T1>
+      void fillPileUpJetID ( const edm::Handle<edm::View<T1> > &);
 
     void fillBtagInfoRECO(int iJet, 
 		      edm::Handle<reco::SecondaryVertexTagInfoCollection> svTagInfos,
@@ -104,7 +113,7 @@ namespace ewk {
 		      const reco::JetTagCollection  &  bTagsTCHE,
 		      const reco::JetTagCollection  &  bTagsCSV,
 		      const reco::JetTagCollection  &  bTagsJP,
-		      const reco::JetTagCollection  &  bTagsSSVHP,
+                      const reco::JetTagCollection  &  bTagsSSVHP,
 		      const reco::JetTagCollection  &  bTagsTCHP);
 
     void fillBtagInfoPAT(int iJet, const pat::Jet* pjet);
@@ -131,6 +140,7 @@ namespace ewk {
     std::string jetType_;
     std::string Vtype_;
     std::string LeptonType_;
+
     edm::InputTag mInputJets;
 	edm::InputTag mInputMet;
 	edm::InputTag mInputMetMVA;
@@ -269,6 +279,10 @@ namespace ewk {
     float l2Hel_HiggsCM;
     float b1Hel_HiggsCM;
     float b2Hel_HiggsCM;
+
+    bool isPileUpJetLoose[NUM_JET_MAX];
+    bool isPileUpJetMedium[NUM_JET_MAX];
+    bool isPileUpJetTight[NUM_JET_MAX];
 
   };
 

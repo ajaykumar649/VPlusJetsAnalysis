@@ -1,3 +1,4 @@
+
 /*****************************************************************************
  * Project: CMS detector at the CERN
  *
@@ -31,7 +32,7 @@
 
 const float BTAG_DISCRIM_DEFAULT=-999.;
 
-ewk::JetTreeFiller::JetTreeFiller(const char *name, TTree* tree, 
+ ewk::JetTreeFiller::JetTreeFiller(const char *name, TTree* tree, 
 				  const std::string jetType,
 				  const edm::ParameterSet iConfig)
 {
@@ -48,7 +49,7 @@ ewk::JetTreeFiller::JetTreeFiller(const char *name, TTree* tree,
   if( jetType=="PFCorVBFTag" && iConfig.existsAs<edm::InputTag>("srcPFCorVBFTag") )
     mInputJets = iConfig.getParameter<edm::InputTag>("srcPFCorVBFTag"); 
 
-  
+
   if(  iConfig.existsAs<edm::InputTag>("srcMet") )
     mInputMet = iConfig.getParameter<edm::InputTag>("srcMet");
   if(  iConfig.existsAs<edm::InputTag>("srcMetMVA") )
@@ -76,9 +77,7 @@ ewk::JetTreeFiller::JetTreeFiller(const char *name, TTree* tree,
 }
 
 
-
-
-void ewk::JetTreeFiller::SetBranches()
+ void ewk::JetTreeFiller::SetBranches()
 {
   // Declare jet branches
   SetBranchSingle( &NumJets, "num" + jetType_ + "Jets");
@@ -263,6 +262,15 @@ void ewk::JetTreeFiller::SetBranches()
 
   }
 
+  if( jetType_ == "PF" || jetType_ == "PFCor" || jetType_ == "PFCorVBFTag") {
+
+    SetBranch( isPileUpJetLoose, "Jet" + jetType_ + "_isPileUpJetLoose");
+    SetBranch( isPileUpJetMedium, "Jet" + jetType_ + "_isPileUpJetMedium");
+    SetBranch( isPileUpJetTight, "Jet" + jetType_ + "_isPileUpJetTight");
+
+  }
+
+
 }
 
 
@@ -275,6 +283,7 @@ void ewk::JetTreeFiller::SetBranchSingle( float* x, std::string name)
 {
   tree_->Branch( name.c_str(), x, ( name+"/F").c_str() );
   bnames.push_back( name );
+
 }
 
 void ewk::JetTreeFiller::SetBranchSingle( int* x, std::string name)
@@ -283,6 +292,10 @@ void ewk::JetTreeFiller::SetBranchSingle( int* x, std::string name)
   bnames.push_back( name );
 }
 
+void ewk::JetTreeFiller::SetBranchSingle( bool* x, std::string name){
+tree_->Branch( name.c_str(), x, ( name+"/O").c_str() );
+bnames.push_back( name );
+}
 
 
 void ewk::JetTreeFiller::SetBranch( float* x, std::string name)
@@ -298,11 +311,14 @@ void ewk::JetTreeFiller::SetBranch( int* x, std::string name)
   bnames.push_back( name );
 }
 
+
+void ewk::JetTreeFiller::SetBranch( bool* x, std::string name){
+tree_->Branch( name.c_str(), x, ( name+"[8]/O").c_str() );
+bnames.push_back( name );
+}
+
 //////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////
-
-
-
 
 
 
@@ -316,7 +332,6 @@ void ewk::JetTreeFiller::FillBranches() const
   }
 
 }
-
 
 
 
@@ -400,6 +415,11 @@ void ewk::JetTreeFiller::init()
     PFrmsCands[j]=0.;
     PFptD[j] = -1.0;
     PFqgLikelihood[j] = -1.0;
+
+    isPileUpJetLoose[j]=false;
+    isPileUpJetMedium[j]=false;
+    isPileUpJetTight[j]=false;
+
   }
   // initialization done
 
@@ -452,9 +472,8 @@ void ewk::JetTreeFiller::init()
 }
 
 
+void ewk::JetTreeFiller::fill(const edm::Event& iEvent){
 
-void ewk::JetTreeFiller::fill(const edm::Event& iEvent)
-{
   // first initialize to the default values
   init();
 
@@ -469,10 +488,8 @@ void ewk::JetTreeFiller::fill(const edm::Event& iEvent)
   const reco::Candidate *Vboson2(0);
   if( nBoson==2) Vboson2  = &((*boson)[1]);
 
-
   edm::Handle<edm::View<reco::Jet> > jets;
   iEvent.getByLabel( mInputJets, jets ); 
-
 
   if(jets->size() < 1) return;
 
@@ -526,6 +543,8 @@ void ewk::JetTreeFiller::fill(const edm::Event& iEvent)
   numBTags = 0;
 
 
+
+
   /////// Pileup density "rho" in the event from fastJet pileup calculation /////
   float fastjet_rho = -999999.9;
   edm::Handle<double> rho;
@@ -537,6 +556,10 @@ void ewk::JetTreeFiller::fill(const edm::Event& iEvent)
   //   edm::Handle<reco::PFCandidateCollection>  PFCandidates;
   //   if(runoverAOD) iEvent.getByLabel("particleFlow", PFCandidates);
 
+
+  // Fill pile Up jet id info
+
+  if(mInputJets.label()!="Gen") fillPileUpJetID (jets);     
 
 
   // Loop over reco jets 
@@ -551,7 +574,7 @@ void ewk::JetTreeFiller::fill(const edm::Event& iEvent)
       fillBtagInfoRECO( iJet, svTagInfos, bTagsSSVHE, bTagsTCHE, 
 			bTagsCSV, bTagsJP, bTagsSSVHP, bTagsTCHP);
     else { 
-      edm::Ptr<reco::Jet> ptrJet = jets->ptrAt( jet - jets->begin() );		  
+     edm::Ptr<reco::Jet> ptrJet = jets->ptrAt( jet - jets->begin() );		  
       if ( ptrJet.isNonnull() && ptrJet.isAvailable() ) {
 	const pat::Jet* pjet = dynamic_cast<const pat::Jet *>(ptrJet.get()) ;
 	fillBtagInfoPAT( iJet, pjet);
@@ -581,6 +604,7 @@ void ewk::JetTreeFiller::fill(const edm::Event& iEvent)
       fillQGLH(iJet, fastjet_rho, pfCandidates);
 
     }// close PF jets loop
+
   }// close jets iteration loop
 
   NumJets = (int) iJet;
@@ -738,7 +762,8 @@ void ewk::JetTreeFiller::fillBasicJetQuantities(int, const pat::Jet&,
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////--------- Energy fractions for generic PF jets (RECO or PAT) ---
-template <typename T1> 
+ 
+template <typename T1>
 void ewk::JetTreeFiller::fillEnergyFractionsPFjets(const T1& pfjet, 
 						   int iJet) 
 {
@@ -793,6 +818,7 @@ void ewk::JetTreeFiller::fillEnergyFractionsPFjets(const pat::Jet&, int);
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////--------- Compute Quark-Gluon likelihood ---
+
 void ewk::JetTreeFiller::fillQGLH(int iJet, float fastjet_rho, 
 				  std::vector<reco::PFCandidatePtr> pfCandidates) 
 {
@@ -839,6 +865,7 @@ void ewk::JetTreeFiller::fillQGLH(int iJet, float fastjet_rho,
 //////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////
 //////--------- Fill b-tag information from RECO ---
+
 void ewk::JetTreeFiller::fillBtagInfoRECO(int iJet, 
 					  edm::Handle<reco::SecondaryVertexTagInfoCollection> svTagInfos,
 					  const reco::JetTagCollection  &  bTagsSSVHE,
@@ -987,6 +1014,7 @@ void ewk::JetTreeFiller::fillBtagInfoRECO(int iJet,
 
 
 //////--------- Fill b-tag information from PAT ---
+
 void ewk::JetTreeFiller::fillBtagInfoPAT(int iJet, const pat::Jet* pjet) 
 {
   if(pjet !=0)
@@ -1008,6 +1036,7 @@ void ewk::JetTreeFiller::fillBtagInfoPAT(int iJet, const pat::Jet* pjet)
 
 
 //////--------- Helicity in 4-body frame ---
+
 void ewk::JetTreeFiller::fillHelicityIn4bodyFrame(TLorentzVector& p4lepton1, 
 						  TLorentzVector& p4lepton2) 
 {
@@ -1037,6 +1066,7 @@ void ewk::JetTreeFiller::fillHelicityIn4bodyFrame(TLorentzVector& p4lepton1,
 
 
 //////--------- Invariant masses of Njets (N>1) and V+Njets (N>0) ---
+
 void ewk::JetTreeFiller::fillInvariantMasses(TLorentzVector& p4lepton1, 
 						  TLorentzVector& p4lepton2) 
 {
@@ -1121,6 +1151,7 @@ void ewk::JetTreeFiller::fillInvariantMasses(TLorentzVector& p4lepton1,
 
 
 //////--------- compute lepton and neutrino 4-vectors --------
+
 void ewk::JetTreeFiller::computeLeptonAndNu4Vectors(const reco::Candidate* Vboson, 
 						    const reco::MET met, 
 						    TLorentzVector& p4lepton1, 
@@ -1161,6 +1192,46 @@ void ewk::JetTreeFiller::computeLeptonAndNu4Vectors(const reco::Candidate* Vboso
   delete metz;
 }
 
+//////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////
+//////--------- Pile Up ID information for generic PF jets (RECO or PAT) ---
+
+template <typename T1>
+void ewk::JetTreeFiller::fillPileUpJetID (const edm::Handle<edm::View<T1> > & jets) {
+
+  unsigned int  iJet = 0;
+  
+  typename edm::View<T1>::const_iterator itJet, endpjets = jets->end();
+
+  for (itJet = jets->begin();  itJet != endpjets;  ++iJet, ++itJet) {
+
+    if( !(iJet< (unsigned int) NUM_JET_MAX) ) break;
+
+    const std::type_info & type = typeid(*itJet);
+    
+    if ( type == typeid(pat::Jet)){
+
+      edm::Ptr<T1> ptrJet = jets->ptrAt(itJet - jets->begin());
+
+      if (ptrJet.isNonnull() && ptrJet.isAvailable() ) {
+
+
+       const pat::Jet* pjet = dynamic_cast<const pat::Jet *>(ptrJet.get()) ;
+
+
+       if((*pjet).userInt("PUChargedWorkingPoint") == 3 )                                     isPileUpJetTight[iJet] = true ;
+       if((*pjet).userInt("PUChargedWorkingPoint") == 2 || isPileUpJetTight[iJet]  == true )  isPileUpJetMedium[iJet] = true ;
+       if((*pjet).userInt("PUChargedWorkingPoint") == 1 || isPileUpJetMedium[iJet] == true )  isPileUpJetLoose[iJet] = true ;
+
+      }
+    }  
+  }
+  
+}
+
+// ----- explicit function template instantiation(s) ---
+template
+void ewk::JetTreeFiller::fillPileUpJetID (const edm::Handle<edm::View<pat::Jet> > &);
 
 
 
