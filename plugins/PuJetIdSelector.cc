@@ -98,7 +98,7 @@ template<typename T>
   else if( (idLabel_.compare("loose")==0) || 
            (idLabel_.compare("Loose")==0) || 
            (idLabel_.compare("LOOSE")==0) )  
-    applyMediumID_ = true;
+    applyLooseID_ = true;
   
 }
 
@@ -131,7 +131,10 @@ template<typename T>
   std::auto_ptr<std::vector<T> > passingJets(new std::vector<T >);
   
   bool* isPassing = new bool[jetsHandle->size()];
-  for(unsigned int iJet=0;iJet<jetsHandle->size();iJet++) { 
+
+  typename edm::View<T>::const_iterator itJet = jetsHandle->begin();
+
+  for(unsigned int iJet=0; itJet!=jetsHandle->end(); iJet++,++itJet) { 
 
     isPassing[iJet]=false;
     
@@ -139,16 +142,36 @@ template<typename T>
     int   idflag = (*puJetIdFlag)[jetsHandle -> refAt(iJet)];
 
     /// ------- Apply selection --------
-    if(applyTightID_ && PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kTight )) isPassing[iJet]= true;
-    if(applyMediumID_ && PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kMedium )) isPassing[iJet]= true;
-    if(applyLooseID_ && PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kLoose )) isPassing[iJet]= true;
+    if(applyTightID_) { if(PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kTight ) == true )  isPassing[iJet]= true; }
+    if(applyMediumID_){ if(PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kMedium) == true )  isPassing[iJet]= true; }
+    if(applyLooseID_) { if(PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kLoose ) == true )  isPassing[iJet]= true; }
+
+    int wp = 0 ;
+
+    if(PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kLoose ) == true )  wp=1;
+    if(PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kMedium) == true )  wp=2;
+    if(PileupJetIdentifier::passJetId( idflag, PileupJetIdentifier::kTight ) == true )  wp=3;
+
+
+    const std::type_info & type = typeid(*itJet);
+
+    if ( type == typeid(pat::Jet) ) {
+
+      pat::Jet pfjet  = static_cast<const pat::Jet &>(*itJet);
+
+      pfjet.addUserInt("PUChargedWorkingPoint",wp);
+
+      passingJets->push_back(pfjet);
+    }
+
   }
 
    
   unsigned int counter=0;
-  typename edm::View<T>::const_iterator tIt, endcands = jetsHandle->end();
-  for (tIt = jetsHandle->begin(); tIt != endcands; ++tIt, ++counter) {
-    if(isPassing[counter]) passingJets->push_back( *tIt );  
+  typename std::vector<T>::iterator tIt, endcands = passingJets->end();
+
+  for (tIt = passingJets->begin(); tIt != endcands; ++tIt, ++counter) {
+    if(!isPassing[counter]) passingJets->erase(tIt); 
   }
 
   nTot_    += jetsHandle->size();
