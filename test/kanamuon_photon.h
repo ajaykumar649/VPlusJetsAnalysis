@@ -5,8 +5,8 @@
 // found on file: /uscms_data/d2/yangf/ana/WuvWjj/DataFile/MergFile/WmunuJets_DataAll_GoldenJSON_2p1invfb.root
 //////////////////////////////////////////////////////////
 
-#ifndef kanamuon_h
-#define kanamuon_h
+#ifndef kanamuon_photon_h
+#define kanamuon_photon_h
 
 #include <TROOT.h>
 #include <TChain.h>
@@ -15,7 +15,7 @@
 
 #include "TLorentzVector.h"
 
-class kanamuon {
+class kanamuon_photon {
   public :
     TTree          *fChain;   //!pointer to the analyzed TTree or TChain
     Int_t           fCurrent; //!current Tree number in a TChain
@@ -1364,9 +1364,8 @@ class kanamuon {
     TBranch        *b_event_mcPU_bx;   //!
     TBranch        *b_event_mcPU_nvtx;   //!
 
-    kanamuon(TTree *tree=0);
-    virtual ~kanamuon();
-    virtual Int_t    Cut(Long64_t entry);
+    kanamuon_photon(TTree *tree=0);
+    virtual ~kanamuon_photon();
     virtual Int_t    GetEntry(Long64_t entry);
     virtual Long64_t LoadTree(Long64_t entry);
     virtual void     Init(TTree *tree);
@@ -1382,7 +1381,6 @@ class kanamuon {
                           const char * outfilename,
                           bool isQCD = false);
     virtual double   getDeltaPhi(double phi1, double phi2);
-    //virtual bool     large(const double &a, const double &b);
     virtual bool     doKinematicFit(Int_t                 fflage,
                                     const TLorentzVector     mup, 
                                     const TLorentzVector     nvp,
@@ -1395,15 +1393,7 @@ class kanamuon {
                                     Float_t            & fit_chi2,
                                     Int_t              & fit_NDF, 
                                     Int_t              & fit_status);
-    virtual bool    dottHKinematicFit(const TLorentzVector     mup, 
-                                      const TLorentzVector     nvp, 
-                                      const TLorentzVector     wajp,
-                                      const TLorentzVector     wbjp,
-                                      const TLorentzVector     topajp,
-                                      const TLorentzVector     topbjp,
-                                       Float_t            & fit_chi2,
-                                       Int_t              & fit_NDF,
-                                       Int_t              & fit_status);
+
     virtual void     calculateAngles( TLorentzVector& thep4M11, TLorentzVector& thep4M12, TLorentzVector& thep4M21, TLorentzVector& thep4M22, double& costheta1, double& costheta2, double& phi, double& costhetastar, double& phistar1, double& phistar2);
     virtual void     gammaCalcAngles( TLorentzVector& thep4gamma, TLorentzVector& thep4M11, TLorentzVector& thep4M12, double& cosine_gamma_vs_decayplane_phi);
     virtual void     InitCounters(const char* input_file_name, TH1F* h_events, TH1F* h_events_weighted);
@@ -1412,8 +1402,8 @@ class kanamuon {
 
 #endif
 
-#ifdef kanamuon_cxx
-kanamuon::kanamuon(TTree *tree)
+#ifdef kanamuon_photon_cxx
+kanamuon_photon::kanamuon_photon(TTree *tree)
 {
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
@@ -1428,19 +1418,19 @@ kanamuon::kanamuon(TTree *tree)
   Init(tree);
 }
 
-kanamuon::~kanamuon()
+kanamuon_photon::~kanamuon_photon()
 {
   if (!fChain) return;
   delete fChain->GetCurrentFile();
 }
 
-Int_t kanamuon::GetEntry(Long64_t entry)
+Int_t kanamuon_photon::GetEntry(Long64_t entry)
 {
 // Read contents of entry.
   if (!fChain) return 0;
   return fChain->GetEntry(entry);
 }
-Long64_t kanamuon::LoadTree(Long64_t entry)
+Long64_t kanamuon_photon::LoadTree(Long64_t entry)
 {
 // Set the environment to read one entry
   if (!fChain) return -5;
@@ -1455,7 +1445,7 @@ Long64_t kanamuon::LoadTree(Long64_t entry)
   return centry;
 }
 
-void kanamuon::Init(TTree *tree)
+void kanamuon_photon::Init(TTree *tree)
 {
    // The Init() function is called when the selector needs to initialize
    // a new tree or chain. Typically here the branch addresses and branch
@@ -2145,7 +2135,7 @@ void kanamuon::Init(TTree *tree)
   Notify();
 }
 
-Bool_t kanamuon::Notify()
+Bool_t kanamuon_photon::Notify()
 {
    // The Notify() function is called when a new file is opened. This
    // can be either for a new TTree in a TChain or when when a new TTree
@@ -2156,7 +2146,7 @@ Bool_t kanamuon::Notify()
   return kTRUE;
 }
 
-Float_t kanamuon::dRCalc(Float_t etaC, Float_t phiC, Float_t etaCrys, Float_t phiCrys){
+Float_t kanamuon_photon::dRCalc(Float_t etaC, Float_t phiC, Float_t etaCrys, Float_t phiCrys){
     // Float_t ClusPhi = 0;
     // if (phiC>0) ClusPhi = phiC;
     // else ClusPhi = TMath::Pi()*2. + phiC;
@@ -2174,19 +2164,12 @@ Float_t kanamuon::dRCalc(Float_t etaC, Float_t phiC, Float_t etaCrys, Float_t ph
     Float_t dR = sqrt(deta*deta + dphi*dphi);
     return dR;
 }
-void kanamuon::Show(Long64_t entry)
+void kanamuon_photon::Show(Long64_t entry)
 {
 // Print contents of entry.
 // If entry is not specified, print current entry
   if (!fChain) return;
   fChain->Show(entry);
 }
-Int_t kanamuon::Cut(Long64_t entry)
-{
-// This function may be called from Loop.
-// returns  1 if entry is accepted.
-// returns -1 otherwise.
-  Long64_t tmp; tmp=entry;
-  return 1;
-}
-#endif // #ifdef kanamuon_cxx
+
+#endif // #ifdef kanamuon_photon_cxx
