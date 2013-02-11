@@ -1,21 +1,20 @@
-
-
 const double intLUMI = 1.;
+
 //const double WJets_scale   = 37509.0* intLUMI/18353019;
-const double WJets_scale   = 3.32283007705589037e-05 * intLUMI;
-const double W4Jets_scale  = 214.0 * intLUMI/12842803;
-const double WW_scale      = 57.1097   * intLUMI/9450414;
-const double WZ_scale      = 32.3161  * intLUMI/10000267;
+double WJets_scale   = 3.32283007705589037e-05 * intLUMI;
+double W4Jets_scale  = 214.0 * intLUMI/12842803;
+double WW_scale      = 57.1097   * intLUMI/9450414;
+double WZ_scale      = 32.3161  * intLUMI/10000267;
 
-const double ZJets_scale   = 3503.71  * intLUMI/30209426;
-const double ttbar_scale   = 225.197 * intLUMI/6893735;
+double ZJets_scale   = 3503.71  * intLUMI/30209426;
+double ttbar_scale   = 225.197 * intLUMI/6893735;
 
-const double SToppS_scale  = 1.76 * intLUMI/ 139974;
-const double SToppT_scale  = 30.7 * intLUMI/1935066;
-const double SToppTW_scale = 11.1 * intLUMI/ 493458;
-const double STopS_scale   = 3.79 * intLUMI/ 259960;
-const double STopT_scale   = 56.4 * intLUMI/3758221;
-const double STopTW_scale  = 11.1 * intLUMI/ 497657;
+double SToppS_scale  = 1.76 * intLUMI/ 139974;
+double SToppT_scale  = 30.7 * intLUMI/1935066;
+double SToppTW_scale = 11.1 * intLUMI/ 493458;
+double STopS_scale   = 3.79 * intLUMI/ 259960;
+double STopT_scale   = 56.4 * intLUMI/3758221;
+double STopTW_scale  = 11.1 * intLUMI/ 497657;
 
 
 
@@ -95,10 +94,10 @@ void makeATGCLimitDataCards(int channel=0) {
 //   const Float_t dm_min = 200.; 
 //   const Float_t dm_max = 600.;
 
-  Int_t bins = 8; 
+  Int_t bins = 7; 
   Float_t dm_min = 100.; 
-  Float_t dm_max = 300.;
-  if(channel>1) { bins = 8; dm_min = 200.; dm_max = 600.; }
+  Float_t dm_max = 275.;
+  if(channel>1) { bins = 12; dm_min = 200.; dm_max = 500.; }
 
 
   domu = true;
@@ -120,7 +119,7 @@ void makeATGCLimitDataCards(int channel=0) {
 
 
   TString lepton_cut = "(event_met_pfmet >30) && (W_electron_pt>35.) &&";
-  if(channel==0) lepton_cut = "(event_met_pfmet >25) && (W_muon_pt>25.) &&";
+  if(channel==0) lepton_cut = "(event_met_pfmet >25) &&(abs(W_muon_eta)<2.1) && (W_muon_pt>25.) &&";
   if(channel==1) lepton_cut = "(event_met_pfmet >30) && (W_electron_pt>30.) &&";
   if(channel==2) lepton_cut = "(event_met_pfmet >50) &&(abs(W_muon_eta)<2.1) && (W_muon_pt>30.) &&";
   if(channel==3) lepton_cut = "(event_met_pfmet >70) && (W_electron_pt>35.) &&";
@@ -205,46 +204,16 @@ void makeATGCLimitDataCards(int channel=0) {
 
 
     // Scale the histos
-    ScaleHistos();
+    ScaleHistos(channel);
 
-
-    // ---- Make smooth W+jets shape ----------
-    TH1D* th1wjetsclone = th1wjets->Clone("th1wjetsclone");
-    TF1 *gaus = new TF1("gaus","gaus",dm_min, dm_max);
-    th1wjets->Fit(gaus,"I0","");
-    th1wjets->Add(gaus);
-    th1wjets->Add(th1wjetsclone, -1.);
-    delete th1wjetsclone;
 
 
     // ---- Make smooth diboson shape ----------
     TH1D* th1wwclone = th1ww->Clone("th1wwclone");
     gaus2 = new TF1("gaus2","gaus",dm_min, dm_max);
     th1ww->Fit(gaus2,"I0","");
-    th1ww->Add(gaus2);
-    th1ww->Add(th1wwclone, -1.);
     delete th1wwclone;
 
-
-
-//     // ---- Make smooth ttbar shape ----------
-//     TH1D* th1Topclone = th1Top->Clone("th1Topclone");
-//     TF1 *gaus3 = new TF1("gaus3","gaus",dm_min, dm_max);
-//     th1Top->Fit(gaus3,"I0","");
-//     th1Top->Add(gaus3);
-//     th1Top->Add(th1Topclone, -1.);
-//     delete th1Topclone;
-
-
-
-
-//     // ---- Make smooth Z+jets shape ----------
-//     TH1D* th1zjetsclone = th1zjets->Clone("th1zjetsclone");
-//     TF1 *gaus4 = new TF1("gaus4","gaus",dm_min, dm_max);
-//     th1zjets->Fit(gaus4,"I0","");
-//     th1zjets->Add(gaus4);
-//     th1zjets->Add(th1zjetsclone, -1.);
-//     delete th1zjetsclone;
 
 
     /////////////////////
@@ -252,38 +221,18 @@ void makeATGCLimitDataCards(int channel=0) {
     SumAllBackgrounds();
     /////////////////////
 
-    double overflow = th1wjets->GetBinContent(bins+1);
-    overflow += gaus2->Integral(dm_max, dm_max + 400.);
-    overflow += th1zjets->GetBinContent(bins+1);
-    overflow += th1qcd->GetBinContent(bins+1);
-    overflow += th1Top->GetBinContent(bins+1);
-    cout << "---------- overflow for bkg = " << overflow << endl;
-
     //Get signal histogram
-    signalForDisplay = GetSignalHistogram(0.05, 0.0, 0.0, "signalForDisplay", dm_max, overflow);
+    signalForDisplay = GetSignalHistogram(0.05, 0.0, 0.0, "signalForDisplay", dm_max);
 
-    // ratio histogram for aTGC display
-    signalRatioForDisplay = 
-      (TH1D*) signalForDisplay->Clone("signaRatiolForDisplay");
-    signalRatioForDisplay->Divide(th1tot);
-    for(int j=1; j<signalRatioForDisplay->GetNbinsX()+1; ++j) {
-      double entry = signalRatioForDisplay->GetBinContent(j);
-      if() signalRatioForDisplay->SetBinContent(j, 1.+entry);
-    }
+//     // ratio histogram for aTGC display
+//     signalRatioForDisplay = 
+//       (TH1D*) signalForDisplay->Clone("signaRatiolForDisplay");
+//     signalRatioForDisplay->Divide(th1tot);
+//     for(int j=1; j<signalRatioForDisplay->GetNbinsX()+1; ++j) {
+//       double entry = signalRatioForDisplay->GetBinContent(j);
+//       if() signalRatioForDisplay->SetBinContent(j, 1.+entry);
+//     }
    
-
-
-    //-------- Add overflow bin ----------------
-//     double lastbin = th1ww->GetBinContent(bins-1);
-//     double overflow = th1ww->GetBinContent(bins);
-//     th1ww->SetBinContent(bins-1, lastbin+overflow);
-//     lastbin = th1wjets->GetBinContent(bins-1);
-//     overflow = th1wjets->GetBinContent(bins);
-//     th1wjets->SetBinContent(bins-1, lastbin+overflow);
-//     lastbin = th1data->GetBinContent(bins-1);
-//     overflow = th1data->GetBinContent(bins);
-//     th1data->SetBinContent(bins-1, lastbin+overflow);
-
 
 
     // Compose the stack
@@ -298,8 +247,8 @@ void makeATGCLimitDataCards(int channel=0) {
 
 
     // Stack for systematics Up
-    TF1* formScaleUp = new TF1("formScaleUp", "1.0+0.3*log(x/5)", dm_min, dm_max);
-    TF1* formScaleDown = new TF1("formScaleDown", "1.0-0.15*log(x/5)", dm_min, dm_max);
+    TF1* formScaleUp = new TF1("formScaleUp", "1.0+0.4*log(x/5)", dm_min, dm_max);
+    TF1* formScaleDown = new TF1("formScaleDown", "1.0-0.2*log(x/5)", dm_min, dm_max);
 
     systUp = (TH1D*) th1wjets->Clone("systUp");
     systUp->Multiply(formScaleUp);
@@ -340,27 +289,8 @@ void makeATGCLimitDataCards(int channel=0) {
     hhratioDown->SetLineWidth(3);
 
 
-    ///////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////
-    /////  ad hoc thing for the 500 range: remove 0 entry points by hand
-
-//     for(int j=1; j<hhratio->GetNbinsX()+1; ++j) {
-//       double x = hhratio->GetBinCenter(j);
-//       if(x>400 || (channel>0 && x>350) ) { 
-// 	hhratio->SetBinContent(j, 0.); 
-// 	hhratio->SetBinError(j, 0.);
-// 	th1data->SetBinContent(j, 0.); 
-// 	th1data->SetBinError(j, 0.);
-// 	hhratioUp->SetBinContent(j, 0.); 
-// 	hhratioUp->SetBinError(j, 0.);
-// 	hhratioDown->SetBinContent(j, 0.); 
-// 	hhratioDown->SetBinError(j, 0.);
-//       }
-//     }
-   
-//     //////////////////
     /////////////////////////////////////////
+    ///////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////
 
@@ -371,7 +301,7 @@ void makeATGCLimitDataCards(int channel=0) {
     gStyle->SetPadLeftMargin(0.15);
     // gStyle->SetPadRightMargin(0.2);
     gStyle->SetPadBottomMargin(0.3);
-
+    // gStyle->SetErrorX(0.5);
 
     TCanvas* c1 = new TCanvas("dijetPt", "dijetPt", 10,10, 500, 500);
     TPad *d1, *d2;
@@ -390,18 +320,29 @@ void makeATGCLimitDataCards(int channel=0) {
 
     // Draw it all
     double ymax= 5000000.;
-    double ymin= 0.8;
-    if(channel>1) ymax= 30000.;
-
+    double ymin= 7.0;
+    if(channel>1) { 
+      ymax= 30000.;
+      ymin= 7.0;
+    }
 
     th1totempty->GetYaxis()->SetRangeUser(ymin, ymax);
     th1data->GetYaxis()->SetRangeUser(ymin, ymax);
     th1totempty->Draw();
     th1data->Draw("esame");
     hs->Draw("samehist");
-    // systUp->Draw("samehist");
-    // systDown->Draw("samehist");
-    //th1tot->Draw("e3same");
+   for (int i=1;i<=th1tot->GetNbinsX();i++)
+      {
+	 double val = th1tot->GetBinContent(i);
+	 double err = fabs(th1tot->GetBinError(i));
+	 TBox *b = new TBox(th1tot->GetBinLowEdge(i),
+			    val-err,th1tot->GetBinLowEdge(i+1),val+err);
+	 b->SetLineColor(1);
+	 b->SetFillColor(1);
+	 b->SetFillStyle(3001);
+	 b->SetLineStyle(3001);	 
+	 b->Draw();
+      }
     th1data->Draw("esame");
     cmspre(); 
     // Set up the legend
@@ -476,7 +417,7 @@ void makeATGCLimitDataCards(int channel=0) {
 // 		  m+0.00001, n+0.00001, q+0.00001);
 // 	  TH1D* stackhist = GetSignalHistogram(m+0.00001, n+0.00001, 
 // 					       q+0.00001, mysighistname, 
-// 					       dm_max, overflow);
+// 					       dm_max);
 // 	  outputForLimit->cd();
 // 	  stackhist->Write(); 
 // 	  delete stackhist;
@@ -491,9 +432,8 @@ void makeATGCLimitDataCards(int channel=0) {
 	  sprintf(mysighistname, 
 		  "signal_lambdaZ_%0.3f_deltaKappaGamma_%0.3f", 
 		  m+0.00001, n+0.00001);
-	  TH1D* stackhist = GetSignalHistogram(m, n, 
-					       0.0, mysighistname, 
-					       dm_max, overflow);
+	  TH1D* stackhist = GetSignalHistogram(m, n, 0.0, 
+					       mysighistname, dm_max);
 	  outputForLimit->cd();
 	  stackhist->Write(); 
 	  delete stackhist;
@@ -507,9 +447,8 @@ void makeATGCLimitDataCards(int channel=0) {
 	  sprintf(mysighistname, 
 		  "signal_lambdaZ_%0.3f_deltaG1_%0.3f", 
 		  m+0.00001, n+0.00001);
-	  TH1D* stackhist = GetSignalHistogram(m, 0.0, 
-					       n, mysighistname, 
-					       dm_max, overflow);
+	  TH1D* stackhist = GetSignalHistogram(m, 0.0, n, 
+					       mysighistname, dm_max);
 	  outputForLimit->cd();
 	  stackhist->Write(); 
 	  delete stackhist;
@@ -613,8 +552,44 @@ void InstantiateTrees() {
 
 
 
-void ScaleHistos()
+void ScaleHistos(int channel)
 {
+  double WJets_norm = 1.;
+  double VV_norm = 1.;
+  double Top_norm = 1.;
+
+  if(channel==0) {
+    WJets_norm = 1.0055;
+    VV_norm = 1.1144;
+    Top_norm = 0.99664;
+  }
+  if(channel==1) {
+    WJets_norm = 1.1107;
+    VV_norm = 1.3919;
+    Top_norm = 0.9825;
+  }
+  if(channel==2) {
+    WJets_norm = 1.1271;
+    VV_norm = 1.2530;
+    Top_norm = 1.013;
+  }
+  if(channel==3) {
+    WJets_norm = 1.0984;
+    VV_norm = 1.3804;
+    Top_norm = 1.0267;
+  }
+
+  WJets_scale   *= WJets_norm;
+  WW_scale      *= VV_norm;
+  WZ_scale      *= VV_norm;
+  ttbar_scale   *= Top_norm;
+  SToppS_scale  *= Top_norm;
+  SToppT_scale  *= Top_norm;
+  SToppTW_scale *= Top_norm;
+  STopS_scale   *= Top_norm;
+  STopT_scale   *= Top_norm;
+  STopTW_scale  *= Top_norm;
+
   th1Top->Scale(ttbar_scale);
   th1Top->SetFillColor(kGreen+2);
   th1Top->SetLineColor(kGreen+2);
@@ -729,17 +704,28 @@ void SumAllBackgrounds() {
   th1tot->Add(th1Top,1);
   th1tot->Add(th1wjets,1);
   th1tot->Add(th1zjets,1);
-  th1tot->SetFillStyle(3013);
-  th1tot->SetFillColor(11);
-  th1tot->SetLineColor(11);
+  th1tot->SetFillStyle(3001);
+  th1tot->SetFillColor(1);
+  th1tot->SetLineColor(1);
   th1tot->SetMarkerStyle(0);
   th1tot->SetMinimum(0.0);
 
-  th1totClone = ( TH1D*) th1tot->Clone("th1totClone");
-  th1totClone->SetMarkerStyle(0);
-  th1totClone->SetFillStyle(3003);
-  th1totClone->SetFillColor(11);
-  th1totClone->SetLineColor(0);
+
+
+    //-------- Add overflow bin ----------------
+    AddOverflowBin(th1ww);
+    AddOverflowBin(th1wjets);
+    AddOverflowBin(th1zjets);
+    AddOverflowBin(th1Top);
+    AddOverflowBin(th1qcd);
+    AddOverflowBin(th1tot);
+    AddOverflowBin(th1data);
+
+    th1totClone = ( TH1D*) th1tot->Clone("th1totClone");
+    th1totClone->SetMarkerStyle(0);
+    th1totClone->SetFillStyle(3003);
+    th1totClone->SetFillColor(11);
+    th1totClone->SetLineColor(0);
 
   double binErr(0.0);
   for(int i=0; i<th1totClone->GetNbinsX(); ++i) {
@@ -776,8 +762,8 @@ void SumAllBackgrounds() {
 TLegend* GetLegend(int channel)
 {
   // float  legX0=0.5, legX1=0.89, legY0=0.41, legY1=0.86;
-  float  legX0=0.68, legX1=0.93, legY0=0.45, legY1=0.88;
-  if(channel > 1) legY0=0.52; 
+  float  legX0=0.6, legX1=0.93, legY0=0.45, legY1=0.88;
+  if(channel > 1) { legX0=0.6; legY0=0.48; }
   TLegend * Leg = new TLegend( legX0, legY0, legX1, legY1);
   Leg->SetFillColor(0);
   Leg->SetFillStyle(0);
@@ -788,9 +774,9 @@ TLegend* GetLegend(int channel)
   Leg->AddEntry(th1Top,  "top",  "f");
   if(channel != 2) Leg->AddEntry(th1qcd,  "Multijet",  "f");
   Leg->AddEntry(th1zjets,  "Z+Jets",  "f");
+  Leg->AddEntry(th1tot,  "MC error",  "f");
   Leg->AddEntry(systUp,  "Shape error",  "f");
   Leg->AddEntry(signalForDisplay,  "#lambda_{Z}=0.05",  "l");
-  // Leg->AddEntry(th1tot,  "MC Uncertainty",  "f");
   Leg->SetFillColor(0);
 
   return Leg;
@@ -836,7 +822,7 @@ void SetupEmptyHistogram(int bins, double dm_min, double dm_max, char* xtitle)
 
 //------- Get signal histogram -------
 TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1, 
-			 char* histName, double dm_max, double baseline_overflow) {
+			 char* histName, double dm_max) {
 
   //---- first we clone the diboson histogram  
   TH1D* newsighist = (TH1D*) th1ww->Clone(histName);
@@ -907,10 +893,8 @@ TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1,
   double lastbin = newsighist->GetBinContent(nBinsTot);
   TF1 *fSignal = new TF1 ("fSignal", "gaus2*sigratio");
   double overflow = fSignal->Integral(dm_max, dm_max + 400.);
-
-  overflow -= baseline_overflow;
-
-  //cout << "last bin = " << lastbin << ", overflow = " << overflow << endl;
+  double baseline_overflow = gaus2->Integral(dm_max, dm_max + 400.);
+  overflow = baseline_overflow;
 
   newsighist->SetBinContent(nBinsTot, lastbin+overflow);
   newsighist->SetBinError(nBinsTot, sqrt(lastbin+overflow));
@@ -918,6 +902,19 @@ TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1,
   return newsighist;
 }
 
+
+
+
+
+void AddOverflowBin(TH1* hist) {
+  int nBins = hist->GetNbinsX();
+  double lastbin = hist->GetBinContent(nBins);
+  double lastbinerr = hist->GetBinError(nBins);
+  double overflow = hist->GetBinContent(nBins+1);
+  double overflowerr = hist->GetBinError(nBins+1);
+  hist->SetBinContent(nBins, lastbin+overflow);
+  hist->SetBinError(nBins, sqrt(lastbin+overflow));
+}
 
 
 
