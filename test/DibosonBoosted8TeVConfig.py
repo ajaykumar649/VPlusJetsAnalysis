@@ -27,9 +27,9 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 
     pars.cuts = \
         '(W_pt>200.)&&(GroomedJet_CA8_pt[0]>200)&&(ggdboostedWevt==1)' +\
-        '&&(event_metMVA_met>50.)&&(GroomedJet_CA8_deltaphi_METca8jet>2.0)' +\
-        '&&(GroomedJet_CA8_mass_pr[0]>40)&&(numPFCorJetBTags==0)' +\
-        '&&(GroomedJet_CA8_tau2tau1[0]<0.53)'
+        '&&(abs(GroomedJet_CA8_eta[0])<2.4)&&(JetPFCor_bDiscriminatorCSV[0]<0.244)' +\
+        '&&(GroomedJet_CA8_mass_pr[0]>40)&&(GroomedJet_numberbjets <1)' +\
+        '&&(GroomedJet_CA8_tau2tau1[0]<0.55)'
     #btag veto
     pars.btagVeto = False
     # for i in range(0, 6):
@@ -173,7 +173,7 @@ def customizeElectrons(pars):
     pars.lumiPerEpoch = [pars.integratedLumi]
 
 ##     pars.cuts += '&&(W_electron_pt>30)'
-    pars.cuts += '&&(event_metMVA_met>70)&&(W_electron_pt>35)'
+    pars.cuts += '&&(event_met_pfmet >70)&&(W_electron_pt>35)'
     return pars
 
 def customizeMuons(pars):
@@ -187,6 +187,6 @@ def customizeMuons(pars):
         }
     pars.lumiPerEpoch = [pars.integratedLumi]
 
-##    pars.cuts += '&&(abs(W_muon_eta)<2.1)&&(W_muon_pt>25.)'
+    pars.cuts += '&&(event_met_pfmet >50)&&(abs(W_muon_eta)<2.1)&&(W_muon_pt>30.)'
     
     return pars

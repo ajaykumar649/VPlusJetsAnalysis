@@ -116,13 +116,13 @@ void makeATGCLimitDataCards(int channel=0) {
 
 
 
- char* cutsMerged = "(W_pt>200.) && (GroomedJet_CA8_pt[0]>200.) &&(abs(GroomedJet_CA8_eta[0])<2.4) &&(JetPFCor_bDiscriminatorCSV[0]<0.244) &&(GroomedJet_numberbjets <1) &&(GroomedJet_CA8_deltaphi_METca8jet[0] > 2.0) && (GroomedJet_CA8_tau2tau1[0]<0.55) && (GroomedJet_CA8_deltaR_lca8jet[0]>1.57) && (GroomedJet_CA8_deltaphi_Vca8jet[0]>2.0) && (GroomedJet_CA8_mass[0]>70. && GroomedJet_CA8_mass[0]<100.)";
+ char* cutsMerged = "(W_pt>200.) && (GroomedJet_CA8_pt[0]>200.) &&(abs(GroomedJet_CA8_eta[0])<2.4) &&(JetPFCor_bDiscriminatorCSV[0]<0.244) &&(GroomedJet_numberbjets <1)&&(ggdboostedWevt==1) && (GroomedJet_CA8_tau2tau1[0]<0.55) && (GroomedJet_CA8_mass[0]>70. && GroomedJet_CA8_mass[0]<100.)";
 
 
   TString lepton_cut = "(event_met_pfmet >30) && (W_electron_pt>35.) &&";
   if(channel==0) lepton_cut = "(event_met_pfmet >25) && (W_muon_pt>25.) &&";
   if(channel==1) lepton_cut = "(event_met_pfmet >30) && (W_electron_pt>30.) &&";
-  if(channel==2) lepton_cut = "(event_met_pfmet >50) && (W_muon_pt>30.) &&";
+  if(channel==2) lepton_cut = "(event_met_pfmet >50) &&(abs(W_muon_eta)<2.1) && (W_muon_pt>30.) &&";
   if(channel==3) lepton_cut = "(event_met_pfmet >70) && (W_electron_pt>35.) &&";
 
 
