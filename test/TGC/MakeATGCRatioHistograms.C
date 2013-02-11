@@ -505,6 +505,10 @@
   }
 
   //------- Graph of Lambda C0, C1, C2 ---------
+  cout << "=============================================" << endl;
+  cout << "------ Graph of Lambda ------" << endl;
+  cout << "=============================================" << endl;
+
   TGraphErrors* grLC0 = new TGraphErrors( numLambdaBins, Lambda, L_C0val, errLambda, L_C0err);
   TGraphErrors* grLC1 = new TGraphErrors( numLambdaBins, Lambda, L_C1val, errLambda, L_C1err);
   grLC1->SetMarkerStyle(4);
@@ -534,6 +538,10 @@
 
 
   //------- Graph of Kappa C0, C1, C2 ---------
+  cout << "=============================================" << endl;
+  cout << "------ Graph of Kappa C0, C1, C2 ------" << endl;
+  cout << "=============================================" << endl;
+
   TGraphErrors* grKC0 = new TGraphErrors( numKappaBins, Kappa, K_C0val, errKappa, K_C0err);
   TGraphErrors* grKC1 = new TGraphErrors( numKappaBins, Kappa, K_C1val, errKappa, K_C1err);
   grKC1->SetMarkerStyle(4);
@@ -562,6 +570,10 @@
 
 
   //------- Graph of G1 C0, C1, C2 ---------
+  cout << "=============================================" << endl;
+  cout << "------ Graph of G1 C0, C1, C2 ------" << endl;
+  cout << "=============================================" << endl;
+
   TGraphErrors* grG1C0 = new TGraphErrors( numG1Bins, G1, G1_C0val, errG1, G1_C0err);
   TGraphErrors* grG1C1 = new TGraphErrors( numG1Bins, G1, G1_C1val, errG1, G1_C1err);
   grG1C1->SetMarkerStyle(4);
