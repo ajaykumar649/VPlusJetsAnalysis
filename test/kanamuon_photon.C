@@ -345,8 +345,8 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    ////////////////////////////////////////////////////////////////
    // Indices: Generated Good Event, # Jets in Event, Good isolated Photon, Good isolated Jet, Photon isolation, Dijet mass, jet four-momentum vectors:
    Int_t   ggdevt   =0,   evtNJ     =0, iPhoton12 = -1, iPhoton11 = -1;
-   Int_t i11Jet1=-1, i11Jet2=-1, i11Jet3=-1, i11Jet4=-1, i11Jet5=-1, i11Jet6=-1;
-   Int_t i12Jet1=-1, i12Jet2=-1, i12Jet3=-1, i12Jet4=-1, i12Jet5=-1, i12Jet6=-1;
+   Int_t i11Jet1=-1, i11Jet2=-1, i11Jet3=-1, i11Jet4=-1;
+   Int_t i12Jet1=-1, i12Jet2=-1, i12Jet3=-1, i12Jet4=-1;
    Float_t         Photon_dRlep[10]={99.};   //[NumPhotons]
    Float_t         JetPFCor_dRpho11[6] = {99.};   
    Float_t         JetPFCor_dRpho12[6] = {99.};   
@@ -359,14 +359,10 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    TBranch *branch_i11Jet2= newtree->Branch("i11Jet2",    &i11Jet2,     "i11Jet2/I");
    TBranch *branch_i11Jet3= newtree->Branch("i11Jet3",    &i11Jet3,     "i11Jet3/I");
    TBranch *branch_i11Jet4= newtree->Branch("i11Jet4",    &i11Jet4,     "i11Jet4/I");
-   TBranch *branch_i11Jet5= newtree->Branch("i11Jet5",    &i11Jet5,     "i11Jet5/I");
-   TBranch *branch_i11Jet6= newtree->Branch("i11Jet6",    &i11Jet6,     "i11Jet6/I");
    TBranch *branch_i12Jet1= newtree->Branch("i12Jet1",    &i12Jet1,     "i12Jet1/I");
    TBranch *branch_i12Jet2= newtree->Branch("i12Jet2",    &i12Jet2,     "i12Jet2/I");
    TBranch *branch_i12Jet3= newtree->Branch("i12Jet3",    &i12Jet3,     "i12Jet3/I");
    TBranch *branch_i12Jet4= newtree->Branch("i12Jet4",    &i12Jet4,     "i12Jet4/I");
-   TBranch *branch_i12Jet5= newtree->Branch("i12Jet5",    &i12Jet5,     "i12Jet5/I");
-   TBranch *branch_i12Jet6= newtree->Branch("i12Jet6",    &i12Jet6,     "i12Jet6/I");
    TBranch *branch_c2jMass11= newtree->Branch("c2jMass11",    &c2jMass11,     "c2jMass11/F");
    TBranch *branch_c2jMass12= newtree->Branch("c2jMass12",    &c2jMass12,     "c2jMass12/F");
    TBranch *branch_Photon_dRlep= newtree->Branch("Photon_dRlep",    &Photon_dRlep,     "Photon_dRlep[NumPhotons]/F");
@@ -602,55 +598,68 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       // Jet Loop:
       c2jMass11=-1.;c2jMass12=-1.;
       double jess=-1,dijetpt=-1;
-      i11Jet1=-1;i11Jet2=-1;i12Jet1=-1;i12Jet2=-1;i11Jet3=-1;i12Jet3=-1;i11Jet4=-1;i12Jet4=-1;i11Jet5=-1;i12Jet5=-1;i11Jet6=-1;i12Jet6=-1;
+      i11Jet1=-1;i11Jet2=-1;i12Jet1=-1;i12Jet2=-1;i11Jet3=-1;i12Jet3=-1;i11Jet4=-1;i12Jet4=-1;
 
-      if(iPhoton11>=0 && iPhoton12>=0){
+      /////////////////////////////////////////////////////////////////////////////////////
+      // Only Focus on the Following Jet Efforts if there is either a good 2011/2012 photon:
+      if(iPhoton11>=0 || iPhoton12>=0){
 
-         for(int ij=0; ij<10;ij++){
+         //////////////////////////////////
+         // Calculate Jet-Photon Isolation:
+         for(int ij=0; ij<6;ij++){
+
+            //////////////////////////////////////////////////////////////////
+            // Only Calculate Isolation for events with good 2011/2012 photon:
             if(iPhoton11>-1) JetPFCor_dRpho11[ij]=dRCalc(Photon_Eta[iPhoton11],Photon_Phi[iPhoton11],JetPFCor_Eta[ij],JetPFCor_Phi[ij]);
             if(iPhoton12>-1) JetPFCor_dRpho12[ij]=dRCalc(Photon_Eta[iPhoton12],Photon_Phi[iPhoton12],JetPFCor_Eta[ij],JetPFCor_Phi[ij]);
+
          }
 
          ///////////////
          ///// First Jet
-         for(int ij=9; ij>=0;ij--){
-            if(JetPFCor_Pt[ij]>30&&JetPFCor_dRpho11[ij]>0.5) i11Jet1=ij;
-            if(JetPFCor_Pt[ij]>30&&JetPFCor_dRpho12[ij]>0.5) i12Jet1=ij;
+         for(int ij=5; ij>=0;ij--){
+
+            ////////////////////////////////////////////////////////////////////
+            // Require good 2011/2012 photon, Jet pT > 30 GeV, Isolation > 0.5
+            // (First Jet sets precedence for further jets):
+            if(iPhoton11>-1&&JetPFCor_Pt[ij]>30&&JetPFCor_dRpho11[ij]>0.5) i11Jet1=ij;
+            if(iPhoton12>-1&&JetPFCor_Pt[ij]>30&&JetPFCor_dRpho12[ij]>0.5) i12Jet1=ij;
+
          }
 
          ////////////////
          ///// Second Jet
-         for(int ij=9; ij>=0;ij--){
+         for(int ij=5; ij>=0;ij--){
+
+            ////////////////////////////////////////////////////////////////////
+            // Require good 2011/2012 First Jet, Jet pT > 30 GeV, Isolation > 0.5
+            // (Second Jet sets precedence for further jets):
             if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho11[ij]>0.5&&i11Jet1>-1&&ij>i11Jet1) i11Jet2=ij;
             if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12[ij]>0.5&&i12Jet1>-1&&ij>i12Jet1) i12Jet2=ij;
+
          }
 
          ///////////////
          ///// Third Jet
-         for(int ij=9; ij>=0;ij--){
+         for(int ij=5; ij>=0;ij--){
+
+            ////////////////////////////////////////////////////////////////////
+            // Require good 2011/2012 Second Jet, Jet pT > 30 GeV, Isolation > 0.5
+            // (Third Jet sets precedence for further jets):
             if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho11[ij]>0.5&&i11Jet2>-1&&ij>i11Jet2) i11Jet3=ij;
             if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12[ij]>0.5&&i12Jet2>-1&&ij>i12Jet2) i12Jet3=ij;
+
          }
 
          ////////////////
          ///// Fourth Jet
-         for(int ij=9; ij>=0;ij--){
+         for(int ij=5; ij>=0;ij--){
+
+            //////////////////////////////////////////////////////////////////////
+            // Require good 2011/2012 Third Jet, Jet pT > 30 GeV, Isolation > 0.5:
             if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho11[ij]>0.5&&i11Jet3>-1&&ij>i11Jet3) i11Jet4=ij;
             if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12[ij]>0.5&&i12Jet3>-1&&ij>i12Jet3) i12Jet4=ij;
-         }
 
-         ///////////////
-         ///// Fifth Jet
-         for(int ij=9; ij>=0;ij--){
-            if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho11[ij]>0.5&&i11Jet4>-1&&ij>i11Jet4) i11Jet5=ij;
-            if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12[ij]>0.5&&i12Jet4>-1&&ij>i12Jet4) i12Jet5=ij;
-         }
-
-         ///////////////
-         ///// Sixth Jet
-         for(int ij=9; ij>=0;ij--){
-            if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho11[ij]>0.5&&i11Jet5>-1&&ij>i11Jet5) i11Jet6=ij;
-            if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12[ij]>0.5&&i12Jet5>-1&&ij>i12Jet5) i12Jet6=ij;
          }
 
          ////////////////////////////
@@ -658,9 +667,9 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          if( i11Jet2>-1 ) {
 
             jess    = 1.00; // control the jet energy scale
-            dijetpt = sqrt(JetPFCor_Pt[/*0*/i11Jet1]*JetPFCor_Pt[/*0*/i11Jet1]+
-               JetPFCor_Pt[/*1*/i11Jet2]*JetPFCor_Pt[/*1*/i11Jet2]+
-               2*JetPFCor_Pt[/*0*/i11Jet1]*JetPFCor_Pt[/*1*/i11Jet2]*cos(JetPFCor_Phi[/*0*/i11Jet1]-JetPFCor_Phi[/*1*/i11Jet2]));
+            dijetpt = sqrt(JetPFCor_Pt[i11Jet1]*JetPFCor_Pt[i11Jet1]+
+               JetPFCor_Pt[i11Jet2]*JetPFCor_Pt[i11Jet2]+
+               2*JetPFCor_Pt[i11Jet1]*JetPFCor_Pt[i11Jet2]*cos(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2]));
 
             p4j1.SetPxPyPzE( JetPFCor_Px[i11Jet1], JetPFCor_Py[i11Jet1], JetPFCor_Pz[i11Jet1], JetPFCor_E[i11Jet1] );
             p4j2.SetPxPyPzE( JetPFCor_Px[i11Jet2], JetPFCor_Py[i11Jet2], JetPFCor_Pz[i11Jet2], JetPFCor_E[i11Jet2] );
@@ -760,8 +769,8 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
       if( i11Jet2>0){
 
-         if (JetPFCor_Pt[/*0*/i11Jet1]>Jpt 
-          && JetPFCor_Pt[/*1*/i11Jet2]>Jpt 
+         if (JetPFCor_Pt[i11Jet1]>Jpt 
+          && JetPFCor_Pt[i11Jet2]>Jpt 
           && W_mt>30. //Move to MVA MET Later
           && W_muon_pt>25.
           && fabs(W_muon_dz000)<0.02
@@ -769,12 +778,12 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
           && fabs(W_muon_eta)<2.1 //Fix the Muon Eta Range to 2.1
             ) {isgengdevt = 1;}
 
-         if (JetPFCor_Pt[/*0*/i11Jet1]>Jpt ) {
+         if (JetPFCor_Pt[i11Jet1]>Jpt ) {
             h_events          -> Fill ( istep ); 
             h_events_weighted -> Fill ( istep, effwt*puwt ); 
             istep++;
 
-            if ( JetPFCor_Pt[/*1*/i11Jet2]>Jpt ) {
+            if ( JetPFCor_Pt[i11Jet2]>Jpt ) {
                h_events          -> Fill ( istep ); 
                h_events_weighted -> Fill ( istep, effwt*puwt ); 
                istep++;
@@ -968,14 +977,10 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       branch_i11Jet2->Fill();
       branch_i11Jet3->Fill();
       branch_i11Jet4->Fill();
-      branch_i11Jet5->Fill();
-      branch_i11Jet6->Fill();
       branch_i12Jet1->Fill();
       branch_i12Jet2->Fill();
       branch_i12Jet3->Fill();
       branch_i12Jet4->Fill();
-      branch_i12Jet5->Fill();
-      branch_i12Jet6->Fill();
       branch_c2jMass11->Fill();
       branch_c2jMass12->Fill();
 
