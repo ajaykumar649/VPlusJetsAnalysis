@@ -35,7 +35,7 @@ import pyroot_logon
 config = __import__(opts.modeConfig)
 import RooWjj2DFitter
 
-from ROOT import TCanvas, TLegend, RooFit, RooLinkedListIter, TMath, RooRandom, TFile, \
+from ROOT import TCanvas, TLegend, RooFit, RooArgSet, RooDataSet, RooLinkedListIter, TMath, RooRandom, TFile, TTree, \
          RooDataHist, RooMsgService, TStopwatch, RooAbsPdf, TBox, kBlack, kRed, \
          kBlue, kOrange, kDashed, RooAbsCollection
 import pulls
@@ -54,7 +54,7 @@ pars = config.theConfig(Nj = opts.Nj, mH = opts.mH,
                         includeSignal = opts.includeSignal)
 
 fitter = RooWjj2DFitter.Wjj2DFitter(pars)
-
+    
 totalPdf = fitter.makeFitter()
 
 if opts.ws:
@@ -214,9 +214,11 @@ if opts.isElectron:
 #         floatVar.setRange(floatVar.getVal()-floatVar.getError()*5.,
 #                           floatVar.getVal()+floatVar.getError()*5)
 
+if pars.btagSelection:
+    output = TFile("DibosonBoostedBtaglnuJ_%s_%ijets_output.root" % (mode, opts.Nj),"recreate")
+else:
+    output = TFile("DibosonBoostedlnuJ_%s_%ijets_output.root" % (mode, opts.Nj),"recreate")
 
-output = TFile("DibosonBoostedlnuJ_%s_%ijets_output.root" % (mode, opts.Nj),
-               "recreate")
 
 plot1.Write()
 dibosonSubtractedFrame.Write()
@@ -226,9 +228,15 @@ fitter.ws.Write()
 #fitter.ws.Print()
 output.Close()
 
-c1.SaveAs("DibosonBoostedlnuJ_%s_%ijets_Stacked.png" % (mode, opts.Nj))
-c2.SaveAs("DibosonBoostedlnuJ_%s_%ijets_Subtracted.png" % (mode, opts.Nj))
-cp1.SaveAs("DibosonBoostedlnuJ_%s_%ijets_Pull.png" % (mode, opts.Nj))
+if pars.btagSelection:
+    c1.SaveAs("DibosonBoostedBtaglnuJ_%s_%ijets_Stacked.png" % (mode, opts.Nj))
+    c2.SaveAs("DibosonBoostedBtaglnuJ_%s_%ijets_Subtracted.png" % (mode, opts.Nj))
+    cp1.SaveAs("DibosonBoostedBtaglnuJ_%s_%ijets_Pull.png" % (mode, opts.Nj))
+else:
+    c1.SaveAs("DibosonBoostedlnuJ_%s_%ijets_Stacked.png" % (mode, opts.Nj))
+    c2.SaveAs("DibosonBoostedlnuJ_%s_%ijets_Subtracted.png" % (mode, opts.Nj))
+    cp1.SaveAs("DibosonBoostedlnuJ_%s_%ijets_Pull.png" % (mode, opts.Nj))
+
 print 'Time elapsed: %.1f sec' % timer.RealTime()
 print 'CPU time used: %.1f sec' % timer.CpuTime()
 

@@ -35,7 +35,7 @@ import pyroot_logon
 config = __import__(opts.modeConfig)
 import RooWjj2DFitter
 
-from ROOT import TCanvas, TLegend, RooFit, RooLinkedListIter, TMath, RooRandom, TFile, \
+from ROOT import TCanvas, TLegend, RooFit, RooDataSet, RooArgSet, RooRealVar, RooTreeDataStore, TTree, RooLinkedListIter, TMath, RooRandom, TFile, \
     RooDataHist, RooMsgService, TStopwatch
 import pulls
 
@@ -54,7 +54,11 @@ pars = config.theConfig(Nj = opts.Nj, mH = opts.mH,
 
 fitter = RooWjj2DFitter.Wjj2DFitter(pars)
 
+    
 totalPdf = fitter.makeFitter()
+
+
+
 
 if opts.ws:
     fitter.loadWorkspaceFromFile(opts.ws, getFloatPars = False)
@@ -66,7 +70,6 @@ fitter.expectedFromPars()
 # fitter.topExpected = 3357.8
 # fitter.dibosonExpected = 670.5
 # fitter.HWWExpected = 225.1
-fitter.resetYields()
 # fitter.readParametersFromFile('WpJHWW350Parameters.txt')
 # fitter.readParametersFromFile('topHWW350Parameters.txt')
 # fitter.readParametersFromFile('dibosonHWW350Parameters.txt')
@@ -92,8 +95,9 @@ if opts.toy:
 else:    
     data = fitter.loadData()
 
-fitter.setMultijetYield()
+#fitter.setMultijetYield()
 data.Print()
+fitter.resetYields()
 startpars.IsA().Destructor(startpars)
 
 print 'Time elapsed: %.1f sec' % timer.RealTime()
@@ -213,9 +217,10 @@ if opts.isElectron:
 #         floatVar.setRange(floatVar.getVal()-floatVar.getError()*5.,
 #                           floatVar.getVal()+floatVar.getError()*5)
 
-
-output = TFile("Dibosonlnujj_%s_%ijets_output.root" % (mode, opts.Nj),
-               "recreate")
+if pars.btagSelection:
+    output = TFile("DibosonBtaglnujj_%s_%ijets_output.root" % (mode, opts.Nj),"recreate")
+else:
+    output = TFile("Dibosonlnujj_%s_%ijets_output.root" % (mode, opts.Nj),"recreate")
 
 plot1.Write()
 dibosonSubtractedFrame.Write()
@@ -225,9 +230,15 @@ fitter.ws.Write()
 #fitter.ws.Print()
 output.Close()
 
-c1.SaveAs("Dibosonlnujj_%s_%ijets_Stacked.png" % (mode, opts.Nj))
-c2.SaveAs("Dibosonlnujj_%s_%ijets_Subtracted.png" % (mode, opts.Nj))
-cp1.SaveAs("Dibosonlnujj_%s_%ijets_Pull.png" % (mode, opts.Nj))
+if pars.btagSelection:
+    c1.SaveAs("DibosonBtaglnujj_%s_%ijets_Stacked.png" % (mode, opts.Nj))
+    c2.SaveAs("DibosonBtaglnujj_%s_%ijets_Subtracted.png" % (mode, opts.Nj))
+    cp1.SaveAs("DibosonBtaglnujj_%s_%ijets_Pull.png" % (mode, opts.Nj))
+else:
+    c1.SaveAs("Dibosonlnujj_%s_%ijets_Stacked.png" % (mode, opts.Nj))
+    c2.SaveAs("Dibosonlnujj_%s_%ijets_Subtracted.png" % (mode, opts.Nj))
+    cp1.SaveAs("Dibosonlnujj_%s_%ijets_Pull.png" % (mode, opts.Nj))
+
 print 'Time elapsed: %.1f sec' % timer.RealTime()
 print 'CPU time used: %.1f sec' % timer.CpuTime()
 

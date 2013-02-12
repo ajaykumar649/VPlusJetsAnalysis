@@ -1,7 +1,7 @@
 from RooWjj2DFitterUtils import Wjj2DFitterUtils
 from ROOT import RooWorkspace, RooFormulaVar, RooAddPdf, RooAbsReal, RooFit, RooCmdArg, \
     RooBinning, RooAbsData, RooHist, RooArgList, RooArgSet, TFile, RooDataHist,\
-    kRed, kBlue, kGreen, kYellow, kGray, kAzure, kCyan, gROOT, TLegend, \
+    kRed, kBlue, kGreen, kYellow, kGray, kAzure, kCyan, gROOT, TLegend, TTree, \
     TBox, kBlack
 from math import sqrt
 from array import array
@@ -325,9 +325,17 @@ class Wjj2DFitter:
         sumExpected = 0.
         for (idx,fset) in enumerate(files):
             filename = fset[0]
-
-            tmpHist = self.utils.File2Hist(filename, 
-                                           'hist%s_%i' % (component, idx))
+            if (component=='QCD'):
+                print 'including the QCD'
+                tmpHist = self.utils.File2Hist(filename, 
+                                               'hist%s_%i' % (component, idx),
+                                               False,None,False,True,0,
+                                               True)
+            else:
+                tmpHist = self.utils.File2Hist(filename, 
+                                               'hist%s_%i' % (component, idx),
+                                               False,None,False,True,0,
+                                               False)                
             sumYields += tmpHist.Integral()
             sumxsec += fset[2]
             compHist.Add(tmpHist, self.pars.integratedLumi*fset[2]/fset[1])
@@ -583,7 +591,11 @@ class Wjj2DFitter:
         for component in components:
             theYield = self.ws.var('n_%s' % component)
             theNorm = self.ws.var('%s_nrm' % component)
-            if hasattr(self, '%sExpected' % component):
+            fracofdata = getattr(self.pars, '%sFracOfData' % component)
+            if (fracofdata>-0.5):
+                print 'explicitly setting ', component,' yield to be', fracofdata,' of data'
+                theYield.setVal(fracofdata*Ndata)
+            elif hasattr(self, '%sExpected' % component):
                 theYield.setVal(getattr(self, '%sExpected' % component))
             else:
                 print 'no expected value for',component
@@ -598,6 +610,24 @@ class Wjj2DFitter:
             else:
                 theYield.setError(sqrt(theYield.getVal()))
             theYield.Print()
+
+    def generateToyMCSet(self,var,inputPdf,outFileName,NEvts):
+        fMC = TFile(outFileName, "RECREATE");
+#        thevar = self.ws.var(var);
+        print 'thevar='
+        print var
+#        print thevar
+        print '...'
+#        varList = RooArgList()
+#        varList.add(self.ws.var(var))
+        toymc = inputPdf.generate(RooArgSet(self.ws.var(var)),NEvts);
+        tMC = toymc.tree();
+        fMC.cd();
+        tMC.Write();
+        fMC.Close();
+
+    
+
 
     def legend4Plot(plot, left = False):
         if left:

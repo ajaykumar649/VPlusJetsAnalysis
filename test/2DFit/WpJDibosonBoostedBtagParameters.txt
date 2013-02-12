@@ -1,0 +1,4 @@
+c_WpJ_GroomedJet_CA8_mass_pr = -0.0494638 +/- 0.0081123 L(-10 - 10) 
+offset_WpJ_GroomedJet_CA8_mass_pr =  68.036 +/- 9.4135 L(-100 - 1000) 
+width_WpJ_GroomedJet_CA8_mass_pr =  27.575 +/- 4.3489 L(0 - 1000) 
+n_WpJ = 463.5 +/- 21.5 C

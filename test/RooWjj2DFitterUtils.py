@@ -54,14 +54,22 @@ class Wjj2DFitterUtils:
         return newHist
 
     # the cuts to be applied to any data
-    def fullCuts(self):
-        if len(self.pars.cuts) > 0:
-            theCut = '(%s)' % self.pars.cuts
-        else:
-            theCut = '(1==1)'
+    def fullCuts(self, isQCD = False):
+        if isQCD:
+            if len(self.pars.QCDcuts) > 0:
+                theCut = '(%s)' % self.pars.QCDcuts
+            else:
+                theCut = '(1==1)'
+        else:  
+            if len(self.pars.cuts) > 0:
+                theCut = '(%s)' % self.pars.cuts
+            else:
+                theCut = '(1==1)'
         for v in self.pars.var:
             theCut += '&&(%s>%0.3f)&&(%s<%0.3f)'%(v,self.pars.varRanges[v][1],
                                                   v,self.pars.varRanges[v][2])
+        if isQCD:
+            print 'implementing QCD cuts = ', theCut
         return '(%s)' % theCut
 
     def btagVeto(self, row, vbf = False):
@@ -77,7 +85,7 @@ class Wjj2DFitterUtils:
     # generator function for looping over an event tree and applying the cuts
     def TreeLoopFromFile(self, fname, noCuts = False,
                          cutOverride = None, CPweight = False, 
-                         interference = 0):
+                         interference = 0, isQCD = False):
 
         # open file and get tree
         treeFile = TFile.Open(fname)
@@ -95,7 +103,10 @@ class Wjj2DFitterUtils:
         elif noCuts:
             theCuts = ''
         else:
-            theCuts = self.fullCuts()
+            if isQCD:
+                theCuts = self.fullCuts(True)
+            else:
+                theCuts = self.fullCuts()
 
         # create an entry list which apply the cuts to the tree
         if gDirectory.Get('cuts_evtList'):
@@ -165,18 +176,19 @@ class Wjj2DFitterUtils:
     # from a file fill a 2D histogram
     def File2Hist(self, fname, histName, noCuts = False, 
                   cutOverride = None, CPweight = False,
-                  doWeights = True, interference = 0):
+                  doWeights = True, interference = 0, isQCD = False):
         theHist = self.newEmptyHist(histName)
 
         print 'filename:',fname
         doEffWgt = (self.pars.doEffCorrections and not cutOverride \
-                        and doWeights)
+                        and doWeights and not isQCD)
         
         for (row, effWgt, cpw, iwt) in self.TreeLoopFromFile(fname, 
                                                              noCuts, 
                                                              cutOverride,
                                                              CPweight,
-                                                             interference):
+                                                             interference,
+                                                             isQCD):
             #print 'entry:',v1val,v2val,effWgt
             if not doEffWgt:
                 effWgt = 1.0
@@ -218,13 +230,13 @@ class Wjj2DFitterUtils:
     # from a file fill and return a RooDataSet
     def File2Dataset(self, fnames, dsName, ws, noCuts = False, 
                      weighted = False, CPweight = False, cutOverride = None,
-                     interference = 0):
+                     interference = 0, isQCD = False):
         if ws.data(dsName):
             return ws.data(dsName)
 
         cols = RooArgSet(ws.set('obsSet'))
         # print 'interference weight flag:',interference
-        if weighted:
+        if (weighted and not isQCD):
             evtWgt = RooRealVar('evtWgt', 'evtWgt', 1.0)
             cols.add(evtWgt)
             ds = RooDataSet(dsName, dsName, cols, 'evtWgt')
@@ -250,7 +262,8 @@ class Wjj2DFitterUtils:
                     self.TreeLoopFromFile(fname, noCuts,
                                           CPweight = CPweight,
                                           cutOverride = cutOverride,
-                                          interference = interference):
+                                          interference = interference,
+                                          isQCD = isQCD):
                 inRange = True
                 for (i,v) in enumerate(obs):
                     inRange = (inRange and ws.var(v).inRange(row[i], ''))

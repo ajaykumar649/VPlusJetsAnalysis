@@ -68,9 +68,9 @@ data = None
 sumNExp = 0.
 weighted = True
 cutOverride = None
-if opts.component == 'multijet':
-    weighted = False
-    cutOverride = pars.multijet_cuts
+## if opts.component == 'QCD':
+##     weighted = False
+##     cutOverride = pars.QCDcuts
 cpw = False
 if (opts.component == "ggH") or (opts.component == 'qqH'):
     cpw = True
@@ -78,10 +78,17 @@ if (opts.component == 'qqH') and (opts.mH == 170):
     cpw = False
 #print 'interference option:',opts.interference
 for (ifile, (filename, ngen, xsec)) in enumerate(files):
-    tmpData = fitter.utils.File2Dataset(filename, 'data%i' % ifile, fitter.ws,
-                                        weighted = weighted, CPweight = cpw,
-                                        cutOverride = cutOverride,
-                                        interference = opts.interference)
+    if opts.component == 'QCD':
+        tmpData = fitter.utils.File2Dataset(filename, 'data%i' % ifile, fitter.ws,
+                                            weighted = False, CPweight = cpw,
+                                            cutOverride = cutOverride,
+                                            interference = opts.interference, isQCD = True)
+    else:
+        tmpData = fitter.utils.File2Dataset(filename, 'data%i' % ifile, fitter.ws,
+                                            weighted = weighted, CPweight = cpw,
+                                            cutOverride = cutOverride,
+                                            interference = opts.interference)
+    
     tmpData.Print()
     expectedYield = xsec*pars.integratedLumi*tmpData.sumEntries()/ngen
     print filename,'A x eff: %.3g' % (tmpData.sumEntries()/ngen)
@@ -227,8 +234,17 @@ lgnd.AddEntry('fitCurve', '%s fit pdf' % opts.component, 'l')
 lgnd.AddEntry('theData','%s MC' % opts.component,'p')
 lgnd.Draw('same')
 
-c1.SaveAs("Dibosonlnujj_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
-#c1.SaveAs("DibosonBoostedlnuJ_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
+if pars.btagSelection:
+    if pars.boostedSelection:
+        c1.SaveAs("DibosonBoostedBtaglnuJ_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
+    else:
+        c1.SaveAs("DibosonBtaglnujj_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
+else:
+    if pars.boostedSelection:
+        c1.SaveAs("DibosonBoostedlnuJ_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
+    else:
+        c1.SaveAs("Dibosonlnujj_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
+    
 
 ndf = 0
 # print chi2s
