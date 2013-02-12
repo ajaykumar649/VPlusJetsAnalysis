@@ -35,13 +35,8 @@ import pyroot_logon
 config = __import__(opts.modeConfig)
 import RooWjj2DFitter
 
-<<<<<<< runDiboson8TevFit.py
 from ROOT import TCanvas, RooFit, RooLinkedListIter, TMath, RooRandom, TFile, \
     RooDataHist, RooMsgService, TStopwatch, RooStats
-=======
-from ROOT import TCanvas, TLegend, RooFit, RooDataSet, RooArgSet, RooRealVar, RooTreeDataStore, TTree, RooLinkedListIter, TMath, RooRandom, TFile, \
-    RooDataHist, RooMsgService, TStopwatch
->>>>>>> 1.4
 import pulls
 
 timer = TStopwatch()

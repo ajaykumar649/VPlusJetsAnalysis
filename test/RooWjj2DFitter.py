@@ -331,8 +331,7 @@ class Wjj2DFitter:
             filename = fset[0]
             tmpHist = self.utils.File2Hist(filename, 
                                            'hist%s_%i' % (component, idx),
-                                           False,cutOverride,False,True,0,
-                                           False)
+                                           False,cutOverride,False,True,0)
             sumYields += tmpHist.Integral()
             sumxsec += fset[2]
             compHist.Add(tmpHist, self.pars.integratedLumi*fset[2]/fset[1])
