@@ -894,7 +894,7 @@ TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1,
   TF1 *fSignal = new TF1 ("fSignal", "gaus2*sigratio");
   double overflow = fSignal->Integral(dm_max, dm_max + 400.);
   double baseline_overflow = gaus2->Integral(dm_max, dm_max + 400.);
-  overflow = baseline_overflow;
+  overflow -= baseline_overflow;
 
   newsighist->SetBinContent(nBinsTot, lastbin+overflow);
   newsighist->SetBinError(nBinsTot, sqrt(lastbin+overflow));
