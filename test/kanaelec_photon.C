@@ -299,6 +299,14 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    else {             sprintf(rootfn, "%s-VS-%i.root",outfilename,runflag);}
    TFile fresults= TFile(rootfn,"RECREATE");
 
+   /////////////////////////////////////////////////////////////////
+   // Remove unneeded branches to reduce size of RDTree output file:
+   fChain->SetBranchStatus("*Higgs*", 0);
+   fChain->SetBranchStatus("*VBF*", 0);
+   fChain->SetBranchStatus("*GroomedJet*", 0);
+   fChain->SetBranchStatus("*W_H*", 0);
+   fChain->SetBranchStatus("*W_tb*", 0);
+
    TTree *newtree = fChain->CloneTree();
 
 
