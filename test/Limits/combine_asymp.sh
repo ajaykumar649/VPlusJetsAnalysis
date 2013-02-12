@@ -6,7 +6,7 @@ then
     exit
 fi
 
-COMBINE_ARGS="-v0 -n HWW2lnujjObs -M Asymptotic --minosAlgo stepping --rMin=0.1 --rMax=5"
+COMBINE_ARGS="-v0 -n HWW2lnujjObs -M Asymptotic --minosAlgo stepping --rMin=-5 --rMax=10"
 
 #for mass in 170 180 190 200 250 300 350 400 450 500 550 600
 #for mass in 180 250 400

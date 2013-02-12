@@ -25,6 +25,8 @@ Some important constants are set at the top of the file.
 
 using namespace std;
 
+const char *wkspacename = "w_mWW";
+
 //================================================================================
 
 bool issignal(const TString& procname)
@@ -104,7 +106,7 @@ makeDataCardContent(TFile *fp,
   //TString trigsyst   = "CMS_trigger_"+TString(elormu);
   TString leptsyst   = "CMS_eff_"+TString(elormu);
 
-  RooWorkspace *w = (RooWorkspace *)gDirectory->Get("w");
+  RooWorkspace *w = (RooWorkspace *)gDirectory->Get(wkspacename);
 
   //w->Print();
 
@@ -121,109 +123,126 @@ makeDataCardContent(TFile *fp,
 
   // PDFs
   RooArgSet pdfs = w->allPdfs();
-  TIterator* pit = pdfs.createIterator();
-  
+  TIterator* pdfit = pdfs.createIterator();
+
+  RooArgSet params = w->allVars();
+  TIterator* parit = params.createIterator();
 
   for(RooAbsPdf* pdf = 0;
-      (pdf=(RooAbsPdf*)pit->Next());){
+      (pdf=(RooAbsPdf*)pdfit->Next());){
 
-    if (pdf->IsA() == RooProdPdf::Class()) {
-      //pdf->Print();
+    //pdf->Print();
 
-      TString pdfname(pdf->GetName());
+    TString pdfname(pdf->GetName());
 
-      if (pdfname.EndsWith("Down")) continue; // skip the "Down"s, expect a matching "Up"
+    // look for a matching "n_pdf" variable.
+    bool isaprocess=false;
+    parit->Reset();
+    for(RooRealVar* param = 0;
+	(param=(RooRealVar*)parit->Next());){
+    
+      if (TString(param->GetName()).EqualTo("n_"+pdfname)) {
+	isaprocess=true;
+	break;
+      }
+    }
 
-      // tokenize the pdf name to determine
-      // 1. process name
-      // 2. any systematic applied
-      //
-      TString procname(""),systname("");
+    if (!isaprocess) continue;
 
-      if (pdfname.EndsWith("Up")) { // This is a histogram with a systematic applied
-	procname = TString(pdfname(0,pdfname.First('_')));
-	systname = TString(pdfname(pdfname.First('_')+1,pdfname.Length()-pdfname.First('_')-3));
-      } else
-	procname = pdfname;
+    if (pdfname.EndsWith("Down")) continue; // skip the "Down"s, expect a matching "Up"
 
-      double yield=0;
-      if (getYield(w,procname,yield)) {
-	cout<<"Read process="<<setw(10)<<procname<<", channel="<<channame<<", mass="<<massgev;
-	if (isinterp) cout << " (interpolated)";
-	if (systname.Length()) cout << ", systname = " << systname;
+    // tokenize the pdf name to determine
+    // 1. process name
+    // 2. any systematic applied
+    //
+    TString procname(""),systname("");
 
-	card->addProcessChannel(yield,procname,systname,ichan,0,1,issignal(procname));
-      } else
-	continue;
+    if (pdfname.EndsWith("Up")) { // This is a histogram with a systematic applied
+      procname = TString(pdfname(0,pdfname.First('_')));
+      systname = TString(pdfname(pdfname.First('_')+1,pdfname.Length()-pdfname.First('_')-3));
+    } else
+      procname = pdfname;
 
-      if( issignal(procname) ) {
+    double yield=0;
+    if (getYield(w,procname,yield)) {
+      cout<<"Read process="<<setw(10)<<procname<<", channel="<<channame<<", mass="<<massgev;
+      if (isinterp) cout << " (interpolated)";
+      if (systname.Length()) cout << ", systname = " << systname;
+      
+      card->addProcessChannel(yield,procname,systname,ichan,0,1,issignal(procname));
+    } else
+      continue;
 
-	// insert signal lumi and xsec systematics now
+    if( issignal(procname) ) {
+
+      // insert signal lumi and xsec systematics now
 
 #ifdef ISHWW
 
-	card->addSystematic("lumi_8TeV",procname,0,1+siglumiunc);
+      card->addSystematic("lumi_8TeV",procname,0,1+siglumiunc);
 
-	card->addSystematic(leptsyst,procname,0,
-			    1+sqrt(siglepteffunc*siglepteffunc + sigtrigeffunc*sigtrigeffunc));
+      card->addSystematic(leptsyst,procname,0,
+			  1+sqrt(siglepteffunc*siglepteffunc + sigtrigeffunc*sigtrigeffunc));
 
-	TString signalsyst = Form("CMS_%s_eff_sig_%dTeV", channame.Data(),beamcomenergytev);
-	card->addSystematic(signalsyst,procname,0,
+      TString signalsyst = Form("CMS_%s_eff_sig_%dTeV", channame.Data(),beamcomenergytev);
+      card->addSystematic(signalsyst,procname,0,
 #ifdef SEVENTEV
-          1.0 + (massgev < 500 ? sigselefferrpctlomass : sigselefferrpcthimass)/100.
+			  1.0 + (massgev < 500 ? sigselefferrpctlomass : sigselefferrpcthimass)/100.
 #else
-	  1.0 + (sigselefferrpct8tev)/100.
+			  1.0 + (sigselefferrpct8tev)/100.
 #endif
 			    );
 
-	// down/up pairs to put in card
-	pair<double,double> pdfunc,scaleunc0,scaleunc1,scaleunc2,scaleunc3,ueps0,ueps1; 
+      // down/up pairs to put in card
+      pair<double,double> pdfunc,scaleunc0,scaleunc1,scaleunc2,scaleunc3,ueps0,ueps1; 
     
-	makeTheoretUncert4Sig(massgev,procname,pdfunc,scaleunc0,scaleunc1,scaleunc2,scaleunc3,ueps0,ueps1);
+      makeTheoretUncert4Sig(massgev,procname,pdfunc,scaleunc0,scaleunc1,scaleunc2,scaleunc3,ueps0,ueps1);
 
-	if (procname.Contains("qq") ) { // VBF process
+      if (procname.Contains("qq") ) { // VBF process
+	
+	card->addSystematic("pdf_qqbar",procname,0,pdfunc.second);
+	card->addSystematic("QCDscale_qqH",procname,0,scaleunc0.second);
 
-	  card->addSystematic("pdf_qqbar",procname,0,pdfunc.second);
-	  card->addSystematic("QCDscale_qqH",procname,0,scaleunc0.second);
+      } else { // default gg fusion
 
-	} else { // default gg fusion
+	card->addSystematic("pdf_gg",procname,0,pdfunc.second);
 
-	  card->addSystematic("pdf_gg",procname,0,pdfunc.second);
-
-	  if (ichan & 1) { // odd channel, 3jet bin
-	    card->addSystematic("QCDscale_ggH1in",procname,0,scaleunc2.second);
-	    card->addSystematic("QCDscale_ggH2in",procname,0,scaleunc3.second);
-	    card->addSystematic("UEPS",procname,0,ueps1.second);
-	  } else { // even channel, 2jet bin
-	    card->addSystematic("QCDscale_ggH",procname,0,scaleunc0.second);
-	    card->addSystematic("QCDscale_ggH1in",procname,0,scaleunc1.second);
-	    card->addSystematic("UEPS",procname,0,ueps0.second);
-	  }
+	if (ichan & 1) { // odd channel, 3jet bin
+	  card->addSystematic("QCDscale_ggH1in",procname,0,scaleunc2.second);
+	  card->addSystematic("QCDscale_ggH2in",procname,0,scaleunc3.second);
+	  card->addSystematic("UEPS",procname,0,ueps1.second);
+	} else { // even channel, 2jet bin
+	  card->addSystematic("QCDscale_ggH",procname,0,scaleunc0.second);
+	  card->addSystematic("QCDscale_ggH1in",procname,0,scaleunc1.second);
+	  card->addSystematic("UEPS",procname,0,ueps0.second);
 	}
+      }
 #endif //ISHWW
 
-      } else {  // background
+    } else {  // background
 
-	double constraint=0.;
-	if (getConstraint(w,procname,constraint)) {
-	  // background from MC, add MC-based uncertainties
-
-	  card->addSystematic(procname+"_xs_unc",procname,0,constraint);
+      double constraint=0.;
+      if (getConstraint(w,procname,constraint)) {
+	// background from MC, add MC-based uncertainties
+	
+	card->addSystematic(procname+"_constraint",procname,0,constraint);
+	if (!procname.EqualTo("WpJ")) {
 	  card->addSystematic(leptsyst,procname,0,
 			      1+sqrt(siglepteffunc*siglepteffunc + sigtrigeffunc*sigtrigeffunc));
 	  card->addSystematic("lumi_8TeV",procname,0,1+siglumiunc);
 	}
       }
-      cout<<endl;
     }
+    cout<<endl;
   }
 
-  RooArgSet params = w->allVars();
-  pit = params.createIterator();
+  parit->Reset();
   for(RooRealVar* param = 0;
-      (param=(RooRealVar*)pit->Next());){
+      (param=(RooRealVar*)parit->Next());){
     
-    if (TString(param->GetName()).Contains("WpJ") &&!param->isConstant()) {
+    if (TString(param->GetName()).Contains("WpJ") &&
+	!TString(param->GetName()).EndsWith("_nrm") &&
+	!param->isConstant()) {
       //param->Print();
       card->addModelParam(param->GetName(),"flatParam");
     }
@@ -267,8 +286,8 @@ makeDataCardFiles(int imass, bool isinterp, char*nametag)
     Card *card = makeDataCardContent(fp,imass,isinterp,ichan);
 
     card->addShapeFiles(ShapeFiles_t("*","*",fname,
-				     "w:$PROCESS",
-				     "w:$PROCESS_$SYSTEMATIC")
+				     TString(wkspacename)+":$PROCESS",
+				     TString(wkspacename)+":$PROCESS_$SYSTEMATIC")
 		      );
     TString dcardname = Form("./datacard_%dTeV_%s_%s-M=%d.txt", beamcomenergytev,
 			     //outdir.Data(),

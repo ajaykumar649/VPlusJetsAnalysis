@@ -27,6 +27,10 @@ parser.add_option('-i', '--interference', dest='interference', default=0,
                   type='int', help='ggH interference to use.  '+\
                       '(0): none [default]  (1): nominal'+\
                       '  (2): +1 sigma  (3): -1 sigma  ')
+parser.add_option('--morphingComp', dest='morphComponent', default=0, 
+                  type='int', help='which morphing component to use.  '+\
+                      '(0): nominal [default]  (+/- 1): matching up/down'+\
+                      '  (+/- 2): scale up/down')
 
 (opts, args) = parser.parse_args()
 
@@ -40,7 +44,7 @@ import RooWjj2DFitter
 import HWWSignalShapes
 #from RooWjj2DFitterUtils import Wjj2DFitterUtils
 
-from ROOT import RooFit, TCanvas, TLegend, RooArgSet, TFile, RooAbsReal, RooAbsData, \
+from ROOT import RooFit, TCanvas, RooArgSet, TFile, RooAbsReal, RooAbsData, \
     RooHist, TMath, kRed, kDashed, kOrange, RooMsgService
 
 import pulls
@@ -54,6 +58,31 @@ files = getattr(pars, '%sFiles' % opts.component)
 models = getattr(pars, '%sModels' % opts.component)
 if opts.sb or opts.sig:
     models = getattr(pars, '%sSidebandModels' % opts.component)
+if models[0] == -2:
+    print 'pdf morphing'
+    if opts.morphComponent == 0:
+        models = getattr(pars, '%sNomModels' % opts.component)
+        files = getattr(pars, '%sNomFiles' % opts.component)
+        opts.component = opts.component + '_Nom'
+    elif opts.morphComponent == -1:
+        models = getattr(pars, '%sMDModels' % opts.component)
+        files = getattr(pars, '%sMDFiles' % opts.component)
+        opts.component = opts.component + '_MD'
+    elif opts.morphComponent == 1:
+        models = getattr(pars, '%sMUModels' % opts.component)
+        files = getattr(pars, '%sMUFiles' % opts.component)
+        opts.component = opts.component + '_MU'
+    elif opts.morphComponent == -2:
+        models = getattr(pars, '%sSDModels' % opts.component)
+        files = getattr(pars, '%sSDFiles' % opts.component)
+        opts.component = opts.component + '_SD'
+    elif opts.morphComponent == 2:
+        models = getattr(pars, '%sSUModels' % opts.component)
+        files = getattr(pars, '%sSUFiles' % opts.component)
+        opts.component = opts.component + '_SU'
+print 'component', opts.component
+print 'models', models
+print 'files', files
 
 # print 'eff lumi WW: %.1f invpb' % (pars.dibosonFiles[0][1]/pars.dibosonFiles[0][2])
 # print 'eff lumi WZ: %.1f invpb' % (pars.dibosonFiles[1][1]/pars.dibosonFiles[1][2])
@@ -68,9 +97,9 @@ data = None
 sumNExp = 0.
 weighted = True
 cutOverride = None
-## if opts.component == 'QCD':
-##     weighted = False
-##     cutOverride = pars.QCDcuts
+if opts.component == 'QCD':
+    weighted = False
+    cutOverride = pars.QCDcuts
 cpw = False
 if (opts.component == "ggH") or (opts.component == 'qqH'):
     cpw = True
@@ -78,16 +107,10 @@ if (opts.component == 'qqH') and (opts.mH == 170):
     cpw = False
 #print 'interference option:',opts.interference
 for (ifile, (filename, ngen, xsec)) in enumerate(files):
-    if opts.component == 'QCD':
-        tmpData = fitter.utils.File2Dataset(filename, 'data%i' % ifile, fitter.ws,
-                                            weighted = False, CPweight = cpw,
-                                            cutOverride = cutOverride,
-                                            interference = opts.interference, isQCD = True)
-    else:
-        tmpData = fitter.utils.File2Dataset(filename, 'data%i' % ifile, fitter.ws,
-                                            weighted = weighted, CPweight = cpw,
-                                            cutOverride = cutOverride,
-                                            interference = opts.interference)
+    tmpData = fitter.utils.File2Dataset(filename, 'data%i' % ifile, fitter.ws,
+                                        weighted = weighted, CPweight = cpw,
+                                        cutOverride = cutOverride,
+                                        interference = opts.interference)
     
     tmpData.Print()
     expectedYield = xsec*pars.integratedLumi*tmpData.sumEntries()/ngen
@@ -183,6 +206,10 @@ fr = sigPdf.fitTo(data, RooFit.Save(),
                   )
 
 
+mode = 'muon'
+if opts.isElectron:
+    mode = 'electron'
+
 cans = []
 plots = []
 chi2s = []
@@ -205,16 +232,25 @@ for (i,m) in enumerate(models):
     if fr:
         sigPdf.plotOn(sigPlot, 
                       RooFit.VisualizeError(fr, 1, True),
+                      RooFit.Name('fitErrors'),
                       RooFit.FillColor(kOrange+1),
                       RooFit.FillStyle(3001))
+        sigPlot.getCurve().SetTitle('Fit errors')
     sigPdf.plotOn(sigPlot, RooFit.Name('fitCurve'))
-    sigPdf.plotOn(sigPlot, RooFit.Name('fitTails'),
-                  RooFit.Components('*tail'),
-                  RooFit.LineColor(kRed),
-                  RooFit.LineStyle(kDashed))
+    sigPlot.getCurve().SetTitle('%s fit' % opts.component)
+    ret = sigPdf.plotOn(sigPlot, RooFit.Name('fitTails'),
+                        RooFit.Components('*tail'),
+                        RooFit.LineColor(kRed),
+                        RooFit.LineStyle(kDashed))
+    if ret:
+        sigPlot.getCurve().SetTitle('tail')
 
     # sigPlot.GetYaxis().SetTitle('Events / GeV')
 
+    sigPlot.getHist('theData').SetTitle('%s MC' % opts.component)
+
+    leg = RooWjj2DFitter.Wjj2DFitter.legend4Plot(sigPlot)
+    sigPlot.addObject(leg)
     sigPlot.Draw()
     c1.Update()
     sigPlot.SetMinimum(1e-6)
@@ -228,23 +264,6 @@ for (i,m) in enumerate(models):
 mode = 'muon'
 if opts.isElectron:
     mode = 'electron'
-
-lgnd = TLegend(0.65, 0.72, 0.92, 0.89, '', 'NDC')
-lgnd.AddEntry('fitCurve', '%s fit pdf' % opts.component, 'l')
-lgnd.AddEntry('theData','%s MC' % opts.component,'p')
-lgnd.Draw('same')
-
-if pars.btagSelection:
-    if pars.boostedSelection:
-        c1.SaveAs("DibosonBoostedBtaglnuJ_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
-    else:
-        c1.SaveAs("DibosonBtaglnujj_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
-else:
-    if pars.boostedSelection:
-        c1.SaveAs("DibosonBoostedlnuJ_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
-    else:
-        c1.SaveAs("Dibosonlnujj_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
-    
 
 ndf = 0
 # print chi2s
@@ -268,7 +287,7 @@ if fr:
         finalPars.setAttribAll('Constant', True)
     finalPars.writeToFile("%s.txt" % opts.bn)
 
-    if opts.component != 'multijet':
+    if opts.component != 'QCD':
         paramsFile = open('%s.txt' % opts.bn)
         lines = paramsFile.readlines()
         paramsFile.close()

@@ -54,22 +54,16 @@ class Wjj2DFitterUtils:
         return newHist
 
     # the cuts to be applied to any data
-    def fullCuts(self, isQCD = False):
-        if isQCD:
-            if len(self.pars.QCDcuts) > 0:
-                theCut = '(%s)' % self.pars.QCDcuts
-            else:
-                theCut = '(1==1)'
-        else:  
-            if len(self.pars.cuts) > 0:
-                theCut = '(%s)' % self.pars.cuts
-            else:
-                theCut = '(1==1)'
+    def fullCuts(self, override = None):
+        if len(self.pars.cuts) > 0:
+            theCut = '(%s)' % self.pars.cuts
+        else:
+            theCut = '(1==1)'
+        if override:
+            theCut = '(%s)' % override
         for v in self.pars.var:
             theCut += '&&(%s>%0.3f)&&(%s<%0.3f)'%(v,self.pars.varRanges[v][1],
                                                   v,self.pars.varRanges[v][2])
-        if isQCD:
-            print 'implementing QCD cuts = ', theCut
         return '(%s)' % theCut
 
     def btagVeto(self, row, vbf = False):
@@ -85,7 +79,7 @@ class Wjj2DFitterUtils:
     # generator function for looping over an event tree and applying the cuts
     def TreeLoopFromFile(self, fname, noCuts = False,
                          cutOverride = None, CPweight = False, 
-                         interference = 0, isQCD = False):
+                         interference = 0):
 
         # open file and get tree
         treeFile = TFile.Open(fname)
@@ -98,15 +92,12 @@ class Wjj2DFitterUtils:
 
         # get the right cuts
         if cutOverride:
-            theCuts = cutOverride
-            print 'override cuts:',cutOverride
+            theCuts = self.fullCuts(cutOverride)
+            print 'override cuts:',theCuts
         elif noCuts:
             theCuts = ''
         else:
-            if isQCD:
-                theCuts = self.fullCuts(True)
-            else:
-                theCuts = self.fullCuts()
+            theCuts = self.fullCuts()
 
         # create an entry list which apply the cuts to the tree
         if gDirectory.Get('cuts_evtList'):
@@ -176,19 +167,18 @@ class Wjj2DFitterUtils:
     # from a file fill a 2D histogram
     def File2Hist(self, fname, histName, noCuts = False, 
                   cutOverride = None, CPweight = False,
-                  doWeights = True, interference = 0, isQCD = False):
+                  doWeights = True, interference = 0):
         theHist = self.newEmptyHist(histName)
 
         print 'filename:',fname
         doEffWgt = (self.pars.doEffCorrections and not cutOverride \
-                        and doWeights and not isQCD)
+                        and doWeights)
         
         for (row, effWgt, cpw, iwt) in self.TreeLoopFromFile(fname, 
                                                              noCuts, 
                                                              cutOverride,
                                                              CPweight,
-                                                             interference,
-                                                             isQCD):
+                                                             interference):
             #print 'entry:',v1val,v2val,effWgt
             if not doEffWgt:
                 effWgt = 1.0
@@ -230,7 +220,7 @@ class Wjj2DFitterUtils:
     # from a file fill and return a RooDataSet
     def File2Dataset(self, fnames, dsName, ws, noCuts = False, 
                      weighted = False, CPweight = False, cutOverride = None,
-                     interference = 0, isQCD = False):
+                     interference = 0):
         if ws.data(dsName):
             return ws.data(dsName)
 
@@ -262,8 +252,7 @@ class Wjj2DFitterUtils:
                     self.TreeLoopFromFile(fname, noCuts,
                                           CPweight = CPweight,
                                           cutOverride = cutOverride,
-                                          interference = interference,
-                                          isQCD = isQCD):
+                                          interference = interference):
                 inRange = True
                 for (i,v) in enumerate(obs):
                     inRange = (inRange and ws.var(v).inRange(row[i], ''))
@@ -506,15 +495,16 @@ class Wjj2DFitterUtils:
                        )
         elif model == 18:
             # QCD inspired power law
-            p1 = ws.factory("power_%s[-100]" % idString)
+            p1 = ws.factory("power_%s[-5.]" % idString)
             p1.setConstant(False)
-            p2 = ws.factory("power2_%s[-15]" % idString)
+            p2 = ws.factory("power2_%s[-3.]" % idString)
             p2.setConstant(False)
-            p3 = ws.factory("power3_%s[450.]" % idString)
+            p3 = ws.factory("power3_%s[7.]" % idString)
             p3.setConstant(False)
-            ws.factory("EXPR::%s('TMath::Power(1.-@0/@3,@4)/TMath::Power(@0/@3,@1+@2*log(@0/@3))', %s, power_%s, power2_%s, 8000, power3_%s)" % \
+            ws.factory("EXPR::%s('TMath::Power(1.-@0/@3,@4)/TMath::Power(@0/@3,@1+@2*log(@0/@3))', %s, power_%s, power2_%s, m_scale[1200], power3_%s)" % \
                            (pdfName, var, idString, idString, idString)
                        )
+            #ws.var('m_scale').setConstant(False)
         elif model == 19:
             #alpha function morphed pdf where the pdf is passed as auxModel
             self.analyticPdf(ws, var, auxModel[0], '%s_side' % pdfName, 
@@ -540,6 +530,13 @@ class Wjj2DFitterUtils:
                 'Constant', True)
             ws.factory("SUM::%s(alpha_comb_%s[0.5, 0., 1.]*%s_low, %s_high)" % \
                            (pdfName, pdfName,pdfName,idString)
+                       )
+        elif model == 21:
+            # a 2 parameter power law formerly used by Milano
+            ws.factory("power_%s[2, -30, 30]" % idString)
+            ws.factory("power2_%s[0, -20, 20]" % idString)
+            ws.factory("EXPR::%s('TMath::Power(1-@0/@3,@2)/TMath::Power(@0,@1)', %s, power_%s, power2_%s, m_scale[1200])" % \
+                           (pdfName, var, idString, idString)
                        )
         else:
             # this is what will be returned if there isn't a model implemented

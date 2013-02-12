@@ -53,6 +53,14 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     # veto vbf
     pars.cuts += '&&(vbf_event==0)'
 
+    pars.backgrounds = ['diboson', 'top', 'WpJ']
+    pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.05 }
+    pars.constrainShapes = ['WpJ']
+    if pars.btagSelection:
+        pars.backgrounds = ['diboson', 'top', 'WpJ']
+        pars.yieldConstraints = {'top' : 0.5, 'WpJ' : 0.5 }
+        pars.constrainShapes = []
+
     # you need a files entry and a models entry for each of the fit 
     # compoents in backgrounds and signals
     # the files should a list with entries like (filename, Ngen, xsec)
@@ -74,11 +82,18 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         ]
     pars.WpJFracOfData = -1
 
-    
-    ### To implement Template Morphing set pars.WpJModels=[-2] and be sure to edit the WpJ*InputParameters.txt file so that the naming scheme corresponds to the correct components/subcomponents. E.g. the parameters from the shape fit to WpJ default MC should contain the suffix Nom, while the overall yield shouldn't, and the lines
-    ### fMU_WpJ = 0.0 +/- 100.0 L(-1 - 1)
-    ### fSU_WpJ = 0.0 +/- 100.0 L(-1 - 1)
-    ### should be added to the .txt file
+    # To implement Template Morphing set pars.WpJModels=[-2]
+    # and be sure to edit the WpJ*InputParameters.txt file so that the
+    # naming scheme corresponds to the correct components/subcomponents.
+    # E.g. the parameters from the shape fit to WpJ default MC should
+    # contain the suffix Nom, while the overall yield shouldn't, and the
+    # lines
+    # fMU_WpJ = 0.0 +/- 100.0 L(-1 - 1)
+    # fSU_WpJ = 0.0 +/- 100.0 L(-1 - 1)
+    # should be added to the .txt file
+
+    # pars.WpJModels = [-2]
+
     if pars.btagSelection:
         pars.WpJModels = [17]
     else:
@@ -88,13 +103,13 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.WpJNomFiles = pars.WpJFiles
     pars.WpJNomModels = [17]
     pars.WpJMUFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingup_CMSSW532.root' % (flavorString), 20976007, 36257.2), ]
-    pars.WpJMUModels = [-1]
+    pars.WpJMUModels = [17]
     pars.WpJMDFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingdown_CMSSW532.root' % (flavorString), 21364575, 36257.2), ]
-    pars.WpJMDModels = [-1]
+    pars.WpJMDModels = [17]
     pars.WpJSUFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaleup_CMSSW532.root' % (flavorString), 20784694, 36257.2), ]
-    pars.WpJSUModels = [-1]
+    pars.WpJSUModels = [17]
     pars.WpJSDFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaledown_CMSSW532.root' % (flavorString), 20760830, 36257.2), ]
-    pars.WpJSDModels = [-1]
+    pars.WpJSDModels = [17]
 
     
     pars.topFiles = [
@@ -144,16 +159,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.binData = False
     # pars.binData = True
 
-
-##     pars.generateToyMCSupersets = False
-##     if pars.generateToyMCSupersets:
-##         pars.dibosonModels = [-1]
-##         pars.WpJModels = [-1]
-##         pars.topModels = [-1]
-##         pars.genOffset = 304
-
-
-    ##Standard vs QCD cuts:
+    #Standard vs QCD cuts:
     pars.QCDcuts = pars.cuts
     pars.cuts += '&&(event_met_pfmet>25)'
     pars.QCDcuts += '&&(event_met_pfmet>20)'
@@ -168,52 +174,18 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     
         
 def customizeElectrons(pars):
-    if pars.btagSelection:
-        pars.backgrounds = ['diboson', 'top', 'WpJ', 'QCD']
-        pars.yieldConstraints = {'top' : 0.5, 'WpJ' : 0.5, 'QCD' : 0.5 }
-        pars.constrainShapes = []
-    else:
-##         pars.backgrounds = ['diboson', 'top', 'WpJ']
-##         pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.05}
-##         pars.constrainShapes = ['WpJ']
-        pars.backgrounds = ['diboson', 'top', 'WpJ', 'QCD']
-        pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.05, 'QCD' : 0.5 }
-        pars.constrainShapes = ['WpJ']
     
     pars.DataFile = pars.MCDirectory + 'RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root'
     
+    pars.backgrounds.append('QCD')
+
+    pars.QCDFracOfData = 0.1
     pars.QCDFiles = [
         (pars.QCDDirectory + 'RDQCD_WenuJets_Isog0p3NoElMVA_19p2invfb.root',1,1), #The events come from the data sideband
         ]
-
-    if pars.btagSelection:
-        pars.QCDFracOfData = 0.10
-        pars.QCDModels = [0]
-    else:
-        pars.QCDFracOfData = 0.10
-        #pars.QCDModels = [-1]
-        pars.QCDModels = [4] 
-    
-##     pars.WpJFracOfData = 0.27
-##     pars.topFracOfData = 0.61
-
-
-    
-    # pars.backgrounds.append('multijet')
-
-    # pars.multijetFraction = 0.0637
-    # pars.multijetFiles = [
-    #     (pars.MCDirectory + 'RDQCD_WenuJets_Isog0p3NoElMVA_11p9invfb.root',
-    #      1, pars.multijetFraction/pars.integratedLumi)
-    #     ]
-    # pars.multijetModels = (11, 1)
-    # pars.yieldConstraints['multijet'] = 0.2
-    # pars.multijetPlotting = {'color' : kGray+1, 'title' : 'multijet'}
-
-    # pars.multijet_cuts = '(ggdevt==%i)&&(fit_status==0)&&(W_mt>30)' % pars.Njets
-    # pars.multijet_cuts += '&&(abs(JetPFCor_dphiMET[0])>0.8)' + \
-    #     '&&(W_electron_pt>35)' + \
-    #     '&&(W_electron_pfIsoEA>0.3)'
+    pars.QCDModels = [4]
+    pars.yieldConstraints['QCD'] = 0.5
+    pars.multijetPlotting = {'color' : kGray+1, 'title' : 'multijet'}
 
     pars.doEffCorrections = True
     pars.effToDo = ['lepton']
@@ -229,15 +201,6 @@ def customizeElectrons(pars):
     return pars
 
 def customizeMuons(pars):
-    pars.backgrounds = ['diboson', 'top', 'WpJ']
-    if pars.btagSelection:
-        pars.yieldConstraints = {'top' : 0.5, 'WpJ' : 0.5 }
-        pars.constrainShapes = []
-    else:
-        pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.05}
-        # pars.yieldConstraints = {}
-        # pars.constrainShapes = []
-        pars.constrainShapes = ['WpJ']
 
     pars.DataFile = pars.MCDirectory + 'RD_WmunuJets_DataAll_GoldenJSON_19p3invfb.root'
     

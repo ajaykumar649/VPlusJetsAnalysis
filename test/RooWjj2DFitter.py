@@ -118,9 +118,9 @@ class Wjj2DFitter:
 
         compPdfs = []
         for component in self.pars.backgrounds:
-            print 'getting compModels'
+            # print 'getting compModels'
             compModels = getattr(self.pars, '%sModels' % component)
-            print 'compModels = %s' % compModels
+            # print 'compModels = %s' % compModels
             compFiles = getattr(self.pars, '%sFiles' % component)
             compPdf = self.makeComponentPdf(component, compFiles, 
                                             compModels)
@@ -304,8 +304,8 @@ class Wjj2DFitter:
     # determine the fitting model for each component and return them
     def makeComponentPdf(self, component, files, models):
         print 'making ComponentPdf %s' % component
-        print 'models = %s' % models
-        print 'files = %s' % files
+        # print 'models = %s' % models
+        # print 'files = %s' % files
         if (models[0] == -1):
             thePdf = self.makeComponentHistPdf(component, files)
         elif (models[0] == -2):
@@ -324,18 +324,15 @@ class Wjj2DFitter:
         sumxsec = 0.
         sumExpected = 0.
         for (idx,fset) in enumerate(files):
-            filename = fset[0]
-            if (component=='QCD'):
-                print 'including the QCD'
-                tmpHist = self.utils.File2Hist(filename, 
-                                               'hist%s_%i' % (component, idx),
-                                               False,None,False,True,0,
-                                               True)
+            if hasattr(self.pars, '%scuts' % component):
+                cutOverride = getattr(self.pars, '%scuts' % component)
             else:
-                tmpHist = self.utils.File2Hist(filename, 
-                                               'hist%s_%i' % (component, idx),
-                                               False,None,False,True,0,
-                                               False)                
+                cutOverride = None
+            filename = fset[0]
+            tmpHist = self.utils.File2Hist(filename, 
+                                           'hist%s_%i' % (component, idx),
+                                           False,cutOverride,False,True,0,
+                                           False)
             sumYields += tmpHist.Integral()
             sumxsec += fset[2]
             compHist.Add(tmpHist, self.pars.integratedLumi*fset[2]/fset[1])
@@ -372,11 +369,11 @@ class Wjj2DFitter:
         modelsSD = getattr(self.pars, '%sSDModels' % component)
 
         # Adds five (sub)components for the component with suffixes Nom, MU, MD, SU, SD
-        NomPdf = self.makeComponentPdf('%sNom' % component, filesNom, modelsNom)
-        MUPdf = self.makeComponentPdf('%sMU' % component, filesMU, modelsMU)
-        MDPdf = self.makeComponentPdf('%sMD' % component, filesMD, modelsMD)
-        SUPdf = self.makeComponentPdf('%sSU' % component, filesSU, modelsSU)
-        SDPdf = self.makeComponentPdf('%sSD' % component, filesSD, modelsSD)
+        NomPdf = self.makeComponentPdf('%s_Nom' % component, filesNom, modelsNom)
+        MUPdf = self.makeComponentPdf('%s_MU' % component, filesMU, modelsMU)
+        MDPdf = self.makeComponentPdf('%s_MD' % component, filesMD, modelsMD)
+        SUPdf = self.makeComponentPdf('%s_SU' % component, filesSU, modelsSU)
+        SDPdf = self.makeComponentPdf('%s_SD' % component, filesSD, modelsSD)
 
         fMU_comp = self.ws.factory("fMU_%s[0., -1., 1.]" % component)
         fSU_comp = self.ws.factory("fSU_%s[0., -1., 1.]" % component)
@@ -592,7 +589,7 @@ class Wjj2DFitter:
             theYield = self.ws.var('n_%s' % component)
             theNorm = self.ws.var('%s_nrm' % component)
             fracofdata = getattr(self.pars, '%sFracOfData' % component)
-            if (fracofdata>-0.5):
+            if (fracofdata >= 0.):
                 print 'explicitly setting ', component,' yield to be', fracofdata,' of data'
                 theYield.setVal(fracofdata*Ndata)
             elif hasattr(self, '%sExpected' % component):
@@ -600,7 +597,7 @@ class Wjj2DFitter:
             else:
                 print 'no expected value for',component
                 theYield.setVal(Ndata/len(components))
-            if theNorm:
+            if theNorm and not theNorm.isConstant():
                 theNorm.setVal(1.0)
             if component in self.pars.yieldConstraints:
                 theYield.setError(theYield.getVal() * \

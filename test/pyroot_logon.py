@@ -1,3 +1,6 @@
+import os
+cmssw_base = os.environ['CMSSW_BASE']
+
 from ROOT import gROOT, gStyle, gSystem, TLatex
 import subprocess
 
@@ -21,7 +24,29 @@ def cmsLabel(canvas, lumi, prelim = False, lumiLabel = 'fb', s = 8.):
 def cmsPrelim(canvas, lumi):
     cmsLabel(canvas, lumi, True)
 
-import os
+def RooFitInclude():
+    print "adding RooFit ...",
+    scramCmd = ['scram','tool','info','roofitcore']
+    grepCmd = ['grep', 'INCLUDE']
+    pscram = subprocess.Popen(scramCmd, stdout = subprocess.PIPE)
+    pgrep = subprocess.Popen(grepCmd, stdin=pscram.stdout,
+                             stdout=subprocess.PIPE)
+    pscram.stdout.close()
+    output = pgrep.communicate()[0]
+    if (pgrep.returncode == 0):
+        print "done"
+        roofitinc = output.split("=")[1].rstrip()
+        # print roofitinc
+        gROOT.GetInterpreter().AddIncludePath(roofitinc)
+        roofitinc = '-I"' + roofitinc + '"'
+        # print roofitinc
+        gSystem.AddIncludePath(roofitinc)
+        return True
+    else:
+        print "failed"
+        print 'scram returned:',pscram.returncode,'grep:',pgrep.returncode
+        return False
+
 import atexit
 import readline
 import rlcompleter
@@ -37,11 +62,10 @@ if os.path.exists(historyPath):
     readline.read_history_file(historyPath)
 
 atexit.register(save_history)
-cmssw_base = os.environ['CMSSW_BASE']
 ## macroPath = gROOT.GetMacroPath()
 ## macroPath += os.environ['CMSSW_BASE'] + '/src/ElectroWeakAnalysis/VPlusJets/test:'
 ## gROOT.SetMacroPath(macroPath)
-del os, atexit, readline, rlcompleter, save_history, historyPath
+del atexit, readline, rlcompleter, save_history, historyPath
 
 gROOT.SetStyle('Plain')
 gStyle.SetPadTickX(1)
@@ -82,38 +106,28 @@ gStyle.SetLabelSize(0.06, "XYZ")
 gStyle.SetNdivisions(505, "XYZ")
 
 if (gSystem.DynamicPathName("libFWCoreFWLite.so",True)):
-    print "adding RooFit ...",
-    scramCmd = ['scram','tool','info','roofitcore']
-    grepCmd = ['grep', 'INCLUDE']
-    pscram = subprocess.Popen(scramCmd, stdout = subprocess.PIPE)
-    pgrep = subprocess.Popen(grepCmd, stdin=pscram.stdout,
-                             stdout=subprocess.PIPE)
-    pscram.stdout.close()
-    output = pgrep.communicate()[0]
     gSystem.Load("$CMSSW_BASE/lib/$SCRAM_ARCH/libMMozerpowhegweight.so")
     gSystem.Load("$CMSSW_BASE/lib/$SCRAM_ARCH/libHiggsAnalysisCombinedLimit.so")
-    if (pgrep.returncode == 0):
-        roofitinc = output.split("=")[1].rstrip()
-        # print roofitinc
-        gROOT.GetInterpreter().AddIncludePath(roofitinc)
-        roofitinc = '-I"' + roofitinc + '"'
-        # print roofitinc
-        gSystem.AddIncludePath(roofitinc)
-        print "done"
-        gROOT.GetInterpreter().AddIncludePath(cmssw_base + '/src')
-        gSystem.AddIncludePath('-I"' + cmssw_base + '/src"')
-        gROOT.ProcessLine('.L EffTableReader.cc+')
-        gROOT.ProcessLine('.L EffTableLoader.cc+')
-        gROOT.ProcessLine('.L CPWeighter.cc+')
-        gROOT.ProcessLine('.L RooPowerLaw.cc+')
-        gROOT.ProcessLine('.L RooPowerExpPdf.cxx+')
-        gROOT.ProcessLine('.L RooErfExpPdf.cxx+')
-        gROOT.ProcessLine('.L RooErfPdf.cxx+')
-        gROOT.ProcessLine('.L RooTH1DPdf.cxx+')
-        gROOT.ProcessLine('.L alphaFunction.cxx+')
-    else:
-        print "failed"
-        print 'scram returned:',pscram.returncode,'grep:',pgrep.returncode
+    gROOT.GetInterpreter().AddIncludePath(cmssw_base + '/src')
+    gSystem.AddIncludePath('-I"' + cmssw_base + '/src"')
+    if not RooFitInclude():
+        workingdir = os.getcwd()
+        print 'changing to', cmssw_base, 'directory'
+        os.chdir(cmssw_base)
+        RooFitInclude()
+        print 'returning to working directory', workingdir
+        os.chdir(workingdir)
+    gROOT.ProcessLine('.L EffTableReader.cc+')
+    gROOT.ProcessLine('.L EffTableLoader.cc+')
+    gROOT.ProcessLine('.L CPWeighter.cc+')
+    # gROOT.ProcessLine('.L RooPowerLaw.cc+')
+    # gROOT.ProcessLine('.L RooPowerExpPdf.cxx+')
+    # gROOT.ProcessLine('.L RooErfExpPdf.cxx+')
+    # gROOT.ProcessLine('.L RooErfPdf.cxx+')
+    # gROOT.ProcessLine('.L RooTH1DPdf.cxx+')
+    gROOT.ProcessLine('.L alphaFunction.cxx+')
+
+        
 
 print 'end of pyroot_logon'
 

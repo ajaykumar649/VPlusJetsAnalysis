@@ -200,9 +200,9 @@ const char *inputfilesfmtstr[NUMCHAN] = {
 };
 #else
 const char *inputfilesfmtstr[NUMCHAN] = {
-  "HWWlnujjH%d_electron_2jets_output.root",
+  "HWW%dlnujj_electron_2jets_1D2Fit_output.root",
   //"HWWlnujjH%d_electron_3jets_output.root",
-  "HWWlnujjH%d_muon_2jets_output.root",
+  "HWW%dlnujj_muon_2jets_1D2Fit_output.root",
   //"HWWlnujjH%d_muon_3jets_output.root",
 };
 #endif
