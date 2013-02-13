@@ -1,7 +1,7 @@
 import os
 cmssw_base = os.environ['CMSSW_BASE']
 
-from ROOT import gROOT, gStyle, gSystem, TLatex
+from ROOT import gROOT, gStyle, gSystem, TLatex, TClass
 import subprocess
 
 def cmsLabel(canvas, lumi, prelim = False, lumiLabel = 'fb', s = 8.):
@@ -107,7 +107,7 @@ gStyle.SetNdivisions(505, "XYZ")
 
 if (gSystem.DynamicPathName("libFWCoreFWLite.so",True)):
     gSystem.Load("$CMSSW_BASE/lib/$SCRAM_ARCH/libMMozerpowhegweight.so")
-    gSystem.Load("$CMSSW_BASE/lib/$SCRAM_ARCH/libHiggsAnalysisCombinedLimit.so")
+    res = gSystem.Load("$CMSSW_BASE/lib/$SCRAM_ARCH/libHiggsAnalysisCombinedLimit.so")
     gROOT.GetInterpreter().AddIncludePath(cmssw_base + '/src')
     gSystem.AddIncludePath('-I"' + cmssw_base + '/src"')
     if not RooFitInclude():
@@ -120,11 +120,13 @@ if (gSystem.DynamicPathName("libFWCoreFWLite.so",True)):
     gROOT.ProcessLine('.L EffTableReader.cc+')
     gROOT.ProcessLine('.L EffTableLoader.cc+')
     gROOT.ProcessLine('.L CPWeighter.cc+')
-    # gROOT.ProcessLine('.L RooPowerLaw.cc+')
-    # gROOT.ProcessLine('.L RooPowerExpPdf.cxx+')
-    # gROOT.ProcessLine('.L RooErfExpPdf.cxx+')
-    # gROOT.ProcessLine('.L RooErfPdf.cxx+')
-    # gROOT.ProcessLine('.L RooTH1DPdf.cxx+')
+    if not TClass.GetClass('RooPowerLaw'):
+        print 'importing RooFit PDF classes'
+        gROOT.ProcessLine('.L RooPowerLaw.cc+')
+        gROOT.ProcessLine('.L RooPowerExpPdf.cxx+')
+        gROOT.ProcessLine('.L RooErfExpPdf.cxx+')
+        gROOT.ProcessLine('.L RooErfPdf.cxx+')
+        gROOT.ProcessLine('.L RooTH1DPdf.cxx+')
     gROOT.ProcessLine('.L alphaFunction.cxx+')
 
         
