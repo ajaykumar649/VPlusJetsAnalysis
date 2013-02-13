@@ -29,13 +29,14 @@
 
 //////////////////////////
 ///// Load MVA Ouput Code:
-
+#include "ClassifierOut/TMVAClassification_WWA_nJ2_el_BDT.class.C"
 
 /////////////////////////////////////////
 ///// Specify Location of Merged Ntuples:
 const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples/";
 const TString inDataDir2 = "/eos/uscms/store/user/jfaulkn3/MergedNTuples/MC/";
 const TString inDataDir3 = "/eos/uscms/store/user/jfaulkn3/MergedNTuples/Data2012/";
+const TString inDataDir4 = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/MergedNtuples/";
 const TString inQCDDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/MergedNtuples/";
 
 
@@ -125,8 +126,8 @@ void kanaelec_photon::myana(double myflag, bool isQCD, int runflag)
       myChain = new TChain("WJet");
 
       if ( !isQCD ) {
-         InitCounters( inDataDir3 + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root", h_events, h_events_weighted);
-         myChain->Add( inDataDir3 + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root");
+         InitCounters( inDataDir4 + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb_Photon.root", h_events, h_events_weighted);
+         myChain->Add( inDataDir4 + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb_Photon.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20120001,runflag, outDataDir + "RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb");
       } else {
          InitCounters( inQCDDir + "QCD_WenuJets_DataAll_GoldenJSON_19p2invfb.root", h_events, h_events_weighted);
@@ -409,7 +410,8 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
    //////////////
    // MVA output:
-
+   Float_t mva2jWWAel = 999;
+   TBranch * branch_2jWWAel   =  newtree->Branch("mva2jWWAel",   &mva2jWWAel,    "mva2jWWAel/F");
 
    //////////////////////////////
    // Efficiencies/Pilup weights:
@@ -433,6 +435,10 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
    ////////////////////
    // For MVA analysis:
+   const char* inputVarsPho[] = { "W_pt", "sqrt((JetPFCor_Eta[i11Jet1]-JetPFCor_Eta[i11Jet2])**2+(abs(abs(abs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])-TMath::Pi())-TMath::Pi()))**2)","JetPFCor_Pt[i11Jet1]", "JetPFCor_Pt[i11Jet2]", "ptlvjja" , "c2jMass11"};
+   std::vector<std::string> inputVarsMVApho;
+   for (int i=0; i<6; ++i) inputVarsMVApho.push_back( inputVarsPho[i] );
+   ReadMVA2jWWAel mvaReader2jWWAel( inputVarsMVApho );
 
 
    /////////////////////////////
@@ -558,6 +564,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       masslvjj=-999; masslvjja =-999; masslv=-999; masslva =-999; ptlvjj    =-999; ptlvjja = -999; ylvjj   =-999;philvjj   =-999;
       rat_mpt_wwa =-999; rat_ptpt_amu =-999; rat_ptpt_aj1 =-999; rat_ptpt_aj2 =-999; rat_ptpt_av =-999;
 
+      mva2jWWAel = 999;
 
       effwt = 1.0; puwt = 1.0; puwt_up = 1.0; puwt_down = 1.0;
       qgld_Spring11[0]= -1;       qgld_Spring11[1]= -1;       qgld_Spring11[2]= -1;       qgld_Spring11[3]= -1;       qgld_Spring11[4]= -1;       qgld_Spring11[5]= -1;
@@ -759,7 +766,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          if (JetPFCor_Pt[i11Jet1]>Jpt
           && JetPFCor_Pt[i11Jet2]>Jpt
           && W_mt>30. //Move to MVA MET Later
-          && W_electron_pt>25.
+          && W_electron_pt>30.
           && fabs(W_electron_eta)<2.1 //Fix the Electron Eta Range to 2.1
             ) {isgengdevt = 1;}
 
@@ -928,8 +935,27 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          ang_ha = a_costheta1; ang_hb = fabs(a_costheta2); ang_hs = a_costhetastar;  ang_phi = a_phi; ang_phia = a_phistar1; ang_phib = a_phistar2;
          ang_lva = cos_Wlv_a_phi3; ang_jja = cos_Wjj_a_phi3;
 
+         float dRjj=0.;
+         if(i11Jet1>-1&&i11Jet2>-1){
+           dRjj=fabs(fabs(fabs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])-TMath::Pi())-TMath::Pi());
+           dRjj*=dRjj;
+           dRjj+=(JetPFCor_Eta[i11Jet1]-JetPFCor_Eta[i11Jet2])*(JetPFCor_Eta[i11Jet1]-JetPFCor_Eta[i11Jet2]);
+         }
+
          ///////////////////////////////
          // Fill the trained MVA output: 
+         std::vector<double> mvaInputValPho;
+         mvaInputValPho.push_back( W_pt );
+         mvaInputValPho.push_back( sqrt(dRjj) );
+         if(i11Jet1>-1){
+           mvaInputValPho.push_back( JetPFCor_Pt[i11Jet1] );
+         }else{ mvaInputValPho.push_back(0.);}
+         if(i11Jet2>-1){
+           mvaInputValPho.push_back( JetPFCor_Pt[i11Jet2] );
+         }else{ mvaInputValPho.push_back(0.);}
+         mvaInputValPho.push_back(ptlvjja);
+         mvaInputValPho.push_back(c2jMass11);
+         mva2jWWAel = (float) mvaReader2jWWAel.GetMvaValue( mvaInputValPho );
 
       }
 
@@ -1003,6 +1029,8 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       branch_ptpt_av->Fill();
       branch_ptpt_aj1->Fill();
       branch_ptpt_aj2->Fill();
+
+      branch_2jWWAel->Fill();
 
       branch_effwt->Fill();
       branch_puwt->Fill();
