@@ -36,6 +36,7 @@
 const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples/";
 const TString inDataDir2 = "/eos/uscms/store/user/jfaulkn3/MergedNTuples/MC/";
 const TString inDataDir3 = "/eos/uscms/store/user/jfaulkn3/MergedNTuples/Data2012/";
+const TString inDataDir4 = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/MergedNtuples/";
 const TString inQCDDir   = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples/";
 
 //////////////////////////////////////////////
@@ -149,8 +150,8 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
       myChain = new TChain("WJet");
 
       if ( !isQCD ) {
-         InitCounters( inDataDir3 + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb.root", h_events, h_events_weighted);
-         myChain->Add( inDataDir3 + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb.root");
+         InitCounters( inDataDir4 + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb_Photon.root", h_events, h_events_weighted);
+         myChain->Add( inDataDir4 + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb_Photon.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20120003,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_19p3invfb");
       } else {
          InitCounters( inDataDir3 + "QCDmu.root", h_events, h_events_weighted);
@@ -475,14 +476,14 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
    /////////////////////////////
    // For Efficiency Correction:
-   EffTableLoader muIDEff(            fDir + "scaleFactor-Run2012ABC-RecoToIso.txt");
-   EffTableLoader muHLTEff(           fDir + "efficiency-Run2012ABC-IsoToIsoMuHLT.txt");
+   EffTableLoader muIDEff(            fDir + "scaleFactor-Run2012ABCD-RecoToIso.txt");
+   EffTableLoader muHLTEff(           fDir + "efficiency-Run2012ABCD-IsoToIsoMuHLT.txt");
 
    ////////////////////////
    // Pile up Re-weighting:
    // S7 MC PU True profile - hardcoded, wow
    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupMCReweightingUtilities
-   TFile *dataFile_      = new TFile( "Data190389-206102_PileupHistogram.root" );
+   TFile *dataFile_      = new TFile( "Data190456-208686_PileupHistogram.root" );
    TH1F* PU_intended = new TH1F(  *(static_cast<TH1F*>(dataFile_->Get( "pileup" )->Clone() )) );
    TH1F* PU_generated = new TH1F("PU_generated","Generated pileup distribution (i.e., MC)",60,0.,60);
    Double_t Summer2012[60] = {
