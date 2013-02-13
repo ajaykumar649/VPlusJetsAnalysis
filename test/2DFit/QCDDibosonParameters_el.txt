@@ -1,3 +1,4 @@
-a1_QCD_Mass2j_PFCor = -0.470492 +/- 0.013786 C L(-10 - 10) 
-a2_QCD_Mass2j_PFCor =  0.12172 +/- 0.013259 C L(-10 - 10) 
-n_QCD = 263059000.0 +/- 16219.1 C
+offset_QCD_Mass2j_PFCor =  66.377 +/- 5.0251 C L(0 - 1000) 
+power2_QCD_Mass2j_PFCor = -2.78848 +/- 0.79407 C L(-20 - 20) 
+power_QCD_Mass2j_PFCor =  2.2638 +/- 0.44191 C L(-30 - 30) 
+width_QCD_Mass2j_PFCor =  21.897 +/- 1.1816 C L(0 - 1000) 

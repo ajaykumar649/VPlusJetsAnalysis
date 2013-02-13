@@ -183,7 +183,7 @@ def customizeElectrons(pars):
     pars.QCDFiles = [
         (pars.QCDDirectory + 'RDQCD_WenuJets_Isog0p3NoElMVA_19p2invfb.root',1,1), #The events come from the data sideband
         ]
-    pars.QCDModels = [4]
+    pars.QCDModels = [10]
     pars.yieldConstraints['QCD'] = 0.5
     pars.multijetPlotting = {'color' : kGray+1, 'title' : 'multijet'}
 
