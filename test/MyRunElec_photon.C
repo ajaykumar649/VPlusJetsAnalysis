@@ -9,6 +9,7 @@ void MyRunElec_photon(double myflag=20112250, bool isQCD=false, int runflag)
   gROOT->ProcessLine(".L ../src/QGLikelihoodCalculator.C+");
   gROOT->ProcessLine(".L EffTableReader.cc+");
   gROOT->ProcessLine(".L EffTableLoader.cc+");
+  gROOT->ProcessLine(".L ClassifierOut/TMVAClassification_WWA_nJ2_el_BDT.class.C+");
   gROOT->ProcessLine(".L kanaelec_photon.C+");
   gROOT->ProcessLine("kanaelec_photon runover");
   //Set true/false for isQCD
