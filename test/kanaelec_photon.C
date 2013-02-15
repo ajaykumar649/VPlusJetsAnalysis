@@ -183,7 +183,7 @@ void kanaelec_photon::myana(double myflag, bool isQCD, int runflag)
          myChain->Add(                    inDataDir + "el_TTbar_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121008,runflag, outDataDir + "RD_el_TTbar_CMSSW532");
       }
-      if (myflag == 20121009 || myflag == -500){
+      if (myflag == 20121009 || myflag == -200){
          InitCounters( inDataDir + "el_WpJ_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_WpJ_CMSSW532.root"); 
@@ -213,48 +213,6 @@ void kanaelec_photon::myana(double myflag, bool isQCD, int runflag)
          myChain->Add(                    inDataDir + "el_ZZ_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121023,runflag, outDataDir + "RD_el_ZZ_CMSSW532");
       }
-      if (myflag == 20121024 || myflag == -200){
-         InitCounters( inDataDir + "el_WpJ_PT100_CMSSW532.root", h_events, h_events_weighted);
-         myChain = new TChain("WJet");
-         myChain->Add(                    inDataDir + "el_WpJ_PT100_CMSSW532.root");
-         Init(myChain);Loop(  h_events, h_events_weighted,20121024,runflag, outDataDir + "RD_el_WpJPt100_CMSSW532");
-      }
-      if (myflag == 20121025 || myflag == -200){
-         InitCounters( inDataDir + "el_W3Jets_CMSSW532.root", h_events, h_events_weighted);
-         myChain = new TChain("WJet");
-         myChain->Add(                    inDataDir + "el_W3Jets_CMSSW532.root");
-         Init(myChain);Loop(  h_events, h_events_weighted,20121025,runflag, outDataDir + "RD_el_W3Jets_CMSSW532");
-      }
-      if (myflag == 20121026 || myflag == -200){
-         InitCounters( inDataDir + "el_W4Jets_CMSSW532.root", h_events, h_events_weighted);
-         myChain = new TChain("WJet");
-         myChain->Add(                    inDataDir + "el_W4Jets_CMSSW532.root");
-         Init(myChain);Loop(  h_events, h_events_weighted,20121026,runflag, outDataDir + "RD_el_W4Jets_CMSSW532");
-      }
-      if (myflag == 20121027 || myflag == -200){
-         InitCounters( inDataDir + "el_ttZ_CMSSW532.root", h_events, h_events_weighted);
-         myChain = new TChain("WJet");
-         myChain->Add(                    inDataDir + "el_ttZ_CMSSW532.root");
-         Init(myChain);Loop(  h_events, h_events_weighted,20121027,runflag, outDataDir + "RD_el_ttZ_CMSSW532");
-      }
-      if (myflag == 20121028 || myflag == -200){
-         InitCounters( inDataDir + "el_ttHbbMH125_CMSSW532.root", h_events, h_events_weighted);
-         myChain = new TChain("WJet");
-         myChain->Add(                    inDataDir + "el_ttHbbMH125_CMSSW532.root");
-         Init(myChain);Loop(  h_events, h_events_weighted,20121028,runflag, outDataDir + "RD_el_ttHbbMH125_CMSSW532");
-      }
-      if (myflag == 20121029 || myflag == -200){
-         InitCounters( inDataDir + "el_ttHinclusivedecayMH125_CMSSW532.root", h_events, h_events_weighted);
-         myChain = new TChain("WJet");
-         myChain->Add(                    inDataDir + "el_ttHinclusivedecayMH125_CMSSW532.root");
-         Init(myChain);Loop(  h_events, h_events_weighted,20121029,runflag, outDataDir + "RD_el_ttHinclusivedecayMH125_CMSSW532");
-      }
-      if (myflag == 20121030 || myflag == -200){
-         InitCounters( inDataDir + "el_ttW_CMSSW532.root", h_events, h_events_weighted);
-         myChain = new TChain("WJet");
-         myChain->Add(                    inDataDir + "el_ttW_CMSSW532.root");
-         Init(myChain);Loop(  h_events, h_events_weighted,20121030,runflag, outDataDir + "RD_el_ttW_CMSSW532");
-      }
       if (myflag == 20121031 || myflag == -200){
          InitCounters( inDataDir2 + "el_qq_wpwma_wp_lvl_wm_qq.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
@@ -279,6 +237,10 @@ void kanaelec_photon::myana(double myflag, bool isQCD, int runflag)
          myChain->Add( inDataDir2 + "el_TTbarAJets.root");
          Init(myChain);Loop(  h_events, h_events_weighted,20121034,runflag, outDataDir + "RD_el_TTbarAJets");
       }
+
+
+      ////////////////////////////////
+      // Anomalous QGC WWA MC Samples:
 
    }
 
@@ -767,7 +729,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
           && JetPFCor_Pt[i11Jet2]>Jpt
           && W_mt>30. //Move to MVA MET Later
           && W_electron_pt>30.
-          && fabs(W_electron_eta)<2.1 //Fix the Electron Eta Range to 2.1
+          && fabs(W_electron_eta)<2.5 //Fix the Electron Eta Range to 2.5
             ) {isgengdevt = 1;}
 
          if (JetPFCor_Pt[i11Jet1]>Jpt ) {
@@ -786,7 +748,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
                   istep++;
 
                   if ( W_electron_pt>30.
-                        && fabs(W_electron_eta)<2.1
+                        && fabs(W_electron_eta)<2.5
                      ) {
                      h_events          -> Fill ( istep );
                      h_events_weighted -> Fill ( istep, effwt*puwt );
