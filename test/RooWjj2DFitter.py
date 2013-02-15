@@ -144,7 +144,7 @@ class Wjj2DFitter:
             self.ws.var('n_%s' % component).setConstant(True)
             if hasattr(self, '%sExpected' % component):
                 self.ws.var('n_%s' % component).setVal(
-                    getattr('%sExpected', component))
+                    getattr(self, '%sExpected' % component))
             compPdfs.append(
                 self.ws.factory('RooExtendPdf::%s_extended(%s,%s)' % \
                                     (compPdf.GetName(), 
@@ -173,7 +173,7 @@ class Wjj2DFitter:
             self.ws.var('n_%s' % component).setConstant(True)
             if hasattr(self, '%sExpected' % component):
                 self.ws.var('n_%s' % component).setVal(
-                    getattr('%sExpected', component))
+                    getattr(self, '%sExpected' % component))
             pdf = self.ws.factory('RooExtendPdf::%s_extended(%s,%s)' % \
                                       (compPdf.GetName(), 
                                        compPdf.GetName(),
