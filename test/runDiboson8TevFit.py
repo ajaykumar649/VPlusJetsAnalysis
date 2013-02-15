@@ -26,6 +26,8 @@ parser.add_option('--ws', dest='ws',
                       'for use')
 parser.add_option('--debug', dest='debug', action='store_true', default=False,
                   help='turn on extra debugging information')
+parser.add_option('--noNull', dest='nullFit', action='store_false',
+                  default=True, help='do not perform the null hypothesis fit.')
 
 (opts, args) = parser.parse_args()
 
@@ -53,15 +55,10 @@ pars = config.theConfig(Nj = opts.Nj, mH = opts.mH,
                         includeSignal = opts.includeSignal)
 
 fitter = RooWjj2DFitter.Wjj2DFitter(pars)
-
-    
-totalPdf = fitter.makeFitter()
-
-
-
-
 if opts.ws:
     fitter.loadWorkspaceFromFile(opts.ws, getFloatPars = False)
+    
+totalPdf = fitter.makeFitter()
 
 #fitter.loadData()
 fitter.readParametersFromFile()
@@ -194,22 +191,25 @@ if opts.toyOut:
     outFile.write('\n')
     outFile.close()
 
-print 'doing fit under null hypothesis'
 
-fitter_null = RooWjj2DFitter.Wjj2DFitter(pars)
-totalPdf_null = fitter_null.makeFitter()
-fitter_null.readParametersFromFile()
-fitter_null.expectedFromPars()
-fitter_null.resetYields()
+if opts.nullFit:
+    print 'doing fit under null hypothesis'
 
-fitter_null.loadDataFromWorkspace(fitter.ws)
+    fitter_null = RooWjj2DFitter.Wjj2DFitter(pars)
+    fitter_null.loadHistogramsFromWorkspace(fitter.ws)
+    totalPdf_null = fitter_null.makeFitter()
+    fitter_null.readParametersFromFile()
+    fitter_null.expectedFromPars()
+    fitter_null.resetYields()
 
-fitter_null.ws.var('diboson_nrm').setVal(0.)
-fitter_null.ws.var('diboson_nrm').setConstant()
+    fitter_null.loadDataFromWorkspace(fitter.ws)
 
-fr_null = fitter_null.fit()
-fr_null.SetName('fitResult_null')
-fr_null.Print('v')
+    fitter_null.ws.var('diboson_nrm').setVal(0.)
+    fitter_null.ws.var('diboson_nrm').setConstant()
+
+    fr_null = fitter_null.fit()
+    fr_null.SetName('fitResult_null')
+    fr_null.Print('v')
 
 mode = 'muon'
 if opts.isElectron:
@@ -220,7 +220,8 @@ if pars.btagSelection:
 else:
     output = TFile("Dibosonlnujj_%s_%ijets_output.root" % (mode, opts.Nj),"recreate")
 fr.Write()
-fr_null.Write()
+if opts.nullFit:
+    fr_null.Write()
 plot1.Write()
 dibosonSubtractedFrame.Write()
 pull1.Write()
@@ -245,10 +246,11 @@ print '%i degrees of freedom' % ndf
 print 'chi2: %.2f / %i = %.2f' % (chi2_1, ndf, (chi2/ndf))
 print 'chi2 probability: %.4g' % (TMath.Prob(chi2, ndf))
 
-likelihoodRatio = 2.*fr_null.minNll()-2.*fr.minNll()
-print '2*nll_null - 2*nll:', 2.*fr_null.minNll(), '-', 2.*fr.minNll(), '=',
-print likelihoodRatio
+if opts.nullFit:
+    likelihoodRatio = 2.*fr_null.minNll()-2.*fr.minNll()
+    print '2*nll_null - 2*nll:', 2.*fr_null.minNll(), '-', 2.*fr.minNll(), '=',
+    print likelihoodRatio
 
-pval = TMath.Prob(likelihoodRatio, 1)
-print 'p-value:', pval
-print 'Gaussian significance:', RooStats.PValueToSignificance(pval)
+    pval = TMath.Prob(likelihoodRatio, 1)
+    print 'p-value:', pval
+    print 'Gaussian significance:', RooStats.PValueToSignificance(pval)

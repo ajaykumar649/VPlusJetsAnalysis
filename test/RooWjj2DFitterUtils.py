@@ -220,13 +220,13 @@ class Wjj2DFitterUtils:
     # from a file fill and return a RooDataSet
     def File2Dataset(self, fnames, dsName, ws, noCuts = False, 
                      weighted = False, CPweight = False, cutOverride = None,
-                     interference = 0):
+                     interference = 0, additionalWgt = 1.0):
         if ws.data(dsName):
             return ws.data(dsName)
 
         cols = RooArgSet(ws.set('obsSet'))
         # print 'interference weight flag:',interference
-        if (weighted and not isQCD):
+        if (weighted):
             evtWgt = RooRealVar('evtWgt', 'evtWgt', 1.0)
             cols.add(evtWgt)
             ds = RooDataSet(dsName, dsName, cols, 'evtWgt')
@@ -262,7 +262,7 @@ class Wjj2DFitterUtils:
                 if interference in [1,2,3]:
                     effWgt *= iwt
                 if inRange:
-                    ds.add(cols, effWgt)
+                    ds.add(cols, effWgt*additionalWgt)
 
         getattr(ws, 'import')(ds)
 
@@ -278,7 +278,7 @@ class Wjj2DFitterUtils:
         return newData
 
     # calculate the efficiency weight for a give event using the supplied
-    # tables.
+    # tables. 
     def effWeight(self, **kinematics):
         # select which lumi/trigger epoch we are going to use for the 
         # computation
@@ -538,6 +538,31 @@ class Wjj2DFitterUtils:
             ws.factory("EXPR::%s('TMath::Power(1-@0/@3,@2)/TMath::Power(@0,@1)', %s, power_%s, power2_%s, m_scale[1200])" % \
                            (pdfName, var, idString, idString)
                        )
+        elif model == 22:
+            # diboson specific model for the resonant shape
+            ws.factory("prod::sigma_%s_W" % (idString) + \
+                       "(mean_%s_W[80.3, 50., 100.]," % (idString) + \
+                       "resolution_%s[0.1, 0., 5.])" % (idString))
+            ws.factory('sum::mean_%s_Z' % (idString) + \
+                       "(mean_%s_W, 10.8026)" % (idString))
+            ws.factory('prod::sigma_%s_Z(mean_%s_Z,resolution_%s)' % \
+                       (idString, idString, idString))
+            ws.factory("RooGaussian::%s_W" % pdfName + \
+                       "(%s, mean_%s_W, sigma_%s_W)" % (var, idString,
+                                                        idString)
+                       )
+            ws.factory("RooGaussian::%s_Z" % pdfName + \
+                       "(%s, mean_%s_Z, sigma_%s_Z)" % (var, idString,
+                                                        idString)
+                       )
+            ws.factory("c_%s[-0.015, -10, 10]" % idString)
+            ws.factory("offset_%s[70, -100, 1000]" % idString)
+            ws.factory("width_%s[20, 0, 1000]" % idString)
+            ws.factory("RooErfExpPdf::%s_tail(%s, c_%s, offset_%s, width_%s)" %\
+                           (pdfName, var, idString, idString, idString)
+                       )
+            ws.factory("SUM::%s(f_W_%s[0.4,0.,1.]*%s_W,f_Z_%s[0.1,0.,1.]*%s_Z,%s_tail)" % \
+                       (pdfName, idString, pdfName, idString, pdfName, pdfName))
         else:
             # this is what will be returned if there isn't a model implemented
             # for a given model code.

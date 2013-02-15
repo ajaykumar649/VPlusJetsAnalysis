@@ -45,7 +45,7 @@ import HWWSignalShapes
 #from RooWjj2DFitterUtils import Wjj2DFitterUtils
 
 from ROOT import RooFit, TCanvas, RooArgSet, TFile, RooAbsReal, RooAbsData, \
-    RooHist, TMath, kRed, kDashed, kOrange, RooMsgService
+    RooHist, TMath, kRed, kDashed, kOrange, RooMsgService, RooDataSet
 
 import pulls
 
@@ -58,29 +58,32 @@ files = getattr(pars, '%sFiles' % opts.component)
 models = getattr(pars, '%sModels' % opts.component)
 if opts.sb or opts.sig:
     models = getattr(pars, '%sSidebandModels' % opts.component)
+compName = opts.component
+morphingPdf = False
 if models[0] == -2:
     print 'pdf morphing'
+    morphingPdf = True
     if opts.morphComponent == 0:
         models = getattr(pars, '%sNomModels' % opts.component)
         files = getattr(pars, '%sNomFiles' % opts.component)
-        opts.component = opts.component + '_Nom'
+        compName = opts.component + '_Nom'
     elif opts.morphComponent == -1:
         models = getattr(pars, '%sMDModels' % opts.component)
         files = getattr(pars, '%sMDFiles' % opts.component)
-        opts.component = opts.component + '_MD'
+        compName = opts.component + '_MD'
     elif opts.morphComponent == 1:
         models = getattr(pars, '%sMUModels' % opts.component)
         files = getattr(pars, '%sMUFiles' % opts.component)
-        opts.component = opts.component + '_MU'
+        compName = opts.component + '_MU'
     elif opts.morphComponent == -2:
         models = getattr(pars, '%sSDModels' % opts.component)
         files = getattr(pars, '%sSDFiles' % opts.component)
-        opts.component = opts.component + '_SD'
+        compName = opts.component + '_SD'
     elif opts.morphComponent == 2:
         models = getattr(pars, '%sSUModels' % opts.component)
         files = getattr(pars, '%sSUFiles' % opts.component)
-        opts.component = opts.component + '_SU'
-print 'component', opts.component
+        compName = opts.component + '_SU'
+print 'component', compName
 print 'models', models
 print 'files', files
 
@@ -97,36 +100,44 @@ data = None
 sumNExp = 0.
 weighted = True
 cutOverride = None
-if opts.component == 'QCD':
+if compName == 'QCD':
     weighted = False
     cutOverride = pars.QCDcuts
 cpw = False
-if (opts.component == "ggH") or (opts.component == 'qqH'):
+if (compName == "ggH") or (compName == 'qqH'):
     cpw = True
-if (opts.component == 'qqH') and (opts.mH == 170):
+if (compName == 'qqH') and (opts.mH == 170):
     cpw = False
 #print 'interference option:',opts.interference
+refEffLumi = -1.
+print 'integrated lumi:',pars.integratedLumi
 for (ifile, (filename, ngen, xsec)) in enumerate(files):
+    if refEffLumi > 0.:
+        scale = refEffLumi/(ngen/xsec)
+    else:
+        scale = 1.0
     tmpData = fitter.utils.File2Dataset(filename, 'data%i' % ifile, fitter.ws,
                                         weighted = weighted, CPweight = cpw,
                                         cutOverride = cutOverride,
-                                        interference = opts.interference)
+                                        interference = opts.interference,
+                                        additionalWgt = scale)
     
     tmpData.Print()
-    expectedYield = xsec*pars.integratedLumi*tmpData.sumEntries()/ngen
-    print filename,'A x eff: %.3g' % (tmpData.sumEntries()/ngen)
+    print filename,'effective integrated lumi:',ngen/xsec
+    expectedYield = xsec*pars.integratedLumi*tmpData.sumEntries()/scale/ngen
+    print filename,'A x eff: %.3g' % (tmpData.sumEntries()/scale/ngen)
     print filename,'expected yield: %.1f' % expectedYield
+    print filename,'scale:',scale
     sumNExp += expectedYield
     if not data:
-        scale = 1.0
-        data = fitter.utils.reduceDataset(tmpData, scale)
+        data = tmpData.Clone('data')
         refEffLumi = ngen/xsec
     else:
-        scale = refEffLumi/(ngen/xsec)
-        reducedData = fitter.utils.reduceDataset(tmpData, scale)
-        data.append(reducedData)
+        data.append(tmpData)
 
-print opts.component,'total expected yield: %.1f' % sumNExp
+print compName,'total expected yield: %.1f' % sumNExp
+data.Print()
+
 hist2d = None
 try:
     obs = [ pars.varNames[x] for x in pars.var ]
@@ -143,11 +154,11 @@ if opts.interference in [1,2,3]:
     fitter.makeFitter()
     # fitter.ws.Print()
     if opts.interference == 1:
-        pdfName = '%s' % opts.component
+        pdfName = '%s' % compName
     elif opts.interference == 2:
-        pdfName = '%s_interf_%sUp' % (opts.component, opts.component)
+        pdfName = '%s_interf_%sUp' % (compName, compName)
     elif opts.interference == 3:
-        pdfName = '%s_interf_%sDown' % (opts.component, opts.component)
+        pdfName = '%s_interf_%sDown' % (compName, compName)
     print pdfName
     sigPdf = fitter.ws.pdf(pdfName)
     if sigPdf:
@@ -155,26 +166,26 @@ if opts.interference in [1,2,3]:
     else:
         print 'failed to fined pdf',pdfName
 else:
-    sigPdf = fitter.makeComponentPdf(opts.component, files, models)
+    sigPdf = fitter.makeComponentPdf(compName, files, models)
 
 extraTag = ''
 if opts.interference == 2:
-    extraTag = '_interf_%sUp' % opts.component
+    extraTag = '_interf_%sUp' % compName
 if opts.interference == 3:
-    extraTag = '_interf_%sDown' % opts.component
+    extraTag = '_interf_%sDown' % compName
 
-if fitter.ws.var('mean_%s_fit_mlvjj_core%s' % (opts.component,extraTag)):
+if fitter.ws.var('mean_%s_fit_mlvjj_core%s' % (compName,extraTag)):
     fitter.ws.var('mean_%s_fit_mlvjj_core%s' % \
-                      (opts.component,extraTag)).setVal(opts.mH)
-if fitter.ws.var('mean_%s_fit_mlvjj_tail%s' % (opts.component,extraTag)):
+                      (compName,extraTag)).setVal(opts.mH)
+if fitter.ws.var('mean_%s_fit_mlvjj_tail%s' % (compName,extraTag)):
     fitter.ws.var('mean_%s_fit_mlvjj_tail%s' % \
-                      (opts.component,extraTag)).setVal(opts.mH)
-if fitter.ws.var('sigma_%s_fit_mlvjj_tail%s' % (opts.component,extraTag)):
+                      (compName,extraTag)).setVal(opts.mH)
+if fitter.ws.var('sigma_%s_fit_mlvjj_tail%s' % (compName,extraTag)):
     fitter.ws.var('sigma_%s_fit_mlvjj_tail%s' % \
-                      (opts.component,extraTag)).setVal(opts.mH*0.25)
-if fitter.ws.var('sigma_%s_fit_mlvjj_core%s' % (opts.component,extraTag)):
+                      (compName,extraTag)).setVal(opts.mH*0.25)
+if fitter.ws.var('sigma_%s_fit_mlvjj_core%s' % (compName,extraTag)):
     fitter.ws.var('sigma_%s_fit_mlvjj_core%s' % \
-                      (opts.component,extraTag)).setVal(opts.mH*0.1)
+                      (compName,extraTag)).setVal(opts.mH*0.1)
 
 params = sigPdf.getParameters(data)
 parCopy = params.snapshot()
@@ -201,9 +212,10 @@ fitter.ws.Print()
 
 
 fr = None
-fr = sigPdf.fitTo(data, RooFit.Save(), 
-                  RooFit.SumW2Error(False)
-                  )
+if models[0] >= 0:
+    fr = sigPdf.fitTo(data, RooFit.Save(), 
+                      RooFit.SumW2Error(False)
+                      )
 
 
 mode = 'muon'
@@ -237,7 +249,7 @@ for (i,m) in enumerate(models):
                       RooFit.FillStyle(3001))
         sigPlot.getCurve().SetTitle('Fit errors')
     sigPdf.plotOn(sigPlot, RooFit.Name('fitCurve'))
-    sigPlot.getCurve().SetTitle('%s fit' % opts.component)
+    sigPlot.getCurve().SetTitle('%s fit' % compName)
     ret = sigPdf.plotOn(sigPlot, RooFit.Name('fitTails'),
                         RooFit.Components('*tail'),
                         RooFit.LineColor(kRed),
@@ -247,7 +259,7 @@ for (i,m) in enumerate(models):
 
     # sigPlot.GetYaxis().SetTitle('Events / GeV')
 
-    sigPlot.getHist('theData').SetTitle('%s MC' % opts.component)
+    sigPlot.getHist('theData').SetTitle('%s MC' % compName)
 
     leg = RooWjj2DFitter.Wjj2DFitter.legend4Plot(sigPlot)
     sigPlot.addObject(leg)
@@ -269,54 +281,60 @@ ndf = 0
 # print chi2s
 # print ndfs
 
+finalPars = params.snapshot()
+
+sigFile = TFile('%s.root' % opts.bn, 'recreate')
 if fr:
     fr.Print('v')
-    finalPars = params.snapshot()
-
-    sigFile = TFile('%s.root' % opts.bn, 'recreate')
     fr.Write('fr')
-    for plot in plots:
-        plot.Write()
-    fitter.ws.Write()
-    if hist2d:
-        hist2d.Write()
+for plot in plots:
+    plot.Write()
+fitter.ws.Write()
+if hist2d:
+    hist2d.Write()
 
-    sigFile.Close()
+sigFile.Close()
 
-    if opts.makeConstant:
-        finalPars.setAttribAll('Constant', True)
-    finalPars.writeToFile("%s.txt" % opts.bn)
+if opts.makeConstant:
+    finalPars.setAttribAll('Constant', True)
+finalPars.writeToFile("%s.txt" % opts.bn)
 
-    if opts.component != 'QCD':
-        paramsFile = open('%s.txt' % opts.bn)
-        lines = paramsFile.readlines()
-        paramsFile.close()
-        outfile = open('%s.txt' % opts.bn, 'w')
-        for line in lines:
-            if opts.sb or opts.sig:
-                tag = '_side ' if opts.sb else '_sig '
-                if opts.sb == 2:
-                    tag = '_low '
-                elif opts.sb == 3:
-                    tag = '_high '
-                words = line.split()
-                outfile.write(words[0] + tag + ' '.join(words[1:]) + '\n')
-            else:
-                outfile.write(line)
-        compName = opts.component
-        if opts.interference == 2:
-            compName += '_interf_%sUp' % compName
-        elif opts.interference == 3:
-            compName += '_interf_%sDown' % compName
-        if opts.sb:
-            compName = 'dummy'
-        outfile.write('n_%s = %.1f +/- %.1f C\n' % (compName, sumNExp, 
-                                                    TMath.Sqrt(sumNExp))
-                      )
-        outfile.close()
+if compName != 'QCD':
+    paramsFile = open('%s.txt' % opts.bn)
+    lines = paramsFile.readlines()
+    paramsFile.close()
+    outfile = open('%s.txt' % opts.bn, 'w')
+    for line in lines:
+        if opts.sb or opts.sig:
+            tag = '_side ' if opts.sb else '_sig '
+            if opts.sb == 2:
+                tag = '_low '
+            elif opts.sb == 3:
+                tag = '_high '
+            words = line.split()
+            outfile.write(words[0] + tag + ' '.join(words[1:]) + '\n')
+        else:
+            outfile.write(line)
+    yieldName = compName
+    if opts.interference == 2:
+        yieldName += '_interf_%sUp' % compName
+    elif opts.interference == 3:
+        yieldName += '_interf_%sDown' % compName
+    if opts.sb:
+        yieldName = 'dummy'
+    if morphingPdf and (opts.morphComponent == 0):
+        yieldName = opts.component
+        outfile.write('fMU_%s = 0.0 +/- 10. L(-1.0 - 1.0)\n' % (yieldName))
+        outfile.write('fSU_%s = 0.0 +/- 10. L(-1.0 - 1.0)\n' % (yieldName))
+    outfile.write('n_%s = %.1f +/- %.1f C\n' % (yieldName, sumNExp, 
+                                                TMath.Sqrt(sumNExp))
+                  )
+    outfile.close()
 
+ndf = 1
+if fr:
     ndf = fr.floatParsFinal().getSize()
-    finalPars.IsA().Destructor(finalPars)
+finalPars.IsA().Destructor(finalPars)
 
 params.IsA().Destructor(params)
 

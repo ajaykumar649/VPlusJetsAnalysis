@@ -81,7 +81,17 @@ class Wjj2DFitter:
             #just import data
             unbinnedData.SetName('data_obs')
             getattr(self.ws, 'import')(unbinnedData)
-        
+
+    def loadHistogramsFromWorkspace(self, other):
+        #pull RooHist pdfs from other workspace
+        pdfs = other.allPdfs()
+        pdfIter = pdfs.createIterator()
+        pdf = pdfIter.Next()
+        while pdf:
+            if pdf.IsA().InheritsFrom('RooHistPdf'):
+                print 'importing',pdf.GetName(),'from old workspace'
+                getattr(self.ws, 'import')(pdf)
+            pdf = pdfIter.Next()
 
     def loadWorkspaceFromFile(self, filename, wsname = 'w', 
                               getFloatPars = True):
@@ -103,6 +113,9 @@ class Wjj2DFitter:
 
         #pull unbinned data from other workspace
         self.loadDataFromWorkspace(other)
+
+        #pull in histogram pdfs to save time
+        self.loadHistogramsFromWorkspace(other)
 
         if getFloatPars and other.loadSnapshot('fitPars'):
             self.useImportPars = True
@@ -129,6 +142,9 @@ class Wjj2DFitter:
                                        '(n_%s[0.,1e6],' % component + \
                                        '%s_nrm[1.,-0.5,5.])' % component)
             self.ws.var('n_%s' % component).setConstant(True)
+            if hasattr(self, '%sExpected' % component):
+                self.ws.var('n_%s' % component).setVal(
+                    getattr('%sExpected', component))
             compPdfs.append(
                 self.ws.factory('RooExtendPdf::%s_extended(%s,%s)' % \
                                     (compPdf.GetName(), 
@@ -155,6 +171,9 @@ class Wjj2DFitter:
                     (component, component)
                 )
             self.ws.var('n_%s' % component).setConstant(True)
+            if hasattr(self, '%sExpected' % component):
+                self.ws.var('n_%s' % component).setVal(
+                    getattr('%sExpected', component))
             pdf = self.ws.factory('RooExtendPdf::%s_extended(%s,%s)' % \
                                       (compPdf.GetName(), 
                                        compPdf.GetName(),
@@ -229,13 +248,6 @@ class Wjj2DFitter:
 
         return self.ws.set('constraintSet')
 
-    # set the yield of the multijet background
-    def setMultijetYield(self):
-        if self.ws.var('n_multijet'):
-            self.multijetExpected = self.ws.data('data_obs').sumEntries() * \
-                self.pars.multijetFraction
-            self.ws.var('n_multijet').setVal(self.multijetExpected)
-
     # fit the data using the pdf
     def fit(self, keepParameterValues = False):
         print 'construct fit pdf ...'
@@ -243,8 +255,6 @@ class Wjj2DFitter:
 
         print 'load data ...'
         data = self.loadData()
-
-        self.setMultijetYield()
 
         self.resetYields()
 
@@ -369,6 +379,9 @@ class Wjj2DFitter:
 
         # Adds five (sub)components for the component with suffixes Nom, MU, MD, SU, SD
         NomPdf = self.makeComponentPdf('%s_Nom' % component, filesNom, modelsNom)
+        if hasattr(self, '%s_NomExpected' % component):
+            setattr(self, '%sExpected' % component,
+                    getattr(self, '%s_NomExpected' % component))
         MUPdf = self.makeComponentPdf('%s_MU' % component, filesMU, modelsMU)
         MDPdf = self.makeComponentPdf('%s_MD' % component, filesMD, modelsMD)
         SUPdf = self.makeComponentPdf('%s_SU' % component, filesSU, modelsSU)
