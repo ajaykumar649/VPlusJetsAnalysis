@@ -53,8 +53,8 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 
     pars.backgrounds = ['diboson', 'top', 'WpJ', 'ZpJ']
     pars.yieldConstraints = {'top' : 0.07, 'ZpJ' : 0.05, 'WpJ' : 0.05}
-    #pars.constrainShapes = ['WpJ']
-    pars.constrainShapes = []
+    pars.constrainShapes = ['WpJ']
+    #pars.constrainShapes = []
     if pars.btagSelection:
         pars.backgrounds = ['diboson', 'top', 'WpJ']
         pars.yieldConstraints = {'top' : 0.5, 'WpJ' : 0.5 }
@@ -70,7 +70,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
          10000267, 32.3161),
         ]
     pars.dibosonFracOfData = -1
-    pars.dibosonModels = [-1]
+    pars.dibosonModels = [22]
  
     pars.WpJFiles = [
         # (pars.MCDirectory + 'RD_%s_WpJ_CMSSW532.root' % (flavorString),
@@ -91,7 +91,8 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
          30209426, 3503.71),
         ]
     pars.ZpJFracOfData = -1
-    pars.ZpJModels = [-1]
+    pars.ZpJModels = [23]
+    pars.ZpJAuxModels = [4]
 
 
     # To implement Template Morphing set pars.WpJModels=[-2]
@@ -110,8 +111,9 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         pars.WpJModels = [17]
     else:
         #pars.WpJModels = [17]
-        pars.WpJModels = [-2]
         #pars.WpJModels = [-2]
+        pars.WpJModels = [23]
+        pars.WpJAuxModels = [5]
     
     pars.WpJNomFiles = pars.WpJFiles
     pars.WpJNomModels = [-1]
@@ -145,7 +147,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     if pars.btagSelection:
         pars.topModels = [4] #btag selection
     else:
-        pars.topModels = [-1] #anti-btag selection
+        pars.topModels = [13] #anti-btag selection
 
     
     pars.dibosonPlotting = {'color' : kAzure+8, 'title' : 'WW+WZ'}
@@ -155,7 +157,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.QCDPlotting = {'color' : kGray, 'title' : 'multijet'}
 
     pars.var = ['Mass2j_PFCor']
-    pars.varRanges = {'Mass2j_PFCor': (25, 50., 250., []),
+    pars.varRanges = {'Mass2j_PFCor': (14, 48., 160., []),
                       }
     pars.varTitles = {'Mass2j_PFCor': 'm_{jj}',
                       }
@@ -170,7 +172,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.integratedLumi = 19300.
 
     # pars.binData = False
-    pars.binData = True
+    pars.binData = False
 
     #Standard vs QCD cuts:
     pars.QCDcuts = pars.cuts

@@ -2,7 +2,8 @@ import pyroot_logon
 from RooWjj2DFitterPars import Wjj2DFitterPars
 from ROOT import TH2D, TFile, gDirectory, TTreeFormula, RooDataHist, \
     RooHistPdf, RooArgList, RooArgSet, RooFit, RooDataSet, RooRealVar, \
-    TRandom3, RooPowerLaw, RooClassFactory, gROOT, TClass, TH1D
+    TRandom3, RooPowerLaw, RooClassFactory, gROOT, TClass, TH1D, \
+    RooChebyshevPDF
 from array import array
 from EffLookupTable import EffLookupTable
 import random
@@ -343,19 +344,13 @@ class Wjj2DFitterUtils:
                        )
         elif model==4:
             # a second order polynomial
-            ws.factory("RooChebychev::%s(%s,{a1_%s[-10,10],a2_%s[-10,10]})" %\
-                           (pdfName, var, idString, idString)
-                       )
+            self.analyticPdf(ws, var, 23, pdfName, idString, 2)
         elif model==5:
             # a double gaussian
-            ws.factory("RooGaussian::%s_core" % pdfName + \
-                           "(%s, mean_%s_core[84.,0,1000],sigma_%s_core[10.,0,500])" %\
-                           (var, idString, idString)
-                       )
-            ws.factory("RooGaussian::%s_tail" % pdfName + \
-                           "(%s, mean_%s_tail[100.,0,1000],sigma_%s_tail[50.,0,500])" %\
-                           (var, idString, idString)
-                       )
+            self.analyticPdf(ws, var, 27, '%s_core' % pdfName,
+                             '%s_core' % idString, 84.)
+            self.analyticPdf(ws, var, 27, '%s_tail' % pdfName,
+                             '%s_tail' % idString, 100.)
             ws.factory("SUM::%s(f_%s_core[0.5,0,1] * %s_core, %s_tail)" % \
                            (pdfName, idString, pdfName, pdfName)
                        )
@@ -375,25 +370,22 @@ class Wjj2DFitterUtils:
                            (pdfName, idString, pdfName, pdfName)
                        )
         elif model==7:
-            # a CB + exp
-            ws.factory("RooCBShape::%s_core" % pdfName + \
-                           "(%s, mean_%s_core[84.,0,1000],sigma_%s_core[10.,0,500]," %\
-                           (var, idString, idString) + \
-                           "alpha_%s[2.,-10,10], npow_%s[2.])" % \
-                           (idString, idString)
-                       )
-            ws.factory("RooExponential::%s_tail" % pdfName + \
-                           "(%s, c_%s_tail[-10, 10])" %\
-                           (var, idString)
-                       )
+            self.analyticPdf(ws, var, 3, '%s_core' % pdfName,
+                             '%s_core' % idString)
+            self.analyticPdf(ws, var, 0, '%s_tail' % pdfName,
+                             '%s_tail' % idString)
             ws.factory("SUM::%s(f_%s_core[0.5,0,1] * %s_core, %s_tail)" % \
                            (pdfName, idString, pdfName, pdfName)
                        )
         elif model== 8:
             # erf * exponential pdf
             ws.factory("c_%s[-0.015, -10, 10]" % idString)
-            ws.factory("offset_%s[70, -100, 1000]" % idString)
-            ws.factory("width_%s[20, 0, 1000]" % idString)
+            offset = ws.factory("offset_%s[70, -100, 1000]" % idString)
+            width = ws.factory("width_%s[20, 0, 1000]" % idString)
+            offset.setVal(ws.var(var).getMin())
+            offset.setError(offset.getVal()*0.2)
+            width.setVal(offset.getVal()*0.2)
+            width.setError(width.getVal()*0.2)
             ws.factory("RooErfExpPdf::%s(%s, c_%s, offset_%s, width_%s)" %\
                            (pdfName, var, idString, idString, idString)
                        )
@@ -404,29 +396,23 @@ class Wjj2DFitterUtils:
                            "width_%s[15.], resolution_%s[10.,0,500])" %\
                            (idString, idString)
                        )
-            ws.factory("RooGaussian::%s_tail" % (pdfName) + \
-                           "(%s, mean_%s, sigma_%s_tail[100,0,500])" % \
-                           (var, idString, idString)
-                       )
+            self.analyticPdf(ws, var, 27, '%s_tail' % pdfName,
+                             '%s_tail' % idString, 100.)
             ws.factory("SUM::%s(f_%s_core[0.5,0,1] * %s_core, %s_tail)" % \
                            (pdfName, idString, pdfName, pdfName)
                        )
             ws.var('width_%s' % idString).setConstant(True)
         elif model == 10:
             #erf * 2 parameter power law
-            ws.factory("offset_%s[40, 0, 1000]" % idString)
-            ws.factory("width_%s[10, 0, 1000]" % idString)
-            ws.factory("power_%s[2, -30, 30]" % idString)
-            ws.factory("power2_%s[0, -20, 20]" % idString)
-            ws.factory("EXPR::%s('(TMath::Erf((@0-@1)/@2)+1)/2./TMath::Power(@0,@3+@4*log(@0/@5))', %s, offset_%s, width_%s, power_%s, power2_%s, 8000)" % \
-                           (pdfName, var, idString, idString, idString, 
-                            idString)
-                       )
+            pdfErf = self.analyticPdf(ws, var, 25, '%s_turnon' % pdfName,
+                                      idString)
+            pdfPower = self.analyticPdf(ws, var, 12, '%s_power' % pdfName,
+                                        idString)
+            ws.factory("PROD::%s(%s,%s)" % (pdfName, pdfErf.GetName(),
+                                            pdfPower.GetName()))
         elif model == 11:
             #3th order polynomial
-            ws.factory("RooChebychev::%s(%s,{a1_%s[-10,10],a2_%s[-10,10],a3_%s[-10,10]})" % \
-                           (pdfName, var, idString, idString, idString)
-                       )
+            self.analyticPdf(ws, var, 23, pdfName, idString, 3)
         elif model == 12:
             # 2 parameter power law
             ws.factory("power_%s[2, -30, 30]" % idString)
@@ -436,63 +422,37 @@ class Wjj2DFitterUtils:
                        )
         elif model == 13:
             # gaussian + erf*exp
-            ws.factory("RooGaussian::%s_core" % pdfName + \
-                           "(%s, mean_%s_core[84.,0,1000],sigma_%s_core[10.,0,500])" %\
-                           (var, idString, idString)
-                       )
-            ws.factory("c_%s[-0.015, -10, 10]" % idString)
-            ws.factory("offset_%s[70, -100, 1000]" % idString)
-            ws.factory("width_%s[20, 0, 1000]" % idString)
-            ws.factory("RooErfExpPdf::%s_tail(%s, c_%s, offset_%s, width_%s)" %\
-                           (pdfName, var, idString, idString, idString)
-                       )
+            self.analyticPdf(ws, var, 27, '%s_core' % pdfName,
+                             '%s_core' % idString, 84.)
+            self.analyticPdf(ws, var, 8, '%s_tail' % pdfName, idString)
             ws.factory("SUM::%s(f_%s_core[0.5,0,1] * %s_core, %s_tail)" % \
                            (pdfName, idString, pdfName, pdfName)
                        )
         elif model == 14:
             #erf * simple power law
-            ws.factory("offset_%s[40, 0, 1000]" % idString)
-            ws.factory("width_%s[10, 0, 1000]" % idString)
-            ws.factory("power_%s[2, -30, 30]" % idString)
-            ws.factory("EXPR::%s('(TMath::Erf((@0-@1)/@2)+1)/2./TMath::Power(@0,@3)', %s, offset_%s, width_%s, power_%s)" % \
-                           (pdfName, var, idString, idString, idString)
-                       )
+            pdfErf = self.analyticPdf(ws, var, 25, '%s_turnon' % pdfName,
+                                      idString)
+            pdfPower = self.analyticPdf(ws, var, 1, '%s_power' % pdfName,
+                                        idString)
+            ws.factory("PROD::%s(%s,%s)" % (pdfName, pdfErf.GetName(),
+                                            pdfPower.GetName()))
         elif model == 15:
             #erf * 2 parameter power law + exp
-            ws.factory("offset_%s[40, 0, 1000]" % idString)
-            ws.factory("width_%s[10, 0, 1000]" % idString)
-            ws.factory("power_%s[2, -30, 30]" % idString)
-            ws.factory("power2_%s[0, -20, 20]" % idString)
-            ws.factory("EXPR::%s_tail('(TMath::Erf((@0-@1)/@2)+1)/2./TMath::Power(@0,@3+@4*log(@0/@5))', %s, offset_%s, width_%s, power_%s, power2_%s, 8000)" % \
-                           (pdfName, var, idString, idString, idString, 
-                            idString)
-                       )
-            ws.factory('RooExponential::%s_core(%s,c_%s[-10,10])' % \
-                           (pdfName, var, idString)
-                       )
+            self.analyticPdf(ws, var, 10, '%s_tail' % pdfName, idString)
+            self.analyticPdf(ws, var, 0, '%s_core' % pdfName, idString)
             ws.factory("SUM::%s(f_%s_core[0.1,0,1] * %s_core, %s_tail)" % \
                            (pdfName, idString, pdfName, pdfName)
                        )
         elif model == 16:
             #erf * simple power law + exp
-            ws.factory("offset_%s[40, 0, 1000]" % idString)
-            ws.factory("width_%s[10, 0, 1000]" % idString)
-            ws.factory("power_%s[2, -30, 30]" % idString)
-            ws.factory("EXPR::%s_tail('(TMath::Erf((@0-@1)/@2)+1)/2./TMath::Power(@0,@3)', %s, offset_%s, width_%s, power_%s)" % \
-                           (pdfName, var, idString, idString, idString)
-                       )
-            ws.factory('RooExponential::%s_core(%s,c_%s[-10,10])' % \
-                           (pdfName, var, idString)
-                       )
+            self.analyticPdf(ws, var, 14, '%s_tail' % pdfName, idString)
+            self.analyticPdf(ws, var, 0, '%s_core' % pdfName, idString)
             ws.factory("SUM::%s(f_%s_core[0.1,0,1] * %s_core, %s_tail)" % \
                            (pdfName, idString, pdfName, pdfName)
                        )
         elif model == 17:
             #4th order polynomial
-            ws.factory("RooChebychev::%s(%s,{a1_%s[-10,10],a2_%s[-10,10],a3_%s[-10,10],a4_%s[-10,10]})" % \
-                           (pdfName, var, idString, idString, idString, 
-                            idString)
-                       )
+            self.analyticPdf(ws, var, 13, pdfName, idString, 4)
         elif model == 18:
             # QCD inspired power law
             p1 = ws.factory("power_%s[-5.]" % idString)
@@ -504,7 +464,7 @@ class Wjj2DFitterUtils:
             ws.factory("EXPR::%s('TMath::Power(1.-@0/@3,@4)/TMath::Power(@0/@3,@1+@2*log(@0/@3))', %s, power_%s, power2_%s, m_scale[1200], power3_%s)" % \
                            (pdfName, var, idString, idString, idString)
                        )
-            #ws.var('m_scale').setConstant(False)
+            # ws.var('m_scale').setConstant(False)
         elif model == 19:
             #alpha function morphed pdf where the pdf is passed as auxModel
             self.analyticPdf(ws, var, auxModel[0], '%s_side' % pdfName, 
@@ -555,20 +515,89 @@ class Wjj2DFitterUtils:
                        "(%s, mean_%s_Z, sigma_%s_Z)" % (var, idString,
                                                         idString)
                        )
-            ws.factory("c_%s[-0.015, -10, 10]" % idString)
-            ws.factory("offset_%s[70, -100, 1000]" % idString)
-            ws.factory("width_%s[20, 0, 1000]" % idString)
-            ws.factory("RooErfExpPdf::%s_tail(%s, c_%s, offset_%s, width_%s)" %\
-                           (pdfName, var, idString, idString, idString)
-                       )
+            self.analyticPdf(ws, var, 8, '%s_tail' % pdfName, idString)
             ws.factory("SUM::%s(f_W_%s[0.4,0.,1.]*%s_W,f_Z_%s[0.1,0.,1.]*%s_Z,%s_tail)" % \
                        (pdfName, idString, pdfName, idString, pdfName, pdfName))
+        elif model == 23:
+            #Nth order polynomial where n is passed in as the auxModel
+            print 'polynomial of order',auxModel
+            parSet = []
+            parList = RooArgList('parList')
+            for i in range(0, auxModel):
+                parSet.append('a%i_%s' % (i+1, idString))
+                a = ws.factory('%s[0.]' % parSet[-1])
+                a.setConstant(False)
+                parList.add(a)
+                # print varSet[-1]
+                # a.Print()
+            factoryStatement = "RooChebyshevPDF::%s(%s,{%s})" % \
+                           (pdfName, var, ','.join(parSet))
+            #print factoryStatement
+            pdf = RooChebyshevPDF(pdfName, pdfName, ws.var(var), parList)
+            getattr(ws, 'import')(pdf)
+            #ws.Print()
+            #ws.factory(factoryStatement)
+        elif model == 24:
+            # Nth order polynomial where n is passed in as the auxModel and an
+            # erf for turn-on
+            print 'polynomial of order',auxModel,'times an erf'
+            pdfPoly = self.analyticPdf(ws, var, 23, "%s_poly" % pdfName,
+                                       idString, auxModel)
+            pdfErf = self.analyticPdf(ws, var, 25, '%s_turnon' % pdfName,
+                                      idString)
+            ws.factory("PROD::%s(%s,%s)" % (pdfName, pdfPoly.GetName(),
+                                            pdfErf.GetName()))
+        elif model == 25:
+            # erf model
+            offset = ws.factory("offset_%s[50, -100, 1000]" % idString)
+            offset.setVal(ws.var(var).getMin())
+            offset.setError(offset.getVal()*0.2)
+            width = ws.factory("width_%s[5, 0, 1000]" % idString)
+            width.setVal(offset.getVal()*0.2)
+            width.setError(width.getVal()*0.2)
+            factoryStatement = "RooErfPdf::%s(%s, offset_%s, width_%s)"%\
+                               (pdfName, var, idString, idString)
+            ws.factory(factoryStatement)
+        elif model == 26:
+            # erf * 2 parameter power law + gaussian
+            pdfErf = self.analyticPdf(ws, var, 10, '%s_tail' % pdfName,
+                                     idString)
+            pdfGaus = self.analyticPdf(ws, var, 27, '%s_wiggle' % pdfName,
+                                       idString, 150)
+            ws.factory('SUM::%s(f_%s[0.1, -1., 1.]*%s, %s)' % \
+                       (pdfName, idString, pdfGaus.GetName(), pdfErf.GetName()))
+        elif model == 27:
+            # gaussian model with optional mean passed as auxModel
+            mean = ws.factory('mean_%s[0.,1000.]' % idString)
+            sigma = ws.factory('sigma_%s[0.,500.]' % idString)
+            if auxModel:
+                mean.setVal(auxModel)
+                mean.setError(auxModel*0.15)
+                sigma.setVal(auxModel*0.15)
+                sigma.setVal(auxModel*0.15*0.2)
+            ws.factory('RooGaussian::%s(%s,mean_%s,sigma_%s)' % \
+                       (pdfName, var, idString, idString))
+        elif model == 28:
+            # QCD inspired model with a erf turnon
+            pdfErf = self.analyticPdf(ws, var, 25, '%s_turnon' % pdfName,
+                                      idString)
+            pdfPower = self.analyticPdf(ws, var, 18, '%s_power' % pdfName,
+                                        idString)
+            ws.factory('PROD::%s(%s,%s)' % (pdfName, pdfErf.GetName(),
+                                            pdfPower.GetName()))
+        elif model == 29:
+            # QCD inspired model with a erf turnon
+            pdfPower = self.analyticPdf(ws, var, 28, '%s_tail' % pdfName,
+                                        idString)
+            pdfGaus = self.analyticPdf(ws, var, 27, '%s_wiggle' % pdfName,
+                                       idString, 150.)
+            ws.factory('SUM::%s(f_%s[0.1, -1., 1.]*%s, %s)' % \
+                       (pdfName, idString, pdfGaus.GetName(),
+                        pdfPower.GetName()))
         else:
             # this is what will be returned if there isn't a model implemented
             # for a given model code.
-            ws.factory("RooChebychev::%s(%s,{a1_%s[-10,10],a2_%s[-10,10]})" %\
-                           (pdfName, var, idString, idString)
-                       )
+            self.analyticPdf(ws, var, 4, pdfName, idString)
 
         return ws.pdf(pdfName)
 

@@ -31,6 +31,8 @@ parser.add_option('--morphingComp', dest='morphComponent', default=0,
                   type='int', help='which morphing component to use.  '+\
                       '(0): nominal [default]  (+/- 1): matching up/down'+\
                       '  (+/- 2): scale up/down')
+parser.add_option('--ws', dest='ws', help='filename to get data from instead' +\
+                  ' reading from source ntuples again.')
 
 (opts, args) = parser.parse_args()
 
@@ -111,11 +113,16 @@ if (compName == 'qqH') and (opts.mH == 170):
 #print 'interference option:',opts.interference
 refEffLumi = -1.
 print 'integrated lumi:',pars.integratedLumi
+in_ws = None
+if opts.ws:
+    in_ws = TFile(opts.ws).Get('wjj2dfitter')
 for (ifile, (filename, ngen, xsec)) in enumerate(files):
     if refEffLumi > 0.:
         scale = refEffLumi/(ngen/xsec)
     else:
         scale = 1.0
+    if in_ws and in_ws.data('data%i' % ifile):
+        getattr(fitter.ws, 'import')(in_ws.data('data%i' % ifile))
     tmpData = fitter.utils.File2Dataset(filename, 'data%i' % ifile, fitter.ws,
                                         weighted = weighted, CPweight = cpw,
                                         cutOverride = cutOverride,
