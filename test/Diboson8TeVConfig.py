@@ -8,7 +8,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.QCDDirectory = "/uscms_data/d3/ilyao/QCD8TeV/Moriond13/"
     # pars.MCDirectory = "root://cmseos:1094//eos/uscms/store/user/lnujj/HCP2012METfix/ReducedTrees/"
     pars.isElectron = isElectron
-    pars.btagSelection = False
+    pars.btagSelection = True
     pars.boostedSelection = False
     pars.initialParametersFile = initFile
 
@@ -53,12 +53,13 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 
     pars.backgrounds = ['diboson', 'top', 'WpJ', 'ZpJ']
     pars.yieldConstraints = {'top' : 0.07, 'ZpJ' : 0.05, 'WpJ' : 0.05}
+    #pars.yieldConstraints = {'top' : 0.07, 'ZpJ' : 0.05}
     pars.constrainShapes = ['WpJ']
     #pars.constrainShapes = []
     if pars.btagSelection:
-        pars.backgrounds = ['diboson', 'top', 'WpJ']
-        pars.yieldConstraints = {'top' : 0.5, 'WpJ' : 0.5 }
-        pars.constrainShapes = []
+        pars.backgrounds = ['diboson', 'top', 'WpJ', 'ZpJ']
+        pars.yieldConstraints = {'top' : 0.14, 'WpJ' : 0.1, 'ZpJ' : 0.1 }
+        pars.constrainShapes = ['top', 'WpJ', 'diboson']
 
     # you need a files entry and a models entry for each of the fit 
     # compoents in backgrounds and signals
@@ -75,14 +76,14 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.WpJFiles = [
         # (pars.MCDirectory + 'RD_%s_WpJ_CMSSW532.root' % (flavorString),
         #  18353019+50768992, 36257.2),
-        # (pars.MCDirectory + 'RD_%s_W1Jets_CMSSW532.root' % (flavorString),
-        #  19871598, 5400.0*1.2),
+        (pars.MCDirectory + 'RD_%s_W1Jets_CMSSW532.root' % (flavorString),
+         19871598, 5400.0*1.16),
         (pars.MCDirectory + 'RD_%s_W2Jets_CMSSW532.root' % (flavorString),
-         33004921, 1750.0*1.2),
+         33004921, 1750.0*1.16),
         (pars.MCDirectory + 'RD_%s_W3Jets_CMSSW532.root' % (flavorString),
-         15059503, 519.0*1.2),
+         15059503, 519.0*1.16),
         (pars.MCDirectory + 'RD_%s_W4Jets_CMSSW532.root' % (flavorString),
-         12842803, 214.0*1.2),
+         12842803, 214.0*1.16),
         ]
     pars.WpJFracOfData = -1
 
@@ -91,8 +92,10 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
          30209426, 3503.71),
         ]
     pars.ZpJFracOfData = -1
-    pars.ZpJModels = [23]
+    pars.ZpJModels = [14]
     pars.ZpJAuxModels = [4]
+    if pars.btagSelection:
+        pars.ZpJAuxModels = [3]
 
 
     # To implement Template Morphing set pars.WpJModels=[-2]
@@ -108,23 +111,24 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     # pars.WpJModels = [-2]
 
     if pars.btagSelection:
-        pars.WpJModels = [17]
+        pars.WpJModels = [14]
     else:
         #pars.WpJModels = [17]
         #pars.WpJModels = [-2]
         pars.WpJModels = [23]
         pars.WpJAuxModels = [5]
     
-    pars.WpJNomFiles = pars.WpJFiles
-    pars.WpJNomModels = [-1]
-    pars.WpJMUFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingup_CMSSW532.root' % (flavorString), 20976007, 36257.2), ]
-    pars.WpJMUModels = [-1]
-    pars.WpJMDFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingdown_CMSSW532.root' % (flavorString), 21364575, 36257.2), ]
-    pars.WpJMDModels = [-1]
-    pars.WpJSUFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaleup_CMSSW532.root' % (flavorString), 20784694, 36257.2), ]
-    pars.WpJSUModels = [-1]
-    pars.WpJSDFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaledown_CMSSW532.root' % (flavorString), 20760830, 36257.2), ]
-    pars.WpJSDModels = [-1]
+    pars.WpJ_NomFiles = pars.WpJFiles
+    pars.WpJ_NomModels = [23]
+    pars.WpJ_NomAuxModels = [5]
+    pars.WpJ_MUFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingup_CMSSW532.root' % (flavorString), 20976007, 36257.2), ]
+    pars.WpJ_MUModels = [17]
+    pars.WpJ_MDFiles = [ (pars.MCDirectory + 'RD_%s_WpJmatchingdown_CMSSW532.root' % (flavorString), 21364575, 36257.2), ]
+    pars.WpJ_MDModels = [17]
+    pars.WpJ_SUFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaleup_CMSSW532.root' % (flavorString), 20784694, 36257.2), ]
+    pars.WpJ_SUModels = [17]
+    pars.WpJ_SDFiles = [ (pars.MCDirectory + 'RD_%s_WpJscaledown_CMSSW532.root' % (flavorString), 20760830, 36257.2), ]
+    pars.WpJ_SDModels = [17]
 
     
     pars.topFiles = [
@@ -145,7 +149,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         ]
     pars.topFracOfData = -1
     if pars.btagSelection:
-        pars.topModels = [4] #btag selection
+        pars.topModels = [11] #btag selection
     else:
         pars.topModels = [13] #anti-btag selection
 
@@ -159,6 +163,9 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.var = ['Mass2j_PFCor']
     pars.varRanges = {'Mass2j_PFCor': (14, 48., 160., []),
                       }
+    if pars.btagSelection:
+        pars.varRanges = {'Mass2j_PFCor': (15, 40., 160., []),
+                          }
     pars.varTitles = {'Mass2j_PFCor': 'm_{jj}',
                       }
     pars.varNames = {'Mass2j_PFCor': 'Mass2j_PFCor' }
@@ -199,7 +206,7 @@ def customizeElectrons(pars):
         (pars.QCDDirectory + 'RDQCD_WenuJets_Isog0p3NoElMVA_19p2invfb.root',
          1,1), #The events come from the data sideband
         ]
-    pars.QCDModels = [-1]
+    pars.QCDModels = [10]
     pars.yieldConstraints['QCD'] = 0.5
 
     pars.doEffCorrections = True

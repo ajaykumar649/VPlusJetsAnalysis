@@ -1,0 +1,4 @@
+offset_ZpJ_Mass2j_PFCor =  44.919 +/- 4.4244 C L(-100 - 1000) 
+power_ZpJ_Mass2j_PFCor = -1.43077 +/- 0.38077 C L(-30 - 30) 
+width_ZpJ_Mass2j_PFCor =  11.167 +/- 8.1258 C L(0 - 1000) 
+n_ZpJ = 302.8 +/- 17.4 C

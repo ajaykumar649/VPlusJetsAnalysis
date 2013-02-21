@@ -1,0 +1,5 @@
+a1_WpJ_MU_Mass2j_PFCor = -0.305403 +/- 0.030229 C L(-INF - +INF) 
+a2_WpJ_MU_Mass2j_PFCor = -0.0489822 +/- 0.030318 C L(-INF - +INF) 
+a3_WpJ_MU_Mass2j_PFCor =  0.061128 +/- 0.026203 C L(-INF - +INF) 
+a4_WpJ_MU_Mass2j_PFCor = -0.0709750 +/- 0.026491 C L(-INF - +INF) 
+n_WpJ_MU = 135504.0 +/- 368.1 C

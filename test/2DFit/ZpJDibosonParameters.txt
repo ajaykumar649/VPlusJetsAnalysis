@@ -1,0 +1,5 @@
+a1_ZpJ_Mass2j_PFCor = -0.556455 +/- 0.030275 C L(-INF - +INF) 
+a2_ZpJ_Mass2j_PFCor =  0.085987 +/- 0.030393 C L(-INF - +INF) 
+a3_ZpJ_Mass2j_PFCor =  0.033392 +/- 0.026915 C L(-INF - +INF) 
+a4_ZpJ_Mass2j_PFCor = -0.0489048 +/- 0.025973 C L(-INF - +INF) 
+n_ZpJ = 8187.5 +/- 90.5 C

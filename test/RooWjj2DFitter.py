@@ -366,16 +366,16 @@ class Wjj2DFitter:
         if self.ws.pdf(component):
             return self.ws.pdf(component)
         
-        filesNom = getattr(self.pars, '%sNomFiles' % component)
-        modelsNom = getattr(self.pars, '%sNomModels' % component)
-        filesMU = getattr(self.pars, '%sMUFiles' % component)
-        modelsMU = getattr(self.pars, '%sMUModels' % component)
-        filesMD = getattr(self.pars, '%sMDFiles' % component)
-        modelsMD = getattr(self.pars, '%sMDModels' % component)
-        filesSU = getattr(self.pars, '%sSUFiles' % component)
-        modelsSU = getattr(self.pars, '%sSUModels' % component)
-        filesSD = getattr(self.pars, '%sSDFiles' % component)
-        modelsSD = getattr(self.pars, '%sSDModels' % component)
+        filesNom = getattr(self.pars, '%s_NomFiles' % component)
+        modelsNom = getattr(self.pars, '%s_NomModels' % component)
+        filesMU = getattr(self.pars, '%s_MUFiles' % component)
+        modelsMU = getattr(self.pars, '%s_MUModels' % component)
+        filesMD = getattr(self.pars, '%s_MDFiles' % component)
+        modelsMD = getattr(self.pars, '%s_MDModels' % component)
+        filesSU = getattr(self.pars, '%s_SUFiles' % component)
+        modelsSU = getattr(self.pars, '%s_SUModels' % component)
+        filesSD = getattr(self.pars, '%s_SDFiles' % component)
+        modelsSD = getattr(self.pars, '%s_SDModels' % component)
 
         # Adds five (sub)components for the component with suffixes Nom, MU, MD, SU, SD
         NomPdf = self.makeComponentPdf('%s_Nom' % component, filesNom, modelsNom)
@@ -398,7 +398,7 @@ class Wjj2DFitter:
                             RooArgList( fSU_comp ) )
         fSD = RooFormulaVar("f_fSD_%s" % component, "@0*(-1)*(@0 < 0.)", 
                             RooArgList( fSU_comp ) )
-        fNom = RooFormulaVar("f_fNom","fNom", "(1.-abs(@0)-abs(@1))", 
+        fNom = RooFormulaVar("f_fNom_%s" % component, "(1.-abs(@0)-abs(@1))", 
                              RooArgList(fMU_comp,fSU_comp) )
         morphPdf = RooAddPdf(component,component, 
                              RooArgList(MUPdf,MDPdf,SUPdf,SDPdf,NomPdf),

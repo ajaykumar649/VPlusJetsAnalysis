@@ -66,24 +66,24 @@ if models[0] == -2:
     print 'pdf morphing'
     morphingPdf = True
     if opts.morphComponent == 0:
-        models = getattr(pars, '%sNomModels' % opts.component)
-        files = getattr(pars, '%sNomFiles' % opts.component)
+        models = getattr(pars, '%s_NomModels' % opts.component)
+        files = getattr(pars, '%s_NomFiles' % opts.component)
         compName = opts.component + '_Nom'
     elif opts.morphComponent == -1:
-        models = getattr(pars, '%sMDModels' % opts.component)
-        files = getattr(pars, '%sMDFiles' % opts.component)
+        models = getattr(pars, '%s_MDModels' % opts.component)
+        files = getattr(pars, '%s_MDFiles' % opts.component)
         compName = opts.component + '_MD'
     elif opts.morphComponent == 1:
-        models = getattr(pars, '%sMUModels' % opts.component)
-        files = getattr(pars, '%sMUFiles' % opts.component)
+        models = getattr(pars, '%s_MUModels' % opts.component)
+        files = getattr(pars, '%s_MUFiles' % opts.component)
         compName = opts.component + '_MU'
     elif opts.morphComponent == -2:
-        models = getattr(pars, '%sSDModels' % opts.component)
-        files = getattr(pars, '%sSDFiles' % opts.component)
+        models = getattr(pars, '%s_SDModels' % opts.component)
+        files = getattr(pars, '%s_SDFiles' % opts.component)
         compName = opts.component + '_SD'
     elif opts.morphComponent == 2:
-        models = getattr(pars, '%sSUModels' % opts.component)
-        files = getattr(pars, '%sSUFiles' % opts.component)
+        models = getattr(pars, '%s_SUModels' % opts.component)
+        files = getattr(pars, '%s_SUFiles' % opts.component)
         compName = opts.component + '_SU'
 print 'component', compName
 print 'models', models

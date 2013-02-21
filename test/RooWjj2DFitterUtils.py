@@ -452,7 +452,7 @@ class Wjj2DFitterUtils:
                        )
         elif model == 17:
             #4th order polynomial
-            self.analyticPdf(ws, var, 13, pdfName, idString, 4)
+            self.analyticPdf(ws, var, 23, pdfName, idString, 4)
         elif model == 18:
             # QCD inspired power law
             p1 = ws.factory("power_%s[-5.]" % idString)
