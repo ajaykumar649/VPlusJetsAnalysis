@@ -1,6 +1,8 @@
-f_diboson_GroomedJet_CA8_mass_pr_core =  0.60751 +/- 0.044835 C L(0 - 1) 
-mean_diboson_GroomedJet_CA8_mass_pr_core =  83.565 +/- 0.27794 C L(0 - 1000) 
-mean_diboson_GroomedJet_CA8_mass_pr_tail =  81.172 +/- 1.1223 C L(0 - 1000) 
-sigma_diboson_GroomedJet_CA8_mass_pr_core =  7.8006 +/- 0.44617 C L(0 - 500) 
-sigma_diboson_GroomedJet_CA8_mass_pr_tail =  23.013 +/- 1.6266 C L(0 - 500) 
+c_diboson_GroomedJet_CA8_mass_pr = -0.0743577 +/- 0.015980 C L(-10 - 10) 
+f_W_diboson_GroomedJet_CA8_mass_pr =  0.48960 +/- 0.039624 C L(0 - 1) 
+f_Z_diboson_GroomedJet_CA8_mass_pr =  0.15219 +/- 0.031018 C L(0 - 1) 
+mean_diboson_GroomedJet_CA8_mass_pr_W =  81.758 +/- 0.49334 C L(50 - 100) 
+offset_diboson_GroomedJet_CA8_mass_pr =  97.954 +/- 12.435 C L(-100 - 1000) 
+resolution_diboson_GroomedJet_CA8_mass_pr =  0.079716 +/- 0.0051930 C L(0 - 5) 
+width_diboson_GroomedJet_CA8_mass_pr =  28.854 +/- 2.6860 C L(0 - 1000) 
 n_diboson = 335.2 +/- 18.3 C

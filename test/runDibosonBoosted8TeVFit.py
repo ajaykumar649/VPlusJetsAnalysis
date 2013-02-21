@@ -93,7 +93,7 @@ if opts.toy:
 else:    
     data = fitter.loadData()
 
-fitter.setMultijetYield()
+#fitter.setMultijetYield()
 data.Print()
 startpars.IsA().Destructor(startpars)
 
