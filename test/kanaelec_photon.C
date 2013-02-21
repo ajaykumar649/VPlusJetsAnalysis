@@ -122,7 +122,7 @@ void kanaelec_photon::myana(double myflag, bool isQCD, int runflag)
       }
    }
 
-   if (myflag == 20120001 || myflag == -100){
+   if (myflag == 20120001 || myflag == -200){
       myChain = new TChain("WJet");
 
       if ( !isQCD ) {
@@ -177,31 +177,31 @@ void kanaelec_photon::myana(double myflag, bool isQCD, int runflag)
          myChain->Add(                    inDataDir + "el_STopTW_T_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121007,runflag, outDataDir + "RD_el_STopTW_T_CMSSW532");
       }
-      if (myflag == 20121008 || myflag == -200){
+      if (myflag == 20121008 || myflag == -500){
          InitCounters( inDataDir + "el_TTbar_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_TTbar_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121008,runflag, outDataDir + "RD_el_TTbar_CMSSW532");
       }
-      if (myflag == 20121009 || myflag == -200){
+      if (myflag == 20121009 || myflag == -500){
          InitCounters( inDataDir + "el_WpJ_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_WpJ_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121009,runflag, outDataDir + "RD_el_WpJ_CMSSW532");
       }
-      if (myflag == 20121015 || myflag == -200){
+      if (myflag == 20121015 || myflag == -500){
          InitCounters( inDataDir + "el_WW_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_WW_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121015,runflag, outDataDir + "RD_el_WW_CMSSW532");
       }
-      if (myflag == 20121016 || myflag == -200){
+      if (myflag == 20121016 || myflag == -500){
          InitCounters( inDataDir + "el_WZ_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_WZ_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121016,runflag, outDataDir + "RD_el_WZ_CMSSW532");
       }
-      if (myflag == 20121017 || myflag == -200){
+      if (myflag == 20121017 || myflag == -500){
          InitCounters( inDataDir + "el_ZpJ_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
          myChain->Add(                    inDataDir + "el_ZpJ_CMSSW532.root"); 
@@ -236,6 +236,18 @@ void kanaelec_photon::myana(double myflag, bool isQCD, int runflag)
          myChain = new TChain("WJet");
          myChain->Add( inDataDir2 + "el_TTbarAJets.root");
          Init(myChain);Loop(  h_events, h_events_weighted,20121034,runflag, outDataDir + "RD_el_TTbarAJets");
+      }
+      if (myflag == 20121035 || myflag == -200){
+         InitCounters( inDataDir4 + "el_WZA_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "el_WZA_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121035,runflag, outDataDir + "RD_el_WZA_CMSSW532");
+      }
+      if (myflag == 20121036 || myflag == -200){
+         InitCounters( "/uscms_data/d3/jfaulkn3/ControlPlots/ElectroWeak/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/nTuples/el_ZAp23Jets_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( "/uscms_data/d3/jfaulkn3/ControlPlots/ElectroWeak/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/nTuples/el_ZAp23Jets_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121036,runflag, outDataDir + "RD_el_ZAp23J_CMSSW532");
       }
 
 
@@ -344,15 +356,15 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    ///////////////////////////////////////////////////////////////////
    // Decay Angles, four-body/three-body/two-body mass/pt, pt:pt/pt:m ratios:
    Float_t ang_ha   = 999, ang_hb = 999, ang_hs = 999, ang_phi = 999, ang_phia = 999, ang_phib = 999, ang_lva = 999, ang_jja = 999;
-   Float_t masslvjj =-999, ptlvjj =-999,  ylvjj = -999,philvjj = -999,masslvjja =-999, ptlvjja =-999, masslva =-999, masslv=-999;
-   Float_t rat_mpt_wwa =-999, rat_ptpt_amu =-999, rat_ptpt_aj1 =-999, rat_ptpt_aj2 =-999, rat_ptpt_av =-999;
+   Float_t masslvjj =-999, ptlvjj =-999,  ylvjj = -999,philvjj = -999,masslvjja =-999, ptlvjja =-999, masslva =-999, masslv=-999, massva=-999, massla=-999, massjja=-999, massj1a=-999, massj2a=-999;
+   Float_t rat_mpt_wwa =-999, rat_ptpt_ae =-999, rat_ptpt_aj1 =-999, rat_ptpt_aj2 =-999, rat_ptpt_av =-999;
 
    TBranch * branch_mpt_wwa = newtree->Branch("rat_mpt_wwa",  &rat_mpt_wwa,  "rat_mpt_wwa/F");
-   TBranch * branch_ptpt_amu = newtree->Branch("rat_ptpt_amu",  &rat_ptpt_amu,  "rat_ptpt_amu/F");
+   TBranch * branch_ptpt_amu = newtree->Branch("rat_ptpt_ae",  &rat_ptpt_ae,  "rat_ptpt_ae/F");
    TBranch * branch_ptpt_aj1 = newtree->Branch("rat_ptpt_aj1",  &rat_ptpt_aj1,  "rat_ptpt_aj1/F");
    TBranch * branch_ptpt_aj2 = newtree->Branch("rat_ptpt_aj2",  &rat_ptpt_aj2,  "rat_ptpt_aj2/F");
    TBranch * branch_ptpt_av = newtree->Branch("rat_ptpt_av",  &rat_ptpt_av,  "rat_ptpt_av/F");
-   TBranch * branch_ha   =  newtree->Branch("ang_ha",   &ang_ha,    "anig_ha/F");
+   TBranch * branch_ha   =  newtree->Branch("ang_ha",   &ang_ha,    "ang_ha/F");
    TBranch * branch_hb   =  newtree->Branch("ang_hb",   &ang_hb,    "ang_hb/F");
    TBranch * branch_hs   =  newtree->Branch("ang_hs",   &ang_hs,    "ang_hs/F");
    TBranch * branch_phi  =  newtree->Branch("ang_phi",  &ang_phi,   "ang_phi/F");
@@ -362,12 +374,17 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    TBranch * branch_jja = newtree->Branch("ang_jja", &ang_jja, "ang_jja/F");
    TBranch * branch_orgm =  newtree->Branch("masslvjj", &masslvjj,  "masslvjj/F");
    TBranch * branch_orgma =  newtree->Branch("masslvjja", &masslvjja,  "masslvjja/F");
+   TBranch * branch_orgjja =  newtree->Branch("massjja", &massjja,  "massjja/F");
+   TBranch * branch_orgj1a =  newtree->Branch("massj1a", &massj1a,  "massj1a/F");
+   TBranch * branch_orgj2a =  newtree->Branch("massj2a", &massj2a,  "massj2a/F");
    TBranch * branch_orgmlva =  newtree->Branch("masslva", &masslva,  "masslva/F");
    TBranch * branch_orgmlv = newtree->Branch("masslv", &masslv, "masslv/F");
    TBranch * branch_orgpt=  newtree->Branch("ptlvjj",   &ptlvjj,    "ptlvjj/F");
    TBranch * branch_orgpta = newtree->Branch("ptlvjja", &ptlvjja, "ptlvjja/F");
    TBranch * branch_orgy =  newtree->Branch("ylvjj",    &ylvjj,     "ylvjj/F");
    TBranch * branch_orgph=  newtree->Branch("philvjj",  &philvjj,   "philvjj/F");
+   TBranch * branch_orgmva=  newtree->Branch("massva",  &massva,   "massva/F");
+   TBranch * branch_orgmla=  newtree->Branch("massla",  &massla,   "massla/F");
 
 
    //////////////
@@ -523,8 +540,8 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
       ang_ha  = 999; ang_hb    =999;ang_hs    =999; ang_phi   =999;
       ang_phia= 999; ang_phib  =999; ang_lva = 999; ang_jja = 999;
-      masslvjj=-999; masslvjja =-999; masslv=-999; masslva =-999; ptlvjj    =-999; ptlvjja = -999; ylvjj   =-999;philvjj   =-999;
-      rat_mpt_wwa =-999; rat_ptpt_amu =-999; rat_ptpt_aj1 =-999; rat_ptpt_aj2 =-999; rat_ptpt_av =-999;
+      masslvjj=-999; masslvjja =-999; masslv=-999; masslva =-999; ptlvjj    =-999; ptlvjja = -999; ylvjj   =-999;philvjj   =-999; massva =-999; massla =-999; massjja=-999; massj1a=-999; massj2a=-999; 
+      rat_mpt_wwa =-999; rat_ptpt_ae =-999; rat_ptpt_aj1 =-999; rat_ptpt_aj2 =-999; rat_ptpt_av =-999;
 
       mva2jWWAel = 999;
 
@@ -868,6 +885,11 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          masslvjja = (mup+b_nvp+ajp+bjp+ap).M();
          masslva = (mup+b_nvp+ap).M();
          masslv = (mup+b_nvp).M();
+         massva = (b_nvp+ap).M();
+         massla = (mup+ap).M();
+         massjja = (ajp+bjp+ap).M();
+         massj1a = (ajp+ap).M();
+         massj2a = (bjp+ap).M();
 
          ptlvjj   = (mup+b_nvp+ajp+bjp).Pt();
          ptlvjja  = (mup+b_nvp+ajp+bjp+ap).Pt();
@@ -876,7 +898,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          philvjj  = (mup+b_nvp+ajp+bjp).Phi();
 
          rat_mpt_wwa = masslvjja/ptlvjja;
-         rat_ptpt_amu = ap.Pt()/mup.Pt();
+         rat_ptpt_ae = ap.Pt()/mup.Pt();
          rat_ptpt_av = ap.Pt()/b_nvp.Pt();
          rat_ptpt_aj1 = ap.Pt()/ajp.Pt();
          rat_ptpt_aj2 = ap.Pt()/bjp.Pt();
@@ -986,6 +1008,11 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       branch_orgpta->Fill();
       branch_orgy->Fill();
       branch_orgph->Fill();
+      branch_orgmva->Fill();
+      branch_orgmla->Fill();
+      branch_orgjja->Fill();
+      branch_orgj1a->Fill();
+      branch_orgj2a->Fill();
       branch_mpt_wwa->Fill();
       branch_ptpt_amu->Fill();
       branch_ptpt_av->Fill();
