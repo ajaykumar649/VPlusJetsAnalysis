@@ -221,8 +221,17 @@ void makeATGCLimitDataCards(int channel=0) {
     SumAllBackgrounds();
     /////////////////////
 
+
+    double overflow = th1wjets->GetBinContent(bins+1);
+    overflow += gaus2->Integral(dm_max, dm_max + 400.);
+    overflow += th1zjets->GetBinContent(bins+1);
+    overflow += th1qcd->GetBinContent(bins+1);
+    overflow += th1Top->GetBinContent(bins+1);
+    cout << "---------- overflow for bkg = " << overflow << endl;
+
+
     //Get signal histogram
-    signalForDisplay = GetSignalHistogram(0.05, 0.0, 0.0, "signalForDisplay", dm_max);
+    signalForDisplay = GetSignalHistogram(0.05, 0.0, 0.0, "signalForDisplay", dm_max, overflow);
 
 //     // ratio histogram for aTGC display
 //     signalRatioForDisplay = 
@@ -417,7 +426,7 @@ void makeATGCLimitDataCards(int channel=0) {
 // 		  m+0.00001, n+0.00001, q+0.00001);
 // 	  TH1D* stackhist = GetSignalHistogram(m+0.00001, n+0.00001, 
 // 					       q+0.00001, mysighistname, 
-// 					       dm_max);
+// 					       dm_max, overflow);
 // 	  outputForLimit->cd();
 // 	  stackhist->Write(); 
 // 	  delete stackhist;
@@ -433,7 +442,8 @@ void makeATGCLimitDataCards(int channel=0) {
 		  "signal_lambdaZ_%0.3f_deltaKappaGamma_%0.3f", 
 		  m+0.00001, n+0.00001);
 	  TH1D* stackhist = GetSignalHistogram(m, n, 0.0, 
-					       mysighistname, dm_max);
+					       mysighistname, 
+					       dm_max, overflow);
 	  outputForLimit->cd();
 	  stackhist->Write(); 
 	  delete stackhist;
@@ -448,7 +458,8 @@ void makeATGCLimitDataCards(int channel=0) {
 		  "signal_lambdaZ_%0.3f_deltaG1_%0.3f", 
 		  m+0.00001, n+0.00001);
 	  TH1D* stackhist = GetSignalHistogram(m, 0.0, n, 
-					       mysighistname, dm_max);
+					       mysighistname, 
+					       dm_max, overflow);
 	  outputForLimit->cd();
 	  stackhist->Write(); 
 	  delete stackhist;
@@ -558,6 +569,7 @@ void ScaleHistos(int channel)
   double VV_norm = 1.;
   double Top_norm = 1.;
 
+  /*
   if(channel==0) {
     WJets_norm = 1.0055;
     VV_norm = 1.1144;
@@ -578,6 +590,7 @@ void ScaleHistos(int channel)
     VV_norm = 1.3804;
     Top_norm = 1.0267;
   }
+  */
 
   WJets_scale   *= WJets_norm;
   WW_scale      *= VV_norm;
@@ -822,7 +835,7 @@ void SetupEmptyHistogram(int bins, double dm_min, double dm_max, char* xtitle)
 
 //------- Get signal histogram -------
 TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1, 
-			 char* histName, double dm_max) {
+			 char* histName, double dm_max, double baseline_overflow) {
 
   //---- first we clone the diboson histogram  
   TH1D* newsighist = (TH1D*) th1ww->Clone(histName);
@@ -893,7 +906,7 @@ TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1,
   double lastbin = newsighist->GetBinContent(nBinsTot);
   TF1 *fSignal = new TF1 ("fSignal", "gaus2*sigratio");
   double overflow = fSignal->Integral(dm_max, dm_max + 400.);
-  double baseline_overflow = gaus2->Integral(dm_max, dm_max + 400.);
+  // double baseline_overflow = gaus2->Integral(dm_max, dm_max + 400.);
   overflow -= baseline_overflow;
 
   newsighist->SetBinContent(nBinsTot, lastbin+overflow);
