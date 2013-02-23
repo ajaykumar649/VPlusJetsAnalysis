@@ -42,7 +42,8 @@ const TString inQCDDir   = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuple
 //////////////////////////////////////////////
 ///// Specify Location of Store Reduced Trees:
 //const TString outDataDir   = "/eos/uscms/store/user/jfaulkn3/ReducedTrees/";
-const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
+//const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
+const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest/";
 
 /////////////////////////////////////////////////////////
 ///// Specify Location of Efficiency Tables:
@@ -242,15 +243,15 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
          Init(myChain);Loop(  h_events, h_events_weighted,20121020,runflag, outDataDir + "RD_mu_ZZ_CMSSW532");
       }
       if (myflag == 20121028 || myflag == -200){
-         InitCounters( inDataDir2 + "mu_qq_wpwma_wp_qq_wm_lvl.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4 + "mu_qq_wpwma_wp_qq_wm_lvl.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add( inDataDir2 + "mu_qq_wpwma_wp_qq_wm_lvl.root"); 
+         myChain->Add( inDataDir4 + "mu_qq_wpwma_wp_qq_wm_lvl.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121028,runflag, outDataDir + "RD_mu_qq_wpwma_wp_qq_wm_lvl");
       }
       if (myflag == 20121029 || myflag == -200){
-         InitCounters( inDataDir2 + "mu_qq_wpwma_wp_lvl_wm_qq.root", h_events, h_events_weighted);
+         InitCounters( inDataDir4 + "mu_qq_wpwma_wp_lvl_wm_qq.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
-         myChain->Add( inDataDir2 + "mu_qq_wpwma_wp_lvl_wm_qq.root");
+         myChain->Add( inDataDir4 + "mu_qq_wpwma_wp_lvl_wm_qq.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20121029,runflag, outDataDir + "RD_mu_qq_wpwma_wp_lvl_wm_qq");
       }
       if (myflag == 20121030 || myflag == -500){
@@ -266,9 +267,9 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
          Init(myChain);Loop( h_events, h_events_weighted, 20121031,runflag, outDataDir + "RD_mu_qq_wpwma_wp_lvl_wm_lvl");
       }
       if (myflag == 20121032 || myflag == -200){
-         InitCounters( inDataDir2 + "mu_WAp23Jets.root", h_events, h_events_weighted);
+         InitCounters( inDataDir4 + "mu_WAp23Jets.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
-         myChain->Add( inDataDir2 + "mu_WAp23Jets.root"); 
+         myChain->Add( inDataDir4 + "mu_WAp23Jets.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121032,runflag, outDataDir + "RD_mu_WGp23J_CMSSW532");
       }
       if (myflag == 20121033 || myflag == -200){
@@ -351,6 +352,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    Float_t         JetPFCor_dRpho11[6] = {99.};   
    Float_t         JetPFCor_dRpho12[6] = {99.};   
    Float_t         c2jMass12,c2jMass11;
+   Float_t         MVAwt=0.;
    TLorentzVector p4j1,p4j2,c2j;
 
    TBranch *branch_iPhoton12= newtree->Branch("iPhoton12",    &iPhoton12,     "iPhoton12/I");
@@ -363,6 +365,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    TBranch *branch_i12Jet2= newtree->Branch("i12Jet2",    &i12Jet2,     "i12Jet2/I");
    TBranch *branch_i12Jet3= newtree->Branch("i12Jet3",    &i12Jet3,     "i12Jet3/I");
    TBranch *branch_i12Jet4= newtree->Branch("i12Jet4",    &i12Jet4,     "i12Jet4/I");
+   TBranch *branch_MVAwt= newtree->Branch("MVAwt",    &MVAwt,     "MVAwt/F");
    TBranch *branch_c2jMass11= newtree->Branch("c2jMass11",    &c2jMass11,     "c2jMass11/F");
    TBranch *branch_c2jMass12= newtree->Branch("c2jMass12",    &c2jMass12,     "c2jMass12/F");
    TBranch *branch_Photon_dRlep= newtree->Branch("Photon_dRlep",    &Photon_dRlep,     "Photon_dRlep[NumPhotons]/F");
@@ -545,9 +548,10 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       1.570E-05,
       5.005E-06
    };   
-   for (int i=1;i<=60;i++)  {
-      PU_generated->SetBinContent(i,Summer2012[i-1]);
-   }
+   if (wda>20120999) fChain->Draw("event_mcPU_nvtx[1]>>PU_generated","","goff");
+//   for (int i=1;i<=60;i++)  {
+//      PU_generated->SetBinContent(i,Summer2012[i-1]);
+//   }
    PU_intended->Scale( 1.0/ PU_intended->Integral() );
    PU_generated->Scale( 1.0/ PU_generated->Integral() );
 
@@ -608,6 +612,9 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       /////////////////////////////////////////////////////////////////////////////////////
       // Only Focus on the Following Jet Efforts if there is either a good 2011/2012 photon:
       if(iPhoton11>=0 || iPhoton12>=0){
+
+      if (wda == 20120003) MVAwt = (1./(1.+(1./(0.0345868 + 14402.2/TMath::Power(Photon_Et[iPhoton11],2.89994)))));
+      if (wda == 20121028|| wda == 20121029 || wda ==20121032) MVAwt=1.;
 
          //////////////////////////////////
          // Calculate Jet-Photon Isolation:
@@ -991,6 +998,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       branch_i12Jet2->Fill();
       branch_i12Jet3->Fill();
       branch_i12Jet4->Fill();
+      branch_MVAwt->Fill();
       branch_c2jMass11->Fill();
       branch_c2jMass12->Fill();
 

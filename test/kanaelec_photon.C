@@ -43,7 +43,8 @@ const TString inQCDDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2
 //////////////////////////////////////////////
 ///// Specify Location of Store Reduced Trees:
 //const TString outDataDir   = "/eos/uscms/store/user/jfaulkn3/ReducedTrees/";
-const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
+//const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
+const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest/";
 
 /////////////////////////////////////////////////////////
 ///// Specify Location of Efficiency Tables:
@@ -294,6 +295,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    Float_t         JetPFCor_dRpho11[6] = {99.};
    Float_t         JetPFCor_dRpho12[6] = {99.};
    Float_t         c2jMass12,c2jMass11;
+   Float_t         MVAwt=0.;
    TLorentzVector p4j1,p4j2,c2j;
 
    TBranch *branch_iPhoton12= newtree->Branch("iPhoton12",    &iPhoton12,     "iPhoton12/I");
@@ -306,6 +308,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    TBranch *branch_i12Jet2= newtree->Branch("i12Jet2",    &i12Jet2,     "i12Jet2/I");
    TBranch *branch_i12Jet3= newtree->Branch("i12Jet3",    &i12Jet3,     "i12Jet3/I");
    TBranch *branch_i12Jet4= newtree->Branch("i12Jet4",    &i12Jet4,     "i12Jet4/I");
+   TBranch *branch_MVAwt= newtree->Branch("MVAwt",    &MVAwt,     "MVAwt/F");
    TBranch *branch_c2jMass11= newtree->Branch("c2jMass11",    &c2jMass11,     "c2jMass11/F");
    TBranch *branch_c2jMass12= newtree->Branch("c2jMass12",    &c2jMass12,     "c2jMass12/F");
    TBranch *branch_Photon_dRlep= newtree->Branch("Photon_dRlep",    &Photon_dRlep,     "Photon_dRlep[NumPhotons]/F");
@@ -502,9 +505,10 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       5.005E-06
    };
 
-   for (int i=1;i<=60;i++)  {
-      PU_generated->SetBinContent(i,Summer2012[i-1]);
-   }
+   if (wda>20120999) fChain->Draw("event_mcPU_nvtx[1]>>PU_generated","","goff");
+//   for (int i=1;i<=60;i++)  {
+//      PU_generated->SetBinContent(i,Summer2012[i-1]);
+//   }
    PU_intended->Scale( 1.0/ PU_intended->Integral() );
    PU_generated->Scale( 1.0/ PU_generated->Integral() );
 
@@ -570,6 +574,9 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       /////////////////////////////////////////////////////////////////////////////////////
       // Only Focus on the Following Jet Efforts if there is either a good 2011/2012 photon:
       if(iPhoton11>=0 || iPhoton12>=0){
+
+      if (wda == 20120001) MVAwt = (1./(1.+(1./(0.0345868 + 14402.2/TMath::Power(Photon_Et[iPhoton11],2.89994)))));
+      if (wda == 20121028|| wda == 20121029 || wda ==20121032) MVAwt=1.;
 
          //////////////////////////////////
          // Calculate Jet-Photon Isolation:
@@ -958,6 +965,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       branch_i12Jet2->Fill();
       branch_i12Jet3->Fill();
       branch_i12Jet4->Fill();
+      branch_MVAwt->Fill();
       branch_c2jMass11->Fill();
       branch_c2jMass12->Fill();
 
