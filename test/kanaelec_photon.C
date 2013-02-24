@@ -43,8 +43,8 @@ const TString inQCDDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2
 //////////////////////////////////////////////
 ///// Specify Location of Store Reduced Trees:
 //const TString outDataDir   = "/eos/uscms/store/user/jfaulkn3/ReducedTrees/";
-//const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
-const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest/";
+const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
+//const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest/";
 
 /////////////////////////////////////////////////////////
 ///// Specify Location of Efficiency Tables:
@@ -547,7 +547,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       masslvjj=-999; masslvjja =-999; masslv=-999; masslva =-999; ptlvjj    =-999; ptlvjja = -999; ylvjj   =-999;philvjj   =-999; massva =-999; massla =-999; massjja=-999; massj1a=-999; massj2a=-999; 
       rat_mpt_wwa =-999; rat_ptpt_ae =-999; rat_ptpt_aj1 =-999; rat_ptpt_aj2 =-999; rat_ptpt_av =-999;
 
-      mva2jWWAel = 999;
+      MVAwt=0.; mva2jWWAel = 999;
 
       effwt = 1.0; puwt = 1.0; puwt_up = 1.0; puwt_down = 1.0;
       qgld_Spring11[0]= -1;       qgld_Spring11[1]= -1;       qgld_Spring11[2]= -1;       qgld_Spring11[3]= -1;       qgld_Spring11[4]= -1;       qgld_Spring11[5]= -1;
@@ -576,7 +576,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       if(iPhoton11>=0 || iPhoton12>=0){
 
       if (wda == 20120001) MVAwt = (1./(1.+(1./(0.0345868 + 14402.2/TMath::Power(Photon_Et[iPhoton11],2.89994)))));
-      if (wda == 20121028|| wda == 20121029 || wda ==20121032) MVAwt=1.;
+      if (wda == 20121031|| wda == 20121032 || wda ==20121033) MVAwt=1.;
 
          //////////////////////////////////
          // Calculate Jet-Photon Isolation:
