@@ -10,6 +10,7 @@ void MyRunMuon_photon(double myflag=20112250, bool isQCD=false, int runflag=0)
   gROOT->ProcessLine(".L EffTableReader.cc+");
   gROOT->ProcessLine(".L EffTableLoader.cc+");
   gROOT->ProcessLine(".L ClassifierOut/TMVAClassification_WWA_nJ2_mu_BDT.class.C+");
+  gROOT->ProcessLine(".L ClassifierOut/TMVAClassification_WWA_nJ2_mu_M_BDT.class.C+");
   gROOT->ProcessLine(".L kanamuon_photon.C+");
   gROOT->ProcessLine("kanamuon_photon runover");
   //Set true/false for isQCD
