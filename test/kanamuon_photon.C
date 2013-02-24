@@ -30,6 +30,7 @@
 //////////////////////////
 ///// Load MVA Ouput Code:
 #include "ClassifierOut/TMVAClassification_WWA_nJ2_mu_BDT.class.C"
+#include "ClassifierOut/TMVAClassification_WWA_nJ2_mu_M_BDT.class.C"
 
 /////////////////////////////////////////
 ///// Specify Location of Merged Ntuples:
@@ -42,8 +43,8 @@ const TString inQCDDir   = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuple
 //////////////////////////////////////////////
 ///// Specify Location of Store Reduced Trees:
 //const TString outDataDir   = "/eos/uscms/store/user/jfaulkn3/ReducedTrees/";
-const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
-//const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest/";
+//const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
+const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest/";
 
 /////////////////////////////////////////////////////////
 ///// Specify Location of Efficiency Tables:
@@ -352,7 +353,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    Float_t         JetPFCor_dRpho11[6] = {99.};   
    Float_t         JetPFCor_dRpho12[6] = {99.};   
    Float_t         c2jMass12,c2jMass11;
-   Float_t         MVAwt=0.;
+   Float_t         MVAwt=1.;
    TLorentzVector p4j1,p4j2,c2j;
 
    TBranch *branch_iPhoton12= newtree->Branch("iPhoton12",    &iPhoton12,     "iPhoton12/I");
@@ -447,6 +448,8 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    // MVA output:
    Float_t mva2jWWAmu = 999;
    TBranch * branch_2jWWAmu   =  newtree->Branch("mva2jWWAmu",   &mva2jWWAmu,    "mva2jWWAmu/F");
+   Float_t mva2jWWAmuM = 999;
+   TBranch * branch_2jWWAmuM   =  newtree->Branch("mva2jWWAmuM",   &mva2jWWAmuM,    "mva2jWWAmuM/F");
 
    //////////////////////////////
    // Efficiencies/Pilup weights:
@@ -468,10 +471,16 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
    ////////////////////
    // For MVA analysis:
+
    const char* inputVarsPho[] = { "W_pt", "sqrt((JetPFCor_Eta[i11Jet1]-JetPFCor_Eta[i11Jet2])**2+(abs(abs(abs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])-TMath::Pi())-TMath::Pi()))**2)","JetPFCor_Pt[i11Jet1]", "JetPFCor_Pt[i11Jet2]", "ptlvjja" , "c2jMass11"};
    std::vector<std::string> inputVarsMVApho;
    for (int i=0; i<6; ++i) inputVarsMVApho.push_back( inputVarsPho[i] );
    ReadMVA2jWWAmu mvaReader2jWWAmu( inputVarsMVApho );
+
+   const char* inputVarsPhoM[] = { "W_pt", "sqrt((JetPFCor_Eta[i11Jet1]-JetPFCor_Eta[i11Jet2])**2+(abs(abs(abs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])-TMath::Pi())-TMath::Pi()))**2)","JetPFCor_Pt[i11Jet1]", "JetPFCor_Pt[i11Jet2]", "ptlvjja" , "c2jMass11", "masslvjja"};
+   std::vector<std::string> inputVarsMVAphoM;
+   for (int i=0; i<7; ++i) inputVarsMVAphoM.push_back( inputVarsPhoM[i] );
+   ReadMVA2jWWAmuM mvaReader2jWWAmuM( inputVarsMVAphoM );
 
    /////////////////////////////
    // For Efficiency Correction:
@@ -587,7 +596,8 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       masslvjj=-999; masslvjja =-999; masslv=-999; masslva =-999; ptlvjj    =-999; ptlvjja = -999; ylvjj   =-999;philvjj   =-999; massva =-999; massla =-999; massjja=-999; massj1a=-999; massj2a=-999;
       rat_mpt_wwa =-999; rat_ptpt_amu =-999; rat_ptpt_aj1 =-999; rat_ptpt_aj2 =-999; rat_ptpt_av =-999;
 
-      MVAwt = 0.; mva2jWWAmu = 999;
+      mva2jWWAmu = 999;
+      mva2jWWAmuM = 999;
 
       effwt = 1.0; puwt = 1.0; puwt_up = 1.0; puwt_down = 1.0;
       qgld_Spring11[0]= -1;       qgld_Spring11[1]= -1;       qgld_Spring11[2]= -1;       qgld_Spring11[3]= -1;       qgld_Spring11[4]= -1;       qgld_Spring11[5]= -1;
@@ -614,7 +624,6 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       if(iPhoton11>=0 || iPhoton12>=0){
 
       if (wda == 20120003) MVAwt = (1./(1.+(1./(0.0345868 + 14402.2/TMath::Power(Photon_Et[iPhoton11],2.89994)))));
-      if (wda == 20121028|| wda == 20121029 || wda ==20121032) MVAwt=1.;
 
          //////////////////////////////////
          // Calculate Jet-Photon Isolation:
@@ -980,6 +989,8 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          mvaInputValPho.push_back(ptlvjja);
          mvaInputValPho.push_back(c2jMass11);
          mva2jWWAmu = (float) mvaReader2jWWAmu.GetMvaValue( mvaInputValPho );
+         mvaInputValPho.push_back(masslvjja);
+         mva2jWWAmuM = (float) mvaReader2jWWAmuM.GetMvaValue( mvaInputValPho );
 
       }
 
@@ -1061,6 +1072,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       branch_ptpt_aj2->Fill();
 
       branch_2jWWAmu->Fill();
+      branch_2jWWAmuM->Fill();
 
       branch_effwt->Fill();
       branch_puwt->Fill();

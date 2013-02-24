@@ -30,6 +30,7 @@
 //////////////////////////
 ///// Load MVA Ouput Code:
 #include "ClassifierOut/TMVAClassification_WWA_nJ2_el_BDT.class.C"
+#include "ClassifierOut/TMVAClassification_WWA_nJ2_el_M_BDT.class.C"
 
 /////////////////////////////////////////
 ///// Specify Location of Merged Ntuples:
@@ -43,8 +44,8 @@ const TString inQCDDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2
 //////////////////////////////////////////////
 ///// Specify Location of Store Reduced Trees:
 //const TString outDataDir   = "/eos/uscms/store/user/jfaulkn3/ReducedTrees/";
-const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
-//const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest/";
+//const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
+const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest/";
 
 /////////////////////////////////////////////////////////
 ///// Specify Location of Efficiency Tables:
@@ -295,7 +296,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    Float_t         JetPFCor_dRpho11[6] = {99.};
    Float_t         JetPFCor_dRpho12[6] = {99.};
    Float_t         c2jMass12,c2jMass11;
-   Float_t         MVAwt=0.;
+   Float_t         MVAwt=1.;
    TLorentzVector p4j1,p4j2,c2j;
 
    TBranch *branch_iPhoton12= newtree->Branch("iPhoton12",    &iPhoton12,     "iPhoton12/I");
@@ -394,6 +395,8 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    // MVA output:
    Float_t mva2jWWAel = 999;
    TBranch * branch_2jWWAel   =  newtree->Branch("mva2jWWAel",   &mva2jWWAel,    "mva2jWWAel/F");
+   Float_t mva2jWWAelM = 999;
+   TBranch * branch_2jWWAelM   =  newtree->Branch("mva2jWWAelM",   &mva2jWWAelM,    "mva2jWWAelM/F");
 
    //////////////////////////////
    // Efficiencies/Pilup weights:
@@ -421,6 +424,11 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    std::vector<std::string> inputVarsMVApho;
    for (int i=0; i<6; ++i) inputVarsMVApho.push_back( inputVarsPho[i] );
    ReadMVA2jWWAel mvaReader2jWWAel( inputVarsMVApho );
+
+   const char* inputVarsPhoM[] = { "W_pt", "sqrt((JetPFCor_Eta[i11Jet1]-JetPFCor_Eta[i11Jet2])**2+(abs(abs(abs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])-TMath::Pi())-TMath::Pi()))**2)","JetPFCor_Pt[i11Jet1]", "JetPFCor_Pt[i11Jet2]", "ptlvjja" , "c2jMass11", "masslvjja"};
+   std::vector<std::string> inputVarsMVAphoM;
+   for (int i=0; i<7; ++i) inputVarsMVAphoM.push_back( inputVarsPhoM[i] );
+   ReadMVA2jWWAelM mvaReader2jWWAelM( inputVarsMVAphoM );
 
 
    /////////////////////////////
@@ -547,7 +555,8 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       masslvjj=-999; masslvjja =-999; masslv=-999; masslva =-999; ptlvjj    =-999; ptlvjja = -999; ylvjj   =-999;philvjj   =-999; massva =-999; massla =-999; massjja=-999; massj1a=-999; massj2a=-999; 
       rat_mpt_wwa =-999; rat_ptpt_ae =-999; rat_ptpt_aj1 =-999; rat_ptpt_aj2 =-999; rat_ptpt_av =-999;
 
-      MVAwt=0.; mva2jWWAel = 999;
+      mva2jWWAel = 999;
+      mva2jWWAelM = 999;
 
       effwt = 1.0; puwt = 1.0; puwt_up = 1.0; puwt_down = 1.0;
       qgld_Spring11[0]= -1;       qgld_Spring11[1]= -1;       qgld_Spring11[2]= -1;       qgld_Spring11[3]= -1;       qgld_Spring11[4]= -1;       qgld_Spring11[5]= -1;
@@ -576,7 +585,6 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       if(iPhoton11>=0 || iPhoton12>=0){
 
       if (wda == 20120001) MVAwt = (1./(1.+(1./(0.0345868 + 14402.2/TMath::Power(Photon_Et[iPhoton11],2.89994)))));
-      if (wda == 20121031|| wda == 20121032 || wda ==20121033) MVAwt=1.;
 
          //////////////////////////////////
          // Calculate Jet-Photon Isolation:
@@ -947,6 +955,8 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          mvaInputValPho.push_back(ptlvjja);
          mvaInputValPho.push_back(c2jMass11);
          mva2jWWAel = (float) mvaReader2jWWAel.GetMvaValue( mvaInputValPho );
+         mvaInputValPho.push_back(masslvjja);
+         mva2jWWAelM = (float) mvaReader2jWWAelM.GetMvaValue( mvaInputValPho );
 
       }
 
@@ -1028,6 +1038,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       branch_ptpt_aj2->Fill();
 
       branch_2jWWAel->Fill();
+      branch_2jWWAelM->Fill();
 
       branch_effwt->Fill();
       branch_puwt->Fill();
