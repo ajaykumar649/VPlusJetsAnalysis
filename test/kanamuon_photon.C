@@ -42,8 +42,8 @@ const TString inQCDDir   = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuple
 //////////////////////////////////////////////
 ///// Specify Location of Store Reduced Trees:
 //const TString outDataDir   = "/eos/uscms/store/user/jfaulkn3/ReducedTrees/";
-//const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
-const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest/";
+const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
+//const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest/";
 
 /////////////////////////////////////////////////////////
 ///// Specify Location of Efficiency Tables:
@@ -587,7 +587,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       masslvjj=-999; masslvjja =-999; masslv=-999; masslva =-999; ptlvjj    =-999; ptlvjja = -999; ylvjj   =-999;philvjj   =-999; massva =-999; massla =-999; massjja=-999; massj1a=-999; massj2a=-999;
       rat_mpt_wwa =-999; rat_ptpt_amu =-999; rat_ptpt_aj1 =-999; rat_ptpt_aj2 =-999; rat_ptpt_av =-999;
 
-      mva2jWWAmu = 999;
+      MVAwt = 0.; mva2jWWAmu = 999;
 
       effwt = 1.0; puwt = 1.0; puwt_up = 1.0; puwt_down = 1.0;
       qgld_Spring11[0]= -1;       qgld_Spring11[1]= -1;       qgld_Spring11[2]= -1;       qgld_Spring11[3]= -1;       qgld_Spring11[4]= -1;       qgld_Spring11[5]= -1;
