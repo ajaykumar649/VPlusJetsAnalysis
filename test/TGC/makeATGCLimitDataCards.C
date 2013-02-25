@@ -212,26 +212,26 @@ void makeATGCLimitDataCards(int channel=0) {
     TH1D* th1wwclone = th1ww->Clone("th1wwclone");
     gaus2 = new TF1("gaus2","gaus",dm_min, dm_max);
     th1ww->Fit(gaus2,"I0","");
-    delete th1wwclone;
+    // delete th1wwclone;
 
 
 
     /////////////////////
     SetupEmptyHistogram(bins, dm_min, dm_max, xtitle);
-    SumAllBackgrounds();
+    SumAllBackgrounds(dm_max);
     /////////////////////
 
 
-    double overflow = th1wjets->GetBinContent(bins+1);
-    overflow += gaus2->Integral(dm_max, dm_max + 400.);
-    overflow += th1zjets->GetBinContent(bins+1);
-    overflow += th1qcd->GetBinContent(bins+1);
-    overflow += th1Top->GetBinContent(bins+1);
-    cout << "---------- overflow for bkg = " << overflow << endl;
+//     double overflow = th1wjets->GetBinContent(bins+1);
+//     overflow += gaus2->Integral(dm_max, dm_max + 400.);
+//     overflow += th1zjets->GetBinContent(bins+1);
+//     overflow += th1qcd->GetBinContent(bins+1);
+//     overflow += th1Top->GetBinContent(bins+1);
+//     cout << "---------- overflow for bkg = " << overflow << endl;
 
 
     //Get signal histogram
-    signalForDisplay = GetSignalHistogram(0.05, 0.0, 0.0, "signalForDisplay", dm_max, overflow);
+    signalForDisplay = GetSignalHistogram(0.05, 0.0, 0.0, "signalForDisplay", dm_max, th1wwclone);
 
 //     // ratio histogram for aTGC display
 //     signalRatioForDisplay = 
@@ -443,7 +443,7 @@ void makeATGCLimitDataCards(int channel=0) {
 		  m+0.00001, n+0.00001);
 	  TH1D* stackhist = GetSignalHistogram(m, n, 0.0, 
 					       mysighistname, 
-					       dm_max, overflow);
+					       dm_max, th1wwclone);
 	  outputForLimit->cd();
 	  stackhist->Write(); 
 	  delete stackhist;
@@ -459,7 +459,7 @@ void makeATGCLimitDataCards(int channel=0) {
 		  m+0.00001, n+0.00001);
 	  TH1D* stackhist = GetSignalHistogram(m, 0.0, n, 
 					       mysighistname, 
-					       dm_max, overflow);
+					       dm_max, th1wwclone);
 	  outputForLimit->cd();
 	  stackhist->Write(); 
 	  delete stackhist;
@@ -657,7 +657,8 @@ void ScaleHistos(int channel)
   if (domu)
     qcd_scale = 0.0 ;//muon
   else
-    qcd_scale = 0.04; //electron
+    qcd_scale = 0.03; //electron
+  if(channel==3) qcd_scale = 0.01; //electron boosted 
 
 
   std::cout << " qcd_scale  " << qcd_scale <<std::endl;
@@ -709,7 +710,19 @@ void ScaleHistos(int channel)
 
 
   // Sum all the backgrounds
-void SumAllBackgrounds() {
+void SumAllBackgrounds(double dm_max) {
+
+
+  //-------- First add overflow bin ----------------
+  // AddOverflowBin(th1ww, gaus2, dm_max);
+  AddOverflowBin(th1ww);
+  AddOverflowBin(th1wjets);
+  AddOverflowBin(th1zjets);
+  AddOverflowBin(th1Top);
+  AddOverflowBin(th1qcd);
+  AddOverflowBin(th1data);
+
+  //-------- Now sum of all bkg histograms ----------
   th1tot = (TH1D*)th1wjets->Clone("th1tot");
   th1tot->Reset();
   th1tot->Add(th1ww,1);
@@ -724,21 +737,12 @@ void SumAllBackgrounds() {
   th1tot->SetMinimum(0.0);
 
 
-
-    //-------- Add overflow bin ----------------
-    AddOverflowBin(th1ww);
-    AddOverflowBin(th1wjets);
-    AddOverflowBin(th1zjets);
-    AddOverflowBin(th1Top);
-    AddOverflowBin(th1qcd);
-    AddOverflowBin(th1tot);
-    AddOverflowBin(th1data);
-
-    th1totClone = ( TH1D*) th1tot->Clone("th1totClone");
-    th1totClone->SetMarkerStyle(0);
-    th1totClone->SetFillStyle(3003);
-    th1totClone->SetFillColor(11);
-    th1totClone->SetLineColor(0);
+  //-------- Needed for plotting ----------
+  th1totClone = ( TH1D*) th1tot->Clone("th1totClone");
+  th1totClone->SetMarkerStyle(0);
+  th1totClone->SetFillStyle(3003);
+  th1totClone->SetFillColor(11);
+  th1totClone->SetLineColor(0);
 
   double binErr(0.0);
   for(int i=0; i<th1totClone->GetNbinsX(); ++i) {
@@ -749,7 +753,9 @@ void SumAllBackgrounds() {
 		  (th1zjets->GetBinError(i))**2);
     th1totClone->SetBinError(i, binErr);
   }
+  
 
+  //-------- Ratio histogram ----------
   hhratio    = (TH1F*) th1data->Clone("hhratio")  ;
   hhratio->Sumw2();
   hhratio->SetMarkerSize(1.25);
@@ -835,10 +841,10 @@ void SetupEmptyHistogram(int bins, double dm_min, double dm_max, char* xtitle)
 
 //------- Get signal histogram -------
 TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1, 
-			 char* histName, double dm_max, double baseline_overflow) {
+			 char* histName, double dm_max, TH1D* smww) {
 
   //---- first we clone the diboson histogram  
-  TH1D* newsighist = (TH1D*) th1ww->Clone(histName);
+  TH1D* newsighist = (TH1D*) smww->Clone(histName);
 
   // --- now define the enhancement ratio function 
   double lambdaZC0 = 0.937435 - 5.57827*lambdaZ + 129.292*lambdaZ*lambdaZ;
@@ -863,21 +869,21 @@ TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1,
 	    "([0]+[1]*x+[2]*x*x)*([3]+[4]*x+[5]*x*x)*([6]+[7]*x+[8]*x*x)", 
 	    50., 1500.);
 
-  if(fabs(lambdaZ)>0.00001) 
+  if(fabs(lambdaZ)>0.001) 
     sigratio->SetParameter(0, lambdaZC0); 
   else sigratio->SetParameter(0, 1.0);
   sigratio->SetParameter(1, lambdaZC1);
   sigratio->SetParameter(2, lambdaZC2);
 
  
-  if(fabs(dkappaGamma)>0.00001)
+  if(fabs(dkappaGamma)>0.001)
     sigratio->SetParameter(3, kappaGC0);
   else sigratio->SetParameter(3, 1.0);
   sigratio->SetParameter(4, kappaGC1);
   sigratio->SetParameter(5, kappaGC2);
 
 
-  if(fabs(deltaG1)>0.00001) 
+  if(fabs(deltaG1)>0.001) 
     sigratio->SetParameter(6, g1C0);
   else sigratio->SetParameter(6, 1.0);
   sigratio->SetParameter(7, g1C1);
@@ -891,7 +897,9 @@ TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1,
   newsighist->Multiply(sigratio);
 
   // ----- need to subtract the diboson contribution 
-  newsighist->Add(th1ww, -1.);
+  newsighist->Add(smww, -1.);
+
+
 
   //    newsighist->Smooth(10);
 
@@ -902,16 +910,10 @@ TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1,
 
 
   //-------- Add overflow bin ----------------
-  int nBinsTot = newsighist->GetNbinsX();
-  double lastbin = newsighist->GetBinContent(nBinsTot);
-  TF1 *fSignal = new TF1 ("fSignal", "gaus2*sigratio");
-  double overflow = fSignal->Integral(dm_max, dm_max + 400.);
-  // double baseline_overflow = gaus2->Integral(dm_max, dm_max + 400.);
-  overflow -= baseline_overflow;
+//   TF1 *fSignal = new TF1 ("fSignal", "gaus2*sigratio");
+//   AddOverflowBin(newsighist, fSignal, dm_max);
 
-  newsighist->SetBinContent(nBinsTot, lastbin+overflow);
-  newsighist->SetBinError(nBinsTot, sqrt(lastbin+overflow));
-
+  AddOverflowBin(newsighist);
   return newsighist;
 }
 
@@ -920,15 +922,22 @@ TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1,
 
 
 void AddOverflowBin(TH1* hist) {
-  int nBins = hist->GetNbinsX();
-  double lastbin = hist->GetBinContent(nBins);
-  double lastbinerr = hist->GetBinError(nBins);
-  double overflow = hist->GetBinContent(nBins+1);
-  double overflowerr = hist->GetBinError(nBins+1);
-  hist->SetBinContent(nBins, lastbin+overflow);
-  hist->SetBinError(nBins, sqrt(lastbin+overflow));
+  int nBinsTot = hist->GetNbinsX();
+  double lastbin = hist->GetBinContent(nBinsTot);
+  double overflow = hist->GetBinContent(nBinsTot+1);
+  hist->SetBinContent(nBinsTot, lastbin+overflow);
+  hist->SetBinError(nBinsTot, sqrt(lastbin+overflow));
 }
 
+
+
+void AddOverflowBin(TH1* hist, TF1 *f, double dm_max) {
+  int nBinsTot = hist->GetNbinsX();
+  double lastbin = hist->GetBinContent(nBinsTot);
+  double overflow = f->Integral(dm_max, dm_max + 400.);
+  hist->SetBinContent(nBinsTot, lastbin+overflow);
+  hist->SetBinError(nBinsTot, sqrt(lastbin+overflow));
+}
 
 
 void cmspre()
