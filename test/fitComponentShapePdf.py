@@ -100,6 +100,7 @@ fitter = RooWjj2DFitter.Wjj2DFitter(pars)
 #data.Print()
 data = None
 sumNExp = 0.
+sumxsec = 0.
 weighted = True
 cutOverride = None
 if compName == 'QCD':
@@ -136,6 +137,7 @@ for (ifile, (filename, ngen, xsec)) in enumerate(files):
     print filename,'expected yield: %.1f' % expectedYield
     print filename,'scale:',scale
     sumNExp += expectedYield
+    sumxsec += xsec
     if not data:
         data = tmpData.Clone('data')
         refEffLumi = ngen/xsec
@@ -143,6 +145,7 @@ for (ifile, (filename, ngen, xsec)) in enumerate(files):
         data.append(tmpData)
 
 print compName,'total expected yield: %.1f' % sumNExp
+print compName,'overall A x eff: %.3g' % (sumNExp/sumxsec/pars.integratedLumi)
 data.Print()
 
 hist2d = None

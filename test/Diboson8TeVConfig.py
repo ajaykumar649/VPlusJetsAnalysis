@@ -8,7 +8,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.QCDDirectory = "/uscms_data/d3/ilyao/QCD8TeV/Moriond13/"
     # pars.MCDirectory = "root://cmseos:1094//eos/uscms/store/user/lnujj/HCP2012METfix/ReducedTrees/"
     pars.isElectron = isElectron
-    pars.btagSelection = True
+    pars.btagSelection = False
     pars.boostedSelection = False
     pars.initialParametersFile = initFile
 

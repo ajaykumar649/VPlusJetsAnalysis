@@ -60,17 +60,8 @@ if opts.ws:
     
 totalPdf = fitter.makeFitter()
 
-#fitter.loadData()
 fitter.readParametersFromFile()
 fitter.expectedFromPars()
-# fitter.WpJExpected = 25660.8
-# fitter.topExpected = 3357.8
-# fitter.dibosonExpected = 670.5
-# fitter.HWWExpected = 225.1
-# fitter.readParametersFromFile('WpJHWW350Parameters.txt')
-# fitter.readParametersFromFile('topHWW350Parameters.txt')
-# fitter.readParametersFromFile('dibosonHWW350Parameters.txt')
-# fitter.readParametersFromFile('HWW350Parameters.txt')
 
 startpars = totalPdf.getParameters(fitter.ws.set('obsSet'))
 fitter.ws.defineSet("params", startpars)
@@ -108,28 +99,34 @@ fr = None
 fr = fitter.fit()
 fr.SetName('fitResult_withSig')
 
-plot1 = fitter.stackedPlot(pars.var[0])
+try:
+    vName = pars.varNames[pars.var[0]]
+except AttributeError:
+    vName = pars.var[0]
+
+xvar = fitter.ws.var(vName)
+
+plot1 = fitter.stackedPlot(vName)
 leg1 = RooWjj2DFitter.Wjj2DFitter.legend4Plot(plot1)
 plot1.addObject(leg1)
 
-c1 = TCanvas('c1', fitter.ws.var(pars.var[0]).GetTitle() + ' plot')
+c1 = TCanvas('c1', xvar.GetTitle() + ' plot')
 plot1.Draw()
 c1.Update()
 
 #Make the Data-NonDiboson subtracted plot
 #print 'plot1 : '
 #plot1.Print()
-xvar = fitter.ws.var(pars.var[0])
 xvar.setRange('plotRange', xvar.getMin(), xvar.getMax())
 dibosonSubtractedFrame = xvar.frame()
-dibosonSubtractedFrame.SetName("%s_subtracted" % pars.var[0])
+dibosonSubtractedFrame.SetName("%s_subtracted" % vName)
 dibosonResidual = plot1.residHist('theData', pars.backgrounds[1], False, True)#The first background is the diboson
 dibosonResidual.SetTitle('subtracted data')
 dibosonSubtractedFrame.addPlotable(dibosonResidual, 'p', False, True)
 fitter.ws.pdf('diboson').plotOn(dibosonSubtractedFrame)
 dibosonSubtractedFrame.getCurve().SetTitle(pars.dibosonPlotting['title'])
 dibosonSubtractedLegend = RooWjj2DFitter.Wjj2DFitter.legend4Plot(dibosonSubtractedFrame)
-c2 = TCanvas('c2', fitter.ws.var(pars.var[0]).GetTitle() + ' Subtracted')
+c2 = TCanvas('c2', xvar.GetTitle() + ' Subtracted')
 dibosonSubtractedFrame.GetYaxis().SetTitle(plot1.GetYaxis().GetTitle())
 dibosonSubtractedFrame.addObject(dibosonSubtractedLegend)
 dibosonSubtractedFrame.Draw()
@@ -157,14 +154,14 @@ pull1 = pulls.createPull(plot1.getHist('theData'), firstCurve1)
 chi2 = chi2_1
 ndf = ndf_1-ndf
 
-cp1 = TCanvas("cp1", fitter.ws.var(pars.var[0]).GetTitle() + ' pull')
+cp1 = TCanvas("cp1", xvar.GetTitle() + ' pull')
 pull1.Draw('ap')
-pull1.SetName(pars.var[0] + "_pull")
+pull1.SetName(xvar.GetTitle() + "_pull")
 cp1.SetGridy()
 cp1.Update()
 pull1.GetXaxis().SetLimits(pars.varRanges[pars.var[0]][1], 
                            pars.varRanges[pars.var[0]][2])
-pull1.GetXaxis().SetTitle(fitter.ws.var(pars.var[0]).getTitle(True).Data())
+pull1.GetXaxis().SetTitle(xvar.getTitle(True).Data())
 pull1.GetYaxis().SetTitle("pull (#sigma)")
 cp1.Update()
 
@@ -215,10 +212,12 @@ mode = 'muon'
 if opts.isElectron:
     mode = 'electron'
 
+tag = ''
+if pars.boostedSelection:
+    tag += 'Boosted'
 if pars.btagSelection:
-    output = TFile("DibosonBtaglnujj_%s_%ijets_output.root" % (mode, opts.Nj),"recreate")
-else:
-    output = TFile("Dibosonlnujj_%s_%ijets_output.root" % (mode, opts.Nj),"recreate")
+    tag += 'Btag'
+output = TFile("Diboson%slnujj_%s_output.root" % (tag, mode),"recreate")
 fr.Write()
 if opts.nullFit:
     fr_null.Write()
@@ -230,14 +229,9 @@ fitter.ws.Write()
 #fitter.ws.Print()
 output.Close()
 
-if pars.btagSelection:
-    c1.SaveAs("DibosonBtaglnujj_%s_%ijets_Stacked.png" % (mode, opts.Nj))
-    c2.SaveAs("DibosonBtaglnujj_%s_%ijets_Subtracted.png" % (mode, opts.Nj))
-    cp1.SaveAs("DibosonBtaglnujj_%s_%ijets_Pull.png" % (mode, opts.Nj))
-else:
-    c1.SaveAs("Dibosonlnujj_%s_%ijets_Stacked.png" % (mode, opts.Nj))
-    c2.SaveAs("Dibosonlnujj_%s_%ijets_Subtracted.png" % (mode, opts.Nj))
-    cp1.SaveAs("Dibosonlnujj_%s_%ijets_Pull.png" % (mode, opts.Nj))
+c1.SaveAs("Diboson%slnujj_%s_Stacked.png" % (tag, mode))
+c2.SaveAs("Diboson%slnujj_%s_Subtracted.png" % (tag, mode))
+cp1.SaveAs("Diboson%slnujj_%s_Pull.png" % (tag, mode))
 
 print 'Time elapsed: %.1f sec' % timer.RealTime()
 print 'CPU time used: %.1f sec' % timer.CpuTime()
@@ -248,9 +242,10 @@ print 'chi2 probability: %.4g' % (TMath.Prob(chi2, ndf))
 
 if opts.nullFit:
     likelihoodRatio = 2.*fr_null.minNll()-2.*fr.minNll()
-    print '2*nll_null - 2*nll:', 2.*fr_null.minNll(), '-', 2.*fr.minNll(), '=',
-    print likelihoodRatio
+    print '2*nll_null - 2*nll: %.4f - %.4f = %.4f' % (2.*fr_null.minNll(),
+                                                      2.*fr.minNll(),
+                                                      likelihoodRatio)
 
     pval = TMath.Prob(likelihoodRatio, 1)
-    print 'p-value:', pval
-    print 'Gaussian significance:', RooStats.PValueToSignificance(pval)
+    print 'p-value: %.4g' % pval
+    print 'Gaussian significance: %.3g' % RooStats.PValueToSignificance(pval)

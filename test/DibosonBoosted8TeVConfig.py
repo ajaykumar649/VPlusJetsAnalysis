@@ -4,7 +4,8 @@ from ROOT import kRed, kAzure, kGreen, kBlue, kCyan, kViolet, kGray
 def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars = Wjj2DFitterPars()
 
-    pars.MCDirectory = '/uscms_data/d2/andersj/Wjj/2012/data/Moriond2013/ReducedTrees/'
+    # pars.MCDirectory = '/uscms_data/d2/andersj/Wjj/2012/data/Moriond2013/ReducedTrees/'
+    pars.MCDirectory = '/uscms_data/d1/lnujj/RDTrees_BoostedW_2013_1_29/'
     pars.isElectron = isElectron
     pars.btagSelection = False
     pars.boostedSelection = True
@@ -14,16 +15,16 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.backgrounds = ['diboson', 'top', 'WpJ']
     pars.includeSignal = includeSignal
     pars.signals = []
+    pars.constrainShapes = []
     if pars.btagSelection:
         pars.yieldConstraints = {'top' : 0.50, 'WpJ' : 0.50 }
     else:
         pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.05 }
-        pars.constrainShapes = ['WpJ']
+        pars.constrainShapes = ['WpJ', 'top', 'diboson']
 
     #pars.yieldConstraints = {}
 
 #    pars.yieldConstraints = {'top' : 0.50, 'WpJ' : 0.50 }
-#    pars.constrainShapes = []
     #pars.constrainShapes = ['WpJ']
 
     pars.Njets = Nj
@@ -36,21 +37,22 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 
 
     pars.cuts = \
-              '(W_pt>200.)&&(GroomedJet_CA8_pt[0]>200)&&(ggdboostedWevt==1)' +\
+              '(W_pt>200.)&&(GroomedJet_CA8_pt[0]>200)' +\
               '&&(abs(GroomedJet_CA8_eta[0])<2.4)' +\
               '&&(GroomedJet_CA8_mass_pr[0]>40)' +\
               '&&(GroomedJet_CA8_tau2tau1[0]<0.55)'
 
     pars.btagVeto = False
-    if pars.btagSelection:
-        pars.cuts += '&&(JetPFCor_bDiscriminatorCSV[0]>0.244)'
-    else:
-        pars.cuts += '&&(JetPFCor_bDiscriminatorCSV[0]<0.244)'
 
     if pars.useTopSideband:
-        pars.cuts += '&&(GroomedJet_numberbjets > 1)'
+        pars.cuts += '&&(GroomedJet_numberbjets_csvm>=1)'
+    elif pars.btagSelection:
+        pars.cuts += '&&(GroomedJet_numberbjets==1)'
     else:
-        pars.cuts += '&&(GroomedJet_numberbjets < 1)'
+        pars.cuts += '&&(ggdboostedWevt==1)' +\
+                     '&&(GroomedJet_CA8_deltaphi_METca8jet>2.0)' +\
+                     '&&(GroomedJet_CA8_deltaR_lca8jet>1.57)'
+        pars.cuts += '&&(numPFCorJetBTags<1)'
 
         
 
@@ -90,15 +92,15 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         pars.WpJFracOfData = 0.332
     else:
         if isElectron:
-            pars.WpJFracOfData = 0.71
+            pars.WpJFracOfData = 0.725
         else:
-            pars.WpJFracOfData = 0.72
+            pars.WpJFracOfData = 0.729
 
     pars.WpJModels = [8]
 
     pars.topFiles = [
-        (pars.MCDirectory + 'RD_%s_TTbar_CMSSW532.root' % (flavorString),
-         6893735, 225.197),
+        (pars.MCDirectory + 'RD_%s_TTJetsPoheg_CMSSW532.root' % (flavorString),
+         20975917, 225.197),
         (pars.MCDirectory + 'RD_%s_STopS_Tbar_CMSSW532.root' % (flavorString),
          139974, 1.75776),
         (pars.MCDirectory + 'RD_%s_STopS_T_CMSSW532.root' % (flavorString),
@@ -119,8 +121,11 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 ##             pars.topModels = [5]
 ##         else:
 ##             pars.topModels = [13]
-    else:  
-        pars.topFracOfData = 0.22
+    else:
+        if isElectron:
+            pars.topFracOfData = 0.209
+        else:
+            pars.topFracOfData = 0.207
 
 
     pars.topModels = [5]
@@ -132,7 +137,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.ggHPlotting = {'color' : kBlue, 'title' : "ggH(%i) #rightarrow WW" % mH}
 
     pars.var = ['GroomedJet_CA8_mass_pr[0]']
-    pars.varRanges = {'GroomedJet_CA8_mass_pr[0]': (20, 40., 140., []),}
+    pars.varRanges = {'GroomedJet_CA8_mass_pr[0]': (10, 40., 140., []),}
     pars.varTitles = {'GroomedJet_CA8_mass_pr[0]': 'm_{J}',
                       }
     pars.varNames = {'GroomedJet_CA8_mass_pr[0]': 'GroomedJet_CA8_mass_pr' }
@@ -154,25 +159,11 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 
 def customizeElectrons(pars):
     pars.DataFile = pars.MCDirectory + 'RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root'
+
     if pars.useTopSideband:
         pars.topFiles = [(pars.DataFile,1,1),]
     
-    #pars.backgrounds.append('multijet')
-
-    # pars.multijetFraction = 0.0637
-    # pars.multijetFiles = [
-    #     (pars.MCDirectory + 'RDQCD_WenuJets_Isog0p3NoElMVA_11p9invfb.root',
-    #      1, pars.multijetFraction/pars.integratedLumi)
-    #     ]
-    # pars.multijetModels = (11, 1)
-    # pars.yieldConstraints['multijet'] = 0.2
-    # pars.multijetPlotting = {'color' : kGray+1, 'title' : 'multijet'}
-
-    # pars.multijet_cuts = '(ggdevt==%i)&&(fit_status==0)&&(W_mt>30)' % pars.Njets
-    # pars.multijet_cuts += '&&(abs(JetPFCor_dphiMET[0])>0.8)' + \
-    #     '&&(W_electron_pt>35)' + \
-    #     '&&(W_electron_pfIsoEA>0.3)'
-
+    pars.integratedLumi = 19200.
     pars.doEffCorrections = True
     pars.effToDo = ['lepton']
     pars.leptonEffFiles = {

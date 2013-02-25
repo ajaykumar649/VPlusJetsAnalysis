@@ -60,18 +60,9 @@ totalPdf = fitter.makeFitter()
 if opts.ws:
     fitter.loadWorkspaceFromFile(opts.ws, getFloatPars = False)
 
-#fitter.loadData()
 fitter.readParametersFromFile()
 fitter.expectedFromPars()
-# fitter.WpJExpected = 25660.8
-# fitter.topExpected = 3357.8
-# fitter.dibosonExpected = 670.5
-# fitter.HWWExpected = 225.1
 fitter.resetYields()
-# fitter.readParametersFromFile('WpJHWW350Parameters.txt')
-# fitter.readParametersFromFile('topHWW350Parameters.txt')
-# fitter.readParametersFromFile('dibosonHWW350Parameters.txt')
-# fitter.readParametersFromFile('HWW350Parameters.txt')
 
 startpars = totalPdf.getParameters(fitter.ws.set('obsSet'))
 fitter.ws.defineSet("params", startpars)
@@ -109,10 +100,10 @@ fr = fitter.fit()
 
 plot1 = fitter.stackedPlot(pars.varNames[pars.var[0]])
 leg1 = RooWjj2DFitter.Wjj2DFitter.legend4Plot(plot1)
+plot1.addObject(leg1)
 
 c1 = TCanvas('c1', fitter.ws.var(pars.varNames[pars.var[0]]).GetTitle() + ' plot')
 plot1.Draw()
-leg1.Draw('same')
 c1.Update()
 
 #Make the Data-NonDiboson subtracted plot
@@ -125,13 +116,12 @@ dibosonSubtractedFrame.SetName("%s_subtracted" % pars.varNames[pars.var[0]])
 dibosonResidual = plot1.residHist('theData', pars.backgrounds[1], False, True)#The first background is the diboson
 dibosonSubtractedFrame.addPlotable(dibosonResidual, 'p', False, True)
 fitter.ws.pdf('diboson').plotOn(dibosonSubtractedFrame)
-c2 = TCanvas('c2', fitter.ws.var(pars.varNames[pars.var[0]]).GetTitle() + ' Subtracted')
+dibosonSubtractedFrame.getCurve().SetTitle(pars.dibosonPlotting['title'])
+dibosonSubtractedLegend = RooWjj2DFitter.Wjj2DFitter.legend4Plot(dibosonSubtractedFrame)
+c2 = TCanvas('c2', fitter.ws.var(pars.var[0]).GetTitle() + ' Subtracted')
 dibosonSubtractedFrame.GetYaxis().SetTitle(plot1.GetYaxis().GetTitle())
+dibosonSubtractedFrame.addObject(dibosonSubtractedLegend)
 dibosonSubtractedFrame.Draw()
-dibosonSubtractedLegend = TLegend(0.65, 0.72, 0.92, 0.89, '', 'NDC')
-dibosonSubtractedLegend.AddEntry('diboson_Norm[%s]' % pars.varNames[pars.var[0]] ,'Diboson Projection','l')
-dibosonSubtractedLegend.AddEntry('resid_theData_%s' % pars.backgrounds[1],'Data - NonDiboson','p')
-dibosonSubtractedLegend.Draw('same')
 c2.Update()
 
 ndf = 0
@@ -193,26 +183,6 @@ if opts.toyOut:
 mode = 'muon'
 if opts.isElectron:
     mode = 'electron'
-
-# WpJ_norm = fitter.ws.factory('WpJ_norm[1.0, -0.5, 5.]')
-# if fr:
-#     for par in floatVars:
-#         # freeze all parameters as a starting point for the combine debugging.
-#         #fitter.ws.var(par).setConstant(True)
-
-#         floatVar = fitter.ws.var(par)
-#         # if fitter.ws.set('constrainedSet').contains(floatVar):
-#         #     floatVar.setVal(1.0)
-#         #     floatVar.setConstant(True)
-#         #     floatVar.SetName(floatVar.GetName() + '_old')
-#         if par == 'WpJ_nrm':
-#             WpJ_norm.setVal(floatVar.getVal())
-#             WpJ_norm.setError(floatVar.getError())
-#             WpJ_norm.setRange(WpJ_norm.getVal()-WpJ_norm.getError()*5.,
-#                               WpJ_norm.getVal()+WpJ_norm.getError()*5)
-            
-#         floatVar.setRange(floatVar.getVal()-floatVar.getError()*5.,
-#                           floatVar.getVal()+floatVar.getError()*5)
 
 if pars.btagSelection:
     output = TFile("DibosonBoostedBtaglnuJ_%s_%ijets_output.root" % (mode, opts.Nj),"recreate")
