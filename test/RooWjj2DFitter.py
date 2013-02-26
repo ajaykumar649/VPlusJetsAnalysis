@@ -540,7 +540,7 @@ class Wjj2DFitter:
             sframe.SetMinimum(0.01)
             sframe.SetMaximum(1.0e6)
         else:
-            sframe.SetMaximum(sframe.GetMaximum()*1.25)
+            sframe.SetMaximum(sframe.GetMaximum()*1.35)
             pass
 
         excluded = (var in self.pars.exclude)

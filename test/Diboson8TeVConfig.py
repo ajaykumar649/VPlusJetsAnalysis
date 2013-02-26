@@ -8,7 +8,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.QCDDirectory = "/uscms_data/d3/ilyao/QCD8TeV/Moriond13/"
     # pars.MCDirectory = "root://cmseos:1094//eos/uscms/store/user/lnujj/HCP2012METfix/ReducedTrees/"
     pars.isElectron = isElectron
-    pars.btagSelection = False
+    pars.btagSelection = True
     pars.boostedSelection = False
     pars.initialParametersFile = initFile
 
@@ -37,7 +37,8 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     if pars.btagSelection:
         startRange = 2
         for i in range(0, startRange):
-            pars.cuts += '&&(JetPFCor_bDiscriminatorCSV[%i]>0.244)' % i
+            # pars.cuts += '&&(JetPFCor_bDiscriminatorCSV[%i]>0.244)' % i
+            pars.cuts += '&&(JetPFCor_bDiscriminatorCSV[%i]>0.679)' % i
     pars.btagVeto = False
     for i in range(startRange, 6):
         pars.cuts += '&&((abs(JetPFCor_Eta[%i])>2.4)||' % i + \
@@ -58,7 +59,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     #pars.constrainShapes = []
     if pars.btagSelection:
         pars.backgrounds = ['diboson', 'top', 'WpJ', 'ZpJ']
-        pars.yieldConstraints = {'top' : 0.14, 'WpJ' : 0.1, 'ZpJ' : 0.1 }
+        pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.1, 'ZpJ' : 0.1 }
         pars.constrainShapes = ['top', 'WpJ', 'diboson']
 
     # you need a files entry and a models entry for each of the fit 
@@ -72,18 +73,21 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         ]
     pars.dibosonFracOfData = -1
     pars.dibosonModels = [22]
- 
+
+    wpj_kfactor = 1.16
+    if pars.btagSelection:
+        wpj_kfactor = 2.05 # from arXiv:1011.6647 [hep-ph]
     pars.WpJFiles = [
         # (pars.MCDirectory + 'RD_%s_WpJ_CMSSW532.root' % (flavorString),
         #  18353019+50768992, 36257.2),
-        (pars.MCDirectory + 'RD_%s_W1Jets_CMSSW532.root' % (flavorString),
-         19871598, 5400.0*1.16),
+        # (pars.MCDirectory + 'RD_%s_W1Jets_CMSSW532.root' % (flavorString),
+        #  19871598, 5400.0*wpj_kfactor),
         (pars.MCDirectory + 'RD_%s_W2Jets_CMSSW532.root' % (flavorString),
-         33004921, 1750.0*1.16),
+         33004921, 1750.0*wpj_kfactor),
         (pars.MCDirectory + 'RD_%s_W3Jets_CMSSW532.root' % (flavorString),
-         15059503, 519.0*1.16),
+         15059503, 519.0*wpj_kfactor),
         (pars.MCDirectory + 'RD_%s_W4Jets_CMSSW532.root' % (flavorString),
-         12842803, 214.0*1.16),
+         12842803, 214.0*wpj_kfactor),
         ]
     pars.WpJFracOfData = -1
 
@@ -95,6 +99,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.ZpJModels = [14]
     pars.ZpJAuxModels = [4]
     if pars.btagSelection:
+        pars.ZpJModels = [0]
         pars.ZpJAuxModels = [3]
 
 
@@ -149,7 +154,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         ]
     pars.topFracOfData = -1
     if pars.btagSelection:
-        pars.topModels = [11] #btag selection
+        pars.topModels = [17] #btag selection
     else:
         pars.topModels = [13] #anti-btag selection
 
@@ -198,16 +203,19 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 def customizeElectrons(pars):
     
     pars.DataFile = pars.MCDirectory + 'RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root'
-    
-    pars.backgrounds.append('QCD')
 
-    pars.QCDFracOfData = 0.1
-    pars.QCDFiles = [
-        (pars.QCDDirectory + 'RDQCD_WenuJets_Isog0p3NoElMVA_19p2invfb.root',
-         1,1), #The events come from the data sideband
-        ]
-    pars.QCDModels = [10]
-    pars.yieldConstraints['QCD'] = 0.5
+    if pars.btagSelection:
+        pass
+    else:
+        pars.backgrounds.append('QCD')
+
+        pars.QCDFracOfData = 0.1
+        pars.QCDFiles = [
+            (pars.QCDDirectory + 'RDQCD_WenuJets_Isog0p3NoElMVA_19p2invfb.root',
+             1,1), #The events come from the data sideband
+            ]
+        pars.QCDModels = [10]
+        pars.yieldConstraints['QCD'] = 0.5
 
     pars.doEffCorrections = True
     pars.effToDo = ['lepton']

@@ -1,4 +1,5 @@
-a1_top_Mass2j_PFCor =  0.30426 +/- 0.011953 L(-INF - +INF) 
-a2_top_Mass2j_PFCor = -0.328687 +/- 0.012645 L(-INF - +INF) 
-a3_top_Mass2j_PFCor =  0.025342 +/- 0.011232 L(-INF - +INF) 
-n_top = 13397.6 +/- 115.7 C
+a1_top_Mass2j_PFCor =  0.34519 +/- 0.016784 L(-INF - +INF) 
+a2_top_Mass2j_PFCor = -0.290940 +/- 0.018824 L(-INF - +INF) 
+a3_top_Mass2j_PFCor =  0.0096097 +/- 0.016009 L(-INF - +INF) 
+a4_top_Mass2j_PFCor = -0.0276977 +/- 0.015545 L(-INF - +INF) 
+n_top = 7186.2 +/- 84.8 C
