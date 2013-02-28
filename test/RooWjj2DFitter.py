@@ -25,7 +25,7 @@ class Wjj2DFitter:
         self.rangeString = None
         obs = []
         for v in self.pars.var:
-            
+
             try:
                 vName = self.pars.varNames[v]
             except AttributeError:
@@ -600,7 +600,9 @@ class Wjj2DFitter:
         for component in components:
             theYield = self.ws.var('n_%s' % component)
             theNorm = self.ws.var('%s_nrm' % component)
-            fracofdata = getattr(self.pars, '%sFracOfData' % component)
+            fracofdata = -1.
+            if hasattr(self.pars, '%sFracOfData' % component):
+                fracofdata = getattr(self.pars, '%sFracOfData' % component)
             if (fracofdata >= 0.):
                 print 'explicitly setting ', component,' yield to be', fracofdata,' of data'
                 theYield.setVal(fracofdata*Ndata)

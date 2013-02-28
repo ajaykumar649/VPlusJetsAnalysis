@@ -1,6 +1,6 @@
-f_ggH_fit_mlvjj_core_interf_ggHUp =  0.65730 +/- 0.067506 C L(0 - 1) 
-mean_ggH_fit_mlvjj_core_interf_ggHUp =  502.92 +/- 1.2623 C L(0 - 1000) 
-mean_ggH_fit_mlvjj_tail_interf_ggHUp =  468.77 +/- 9.3639 C L(0 - 1000) 
-sigma_ggH_fit_mlvjj_core_interf_ggHUp =  49.959 +/- 2.1166 C L(0 - 500) 
-sigma_ggH_fit_mlvjj_tail_interf_ggHUp =  100.18 +/- 8.2273 C L(0 - 500) 
-n_ggH_interf_ggHUp = 261.0 +/- 16.2 C
+f_ggH_fit_mlvjj_core_interf_ggHUp =  0.51215 +/- 0.12172 C L(0 - 1) 
+mean_ggH_fit_mlvjj_core_interf_ggHUp =  502.97 +/- 1.9839 C L(0 - 1000) 
+mean_ggH_fit_mlvjj_tail_interf_ggHUp =  479.96 +/- 6.7228 C L(0 - 1000) 
+sigma_ggH_fit_mlvjj_core_interf_ggHUp =  44.953 +/- 3.8632 C L(0 - 500) 
+sigma_ggH_fit_mlvjj_tail_interf_ggHUp =  82.195 +/- 6.6711 C L(0 - 500) 
+n_ggH_interf_ggHUp = 175.5 +/- 13.2 C

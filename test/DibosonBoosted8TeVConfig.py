@@ -10,6 +10,8 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.btagSelection = False
     pars.boostedSelection = True
     pars.useTopSideband = False
+    pars.useTopMC = True
+    
     pars.initialParametersFile = initFile
 
     pars.backgrounds = ['diboson', 'top', 'WpJ']
@@ -46,8 +48,8 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 
     if pars.useTopSideband:
         pars.cuts += '&&(GroomedJet_numberbjets_csvm>=1)'
-    elif pars.btagSelection:
-        pars.cuts += '&&(GroomedJet_numberbjets==1)'
+    # elif pars.btagSelection:
+    #     pars.cuts += '&&(GroomedJet_numberbjets==1)'
     else:
         pars.cuts += '&&(ggdboostedWevt==1)' +\
                      '&&(GroomedJet_CA8_deltaphi_METca8jet>2.0)' +\
@@ -55,15 +57,6 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         pars.cuts += '&&(numPFCorJetBTags<1)'
 
         
-
-    # for i in range(0, 6):
-    #     pars.cuts += '&&((abs(JetPFCor_Eta[%i])>2.4)||' % i + \
-    #         '(JetPFCor_Pt[%i]<30.)||' % i + \
-    #         '(JetPFCor_bDiscriminatorCSV[%i]<0.679))' % i
-
-    # veto boosted topology
-    # if mH >= 600:
-    #     pars.cuts += '&&(W_pt<200.)'
 
     # veto vbf
     pars.cuts += '&&(vbf_event==0)'
@@ -98,21 +91,22 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 
     pars.WpJModels = [8]
 
+    ttkfactor = 1.07
     pars.topFiles = [
-        (pars.MCDirectory + 'RD_%s_TTJetsPoheg_CMSSW532.root' % (flavorString),
-         20975917, 225.197),
-        (pars.MCDirectory + 'RD_%s_STopS_Tbar_CMSSW532.root' % (flavorString),
-         139974, 1.75776),
-        (pars.MCDirectory + 'RD_%s_STopS_T_CMSSW532.root' % (flavorString),
-         259960, 3.89394),
-        (pars.MCDirectory + 'RD_%s_STopT_Tbar_CMSSW532.root' % (flavorString),
-         1935066, 30.0042),
-        (pars.MCDirectory + 'RD_%s_STopT_T_CMSSW532.root' % (flavorString),
-         3758221, 55.531),
         (pars.MCDirectory + 'RD_%s_STopTW_Tbar_CMSSW532.root' % (flavorString),
-         493458, 11.1773),
+         493458, 11.1773*ttkfactor),
         (pars.MCDirectory + 'RD_%s_STopTW_T_CMSSW532.root' % (flavorString),
-         497657, 11.1773),
+         497657, 11.1773*ttkfactor),
+        (pars.MCDirectory + 'RD_%s_TTJetsPoheg_CMSSW532.root' % (flavorString),
+         20975917, 225.197*ttkfactor),
+        (pars.MCDirectory + 'RD_%s_STopS_Tbar_CMSSW532.root' % (flavorString),
+         139974, 1.75776*ttkfactor),
+        (pars.MCDirectory + 'RD_%s_STopS_T_CMSSW532.root' % (flavorString),
+         259960, 3.89394*ttkfactor),
+        (pars.MCDirectory + 'RD_%s_STopT_Tbar_CMSSW532.root' % (flavorString),
+         1935066, 30.0042*ttkfactor),
+        (pars.MCDirectory + 'RD_%s_STopT_T_CMSSW532.root' % (flavorString),
+         3758221, 55.531*ttkfactor),
         ]
     
     if pars.btagSelection:
@@ -128,7 +122,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
             pars.topFracOfData = 0.207
 
 
-    pars.topModels = [5]
+    pars.topModels = [30]
 
 
     pars.dibosonPlotting = {'color' : kAzure+8, 'title' : 'WW+WZ'}
@@ -145,9 +139,6 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     
     pars.exclude = {}
     pars.blind = False
-    # pars.v1binEdges = [50, 55.,60.,65.,70.,75.,80.,85.,95.,
-    #                    105.,115.,125.,135.,150.,165.,180.,200.]
-    # pars.v1nbins = len(pars.v1binEdges)-1
 
     pars.integratedLumi = 19300.
 
@@ -160,7 +151,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 def customizeElectrons(pars):
     pars.DataFile = pars.MCDirectory + 'RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root'
 
-    if pars.useTopSideband:
+    if pars.useTopSideband and not pars.useTopMC:
         pars.topFiles = [(pars.DataFile,1,1),]
     
     pars.integratedLumi = 19200.
@@ -179,7 +170,8 @@ def customizeElectrons(pars):
 
 def customizeMuons(pars):
     pars.DataFile = pars.MCDirectory + 'RD_WmunuJets_DataAll_GoldenJSON_19p3invfb.root'
-    if pars.useTopSideband:
+
+    if pars.useTopSideband and not pars.useTopMC:
         pars.topFiles = [(pars.DataFile,1,1),]
     
     pars.doEffCorrections = True

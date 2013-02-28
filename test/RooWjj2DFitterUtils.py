@@ -370,6 +370,7 @@ class Wjj2DFitterUtils:
                            (pdfName, idString, pdfName, pdfName)
                        )
         elif model==7:
+            # CB + exp
             self.analyticPdf(ws, var, 3, '%s_core' % pdfName,
                              '%s_core' % idString)
             self.analyticPdf(ws, var, 0, '%s_tail' % pdfName,
@@ -574,7 +575,7 @@ class Wjj2DFitterUtils:
                 mean.setVal(auxModel)
                 mean.setError(auxModel*0.15)
                 sigma.setVal(auxModel*0.15)
-                sigma.setVal(auxModel*0.15*0.2)
+                sigma.setError(auxModel*0.15*0.2)
             ws.factory('RooGaussian::%s(%s,mean_%s,sigma_%s)' % \
                        (pdfName, var, idString, idString))
         elif model == 28:
@@ -594,6 +595,46 @@ class Wjj2DFitterUtils:
             ws.factory('SUM::%s(f_%s[0.1, -1., 1.]*%s, %s)' % \
                        (pdfName, idString, pdfGaus.GetName(),
                         pdfPower.GetName()))
+        elif model == 30:
+            # 2 gaussian + erf*exp
+            pdfCore = self.analyticPdf(ws, var, 27, '%s_core' % pdfName,
+                                       '%s_core' % idString, 84.)
+            sigma = ws.factory('prod::sigma_%s_wide(sigma_%s_core, wider_%s[4.559, 1., 10.])' % \
+                               (idString,idString,idString))
+            ws.var('wider_%s' % idString).setConstant(True)
+            pdfWide = ws.factory('RooGaussian::%s_wide(%s,mean_%s_core,%s)' % \
+                                 (pdfName, var, idString, sigma.GetName()))
+            pdfTail = self.analyticPdf(ws, var, 8, '%s_tail' % pdfName,
+                                       idString)
+            fcore = ws.factory('f_%s_core[0.3, 0., 1.]' % idString)
+            fwide = ws.factory('prod::f_%s_wide(%s,0.7787)' % \
+                               (idString, fcore.GetName()))
+            ws.factory("SUM::%s(%s*%s," % \
+                       (pdfName, fcore.GetName(), pdfCore.GetName()) + \
+                       '%s*%s,' % \
+                       (fwide.GetName(), pdfWide.GetName()) +\
+                       "%s)" % (pdfTail.GetName())
+                       )
+        elif model == 31:
+            # diboson specific model for the resonant shape
+            ws.factory("prod::sigma_%s_W" % (idString) + \
+                       "(mean_%s_W[80.3, 50., 100.]," % (idString) + \
+                       "resolution_%s[0.1, 0., 5.])" % (idString))
+            ws.factory('sum::mean_%s_Z' % (idString) + \
+                       "(mean_%s_W, 10.8026)" % (idString))
+            ws.factory('prod::sigma_%s_Z(mean_%s_Z,resolution_%s)' % \
+                       (idString, idString, idString))
+            ws.factory("RooGaussian::%s_W" % pdfName + \
+                       "(%s, mean_%s_W, sigma_%s_W)" % (var, idString,
+                                                        idString)
+                       )
+            ws.factory("RooGaussian::%s_Z" % pdfName + \
+                       "(%s, mean_%s_Z, sigma_%s_Z)" % (var, idString,
+                                                        idString)
+                       )
+            self.analyticPdf(ws, var, 0, '%s_tail' % pdfName, idString)
+            ws.factory("SUM::%s(f_W_%s[0.4,0.,1.]*%s_W,f_Z_%s[0.1,0.,1.]*%s_Z,%s_tail)" % \
+                       (pdfName, idString, pdfName, idString, pdfName, pdfName))
         else:
             # this is what will be returned if there isn't a model implemented
             # for a given model code.

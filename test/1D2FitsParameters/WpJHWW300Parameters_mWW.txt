@@ -1,3 +1,3 @@
-power2_WpJ_fit_mlvjj =  1.2895 +/- 0.82388 L(-20 - 20) 
-power_WpJ_fit_mlvjj =  1.6190 +/- 1.9939 L(-30 - 30) 
-n_WpJ = 40766.4 +/- 201.9 C
+power2_WpJ_fit_mlvjj =  1.2791 +/- 0.50970 L(-20 - 20) 
+power_WpJ_fit_mlvjj =  1.8727 +/- 1.2318 L(-30 - 30) 
+n_WpJ = 15565.0 +/- 124.8 C
