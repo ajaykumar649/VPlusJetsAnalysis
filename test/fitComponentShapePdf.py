@@ -283,6 +283,9 @@ for (i,m) in enumerate(models):
     chi2s.append(chi2_1)
     ndfs.append(ndf_1)
 
+    c1.Print('%s.png' % opts.bn)
+    c1.Print('%s.pdf' % opts.bn)
+
 mode = 'muon'
 if opts.isElectron:
     mode = 'electron'
