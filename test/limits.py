@@ -2,6 +2,14 @@ from ROOT import RooStats, Double, RooArgSet, RooFit
 
 # one parameter limit
 def plcLimit(obs_, poi_, model, ws, data, CL = 0.95, verbose = False):
+    # obs : observable variable or RooArgSet of observables
+    # poi : parameter of interest or RooArgSet of parameters
+    # model : RooAbsPdf of model to consider including any constraints
+    # data : RooAbsData of the data
+    # CL : confidence level for interval
+    # returns a dictionary with the upper and lower limits for the first/only
+    # parameter in poi_ as well as the interval object and status flag
+    
     obs = RooArgSet(obs_)
     obs.setName('observables')
     poi = RooArgSet(poi_)
@@ -47,6 +55,17 @@ def plcLimit(obs_, poi_, model, ws, data, CL = 0.95, verbose = False):
             'interval': interval}
 
 def expectedPlcLimit(obs_, poi_, model, ws, ntoys = 30, CL = 0.95):
+    # obs : observable variable or RooArgSet of observables
+    # poi : parameter of interest or RooArgSet of parameters
+    # model : RooAbsPdf of model to consider including any constraints
+    #         the parameters should have the values corresponding to the
+    #         background-only hypothesis which will be used to  estimate the
+    #         expected limit.
+    # ntoys : number of toy datsets to generate to get expected limit
+    # CL : confidence level for interval
+    # returns a dictionary containing the expected limits and their 1 sigma
+    # errors and a list of the results from the individual toys.
+
     from math import sqrt
     obs = RooArgSet(obs_)
     obs.setName('observables')
