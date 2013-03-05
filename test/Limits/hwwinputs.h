@@ -205,6 +205,7 @@ const char *inputfilesfmtstr[NUMCHAN] = {
   "HWW%dlnujj_muon_2jets_1D2Fit_output.root",
   //"HWWlnujjH%d_muon_3jets_output.root",
 };
+const char *perlrecapturefmt = "(.*/)?HWW([0-9]{3})lnujj_(.*?)_([23])jets_1D2Fit_output.root";
 #endif
 
 const char *dataobjname = "theData";
