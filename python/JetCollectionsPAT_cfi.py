@@ -26,6 +26,11 @@ ak5PFJetsClean = cms.EDProducer("PFPATJetCleaner",
 )
 
 
+ak5PFJetsLooseIdAll = cms.EDFilter("PATJetRefSelector",
+    src = cms.InputTag("ak5PFJetsClean"),
+    cut = cms.string('pt > 20.0')
+)
+
 ak5PFJetsLooseId = cms.EDFilter("PATJetRefSelector",
     src = cms.InputTag("ak5PFJetsClean"),
     cut = cms.string('pt > 20.0 && abs(eta) < 2.4')
