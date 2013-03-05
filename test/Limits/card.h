@@ -38,9 +38,6 @@ struct ModelParam_t {
 class Card {
  public:
 
-  // Histogram manipulation
-  static const double minimum_signal_content=0.01;
-
   Card(double         procchanyield,
        const TString& procname,
        const TString& systname,
@@ -51,6 +48,7 @@ class Card {
   void
     addProcessChannel(double         procchanyield,// process/channel yield
 		      const TString& procname,     // process name 
+		      const TString& channame,     // name of channel
 		      const TString& systname,     // name of (shape) systematic applied
 		      const int      ichanref,     // channel reference index
 		      const int      ichan,        // channel index

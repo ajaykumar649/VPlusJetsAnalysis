@@ -5,17 +5,14 @@
 #include <math.h>
 #include "card.h"
 
-#include "hwwinputs.h"
-#include "hwwutils.h"
-
 using namespace std;
 
 //================================================================================
 
 Card::Card(double         procchanyield,
 	   const TString& procname,
-	   const TString& systname,
 	   const TString& channame,
+	   const TString& systname,
 	   const bool     issignal
 	   )
 {
@@ -63,6 +60,7 @@ Card::Card(double         procchanyield,
 void
 Card::addProcessChannel(double         procchanyield,// process/channel yield
 			const TString& procname,     // process name 
+			const TString& channame,     // name of channel
 			const TString& systname,     // name of (shape) systematic applied
 			const int      ichanref,     // channel reference index
 			const int      ichan,        // channel index
@@ -82,8 +80,6 @@ Card::addProcessChannel(double         procchanyield,// process/channel yield
   pair<TString,double> channel;
 
   const pair<double,double> zeropair(0.0,0.0);
-
-  TString channame(channames[ichanref]);
 
   channels.insert(channame);
 
@@ -172,6 +168,13 @@ Card::addProcessChannel(double         procchanyield,// process/channel yield
       ProcData_t pd;
       pd.name = procname;
       pd.procindex = nbackproc;
+
+      if (systname.Length()) { // a shape-based limit, all channels get a factor of 0.0
+	systematics[systname] = "shape1";
+	pd.systrates[systname].resize(nchan,zeropair);
+	pd.systrates[systname][ichan].second = 1.0; // except the current channel
+      }
+
       pd.channels.insert(channel);
 
       pname2index[pd.name] = (int)processes.size();
