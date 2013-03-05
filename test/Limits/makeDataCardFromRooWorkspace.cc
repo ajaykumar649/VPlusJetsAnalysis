@@ -4,6 +4,7 @@ makeLimitFile
 Some important constants are set at the top of the file.
 */
 #include <iostream>
+#include <iomanip>
 #include <vector>
 #include <stdio.h>
 #include <stdlib.h>
@@ -11,6 +12,9 @@ Some important constants are set at the top of the file.
 #include "TFile.h"
 #include "TDirectory.h"
 #include "TString.h"
+#include "TPRegexp.h"
+#include "TObjArray.h"
+#include "TObjString.h"
 
 #include "RooWorkspace.h"
 #include "RooAbsData.h"
@@ -93,14 +97,13 @@ bool getConstraint(RooWorkspace*w, const TString& procname, double& constraint)
 
 Card *
 makeDataCardContent(TFile *fp,
-		    int imass,
+		    int massgev,
 		    bool isinterp,
 		    int ichan)
 {
   Card *card;
 
   TString channame(channames[ichan]);
-  int massgev=isinterp ? interpolatedmasspts[imass] : masspts[imass];
 
   char elormu = channame[ELORMUCHAR];
   //TString trigsyst   = "CMS_trigger_"+TString(elormu);
@@ -117,7 +120,7 @@ makeDataCardContent(TFile *fp,
     exit(-1);
   }
 
-  card = new Card(-1,"data_obs","",channame,false);
+  card = new Card(-1,"data_obs",channame,"",false);
 
   cout<<endl;
 
@@ -169,7 +172,7 @@ makeDataCardContent(TFile *fp,
       if (isinterp) cout << " (interpolated)";
       if (systname.Length()) cout << ", systname = " << systname;
       
-      card->addProcessChannel(yield,procname,systname,ichan,0,1,issignal(procname));
+      card->addProcessChannel(yield,procname,channame,systname,ichan,0,1,issignal(procname));
     } else
       continue;
 
@@ -255,12 +258,62 @@ makeDataCardContent(TFile *fp,
 //================================================================================
 
 void
-makeDataCardFiles(int imass, bool isinterp, char*nametag)
+makeDataCardFiles(char *rootfn,
+		  char *nametag)
 {
+  int imass,ichan=-1;
+  bool isinterp=false;
+
   TString cfgtag(nametag);
 
-  int massgev=isinterp ? interpolatedmasspts[imass] : masspts[imass];
+  // get mass and channel from root filename, assuming a predefined format
+  //
+  TObjArray *subStrL = TPRegexp(perlrecapturefmt).MatchS(rootfn);
 
+//   TString subStr;
+//   for (Int_t i = 0; i < subStrL->GetLast()+1; i++) {
+//     subStr = ((TObjString *)subStrL->At(i))->GetString();
+//     cout << "\"" << subStr << "\" ";
+//   }
+
+  if ((subStrL->GetEntriesFast()!=5)) {
+    cerr << "root filename doesn't match expected format, " << TString(rootfn) << endl;
+    exit(-1);
+  }
+
+  int massgev  = ((TObjString *)subStrL->At(2))->GetString().Atoi();
+  TString flav = ((TObjString *)subStrL->At(3))->GetString();
+  int njets    = ((TObjString *)subStrL->At(4))->GetString().Atoi();
+
+  cout<<"MH="<<massgev<<"GeV "<<flav<<" "<<njets<<"jets"<<endl;
+
+  for (imass=0; imass<NUMMASSPTS; imass++) {
+    int mass = masspts[imass];
+    if (mass == massgev) break;
+  }
+
+#ifdef DO_INTERP
+  if (imass==NUMMASSPTS) {
+    for (imass=0; ; imass++) {
+      int mass = interpolatedmasspts[imass];
+      if (mass == massgev) break;
+      if (mass < 0) break;
+    }
+    isinterp = (mass > 0);
+  }
+#endif
+
+  if (!isinterp && imass >= NUMMASSPTS) {
+    cerr << "Unknown mass read, M= " << massgev << endl;
+    exit(-1);
+  }
+  flav.ToLower();
+  if (flav == "muon") ichan=1;          // hwwmunu2j
+  else if (flav == "electron") ichan=0; // hwwelnu2j
+  else {
+    cerr << "Unknown flavor " << flav << endl;
+    exit(-1);
+  }
   cout << "cfgtag = " << cfgtag << endl;
 
 #ifdef ISHWW
@@ -269,35 +322,31 @@ makeDataCardFiles(int imass, bool isinterp, char*nametag)
   readHxsTable   (Form("vbfHtable%dtev.txt",beamcomenergytev)); // , scalefrom7to8tev);
   readJetBinErrTable("jetbinerrtable.txt");
 #endif //ISHWW
-
   
-  for (int ichan=0; ichan<NUMCHAN; ichan++) {
-    TString fname = TString(dir) + "/" + Form(inputfilesfmtstr[ichan],massgev);
-    cout << "Reading files from directory: " << dir << endl;
-    TFile *fp = new TFile(fname.Data());
+  TString fname = TString(rootfn);
+  TFile *fp = new TFile(fname.Data());
 
-    if (fp->IsZombie()) {
-      cerr << "Couldn't find root input file " << fname << ", skipping..." << endl;
-      continue;
-    }
+  if (fp->IsZombie()) {
+    cerr << "Couldn't find root input file " << fname << ", skipping..." << endl;
+    exit(-1);
+  }
 
-    cout << "Reading root input file " << fname << endl;
+  cout << "Reading root input file " << fname << endl;
     
-    Card *card = makeDataCardContent(fp,imass,isinterp,ichan);
+  Card *card = makeDataCardContent(fp,massgev,isinterp,ichan);
 
-    card->addShapeFiles(ShapeFiles_t("*","*",fname,
-				     TString(wkspacename)+":$PROCESS",
-				     TString(wkspacename)+":$PROCESS_$SYSTEMATIC")
+  card->addShapeFiles(ShapeFiles_t("*","*",fname,
+				   TString(wkspacename)+":$PROCESS",
+				   TString(wkspacename)+":$PROCESS_$SYSTEMATIC")
 		      );
-    TString dcardname = Form("./datacard_%dTeV_%s_%s-M=%d.txt", beamcomenergytev,
-			     //outdir.Data(),
-			     channames[ichan],cfgtag.Data(),massgev);
+  TString dcardname = Form("./datacard_%dTeV_%s_%s-M=%d.txt", beamcomenergytev,
+			   //outdir.Data(),
+			   channames[ichan],cfgtag.Data(),massgev);
 
-    card->Print(dcardname);
+  card->Print(dcardname);
 
-    delete card;
+  delete card;
 
-  } // channel loop
 }                                                             // makeDataCardFiles
 
 #ifdef MAIN
@@ -306,8 +355,8 @@ makeDataCardFiles(int imass, bool isinterp, char*nametag)
 #define DEBUG 1
 
 int main(int argc, char* argv[]) {
-  if (argc != 2) {
-    printf("Usage: %s nametag\n",argv[0]);
+  if (argc != 3) {
+    printf("Usage: %s rootfile nametag\n",argv[0]);
     return 1;
   }
 #ifdef DEBUG
@@ -315,17 +364,7 @@ int main(int argc, char* argv[]) {
   printf ("\n");
 #endif
 
-  //int imass=11;
-  for (int imass=0; imass<NUMMASSPTS; imass++) {
-    makeDataCardFiles(imass, false, argv[1]);
-  }
-#ifdef DO_INTERP
-  for (int imass=0; ; imass++) {
-    int mass = interpolatedmasspts[imass];
-    if (mass < 0) break;
-    makeDataCardFiles(imass, true, argv[1]);
-  }
-#endif
+  makeDataCardFiles(argv[1], argv[2]);
 
   return 0;
 }
