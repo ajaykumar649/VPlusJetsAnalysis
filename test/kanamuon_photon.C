@@ -31,10 +31,11 @@
 ///// Load MVA Ouput Code:
 #include "ClassifierOut/TMVAClassification_WWA_nJ2_mu_BDT.class.C"
 #include "ClassifierOut/TMVAClassification_WWA_nJ2_mu_M_BDT.class.C"
+#include "ClassifierOut/TMVAClassification_WWA_nJ2_mu_A_BDT.class.C"
 
 /////////////////////////////////////////
 ///// Specify Location of Merged Ntuples:
-const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples/";
+const TString inDataDir= "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples/";
 const TString inDataDir2 = "/eos/uscms/store/user/jfaulkn3/MergedNTuples/MC/";
 const TString inDataDir3 = "/eos/uscms/store/user/jfaulkn3/MergedNTuples/Data2012/";
 const TString inDataDir4 = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/MergedNtuples/";
@@ -110,11 +111,11 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
       myChain = new TChain("WJet");  
 
       if ( !isQCD ) {
-         InitCounters( inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_15p7invfb.root", h_events, h_events_weighted);
-         myChain->Add(                    inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_15p7invfb.root");
+         InitCounters( inDataDir4+ "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_15p7invfb.root", h_events, h_events_weighted);
+         myChain->Add(                    inDataDir4+ "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_15p7invfb.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_15p7invfb");
       } else {
-         InitCounters( inDataDir + "QCDmu.root", h_events, h_events_weighted);
+         InitCounters( inDataDir4+ "QCDmu.root", h_events, h_events_weighted);
          myChain->Add(                    inQCDDir +     "QCDmu.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RDQCD_WmunuJets_DataAll_GoldenJSON_0p7invfb", isQCD);
       }
@@ -124,11 +125,11 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
       myChain = new TChain("WJet");  
 
       if ( !isQCD ) {
-         InitCounters( inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_5p3invfb.root", h_events, h_events_weighted);
-         myChain->Add(                    inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_5p3invfb.root");
+         InitCounters( inDataDir4+ "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_5p3invfb.root", h_events, h_events_weighted);
+         myChain->Add(                    inDataDir4+ "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_5p3invfb.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20120001,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_5p3invfb");
       } else {
-         InitCounters( inDataDir + "QCDmu.root", h_events, h_events_weighted);
+         InitCounters( inDataDir4+ "QCDmu.root", h_events, h_events_weighted);
          myChain->Add(                    inQCDDir +     "QCDmu.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20120001,runflag, outDataDir + "RDQCD_WmunuJets_DataAll_GoldenJSON_0p7invfb", isQCD);
       }
@@ -138,11 +139,11 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
       myChain = new TChain("WJet");
 
       if ( !isQCD ) {
-         InitCounters( inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_18p764invfb.root", h_events, h_events_weighted);
-         myChain->Add(                    inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_18p764invfb.root");
+         InitCounters( inDataDir4+ "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_18p764invfb.root", h_events, h_events_weighted);
+         myChain->Add(                    inDataDir4+ "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_18p764invfb.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20120002,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_18p764invfb");
       } else {
-         InitCounters( inDataDir + "QCDmu.root", h_events, h_events_weighted);
+         InitCounters( inDataDir4+ "QCDmu.root", h_events, h_events_weighted);
          myChain->Add(                    inQCDDir +     "QCDmu.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20120002,runflag, outDataDir + "RDQCD_WmunuJets_DataAll_GoldenJSON_18p764invfb", isQCD);
       }
@@ -166,81 +167,81 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
    ///// General Background Samples:
    if ( !isQCD ) {
       if (myflag == 20121002 || myflag == -200){
-         InitCounters( inDataDir + "mu_STopS_Tbar_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4 + "mu_STopS_Tbar_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_STopS_Tbar_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4 + "mu_STopS_Tbar_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121002,runflag, outDataDir + "RD_mu_STopS_Tbar_CMSSW532");
       }
       if (myflag == 20121003 || myflag == -200){
-         InitCounters( inDataDir + "mu_STopS_T_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4 + "mu_STopS_T_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_STopS_T_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4 + "mu_STopS_T_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121003,runflag, outDataDir + "RD_mu_STopS_T_CMSSW532");
       }
       if (myflag == 20121004 || myflag == -200){
-         InitCounters( inDataDir + "mu_STopT_Tbar_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4 + "mu_STopT_Tbar_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_STopT_Tbar_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4 + "mu_STopT_Tbar_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121004,runflag, outDataDir + "RD_mu_STopT_Tbar_CMSSW532");
       }
       if (myflag == 20121005 || myflag == -200){
-         InitCounters( inDataDir + "mu_STopT_T_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4+ "mu_STopT_T_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_STopT_T_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4+ "mu_STopT_T_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121005,runflag, outDataDir + "RD_mu_STopT_T_CMSSW532");
       }
       if (myflag == 20121006 || myflag == -200){
-         InitCounters( inDataDir + "mu_STopTW_Tbar_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4+ "mu_STopTW_Tbar_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_STopTW_Tbar_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4+ "mu_STopTW_Tbar_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121006,runflag, outDataDir + "RD_mu_STopTW_Tbar_CMSSW532");
       }
       if (myflag == 20121007 || myflag == -200){
-         InitCounters( inDataDir + "mu_STopTW_T_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4+ "mu_STopTW_T_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_STopTW_T_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4+ "mu_STopTW_T_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121007,runflag, outDataDir + "RD_mu_STopTW_T_CMSSW532");
       }
       if (myflag == 20121008 || myflag == -500){
-         InitCounters( inDataDir + "mu_TTbar_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4+ "mu_TTbar_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_TTbar_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4+ "mu_TTbar_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121008,runflag, outDataDir + "RD_mu_TTbar_CMSSW532");
       }
       if (myflag == 20121108 || myflag == -500){
-         InitCounters( inDataDir + "crabmerge_MC_Wmunu_TTbar.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4+ "crabmerge_MC_Wmunu_TTbar.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "crabmerge_MC_Wmunu_TTbar.root"); 
+         myChain->Add(                    inDataDir4+ "crabmerge_MC_Wmunu_TTbar.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121108,runflag, outDataDir + "RD_mu_TTbar_CMSSW532");
       }
       if (myflag == 20121009 || myflag == -500){
-         InitCounters( inDataDir + "mu_WpJ_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4+ "mu_WpJ_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_WpJ_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4+ "mu_WpJ_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121009,runflag, outDataDir + "RD_mu_WpJ_CMSSW532");
       }
       if (myflag == 20121015 || myflag == -500){
-         InitCounters( inDataDir + "mu_WW_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4+ "mu_WW_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_WW_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4+ "mu_WW_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121015,runflag, outDataDir + "RD_mu_WW_CMSSW532");
       }
       if (myflag == 20121016 || myflag == -500){
-         InitCounters( inDataDir + "mu_WZ_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4+ "mu_WZ_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_WZ_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4+ "mu_WZ_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121016,runflag, outDataDir + "RD_mu_WZ_CMSSW532");
       }
       if (myflag == 20121017 || myflag == -500){
-         InitCounters( inDataDir + "mu_ZpJ_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4+ "mu_ZpJ_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_ZpJ_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4+ "mu_ZpJ_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121017,runflag, outDataDir + "RD_mu_ZpJ_CMSSW532");
       }
       if (myflag == 20121020 || myflag == -200){
-         InitCounters( inDataDir + "mu_ZZ_CMSSW532.root", h_events, h_events_weighted);
+         InitCounters( inDataDir4+ "mu_ZZ_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
-         myChain->Add(                    inDataDir + "mu_ZZ_CMSSW532.root");
+         myChain->Add(                    inDataDir4+ "mu_ZZ_CMSSW532.root");
          Init(myChain);Loop(  h_events, h_events_weighted,20121020,runflag, outDataDir + "RD_mu_ZZ_CMSSW532");
       }
       if (myflag == 20121028 || myflag == -200){
@@ -256,15 +257,15 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
          Init(myChain);Loop( h_events, h_events_weighted, 20121029,runflag, outDataDir + "RD_mu_qq_wpwma_wp_lvl_wm_qq");
       }
       if (myflag == 20121030 || myflag == -500){
-         InitCounters( inDataDir + "mu_WGpJ_CMSSW532.root", h_events, h_events_weighted);             
+         InitCounters( inDataDir4+ "mu_WGpJ_CMSSW532.root", h_events, h_events_weighted);             
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "mu_WGpJ_CMSSW532.root"); 
+         myChain->Add(                    inDataDir4+ "mu_WGpJ_CMSSW532.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20121030,runflag, outDataDir + "RD_mu_WGpJ_CMSSW532");
       }
       if (myflag == 20121031 || myflag == -500){
-         InitCounters( inDataDir2 + "mu_wwa_lvlva_CMSSW532.root", h_events, h_events_weighted);
+         InitCounters( inDataDir4 + "mu_wwa_lvlva_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
-         myChain->Add( inDataDir2 + "mu_wwa_lvlva_CMSSW532.root");
+         myChain->Add( inDataDir4 + "mu_wwa_lvlva_CMSSW532.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20121031,runflag, outDataDir + "RD_mu_qq_wpwma_wp_lvl_wm_lvl");
       }
       if (myflag == 20121032 || myflag == -200){
@@ -274,9 +275,9 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
          Init(myChain);Loop( h_events, h_events_weighted, 20121032,runflag, outDataDir + "RD_mu_WGp23J_CMSSW532");
       }
       if (myflag == 20121033 || myflag == -200){
-         InitCounters( inDataDir2 + "mu_TTbarAJets.root", h_events, h_events_weighted);
+         InitCounters( inDataDir4 + "mu_TTbarAJets.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
-         myChain->Add( inDataDir2 + "mu_TTbarAJets.root");      
+         myChain->Add( inDataDir4 + "mu_TTbarAJets.root");      
          Init(myChain);Loop( h_events, h_events_weighted, 20121033,runflag, outDataDir + "RD_mu_TTbarGpJets_CMSSW532");
       }
       if (myflag == 20121034 || myflag == -200){
@@ -286,33 +287,123 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
          Init(myChain);Loop( h_events, h_events_weighted, 20121034,runflag, outDataDir + "RD_mu_WZA_CMSSW532");
       }
       if (myflag == 20121035 || myflag == -200){
-         InitCounters( "/uscms_data/d3/jfaulkn3/ControlPlots/ElectroWeak/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/nTuples/mu_ZAp23Jets_CMSSW532.root", h_events, h_events_weighted);
+         InitCounters( inDataDir4 + "mu_ZAp23Jets_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
-         myChain->Add( "/uscms_data/d3/jfaulkn3/ControlPlots/ElectroWeak/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/nTuples/mu_ZAp23Jets_CMSSW532.root");
+         myChain->Add( inDataDir4 + "mu_ZAp23Jets_CMSSW532.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20121035,runflag, outDataDir + "RD_mu_ZAp23J_CMSSW532");
       }
 
       ////////////////////////////////
       // Anomalous QGC WWA MC Samples:
-      if (myflag == 20121036 || myflag == -200){
-         InitCounters( inDataDir4 + "mu_A6m5m5SIM_CMSSW532.root", h_events, h_events_weighted);
+      if (myflag == 20121040 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KOG_m5m5MG_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
-         myChain->Add( inDataDir4 + "mu_A6m5m5SIM_CMSSW532.root");
-         Init(myChain);Loop( h_events, h_events_weighted, 20121036,runflag, outDataDir + "RD_mu_WWA6m5m5MG_CMSSW532");
+         myChain->Add( inDataDir4 + "mu_KOG_m5m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121040,runflag, outDataDir + "RD_mu_KOG_m5m5MG_CMSSW532");
       }
-      if (myflag == 20121037 || myflag == -200){
-         InitCounters( inDataDir4 + "mu_WWA6cm8m5MG_CMSSW532.root", h_events, h_events_weighted);
+      if (myflag == 20121041 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KOG_m3m5MG_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
-         myChain->Add( inDataDir4 + "mu_WWA6cm8m5MG_CMSSW532.root");
-         Init(myChain);Loop( h_events, h_events_weighted, 20121037,runflag, outDataDir + "RD_mu_WWA6cm8m5MG_CMSSW532");
+         myChain->Add( inDataDir4 + "mu_KOG_m3m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121041,runflag, outDataDir + "RD_mu_KOG_m3m5MG_CMSSW532");
       }
-      if (myflag == 20121038 || myflag == -200){
-         InitCounters( inDataDir4 + "mu_WWA6p5m5MG_CMSSW532.root", h_events, h_events_weighted);
+      if (myflag == 20121042 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KOG_m2m5MG_CMSSW532.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
-         myChain->Add( inDataDir4 + "mu_WWA6p5m5MG_CMSSW532.root");
-         Init(myChain);Loop( h_events, h_events_weighted, 20121038,runflag, outDataDir + "RD_mu_WWA6p5m5MG_CMSSW532.root");
+         myChain->Add( inDataDir4 + "mu_KOG_m2m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121042,runflag, outDataDir + "RD_mu_KOG_m2m5MG_CMSSW532");
+      }
+      if (myflag == 20121043 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KOG_p2m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_KOG_p2m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121043,runflag, outDataDir + "RD_mu_KOG_p2m5MG_CMSSW532");
+      }
+      if (myflag == 20121044 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KOG_p3m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_KOG_p3m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121044,runflag, outDataDir + "RD_mu_KOG_p3m5MG_CMSSW532");
+      }
+      if (myflag == 20121045 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KOG_p5m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_KOG_p5m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121045,runflag, outDataDir + "RD_mu_KOG_p5m5MG_CMSSW532");
       }
 
+      if (myflag == 20121050 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KCG_m8m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_KCG_m8m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121050,runflag, outDataDir + "RD_mu_KCG_m8m5MG_CMSSW532");
+      }
+      if (myflag == 20121051 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KCG_m5m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_KCG_m5m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121051,runflag, outDataDir + "RD_mu_KCG_m5m5MG_CMSSW532");
+      }
+      if (myflag == 20121052 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KCG_m3m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_KCG_m3m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121052,runflag, outDataDir + "RD_mu_KCG_m3m5MG_CMSSW532");
+      }
+      if (myflag == 20121053 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KCG_p3m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_KCG_p3m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121053,runflag, outDataDir + "RD_mu_KCG_p3m5MG_CMSSW532");
+      }
+      if (myflag == 20121054 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KCG_p5m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_KCG_p5m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121054,runflag, outDataDir + "RD_mu_KCG_p5m5MG_CMSSW532");
+      }
+      if (myflag == 20121055 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_KCG_p8m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_KCG_p8m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121055,runflag, outDataDir + "RD_mu_KCG_p8m5MG_CMSSW532");
+      }
+      if (myflag == 20121060 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_LT0_m3m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_LT0_m3m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121060,runflag, outDataDir + "RD_mu_LT0_m3m11MG_CMSSW532");
+      }
+      if (myflag == 20121061 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_LT0_m5m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_LT0_m5m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121061,runflag, outDataDir + "RD_mu_LT0_m5m11MG_CMSSW532");
+      }
+      if (myflag == 20121062 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_LT0_m8m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_LT0_m8m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121062,runflag, outDataDir + "RD_mu_LT0_m8m11MG_CMSSW532");
+      }
+      if (myflag == 20121063 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_LT0_p3m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_LT0_p3m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121063,runflag, outDataDir + "RD_mu_LT0_p3m11MG_CMSSW532");
+      }
+      if (myflag == 20121064 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_LT0_p5m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_LT0_p5m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121064,runflag, outDataDir + "RD_mu_LT0_p5m11MG_CMSSW532");
+      }
+      if (myflag == 20121065 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_LT0_p8m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_LT0_p8m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121065,runflag, outDataDir + "RD_mu_LT0_p8m11MG_CMSSW532");
+      }
    }
 
 }// End Function "myana"
@@ -337,7 +428,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    /////////////////////////////////////////////////////////////////
    // Remove unneeded branches to reduce size of RDTree output file:
    fChain->SetBranchStatus("*Higgs*", 0);
-   fChain->SetBranchStatus("*VBF*", 0);
+//   fChain->SetBranchStatus("*VBF*", 0);
    fChain->SetBranchStatus("*GroomedJet*", 0);
    fChain->SetBranchStatus("*W_H*", 0);
    fChain->SetBranchStatus("*W_tb*", 0);
@@ -450,6 +541,8 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    TBranch * branch_2jWWAmu   =  newtree->Branch("mva2jWWAmu",   &mva2jWWAmu,    "mva2jWWAmu/F");
    Float_t mva2jWWAmuM = 999;
    TBranch * branch_2jWWAmuM   =  newtree->Branch("mva2jWWAmuM",   &mva2jWWAmuM,    "mva2jWWAmuM/F");
+   Float_t mva2jWWAmuA = 999;
+   TBranch * branch_2jWWAmuA   =  newtree->Branch("mva2jWWAmuA",   &mva2jWWAmuA,    "mva2jWWAmuA/F");
 
    //////////////////////////////
    // Efficiencies/Pilup weights:
@@ -481,6 +574,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    std::vector<std::string> inputVarsMVAphoM;
    for (int i=0; i<7; ++i) inputVarsMVAphoM.push_back( inputVarsPhoM[i] );
    ReadMVA2jWWAmuM mvaReader2jWWAmuM( inputVarsMVAphoM );
+   ReadMVA2jWWAmuA mvaReader2jWWAmuA( inputVarsMVAphoM );
 
    /////////////////////////////
    // For Efficiency Correction:
@@ -598,6 +692,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
       mva2jWWAmu = 999;
       mva2jWWAmuM = 999;
+      mva2jWWAmuA = 999;
 
       effwt = 1.0; puwt = 1.0; puwt_up = 1.0; puwt_down = 1.0;
       qgld_Spring11[0]= -1;       qgld_Spring11[1]= -1;       qgld_Spring11[2]= -1;       qgld_Spring11[3]= -1;       qgld_Spring11[4]= -1;       qgld_Spring11[5]= -1;
@@ -991,6 +1086,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          mva2jWWAmu = (float) mvaReader2jWWAmu.GetMvaValue( mvaInputValPho );
          mvaInputValPho.push_back(masslvjja);
          mva2jWWAmuM = (float) mvaReader2jWWAmuM.GetMvaValue( mvaInputValPho );
+         mva2jWWAmuA = (float) mvaReader2jWWAmuA.GetMvaValue( mvaInputValPho );
 
       }
 
@@ -1073,6 +1169,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
       branch_2jWWAmu->Fill();
       branch_2jWWAmuM->Fill();
+      branch_2jWWAmuA->Fill();
 
       branch_effwt->Fill();
       branch_puwt->Fill();
