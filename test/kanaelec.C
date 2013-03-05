@@ -2040,8 +2040,8 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
     */
    // S7 MC PU True profile - hardcoded, wow
    // https://twiki.cern.ch/twiki/bin/viewauth/CMS/PileupMCReweightingUtilities
-   //TFile *dataFile_      = new TFile( "PileupHistogramGold_190456-196531_8TeV_PromptReco_Collisions12_true.root" );
-   TFile *dataFile_      = new TFile( "Data190389-200041_PileupHistogram.root" );
+
+   TFile *dataFile_      = new TFile( "Data190456-208686_PileupHistogram.root" );
    TH1F* PU_intended = new TH1F(  *(static_cast<TH1F*>(dataFile_->Get( "pileup" )->Clone() )) );
    TH1F* PU_generated = new TH1F("PU_generated","Generated pileup distribution (i.e., MC)",60,0.,60);
    Double_t Summer2012[60] = {
