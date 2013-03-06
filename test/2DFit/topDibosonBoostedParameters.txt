@@ -1,8 +1,8 @@
-c_top_GroomedJet_CA8_mass_pr = -0.0308814 +/- 0.0073194 C L(-10 - 10) 
-f_top_GroomedJet_CA8_mass_pr_core =  0.34609 +/- 0.032801 C L(0 - 1) 
-mean_top_GroomedJet_CA8_mass_pr_core =  83.634 +/- 0.42149 C L(0 - 1000) 
-offset_top_GroomedJet_CA8_mass_pr =  71.198 +/- 7.2496 C L(-100 - 1000) 
-sigma_top_GroomedJet_CA8_mass_pr_core =  8.359 +/- 0.50008 C L(0 - 500) 
+c_top_GroomedJet_CA8_mass_pr = -0.0307870 +/- 0.0073691 L(-10 - 10) 
+f_top_GroomedJet_CA8_mass_pr_core =  0.34616 +/- 0.032833 C L(0 - 1) 
+mean_top_GroomedJet_CA8_mass_pr_core =  83.636 +/- 0.42234 C L(0 - 1000) 
+offset_top_GroomedJet_CA8_mass_pr =  71.095 +/- 7.3132 C L(-100 - 1000) 
+sigma_top_GroomedJet_CA8_mass_pr_core =  7.444548 +/- 0.49976 C L(0 - 500) 
 wider_top_GroomedJet_CA8_mass_pr =  4.5590 C L(1 - 10) 
-width_top_GroomedJet_CA8_mass_pr =  22.993 +/- 3.6837 C L(0 - 1000) 
-n_top = 1221.0 +/- 34.9 C
+width_top_GroomedJet_CA8_mass_pr =  22.941 +/- 3.7179 C L(0 - 1000) 
+n_top = 1084.1 +/- 32.9 C

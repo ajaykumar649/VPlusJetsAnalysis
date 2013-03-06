@@ -87,11 +87,11 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         if isElectron:
             pars.WpJFracOfData = 0.725
         else:
-            pars.WpJFracOfData = 0.729
+            pars.WpJFracOfData = 0.737
 
     pars.WpJModels = [8]
 
-    ttkfactor = 1.07
+    ttkfactor = 0.95
     pars.topFiles = [
         (pars.MCDirectory + 'RD_%s_STopTW_Tbar_CMSSW532.root' % (flavorString),
          493458, 11.1773*ttkfactor),
@@ -119,7 +119,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         if isElectron:
             pars.topFracOfData = 0.209
         else:
-            pars.topFracOfData = 0.207
+            pars.topFracOfData = 0.199
 
 
     pars.topModels = [30]
