@@ -95,6 +95,10 @@ timer.Continue()
 #fitter.ws.var('top_nrm').setConstant()
 fitter.ws.var('r_signal').setVal(1.0)
 fitter.ws.var('r_signal').setError(0.04)
+
+if fitter.ws.var('WHbb_nrm'):
+    fitter.ws.var('WHbb_nrm').setConstant(True)
+    
 fr = None
 fr = fitter.fit()
 fr.SetName('fitResult_withSig')
@@ -203,6 +207,8 @@ if opts.nullFit:
 
     fitter_null.ws.var('diboson_nrm').setVal(0.)
     fitter_null.ws.var('diboson_nrm').setConstant()
+    if fitter_null.ws.var('WHbb_nrm'):
+        fitter_null.ws.var('WHbb_nrm').setConstant(True)
 
     fr_null = fitter_null.fit()
     fr_null.SetName('fitResult_null')
@@ -232,6 +238,9 @@ output.Close()
 c1.SaveAs("Diboson%slnujj_%s_Stacked.png" % (tag, mode))
 c2.SaveAs("Diboson%slnujj_%s_Subtracted.png" % (tag, mode))
 cp1.SaveAs("Diboson%slnujj_%s_Pull.png" % (tag, mode))
+
+fitter.ws.var('n_diboson').Print()
+fitter.ws.var('diboson_nrm').Print()
 
 print 'Time elapsed: %.1f sec' % timer.RealTime()
 print 'CPU time used: %.1f sec' % timer.CpuTime()

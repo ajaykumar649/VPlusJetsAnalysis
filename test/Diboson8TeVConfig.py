@@ -4,7 +4,7 @@ from ROOT import kRed, kAzure, kGreen, kBlue, kCyan, kViolet, kGray, kYellow
 def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars = Wjj2DFitterPars()
 
-    pars.MCDirectory = '/uscms_data/d2/andersj/Wjj/2012/data/Moriond2013/ReducedTrees/'
+    pars.MCDirectory = '/uscms_data/d1/lnujj/data/Moriond2013/ReducedTrees/'
     pars.QCDDirectory = "/uscms_data/d3/ilyao/QCD8TeV/Moriond13/"
     # pars.MCDirectory = "root://cmseos:1094//eos/uscms/store/user/lnujj/HCP2012METfix/ReducedTrees/"
     pars.isElectron = isElectron
@@ -58,6 +58,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.constrainShapes = ['WpJ']
     #pars.constrainShapes = []
     if pars.btagSelection:
+        # pars.backgrounds = ['diboson', 'WHbb', 'top', 'WpJ', 'ZpJ']
         pars.backgrounds = ['diboson', 'top', 'WpJ', 'ZpJ']
         pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.1, 'ZpJ' : 0.1 }
         pars.constrainShapes = ['top', 'WpJ', 'diboson']
@@ -102,6 +103,11 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         pars.ZpJModels = [0]
         pars.ZpJAuxModels = [3]
 
+    pars.WHbbFiles = [
+        (pars.MCDirectory + 'RD_%s_WH_WToLNu_HToBB_M-125_CMSSW532.root' % flavorString, 999998, 0.6966*0.577*(0.1075+0.1057+0.1125))
+            ]
+    pars.WHbbModels = [5]
+    pars.WHbbFracOfData = -1
 
     # To implement Template Morphing set pars.WpJModels=[-2]
     # and be sure to edit the WpJ*InputParameters.txt file so that the
@@ -164,6 +170,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.ZpJPlotting = { 'color' : kYellow, 'title' : 'Z+jets'}
     pars.topPlotting = {'color' : kGreen+2, 'title' : 'top'}
     pars.QCDPlotting = {'color' : kGray, 'title' : 'multijet'}
+    pars.WHbbPlotting = {'color' : kBlue, 'title' : 'WHbb'}
 
     pars.var = ['Mass2j_PFCor']
     pars.varRanges = {'Mass2j_PFCor': (14, 48., 160., []),
