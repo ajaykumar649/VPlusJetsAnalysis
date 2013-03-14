@@ -1,4 +1,3 @@
-
 /*****************************************************************************
  * Project: CMS detector at the CERN
  *
@@ -50,7 +49,7 @@ ewk::MCTreeFiller::MCTreeFiller(const char *name, TTree* tree,
 void ewk::MCTreeFiller::SetBranches()
 {
 
-  //	std::cout << "srcgenparticles " << mInputgenParticles << std::endl;
+	std::cout << "srcgenparticles " << mInputgenParticles << std::endl;
 
 // Declare jet branches
   std::string lept1;
@@ -72,6 +71,9 @@ void ewk::MCTreeFiller::SetBranches()
       lept2 = "neutrino";
     }
   }
+
+  SetBranch( &Photon_pt_gen,      "Photon_pt_gen");
+
 
   SetBranch( &H_mass,      "H_mass_gen");
   SetBranch( &H_px,        "H_px_gen");
@@ -290,22 +292,6 @@ void ewk::MCTreeFiller::SetBranches()
   SetBranch( &Hbbar_Y,              "Hbbar_y" );
   SetBranch( &Hbbar_Id,              "Hbbar_Id" );
 
-  /////////////////////////////////////////////////
-  SetBranch( TagQuark_px,             "TagQuark_px[2]" );
-  SetBranch( TagQuark_py,             "TagQuark_py[2]" );
-  SetBranch( TagQuark_pz,             "TagQuark_pz[2]" );
-  SetBranch( TagQuark_E,              "TagQuark_E[2]" );
-  SetBranch( TagQuark_Pt,             "TagQuark_pt[2]" );
-  SetBranch( TagQuark_Et,             "TagQuark_et[2]" );
-  SetBranch( TagQuark_Eta,            "TagQuark_eta[2]" ); 
-  SetBranch( TagQuark_Theta,          "TagQuark_theta[2]" );    
-  SetBranch( TagQuark_Phi,            "TagQuark_phi[2]" );
-  SetBranch( TagQuark_Charge,         "TagQuark_charge[2]" );
-  SetBranch( TagQuark_Vx,             "TagQuark_vx[2]" );
-  SetBranch( TagQuark_Vy,             "TagQuark_vy[2]" );
-  SetBranch( TagQuark_Vz,             "TagQuark_vz[2]" );
-  SetBranch( TagQuark_Y,              "TagQuark_y[2]" );
-  SetBranch( TagQuark_Id,              "TagQuark_Id[2]" );
     
 }
 /////////////////////////////////////////////////////////////////////////
@@ -318,6 +304,7 @@ void ewk::MCTreeFiller::SetBranches()
 void ewk::MCTreeFiller::init()   
 {
   // initialize private data members
+  Photon_pt_gen         = -1. ;
   H_mass                  = -1.;
   H_px                  = -99999.;
   H_py                  = -99999.;
@@ -530,24 +517,6 @@ for ( int i =0; i<2; i++){
   Hbbar_Id              = 0;
 
 
-  for ( int i =0; i<2; i++){
-    TagQuark_px[i]              = -99999.;
-    TagQuark_py[i]              = -99999.;
-    TagQuark_pz[i]              = -99999.;
-    TagQuark_E[i]               = -1.;
-    TagQuark_Pt[i]              = -1.;
-    TagQuark_Et[i]              = -1.;
-    TagQuark_Eta[i]             = -10.;
-    TagQuark_Theta[i]           = -99999.;
-    TagQuark_Phi[i]             = -10.;
-    TagQuark_Vx[i]              = -10.;
-    TagQuark_Vy[i]              = -10.;
-    TagQuark_Vz[i]              = -10.;
-    TagQuark_Y[i]              =  -10.;
-    TagQuark_Id[i]              = 0;
-  }
-
-
 
   // initialization done
 }
@@ -596,21 +565,15 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
   const reco::Candidate *tParton1=NULL;
   const reco::Candidate *tParton2=NULL;
 
-  const reco::Candidate *TagQuark1=NULL;
-  const reco::Candidate *TagQuark2=NULL;
 
-  // Vector Bosons Info 
   for(size_t i = 0; i < nGen; ++ i) {
-
      V = &((*genParticles)[i]);
-
     // The vector boson must have stutus==3  
     if( !(abs(V->status())==3) ) continue;
+    if(V->pdgId()==22)Photon_pt_gen = V->pt();
     size_t ndau = 0;
-
     if(!(V==NULL)) ndau = V->numberOfDaughters();
     // The vector boson must decay to leptons
-
     if(ndau<1) continue;
     if( (Vtype_=="Z") && !( V->pdgId()==22 || V->pdgId()==23) ) continue;
     if( (Vtype_=="W") && !(abs(V->pdgId())==24) ) continue;
@@ -632,7 +595,10 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
 
 
 
+
 //tth gen information
+
+
 
  for(size_t i = 0; i < nGen; ++ i) {
     aH = &((*genParticles)[i]);
@@ -640,7 +606,7 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
     tbar = &((*genParticles)[i]);
 // asociated higgs
     if( ((abs(aH->status())==3) && (abs(aH->pdgId())==25) )){
-      //        std::cout<<"tth    "<<aH->pdgId()<<std::endl;
+        std::cout<<"tth    "<<aH->pdgId()<<std::endl;
        size_t aHndau =0;
     if(!(aH==NULL)) aHndau = aH->numberOfDaughters();
 //        std::cout<<"bbar    "<<aHndau<<std::endl;
@@ -649,10 +615,10 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
 //loop over higgs daughter
       const reco::Candidate *g = aH->daughter( k );
       if( !(g==NULL) && (g->pdgId()==5) ) {Hb=g;
-	//         std::cout<<"h decay b    "<<g->pdgId()<<std::endl;
+         std::cout<<"h decay b    "<<g->pdgId()<<std::endl;
 }
       else if (!(g==NULL) && (g->pdgId()==-5)) {Hbbar=g;
-	//        std::cout<<" h decay bbar    "<<g->pdgId()<<std::endl;
+        std::cout<<" h decay bbar    "<<g->pdgId()<<std::endl;
 }
 }
 }
@@ -670,7 +636,7 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
       const reco::Candidate *p = t->daughter( k );
       if (!(p==NULL) && (abs(p->pdgId())==5)) tb=p;
       else if( !(p==NULL) && (p->pdgId()==24) ) {
-	//        std::cout<<"W    "<<p->pdgId()<<std::endl;
+        std::cout<<"W    "<<p->pdgId()<<std::endl;
         size_t tWndau =0;
            tWndau = p->numberOfDaughters();
            if(tWndau<1) continue;
@@ -678,7 +644,7 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
 //loop over tW daughter
            const reco::Candidate *g = p->daughter( l );
         //std::cout<<" dau    "<<e->numberOfDaughters()<<std::endl;
-	   //  std::cout<<" dau of tW   "<<g->pdgId()<<std::endl;
+        std::cout<<" dau of tW   "<<g->pdgId()<<std::endl;
            if( !(g==NULL)&& (abs(g->pdgId())<=4)){
            tParton1 =g->daughter(0);
            tParton2 =g->daughter(1);}
@@ -703,10 +669,9 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
 	//loop over associated anti top daughter
       	const reco::Candidate *q = tbar->daughter( k );
       	if (!(q==NULL) && (q->pdgId()==-5)){ tbbar=q;
-	  //       std::cout<<" anti top bbar    "<<q->pdgId()<<std::endl;
-        }
+        std::cout<<" anti top bbar    "<<q->pdgId()<<std::endl;}
       	else if( !(q==NULL) && (q->pdgId()==-24) ) {
-	  //        std::cout<<" anti top W    "<<q->pdgId()<<std::endl;
+        std::cout<<" anti top W    "<<q->pdgId()<<std::endl;
        	size_t tbarWndau =0;
         tbarWndau = q->numberOfDaughters();
            if(tbarWndau<1) continue;
@@ -714,7 +679,7 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
 //loop over tbarW daughter
            const reco::Candidate *h = q->daughter( l );
         //std::cout<<" dau    "<<e->numberOfDaughters()<<std::endl;
-	   //       std::cout<<" dau of anti top W    "<<h->pdgId()<<std::endl;
+        std::cout<<" dau of anti top W    "<<h->pdgId()<<std::endl;
            if( !(h==NULL)&& (abs(h->pdgId())<=4)){
            tParton1 =h->daughter(0);
            tParton2 =h->daughter(1);}
@@ -731,6 +696,7 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
 }// gen Particles loop
 
 // tth info ends
+
 
 
 
@@ -767,24 +733,8 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
 	}	
 	} 
 
-    // save tag quark information for vbf case in HWW topology 
-    int counter = 0;
-    if(H!=NULL){
-      for(reco::GenParticleCollection::const_iterator p = genParticles -> begin();p != genParticles -> end(); ++p,counter++){
-
-      const reco::Candidate* pCurrent = &(*p);
-  
-      if(counter == 7) TagQuark1 = pCurrent;
-      if(counter == 8) TagQuark2 = pCurrent;
-
-     }
-    }
-      
-
-
   ////////// Higgs boson quantities //////////////
 if(H==NULL) return;
-
   H_mass = H->mass();
   H_Eta = H->eta();   
   H_Phi = H->phi();
@@ -1080,44 +1030,8 @@ if(H==NULL) return;
     Hbbar_Id              = Hbbar->pdgId();
   }
 
- ///////////////////////////////// Fill Tag Quark info for VBF case
 
-//Parton filling
-  if( H!=NULL && TagQuark1 != NULL && TagQuark2!=NULL) {
 
-    TagQuark_Charge[0]          = TagQuark1->charge();
-    TagQuark_Vx[0]              = TagQuark1->vx();
-    TagQuark_Vy[0]              = TagQuark1->vy();
-    TagQuark_Vz[0]              = TagQuark1->vz();
-    TagQuark_Y[0]               = TagQuark1->rapidity();
-    TagQuark_Theta[0]           = TagQuark1->theta();
-    TagQuark_Eta[0]             = TagQuark1->eta();
-    TagQuark_Phi[0]             = TagQuark1->phi();
-    TagQuark_E[0]               = TagQuark1->energy();
-    TagQuark_px[0]              = TagQuark1->px();
-    TagQuark_py[0]              = TagQuark1->py();
-    TagQuark_pz[0]              = TagQuark1->pz();
-    TagQuark_Pt[0]              = TagQuark1->pt();
-    TagQuark_Et[0]              = TagQuark1->et(); 
-    TagQuark_Id[0]              = TagQuark1->pdgId();
-
-    TagQuark_Charge[1]          = TagQuark2->charge();
-    TagQuark_Vx[1]              = TagQuark2->vx();
-    TagQuark_Vy[1]              = TagQuark2->vy();
-    TagQuark_Vz[1]              = TagQuark2->vz();
-    TagQuark_Y[1]               = TagQuark2->rapidity();
-    TagQuark_Theta[1]           = TagQuark2->theta();
-    TagQuark_Eta[1]             = TagQuark2->eta();
-    TagQuark_Phi[1]             = TagQuark2->phi();
-    TagQuark_E[1]               = TagQuark2->energy();
-    TagQuark_px[1]              = TagQuark2->px();
-    TagQuark_py[1]              = TagQuark2->py();
-    TagQuark_pz[1]              = TagQuark2->pz();
-    TagQuark_Pt[1]              = TagQuark2->pt();
-    TagQuark_Et[1]              = TagQuark2->et();
-    TagQuark_Id[1]              = TagQuark2->pdgId();
- 
- }
 
 }
 
