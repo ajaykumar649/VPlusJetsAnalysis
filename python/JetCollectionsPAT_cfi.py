@@ -51,7 +51,7 @@ RequireTwoJets = cms.EDFilter("PATCandViewCountFilter",
 
 
 ############################################
-PFJetPath = cms.Sequence( ak5PFnoPUJets + ak5PFGoodJets + ak5PFJetsClean + ak5PFJetsLooseId + 
+PFJetPath = cms.Sequence( ak5PFnoPUJets + ak5PFGoodJets + ak5PFJetsClean + ak5PFJetsLooseId + ak5PFJetsLooseIdAll +
 	ak5PFJetsLooseIdVBFTag )
 #	ak5PFJetsLooseIdVBFTag + RequireTwoJets )
 ##########################################
