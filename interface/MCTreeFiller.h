@@ -297,6 +297,23 @@ namespace ewk {
     float Hbbar_Y;
     int Hbbar_Id;
 
+    ///////////////////
+
+    int TagQuark_Charge[2];
+    float TagQuark_px[2];
+    float TagQuark_py[2];
+    float TagQuark_pz[2];
+    float TagQuark_E[2];
+    float TagQuark_Pt[2];
+    float TagQuark_Et[2];
+    float TagQuark_Eta[2];
+    float TagQuark_Theta[2];
+    float TagQuark_Phi[2];
+    float TagQuark_Vx[2];
+    float TagQuark_Vy[2];
+    float TagQuark_Vz[2];
+    float TagQuark_Y[2];
+    int TagQuark_Id[2];
 
 
 
