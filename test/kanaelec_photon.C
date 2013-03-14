@@ -32,6 +32,8 @@
 #include "ClassifierOut/TMVAClassification_WWA_nJ2_el_BDT.class.C"
 #include "ClassifierOut/TMVAClassification_WWA_nJ2_el_M_BDT.class.C"
 #include "ClassifierOut/TMVAClassification_WWA_nJ2_el_A_BDT.class.C"
+#include "ClassifierOut/TMVAClassification_WWA_nJ2_el_A1_BDT.class.C"
+#include "ClassifierOut/TMVAClassification_WWA_nJ2_el_A2_BDT.class.C"
 
 /////////////////////////////////////////
 ///// Specify Location of Merged Ntuples:
@@ -46,7 +48,7 @@ const TString inQCDDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2
 ///// Specify Location of Store Reduced Trees:
 //const TString outDataDir   = "/eos/uscms/store/user/jfaulkn3/ReducedTrees/";
 //const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
-const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest/";
+const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest11/";
 
 /////////////////////////////////////////////////////////
 ///// Specify Location of Efficiency Tables:
@@ -251,6 +253,12 @@ void kanaelec_photon::myana(double myflag, bool isQCD, int runflag)
          myChain = new TChain("WJet");
          myChain->Add( inDataDir4 + "el_ZAp23Jets_CMSSW532.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20121036,runflag, outDataDir + "RD_el_ZAp23J_CMSSW532");
+      }
+      if (myflag == 20121037 || myflag == -200){
+         InitCounters( inDataDir4 + "el_WAp23Jets_PT100_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "el_WAp23Jets_PT100_CMSSW532.root");
+         Init(myChain);Loop(  h_events, h_events_weighted,20121037,runflag, outDataDir + "RD_el_WAp23Jets_PT100_CMSSW532");
       }
 
 
@@ -509,6 +517,10 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    TBranch * branch_2jWWAelM   =  newtree->Branch("mva2jWWAelM",   &mva2jWWAelM,    "mva2jWWAelM/F");
    Float_t mva2jWWAelA = 999;
    TBranch * branch_2jWWAelA   =  newtree->Branch("mva2jWWAelA",   &mva2jWWAelA,    "mva2jWWAelA/F");
+   Float_t mva2jWWAelA1 = 999;
+   TBranch * branch_2jWWAelA1   =  newtree->Branch("mva2jWWAelA1",   &mva2jWWAelA1,    "mva2jWWAelA1/F");
+   Float_t mva2jWWAelA2 = 999;
+   TBranch * branch_2jWWAelA2   =  newtree->Branch("mva2jWWAelA2",   &mva2jWWAelA2,    "mva2jWWAelA2/F");
 
    //////////////////////////////
    // Efficiencies/Pilup weights:
@@ -542,6 +554,16 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    for (int i=0; i<7; ++i) inputVarsMVAphoM.push_back( inputVarsPhoM[i] );
    ReadMVA2jWWAelM mvaReader2jWWAelM( inputVarsMVAphoM );
    ReadMVA2jWWAelA mvaReader2jWWAelA( inputVarsMVAphoM );
+
+   const char* inputVarsPhoA1[] = {  "sqrt((JetPFCor_Eta[i11Jet1]-JetPFCor_Eta[i11Jet2])**2+(abs(abs(abs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])-TMath::Pi())-TMath::Pi()))**2)", "JetPFCor_Pt[i11Jet1]", "JetPFCor_Pt[i11Jet2]", "c2jMass11", "W_electron_pt", "abs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])", "abs(event_met_pfmetPhi-Photon_Phi[iPhoton11])", "abs(W_electron_phi-Photon_Phi[iPhoton11])", "event_met_pfmet", "event_met_pfsumet"};
+   std::vector<std::string> inputVarsMVAphoA1;
+   for (int i=0; i<10; ++i) inputVarsMVAphoA1.push_back( inputVarsPhoA1[i] );
+   ReadMVA2jWWAelA1 mvaReader2jWWAelA1( inputVarsMVAphoA1 );
+
+   const char* inputVarsPhoA2[] = {  "sqrt((JetPFCor_Eta[i11Jet1]-JetPFCor_Eta[i11Jet2])**2+(abs(abs(abs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])-TMath::Pi())-TMath::Pi()))**2)", "JetPFCor_Pt[i11Jet1]", "JetPFCor_Pt[i11Jet2]", "c2jMass11", "W_electron_pt", "abs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])", "abs(event_met_pfmetPhi-Photon_Phi[iPhoton11])", "abs(W_electron_phi-Photon_Phi[iPhoton11])", "event_met_pfmet", "event_met_pfsumet", "masslvjja", "Photon_Et[iPhoton11]"  };
+   std::vector<std::string> inputVarsMVAphoA2;
+   for (int i=0; i<12; ++i) inputVarsMVAphoA2.push_back( inputVarsPhoA2[i] );
+   ReadMVA2jWWAelA2 mvaReader2jWWAelA2( inputVarsMVAphoA2 );
 
 
    /////////////////////////////
@@ -671,6 +693,8 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       mva2jWWAel = 999;
       mva2jWWAelM = 999;
       mva2jWWAelA = 999;
+      mva2jWWAelA1 = 999;
+      mva2jWWAelA2 = 999;
 
       effwt = 1.0; puwt = 1.0; puwt_up = 1.0; puwt_down = 1.0;
       qgld_Spring11[0]= -1;       qgld_Spring11[1]= -1;       qgld_Spring11[2]= -1;       qgld_Spring11[3]= -1;       qgld_Spring11[4]= -1;       qgld_Spring11[5]= -1;
@@ -1073,6 +1097,35 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          mva2jWWAelM = (float) mvaReader2jWWAelM.GetMvaValue( mvaInputValPho );
          mva2jWWAelA = (float) mvaReader2jWWAelA.GetMvaValue( mvaInputValPho );
 
+         std::vector<double> mvaInputValPhoA12;
+         if(i11Jet1>-1&&i11Jet2>-1){
+           mvaInputValPhoA12.push_back( dRjj);
+         }else{ mvaInputValPhoA12.push_back(0.);}
+         if(i11Jet1>-1){
+           mvaInputValPhoA12.push_back( JetPFCor_Pt[i11Jet1]);
+         }else{ mvaInputValPhoA12.push_back(0.);}
+         if(i11Jet2>-1){
+           mvaInputValPhoA12.push_back( JetPFCor_Pt[i11Jet2]);
+         }else{ mvaInputValPhoA12.push_back(0.);}
+         mvaInputValPhoA12.push_back( c2jMass11);
+         mvaInputValPhoA12.push_back( W_electron_pt);
+         if(i11Jet1>-1&&i11Jet2>-1){
+           mvaInputValPhoA12.push_back( fabs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2]));
+         }else{ mvaInputValPhoA12.push_back(0.);}
+         if(iPhoton11>-1){
+           mvaInputValPhoA12.push_back( fabs(event_met_pfmetPhi-Photon_Phi[iPhoton11]));
+         }else{ mvaInputValPhoA12.push_back(0.);}
+         if(iPhoton11>-1){
+           mvaInputValPhoA12.push_back( fabs(W_electron_phi-Photon_Phi[iPhoton11]));
+         }else{ mvaInputValPhoA12.push_back(0.);}
+         mvaInputValPhoA12.push_back( event_met_pfmet);
+         mvaInputValPhoA12.push_back( event_met_pfsumet);
+         mva2jWWAelA1 = (float) mvaReader2jWWAelA1.GetMvaValue( mvaInputValPhoA12 );
+         mvaInputValPhoA12.push_back( masslvjja);
+         if(i11Jet1>-1&&iPhoton11>-1){
+           mvaInputValPhoA12.push_back( Photon_Et[iPhoton11]/JetPFCor_Pt[i11Jet1]);
+         }else{ mvaInputValPhoA12.push_back(0.);}
+         mva2jWWAelA2 = (float) mvaReader2jWWAelA2.GetMvaValue( mvaInputValPhoA12 );
       }
 
       /////////////////
@@ -1155,6 +1208,8 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       branch_2jWWAel->Fill();
       branch_2jWWAelM->Fill();
       branch_2jWWAelA->Fill();
+      branch_2jWWAelA1->Fill();
+      branch_2jWWAelA2->Fill();
 
       branch_effwt->Fill();
       branch_puwt->Fill();
@@ -1169,7 +1224,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    } // end event loop
 
    fresults.cd();
-   newtree->Write("WJet",TObject::kOverwrite);
+      newtree->Write("WJet",TObject::kOverwrite);
    h_events->Write();
    h_events_weighted->Write();
 
