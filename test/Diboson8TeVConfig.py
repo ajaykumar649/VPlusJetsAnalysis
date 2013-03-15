@@ -1,14 +1,15 @@
 from RooWjj2DFitterPars import Wjj2DFitterPars
 from ROOT import kRed, kAzure, kGreen, kBlue, kCyan, kViolet, kGray, kYellow
 
-def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
+def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
+              btagged = False):
     pars = Wjj2DFitterPars()
 
     pars.MCDirectory = '/uscms_data/d1/lnujj/data/Moriond2013/ReducedTrees/'
     pars.QCDDirectory = "/uscms_data/d3/ilyao/QCD8TeV/Moriond13/"
     # pars.MCDirectory = "root://cmseos:1094//eos/uscms/store/user/lnujj/HCP2012METfix/ReducedTrees/"
     pars.isElectron = isElectron
-    pars.btagSelection = True
+    pars.btagSelection = btagged
     pars.boostedSelection = False
     pars.initialParametersFile = initFile
 

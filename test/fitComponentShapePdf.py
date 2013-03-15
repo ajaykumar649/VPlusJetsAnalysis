@@ -33,6 +33,8 @@ parser.add_option('--morphingComp', dest='morphComponent', default=0,
                       '  (+/- 2): scale up/down')
 parser.add_option('--ws', dest='ws', help='filename to get data from instead' +\
                   ' reading from source ntuples again.')
+parser.add_option('--btag', dest='btag', action='store_true',
+                  default=False, help='Use b-tagged selection.')
 
 (opts, args) = parser.parse_args()
 
@@ -55,6 +57,14 @@ RooMsgService.instance().setGlobalKillBelow(RooFit.WARNING)
 
 pars = config.theConfig(Nj = opts.Nj, mH = opts.mH, 
                         isElectron = opts.isElectron, initFile = args)
+if opts.btag:
+    pars = config.theConfig(Nj = opts.Nj, mH = opts.mH, 
+                            isElectron = opts.isElectron, initFile = args,
+                            btagged = opts.btag)
+else:
+    pars = config.theConfig(Nj = opts.Nj, mH = opts.mH, 
+                            isElectron = opts.isElectron, initFile = args)
+
 
 files = getattr(pars, '%sFiles' % opts.component)
 models = getattr(pars, '%sModels' % opts.component)

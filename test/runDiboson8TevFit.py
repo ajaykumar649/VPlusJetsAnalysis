@@ -28,6 +28,8 @@ parser.add_option('--debug', dest='debug', action='store_true', default=False,
                   help='turn on extra debugging information')
 parser.add_option('--noNull', dest='nullFit', action='store_false',
                   default=True, help='do not perform the null hypothesis fit.')
+parser.add_option('--btag', dest='btag', action='store_true',
+                  default=False, help='Use b-tagged selection.')
 
 (opts, args) = parser.parse_args()
 
@@ -52,7 +54,8 @@ if hasattr(opts, "seed") and (opts.seed >= 0):
     RooRandom.randomGenerator().SetSeed(opts.seed)
 pars = config.theConfig(Nj = opts.Nj, mH = opts.mH, 
                         isElectron = opts.isElectron, initFile = args,
-                        includeSignal = opts.includeSignal)
+                        includeSignal = opts.includeSignal,
+                        btagged = opts.btag)
 
 fitter = RooWjj2DFitter.Wjj2DFitter(pars)
 if opts.ws:

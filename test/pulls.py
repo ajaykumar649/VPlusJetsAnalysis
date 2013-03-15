@@ -50,3 +50,58 @@ def computeChi2(theData, curve):
         chi2 += pullGraph.GetY()[pnt]**2
 
     return (chi2, pullGraph.GetN())
+
+def splitErrCurve(curve):
+    from ROOT import RooCurve
+
+    upperCurve = RooCurve()
+    upperCurve.SetName('%s_upper' % curve.GetName())
+
+    lowerCurve = RooCurve()
+    lowerCurve.SetName('%s_lower' % curve.GetName())
+
+    lastx = curve.GetX()[0]
+    lasty = curve.GetY()[0]
+    inCurve = False
+    currentCurve = upperCurve
+    for pt in range(0, curve.GetN()):
+        x = curve.GetX()[pt]
+        y = curve.GetY()[pt]
+
+        if (lastx > x):
+            currentCurve = lowerCurve
+
+        if (x == lastx) and inCurve:
+            if (lasty != y):
+                inCurve = False
+        elif not inCurve and (lastx != x):
+            inCurve = True
+            currentCurve.addPoint(lastx, lasty if (lasty>0.) else 0.)
+
+        if (x != lastx) and inCurve:
+            currentCurve.addPoint(x, y if (y>0.) else 0.)
+
+        lastx = x
+        lasty = y
+
+    upperCurve.Sort()
+    lowerCurve.Sort()
+    return (upperCurve, lowerCurve)
+
+def curveToHist(curve, hist, debug = False):
+    from math import sqrt
+    from ROOT import gPad
+    #hist.Sumw2()
+    for binx in range(1, hist.GetNbinsX()+1):
+        low = hist.GetBinLowEdge(binx)
+        high = low + hist.GetBinWidth(binx)
+        hist.SetBinContent(binx, curve.average(low,high))
+        #hist.SetBinError(binx, sqrt(hist.GetBinContent(binx)))
+    if debug:
+        print 'drawing background histogram...'
+        curve.Draw('al')
+        hist.Draw('same')
+        gPad.Update()
+        gPad.WaitPrimitive()
+
+    return hist

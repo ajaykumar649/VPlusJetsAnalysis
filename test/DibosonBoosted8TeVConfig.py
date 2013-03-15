@@ -1,13 +1,14 @@
 from RooWjj2DFitterPars import Wjj2DFitterPars
 from ROOT import kRed, kAzure, kGreen, kBlue, kCyan, kViolet, kGray
 
-def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
+def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
+              btagged = False):
     pars = Wjj2DFitterPars()
 
     # pars.MCDirectory = '/uscms_data/d2/andersj/Wjj/2012/data/Moriond2013/ReducedTrees/'
     pars.MCDirectory = '/uscms_data/d1/lnujj/RDTrees_BoostedW_2013_1_29/'
     pars.isElectron = isElectron
-    pars.btagSelection = False
+    pars.btagSelection = btagged
     pars.boostedSelection = True
     pars.useTopSideband = False
     pars.useTopMC = True

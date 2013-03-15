@@ -42,7 +42,8 @@ import RooWjj2DFitter
 
 from ROOT import TCanvas, RooFit, RooLinkedListIter, TMath, RooRandom, TFile, \
     RooDataHist, RooMsgService, TStopwatch, RooAbsPdf, TBox, kBlack, kRed, \
-    kBlue, kOrange, kDashed, RooAbsCollection, RooArgSet, RooStats, Double
+    kBlue, kOrange, kDashed, RooAbsCollection, RooArgSet, RooStats, Double, \
+    RooAbsReal, RooAbsData
 import pulls
 
 timer = TStopwatch()
@@ -261,12 +262,35 @@ plot_mWW = fitter_mWW.stackedPlot(pars_mWW.var[0])
 plot_mWW.SetName('%s_plot_stacked' % (pars_mWW.var[0]))
 leg_mWW = RooWjj2DFitter.Wjj2DFitter.legend4Plot(plot_mWW)
 
+plot_mWW_withErrs = fitter_mWW.stackedPlot(pars_mWW.var[0])
+plot_mWW_withErrs.SetName('%s_plot_with_errors' % (pars_mWW.var[0]))
+nexp = totalPdf_mWW.expectedEvents(fitter_mWW.ws.set('obsSet'))
+totalPdf_mWW.plotOn(plot_mWW_withErrs, 
+                    RooFit.VisualizeError(fr_mWW, 1, True),
+                    RooFit.Range('plotRange'),
+                    RooFit.NormRange('plotRange'),
+                    RooFit.Normalization(nexp, RooAbsReal.NumEvent),
+                    RooFit.Name('fitErrors'),
+                    RooFit.FillColor(kOrange+1),
+                    RooFit.FillStyle(3001))
+plot_mWW_withErrs.getCurve().SetTitle('Fit errors')
+errs = plot_mWW_withErrs.getCurve('fitErrors')
+(upper, lower) = pulls.splitErrCurve(errs)
+
+# errs.Print('v')
+# upper.Print('v')
+# lower.Print('v')
+
 c_mWW = TCanvas('c_mWW', pars_mWW.var[0] + ' plot')
 plot_mWW.addObject(leg_mWW)
 plot_mWW.Draw()
 if blinder:
     plot_mWW.setInvisible('theData', True)
 c_mWW.Update()
+
+c_mWW_err = TCanvas('c_mWW_err', 'with errors')
+plot_mWW_withErrs.Draw()
+c_mWW_err.Update()
 
 (chi2_mWW, ndf_mWW) = pulls.computeChi2(plot_mWW.getHist('theData'), 
                                         plot_mWW.getObject(1))
@@ -306,6 +330,62 @@ fitter_mWW.ws.var('r_signal').setRange(-3., 9.)
 full_pdf = fitter_mWW.ws.pdf('totalFit_const')
 if not full_pdf:
     full_pdf = totalPdf_mWW
+
+bkgHisto = full_pdf.createHistogram("HWW%snujj_bkg" % mode,
+                                    fitter_mWW.ws.var(pars_mWW.var[0]))
+bkgHisto.Scale(full_pdf.expectedEvents(fitter_mWW.ws.set('obsSet'))/bkgHisto.Integral())
+# c_debug = TCanvas('c_debug', 'debug')
+bkgHisto_up = fitter_mWW.utils.newEmptyHist(
+    'HWW%snujj_bkg_Up__%s' % (mode, pars_mWW.var[0]), 1)
+bkgHisto_up = pulls.curveToHist(upper, bkgHisto_up)
+bkgHisto_up.SetLineColor(kOrange+2)
+bkgHisto_up.SetLineStyle(kDashed)
+bkgHisto_dwn = fitter_mWW.utils.newEmptyHist(
+    'HWW%snujj_bkg_Down__%s' % (mode, pars_mWW.var[0]), 1)
+bkgHisto_dwn = pulls.curveToHist(lower, bkgHisto_dwn)
+bkgHisto_dwn.SetLineColor(kOrange+4)
+bkgHisto_dwn.SetLineStyle(kDashed)
+c_bkg = TCanvas('c_bkg', 'histograms')
+c_bkg.cd()
+bkgHisto.Draw()
+bkgHisto_up.Draw('same')
+bkgHisto_dwn.Draw('same')
+c_bkg.Update()
+ggHPdf = fitter_mWW.ws.pdf('ggH')
+ggHHisto = ggHPdf.createHistogram("HWW%snujj_ggH" % mode,
+                                  fitter_mWW.ws.var(pars_mWW.var[0]))
+ggHHisto.Scale(fitter_mWW.ws.var('n_ggH').getVal()/ggHHisto.Integral())
+ggHHisto.SetLineColor(kBlue+2)
+ggHHisto.Draw('same')
+
+interf = []
+if fitter_mWW.ws.pdf('ggH_interf_ggHDown'):
+    for direction in ['Up', 'Down']:
+        interfPdf = fitter_mWW.ws.pdf('ggH_interf_ggH%s' % direction)
+        interf.append(interfPdf.createHistogram(
+            "HWW%snujj_ggH_interf_%s" % (mode, direction),
+            fitter_mWW.ws.var(pars_mWW.var[0])))
+        interf[-1].Scale(
+            fitter_mWW.ws.var('n_ggH_interf_ggH%s' % direction).getVal()/ \
+            interf[-1].Integral())
+        interf[-1].SetLineColor(kBlue+2)
+        interf[-1].SetLineStyle(kDashed)
+        interf[-1].Draw('same')
+        
+                     
+        
+qqHPdf = fitter_mWW.ws.pdf('qqH')
+qqHHisto = qqHPdf.createHistogram("HWW%snujj_qqH" % mode,
+                                  fitter_mWW.ws.var(pars_mWW.var[0]))
+qqHHisto.Scale(fitter_mWW.ws.var('n_qqH').getVal()/qqHHisto.Integral())
+qqHHisto.SetLineColor(kRed+2)
+qqHHisto.Draw('same')
+
+dataHisto = RooAbsData.createHistogram(fitter_mWW.ws.data('data_obs'),
+                                       'HWW%snujj_data_obs' % mode,
+                                       fitter_mWW.ws.var(pars_mWW.var[0]))
+dataHisto.SetMarkerStyle(20)
+dataHisto.Draw('same')
 
 if opts.doLimit:
     (expectedLimit, toys) = \
@@ -347,6 +427,14 @@ plot1.Write()
 pull1.Write()
 plot_mWW.Write()
 pull_mWW.Write()
+bkgHisto.Write()
+bkgHisto_up.Write()
+bkgHisto_dwn.Write()
+qqHHisto.Write()
+ggHHisto.Write()
+for histo in interf:
+    histo.Write()
+dataHisto.Write()
 fitter.ws.Write()
 # fitter_low.ws.Write()
 fitter_mWW.ws.Write()

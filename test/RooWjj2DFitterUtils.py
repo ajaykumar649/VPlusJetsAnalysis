@@ -3,7 +3,7 @@ from RooWjj2DFitterPars import Wjj2DFitterPars
 from ROOT import TH2D, TFile, gDirectory, TTreeFormula, RooDataHist, \
     RooHistPdf, RooArgList, RooArgSet, RooFit, RooDataSet, RooRealVar, \
     TRandom3, RooPowerLaw, RooClassFactory, gROOT, TClass, TH1D, \
-    RooChebyshevPDF
+    RooChebyshevPDF, TH1F
 from array import array
 from EffLookupTable import EffLookupTable
 import random
@@ -37,17 +37,19 @@ class Wjj2DFitterUtils:
             # print effTables
 
     # create a new empty 2D histogram with the appropriate binning
-    def newEmptyHist(self, histName):
+    def newEmptyHist(self, histName, pickVar = None):
         newHist = None
-        histCmd = 'TH%iD("%s","%s"' % (len(self.pars.var), histName, histName)
-        for v in self.pars.var:
-            if len(self.pars.varRanges[v][3]) > 1:
-                histCmd += ',%i,%s' % (len(self.pars.varRanges[v][3])-1,
-                                       "array('d', self.pars.varRanges[v][3])")
-            else:
-                histCmd += ',%i,%f,%f' % (self.pars.varRanges[v][0],
-                                          self.pars.varRanges[v][1],
-                                          self.pars.varRanges[v][2])
+        histCmd = 'TH%iF("%s","%s"' % (1 if pickVar else len(self.pars.var),
+                                       histName, histName)
+        for (i,v) in enumerate(self.pars.var):
+            if ((pickVar) and (pickVar == i+1)) or (not pickVar):
+                if len(self.pars.varRanges[v][3]) > 1:
+                    histCmd += ',%i,%s' % (len(self.pars.varRanges[v][3])-1,
+                                           "array('d', self.pars.varRanges[v][3])")
+                else:
+                    histCmd += ',%i,%f,%f' % (self.pars.varRanges[v][0],
+                                              self.pars.varRanges[v][1],
+                                              self.pars.varRanges[v][2])
         histCmd += ')'
         print 'histCmd=',histCmd
         newHist = eval(histCmd)

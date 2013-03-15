@@ -1,5 +1,4 @@
-a1_ZpJ_Mass2j_PFCor = -0.421100 +/- 0.034471 C L(-INF - +INF) 
-a2_ZpJ_Mass2j_PFCor =  0.069986 +/- 0.034219 C L(-INF - +INF) 
-a3_ZpJ_Mass2j_PFCor =  0.040781 +/- 0.029818 C L(-INF - +INF) 
-a4_ZpJ_Mass2j_PFCor =  0.037930 +/- 0.028565 C L(-INF - +INF) 
+offset_ZpJ_Mass2j_PFCor =  35.861 +/- 10.598 C L(-100 - 1000) 
+power_ZpJ_Mass2j_PFCor = -1.08291 +/- 0.23929 C L(-30 - 30) 
+width_ZpJ_Mass2j_PFCor =  44.301 +/- 19.021 C L(0 - 1000) 
 n_ZpJ = 6819.2 +/- 82.6 C

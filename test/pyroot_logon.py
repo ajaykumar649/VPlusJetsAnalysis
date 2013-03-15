@@ -121,14 +121,20 @@ if (gSystem.DynamicPathName("libFWCoreFWLite.so",True)):
     gROOT.ProcessLine('.L EffTableLoader.cc+')
     gROOT.ProcessLine('.L CPWeighter.cc+')
     if not TClass.GetClass('RooPowerLaw'):
-        print 'importing RooFit PDF classes'
+        # print 'importing RooFit PDF classes'
         gROOT.ProcessLine('.L RooPowerLaw.cc+')
+    if not TClass.GetClass('RooPowerExpPdf'):
         gROOT.ProcessLine('.L RooPowerExpPdf.cxx+')
+    if not TClass.GetClass('RooErfExpPdf'):
         gROOT.ProcessLine('.L RooErfExpPdf.cxx+')
+    if not TClass.GetClass('RooErfPdf'):
         gROOT.ProcessLine('.L RooErfPdf.cxx+')
+    if not TClass.GetClass('RooTH1DPdf'):
         gROOT.ProcessLine('.L RooTH1DPdf.cxx+')
-    gROOT.ProcessLine('.L RooChebyshevPDF.cc+')
-    gROOT.ProcessLine('.L alphaFunction.cxx+')
+    if not TClass.GetClass('RooChebyshevPdf'):
+        gROOT.ProcessLine('.L RooChebyshevPDF.cc+')
+    if not TClass.GetClass('alphaFunction'):
+        gROOT.ProcessLine('.L alphaFunction.cxx+')
 
         
 
