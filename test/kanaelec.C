@@ -3628,13 +3628,11 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
          if(sortjets.size() > 1 && sortjets[0]->Pt() > firsttagjetpt && sortjets[1]->Pt() > secondtagjetpt && fabs(sortjets[0]->Eta()) < tagjeteta && fabs(sortjets[1]->Eta()) < tagjeteta)
          {
 
-            cout << "Error 1 " << endl;
             leadingjetp4.SetPtEtaPhiE(sortjets[0]->Pt(), sortjets[0]->Eta(), sortjets[0]->Phi(), sortjets[0]->E());
             secondjetp4.SetPtEtaPhiE(sortjets[1]->Pt(), sortjets[1]->Eta(), sortjets[1]->Phi(), sortjets[1]->E());
 
             float lstagjetmass = (leadingjetp4 + secondjetp4).M();
             float rapdiff_W_dijet = fabs(wlv_p.Rapidity() - (leadingjetp4.Rapidity() + secondjetp4.Rapidity())/ 2.0);
-            cout << "Error 2 " << endl;
 
             //no cuts for tag jet mass
             EWK_W_2jets_event = 1;
@@ -3646,14 +3644,12 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             EWK_W_2jets_tagjet1_e = leadingjetp4.E();
             EWK_W_2jets_tagjet1_m = leadingjetp4.M();
 
-            cout << "Error 3 " << endl;
             EWK_W_2jets_tagjet2_pt = secondjetp4.Pt();
             EWK_W_2jets_tagjet2_eta = secondjetp4.Eta();
             EWK_W_2jets_tagjet2_phi = secondjetp4.Phi();
             EWK_W_2jets_tagjet2_e = secondjetp4.E();
             EWK_W_2jets_tagjet2_m = secondjetp4.M();
 
-            cout << "Error 4 " << endl;
             //Tag Jet pair
             EWK_W_2jets_tagjet_etasign = leadingjetp4.Eta() * secondjetp4.Eta();
             EWK_W_2jets_tagjet_deltaeta = fabs(leadingjetp4.Eta() - secondjetp4.Eta());
@@ -3662,7 +3658,6 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             EWK_W_2jets_tagjet_deltaR = leadingjetp4.DeltaR(secondjetp4); 
             EWK_W_2jets_tagjet_mass = lstagjetmass;
 
-            cout << "Error 5 " << endl;
             //Lepton and MET
             EWK_W_2jets_l_pt = mup.Pt();
             EWK_W_2jets_l_eta = mup.Eta();
@@ -3670,7 +3665,6 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             EWK_W_2jets_l_e = mup.E();
             EWK_W_2jets_l_MET_deltaphi = fabs(mup.Phi() - nvp.Phi());
 
-            cout << "Error 6 " << endl;
             //Lepton and tag jet pair
             EWK_W_2jets_l_tagjet1_deltaeta = fabs(mup.Eta() - leadingjetp4.Eta());
             EWK_W_2jets_l_tagjet1_deltaphi = fabs(mup.Phi() - leadingjetp4.Phi());
@@ -3679,14 +3673,12 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             EWK_W_2jets_l_tagjet2_deltaphi = fabs(mup.Phi() - secondjetp4.Phi());
             EWK_W_2jets_l_tagjet2_deltaR = mup.DeltaR(secondjetp4);
 
-            cout << "Error 7 " << endl;
             EWK_W_2jets_W_pt = wlv_p.Pt();
             EWK_W_2jets_W_eta = wlv_p.Eta();
             EWK_W_2jets_W_rap = wlv_p.Rapidity();
             EWK_W_2jets_W_phi = wlv_p.Phi();
             EWK_W_2jets_W_e = wlv_p.E();
 
-            cout << "Error 8 " << endl;
             //W boson and tag jet pair
             EWK_W_2jets_W_tagjet1_deltaphi = fabs(wlv_p.Phi() - leadingjetp4.Phi());
             EWK_W_2jets_W_tagjet1_deltaeta = fabs(wlv_p.Eta() - leadingjetp4.Eta());
@@ -3697,13 +3689,11 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
             EWK_W_2jets_W_tagjet_Zeppenfield = rapdiff_W_dijet;
 
-            cout << "Error 9 " << endl;
             vector<double> tagjet_1_2_eta;
             tagjet_1_2_eta.push_back(EWK_W_2jets_tagjet1_eta);
             tagjet_1_2_eta.push_back(EWK_W_2jets_tagjet2_eta);
             sort(tagjet_1_2_eta.begin(), tagjet_1_2_eta.end()); //Sort the jet eta from smallest to largest
 
-            cout << "Error 10 " << endl;
             //Find the left FIRST central jet between the tag jet eta
             int findcentraljet = 0;
 
@@ -3739,7 +3729,6 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
                }
             }
-            cout << "Error 11 " << endl;
 
             //Tag jet pair Q-G information
             if((jetsp4QGd.FindObject(sortjets[0]) != 0) && (jetsp4QGd.FindObject(sortjets[1]) != 0))
@@ -3757,9 +3746,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                EWK_W_2jets_tagjet2_btagCSV = *tmp2btagCSV;
             } 
           
-            cout << "Error 12 " << endl;
          }//Loose tag jet selection
-            cout << "Error 13 " << endl;
 
       }
 

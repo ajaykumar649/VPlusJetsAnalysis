@@ -3690,19 +3690,20 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             }
 
             //Tag jet pair Q-G information
-            Float_t *tmp1qg = (Float_t*) jetsp4QGd.GetValue(sortjets[0]);
-            Float_t *tmp2qg = (Float_t*) jetsp4QGd.GetValue(sortjets[1]);
-
-            EWK_W_2jets_tagjet1_QGd = *tmp1qg;
-            //cout<<"QG Value: " << EWK_W_2jets_tagjet1_QGd << endl;
-            EWK_W_2jets_tagjet2_QGd = *tmp2qg;
-
-            //Tag jet pair b-tag information
-            Float_t *tmp1btagCSV = (Float_t*) jetsp4btagCSV.GetValue(sortjets[0]);
-            Float_t *tmp2btagCSV = (Float_t*) jetsp4btagCSV.GetValue(sortjets[1]);
-
-            EWK_W_2jets_tagjet1_btagCSV = *tmp1btagCSV;
-            EWK_W_2jets_tagjet2_btagCSV = *tmp2btagCSV;
+            if((jetsp4QGd.FindObject(sortjets[0]) != 0) && (jetsp4QGd.FindObject(sortjets[1]) != 0))
+            {
+               Float_t *tmp1qg = (Float_t*) jetsp4QGd.GetValue(sortjets[0]);
+               Float_t *tmp2qg = (Float_t*) jetsp4QGd.GetValue(sortjets[1]);
+               EWK_W_2jets_tagjet1_QGd = *tmp1qg;
+               EWK_W_2jets_tagjet2_QGd = *tmp2qg;
+            } 
+            if((jetsp4btagCSV.FindObject(sortjets[0]) != 0) && (jetsp4btagCSV.FindObject(sortjets[1]) != 0))
+            {
+               Float_t *tmp1btagCSV = (Float_t*) jetsp4btagCSV.GetValue(sortjets[0]);
+               Float_t *tmp2btagCSV = (Float_t*) jetsp4btagCSV.GetValue(sortjets[1]);
+               EWK_W_2jets_tagjet1_btagCSV = *tmp1btagCSV;
+               EWK_W_2jets_tagjet2_btagCSV = *tmp2btagCSV;
+            } 
 
          }//Loose tag jet selection
 
