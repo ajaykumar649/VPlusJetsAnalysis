@@ -334,14 +334,15 @@ if not full_pdf:
 bkgHisto = full_pdf.createHistogram("HWW%snujj_bkg" % mode,
                                     fitter_mWW.ws.var(pars_mWW.var[0]))
 bkgHisto.Scale(full_pdf.expectedEvents(fitter_mWW.ws.set('obsSet'))/bkgHisto.Integral())
+bkgHisto.SetName("HWW%snujj_bkg" % mode)
 # c_debug = TCanvas('c_debug', 'debug')
 bkgHisto_up = fitter_mWW.utils.newEmptyHist(
-    'HWW%snujj_bkg_Up__%s' % (mode, pars_mWW.var[0]), 1)
+    'HWW%snujj_bkg_bkgshapeUp' % (mode), 1)
 bkgHisto_up = pulls.curveToHist(upper, bkgHisto_up)
 bkgHisto_up.SetLineColor(kOrange+2)
 bkgHisto_up.SetLineStyle(kDashed)
 bkgHisto_dwn = fitter_mWW.utils.newEmptyHist(
-    'HWW%snujj_bkg_Down__%s' % (mode, pars_mWW.var[0]), 1)
+    'HWW%snujj_bkg_bkgshapeDown' % (mode), 1)
 bkgHisto_dwn = pulls.curveToHist(lower, bkgHisto_dwn)
 bkgHisto_dwn.SetLineColor(kOrange+4)
 bkgHisto_dwn.SetLineStyle(kDashed)
@@ -355,6 +356,7 @@ ggHPdf = fitter_mWW.ws.pdf('ggH')
 ggHHisto = ggHPdf.createHistogram("HWW%snujj_ggH" % mode,
                                   fitter_mWW.ws.var(pars_mWW.var[0]))
 ggHHisto.Scale(fitter_mWW.ws.var('n_ggH').getVal()/ggHHisto.Integral())
+ggHHisto.SetName("HWW%snujj_ggH" % mode)
 ggHHisto.SetLineColor(kBlue+2)
 ggHHisto.Draw('same')
 
@@ -368,6 +370,7 @@ if fitter_mWW.ws.pdf('ggH_interf_ggHDown'):
         interf[-1].Scale(
             fitter_mWW.ws.var('n_ggH_interf_ggH%s' % direction).getVal()/ \
             interf[-1].Integral())
+        interf[-1].SetName('HWW%snujj_ggH_interf_ggH%s' % (mode,direction))
         interf[-1].SetLineColor(kBlue+2)
         interf[-1].SetLineStyle(kDashed)
         interf[-1].Draw('same')
@@ -378,6 +381,7 @@ qqHPdf = fitter_mWW.ws.pdf('qqH')
 qqHHisto = qqHPdf.createHistogram("HWW%snujj_qqH" % mode,
                                   fitter_mWW.ws.var(pars_mWW.var[0]))
 qqHHisto.Scale(fitter_mWW.ws.var('n_qqH').getVal()/qqHHisto.Integral())
+qqHHisto.SetName("HWW%snujj_qqH" % mode)
 qqHHisto.SetLineColor(kRed+2)
 qqHHisto.Draw('same')
 
@@ -385,6 +389,7 @@ dataHisto = RooAbsData.createHistogram(fitter_mWW.ws.data('data_obs'),
                                        'HWW%snujj_data_obs' % mode,
                                        fitter_mWW.ws.var(pars_mWW.var[0]))
 dataHisto.SetMarkerStyle(20)
+dataHisto.SetName('HWW%snujj_data_obs' % mode)
 dataHisto.Draw('same')
 
 if opts.doLimit:

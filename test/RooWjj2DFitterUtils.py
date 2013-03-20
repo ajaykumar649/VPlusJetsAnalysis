@@ -471,13 +471,14 @@ class Wjj2DFitterUtils:
         elif model == 19:
             #alpha function morphed pdf where the pdf is passed as auxModel
             self.analyticPdf(ws, var, auxModel[0], '%s_side' % pdfName, 
-                             idString + '_side')
+                             idString + '_side', auxModel[3])
             self.analyticPdf(ws, var, auxModel[1], '%s_sig' % pdfName, 
-                             idString + '_sig')
+                             idString + '_sig', auxModel[4])
             ws.factory("alphaFunction::%s_alpha(%s, %s_side, %s_sig)" % \
                            (pdfName, var, pdfName, pdfName)
                        )
-            self.analyticPdf(ws, var, auxModel[2], '%s_pdf' % pdfName, idString)
+            self.analyticPdf(ws, var, auxModel[2], '%s_pdf' % pdfName, idString,
+                             auxModel[5])
             ws.factory("RooEffProd::%s(%s_pdf, %s_alpha)" % (pdfName, pdfName,
                                                             pdfName)
                        )
@@ -589,7 +590,7 @@ class Wjj2DFitterUtils:
             ws.factory('PROD::%s(%s,%s)' % (pdfName, pdfErf.GetName(),
                                             pdfPower.GetName()))
         elif model == 29:
-            # QCD inspired model with a erf turnon
+            # QCD inspired model with a erf turnon + gaussian
             pdfPower = self.analyticPdf(ws, var, 28, '%s_tail' % pdfName,
                                         idString)
             pdfGaus = self.analyticPdf(ws, var, 27, '%s_wiggle' % pdfName,
@@ -637,6 +638,21 @@ class Wjj2DFitterUtils:
             self.analyticPdf(ws, var, 0, '%s_tail' % pdfName, idString)
             ws.factory("SUM::%s(f_W_%s[0.4,0.,1.]*%s_W,f_Z_%s[0.1,0.,1.]*%s_Z,%s_tail)" % \
                        (pdfName, idString, pdfName, idString, pdfName, pdfName))
+        elif model == 32:
+            # sum of exponentials
+            factoryString = 'SUM::%s(' % (pdfName)
+            for i in range(0, auxModel):
+                pdf = ws.factory(
+                    'RooExponential::%s_%i(%s,c_%s_%i[0.012,-10,10])' % \
+                    (pdfName, i, var, idString, i))
+                f = ws.factory('f_%i[%.3f,0.,1.]' % (i, 1./auxModel))
+                if i < (auxModel-1):
+                    factoryString += f.GetName() + '*'
+                factoryString += pdf.GetName() + ','
+            factoryString = factoryString[:-1] + ')'
+            print factoryString
+            ws.factory(factoryString)
+           
         else:
             # this is what will be returned if there isn't a model implemented
             # for a given model code.

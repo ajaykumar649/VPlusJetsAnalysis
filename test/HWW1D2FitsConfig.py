@@ -122,18 +122,15 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
             modePars = mu2Pars
 
     pars.cuts = '(ggdevt==%i)&&(fit_status==0)&&(W_mt>30)' % Nj
+    pars.cuts = '(fit_status==0)&&(W_mt>30)'
     pars.cuts += '&&(%s>%.3f)' % (modePars[mH][0], modePars[mH][1])
-    # pars.cuts = '(fit_status==0)&&(W_mt>30)' + \
-    #     '&&(%s>%.3f)' % (modePars[mH][0], modePars[mH][1])
-    # pars.cuts += '&&(fit_mlvjj>%.0f)&&(fit_mlvjj<%.0f)' % (modePars[mH][2],
-    #                                                        modePars[mH][3])
     
     #btag veto
     pars.btagVeto = False
-    # for i in range(0, 6):
-    #     pars.cuts += '&&((abs(JetPFCor_Eta[%i])>2.4)||' % i + \
-    #         '(JetPFCor_Pt[%i]<30.)||' % i + \
-    #         '(JetPFCor_bDiscriminatorCSV[%i]<0.679))' % i
+    for i in range(0, 6):
+        pars.cuts += '&&((abs(JetPFCor_Eta[%i])>2.4)||' % i + \
+            '(JetPFCor_Pt[%i]<30.)||' % i + \
+            '(JetPFCor_bDiscriminatorCSV[%i]<0.244))' % i
 
     # veto boosted topology
     # if mH >= 600:

@@ -86,6 +86,11 @@ def splitErrCurve(curve):
 
     upperCurve.Sort()
     lowerCurve.Sort()
+    if lowerCurve.GetY()[0] > upperCurve.GetY()[0]:
+        tmp = lowerCurve
+        lowerCurve = upperCurve
+        upperCurve = tmp
+        
     return (upperCurve, lowerCurve)
 
 def curveToHist(curve, hist, debug = False):

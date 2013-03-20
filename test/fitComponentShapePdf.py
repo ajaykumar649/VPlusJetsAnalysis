@@ -68,8 +68,12 @@ else:
 
 files = getattr(pars, '%sFiles' % opts.component)
 models = getattr(pars, '%sModels' % opts.component)
-if opts.sb or opts.sig:
-    models = getattr(pars, '%sSidebandModels' % opts.component)
+if opts.sb:
+    # print getattr(pars, '%sAuxModels' % opts.component)
+    # models = [ getattr(pars, '%sAuxModels' % opts.component)[0][0] ]
+    pars.cuts = pars.SidebandCuts
+# if opts.sig:
+#     models = [ getattr(pars, '%sAuxModels' % opts.component)[0][1] ]
 compName = opts.component
 morphingPdf = False
 if models[0] == -2:
@@ -187,6 +191,10 @@ if opts.interference in [1,2,3]:
         print 'failed to fined pdf',pdfName
 else:
     sigPdf = fitter.makeComponentPdf(compName, files, models)
+    if opts.sb and fitter.ws.pdf('%s_%s_side' % (compName,pars.var[0])):
+        sigPdf = fitter.ws.pdf('%s_%s_side' % (compName,pars.var[0]))
+    elif opts.sig and fitter.ws.pdf('%s_%s_sig' % (compName,pars.var[0])):
+        sigPdf = fitter.ws.pdf('%s_%s_sig' % (compName,pars.var[0]))
 
 extraTag = ''
 if opts.interference == 2:
@@ -213,6 +221,7 @@ for filename in args:
     parCopy.readFromFile(filename)
     params.assignValueOnly(parCopy)
 
+params.Print('v')
 parCopy.IsA().Destructor(parCopy)
     
 if fitter.ws.var('npow_ggH_Mass2j_PFCor'):
@@ -293,6 +302,15 @@ for (i,m) in enumerate(models):
     chi2s.append(chi2_1)
     ndfs.append(ndf_1)
 
+    pull = pulls.createPull(sigPlot.getHist('theData'),
+                            sigPlot.getCurve('fitCurve'))
+    plots.append(pull)
+    c2 = TCanvas('c%i_pull' % i, par + ' pull')
+    c2.SetGridy()
+    pull.Draw('ap')
+    cans.append(c2)
+    
+
     c1.Print('%s.png' % opts.bn)
     c1.Print('%s.pdf' % opts.bn)
 
@@ -328,23 +346,20 @@ if compName != 'QCD':
     paramsFile.close()
     outfile = open('%s.txt' % opts.bn, 'w')
     for line in lines:
-        if opts.sb or opts.sig:
-            tag = '_side ' if opts.sb else '_sig '
-            if opts.sb == 2:
-                tag = '_low '
-            elif opts.sb == 3:
-                tag = '_high '
-            words = line.split()
-            outfile.write(words[0] + tag + ' '.join(words[1:]) + '\n')
-        else:
-            outfile.write(line)
+        tag = ' '
+        if opts.sb == 2:
+            tag = '_low '
+        elif opts.sb == 3:
+            tag = '_high '
+        words = line.split()
+        outfile.write(words[0] + tag + ' '.join(words[1:]) + '\n')
     yieldName = compName
     if opts.interference == 2:
         yieldName += '_interf_%sUp' % compName
     elif opts.interference == 3:
         yieldName += '_interf_%sDown' % compName
-    if opts.sb:
-        yieldName = 'dummy'
+    # if opts.sb:
+    #     yieldName = 'dummy'
     if morphingPdf and (opts.morphComponent == 0):
         yieldName = opts.component
         outfile.write('fMU_%s = 0.0 +/- 10. L(-1.0 - 1.0)\n' % (yieldName))

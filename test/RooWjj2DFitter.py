@@ -457,7 +457,7 @@ class Wjj2DFitter:
 
         return data
 
-    def stackedPlot(self, var, logy = False, pdfName = None):
+    def stackedPlot(self, var, logy = False, pdfName = None, Silent = False):
         if not pdfName:
             pdfName = 'total'
 
@@ -476,11 +476,12 @@ class Wjj2DFitter:
         data = self.ws.data('data_obs')
         nexp = pdf.expectedEvents(self.ws.set('obsSet'))
 
-        print pdf.GetName(),'expected: %.0f' % (nexp)
-        print 'data events: %.0f' % (data.sumEntries())
+        if not Silent:
+            print pdf.GetName(),'expected: %.0f' % (nexp)
+            print 'data events: %.0f' % (data.sumEntries())
 
         if nexp < 1:
-            nexpt = data.sumEntries()
+            nexp = data.sumEntries()
         theComponents = [] 
         if self.pars.includeSignal:
             theComponents += self.pars.signals
@@ -493,7 +494,8 @@ class Wjj2DFitter:
         # #invData.Print('v')
         # sframe.addPlotable(invData, 'pe', True, True)
         for (idx,component) in enumerate(theComponents):
-            print 'plotting',component,'...',
+            if not Silent:
+                print 'plotting',component,'...',
             if hasattr(self.pars, '%sPlotting' % (component)):
                 plotCharacteristics = getattr(self.pars, '%sPlotting' % \
                                                   (component))
@@ -509,8 +511,9 @@ class Wjj2DFitter:
                 removals = compList.selectByName('%s*' % component)
                 compList.remove(removals)
 
-            print 'events', self.ws.function('f_%s_norm' % component).getVal()
-            sys.stdout.flush()
+            if not Silent:
+                print 'events', self.ws.function('f_%s_norm' % component).getVal()
+                sys.stdout.flush()
             if abs(self.ws.function('f_%s_norm' % component).getVal()) >= 1.:
                 pdf.plotOn(sframe, #RooFit.ProjWData(data),
                            RooFit.DrawOption('LF'), RooFit.FillStyle(1001),
@@ -559,14 +562,16 @@ class Wjj2DFitter:
             blinder.SetFillStyle(1001)
             sframe.addObject(blinder)
         elif self.pars.blind:
-            print "blind but can't find exclusion region for", var
-            print 'excluded',excluded,self.pars.exclude
-            print 'hiding data points'
+            if not Silent:
+                print "blind but can't find exclusion region for", var
+                print 'excluded',excluded,self.pars.exclude
+                print 'hiding data points'
             sframe.setInvisible('theData', True)
 
         #sframe.GetYaxis().SetTitle('Events / GeV')
         # dataHist.IsA().Destructor(dataHist)
-        print
+        if not Silent:
+            print
 
         return sframe
 
