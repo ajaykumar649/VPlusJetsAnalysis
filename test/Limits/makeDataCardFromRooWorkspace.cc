@@ -172,7 +172,7 @@ makeDataCardContent(TFile *fp,
       if (isinterp) cout << " (interpolated)";
       if (systname.Length()) cout << ", systname = " << systname;
       
-      card->addProcessChannel(yield,procname,channame,systname,ichan,0,1,issignal(procname));
+      card->addProcessChannel(yield,procname,channame,systname,issignal(procname));
     } else
       continue;
 
@@ -182,13 +182,13 @@ makeDataCardContent(TFile *fp,
 
 #ifdef ISHWW
 
-      card->addSystematic("lumi_8TeV",procname,0,1+siglumiunc);
+      card->addSystematic("lumi_8TeV",procname,channame,1+siglumiunc);
 
-      card->addSystematic(leptsyst,procname,0,
+      card->addSystematic(leptsyst,procname,channame,
 			  1+sqrt(siglepteffunc*siglepteffunc + sigtrigeffunc*sigtrigeffunc));
 
       TString signalsyst = Form("CMS_%s_eff_sig_%dTeV", channame.Data(),beamcomenergytev);
-      card->addSystematic(signalsyst,procname,0,
+      card->addSystematic(signalsyst,procname,channame,
 #ifdef SEVENTEV
 			  1.0 + (massgev < 500 ? sigselefferrpctlomass : sigselefferrpcthimass)/100.
 #else
@@ -203,21 +203,21 @@ makeDataCardContent(TFile *fp,
 
       if (procname.Contains("qq") ) { // VBF process
 	
-	card->addSystematic("pdf_qqbar",procname,0,pdfunc.second);
-	card->addSystematic("QCDscale_qqH",procname,0,scaleunc0.second);
+	card->addSystematic("pdf_qqbar",procname,channame,pdfunc.second);
+	card->addSystematic("QCDscale_qqH",procname,channame,scaleunc0.second);
 
       } else { // default gg fusion
 
-	card->addSystematic("pdf_gg",procname,0,pdfunc.second);
+	card->addSystematic("pdf_gg",procname,channame,pdfunc.second);
 
 	if (ichan & 1) { // odd channel, 3jet bin
-	  card->addSystematic("QCDscale_ggH1in",procname,0,scaleunc2.second);
-	  card->addSystematic("QCDscale_ggH2in",procname,0,scaleunc3.second);
-	  card->addSystematic("UEPS",procname,0,ueps1.second);
+	  card->addSystematic("QCDscale_ggH1in",procname,channame,scaleunc2.second);
+	  card->addSystematic("QCDscale_ggH2in",procname,channame,scaleunc3.second);
+	  card->addSystematic("UEPS",procname,channame,ueps1.second);
 	} else { // even channel, 2jet bin
-	  card->addSystematic("QCDscale_ggH",procname,0,scaleunc0.second);
-	  card->addSystematic("QCDscale_ggH1in",procname,0,scaleunc1.second);
-	  card->addSystematic("UEPS",procname,0,ueps0.second);
+	  card->addSystematic("QCDscale_ggH",procname,channame,scaleunc0.second);
+	  card->addSystematic("QCDscale_ggH1in",procname,channame,scaleunc1.second);
+	  card->addSystematic("UEPS",procname,channame,ueps0.second);
 	}
       }
 #endif //ISHWW
@@ -228,11 +228,11 @@ makeDataCardContent(TFile *fp,
       if (getConstraint(w,procname,constraint)) {
 	// background from MC, add MC-based uncertainties
 	
-	card->addSystematic(procname+"_constraint",procname,0,constraint);
+	card->addSystematic(procname+"_constraint",procname,channame,constraint);
 	if (!procname.EqualTo("WpJ")) {
-	  card->addSystematic(leptsyst,procname,0,
+	  card->addSystematic(leptsyst,procname,channame,
 			      1+sqrt(siglepteffunc*siglepteffunc + sigtrigeffunc*sigtrigeffunc));
-	  card->addSystematic("lumi_8TeV",procname,0,1+siglumiunc);
+	  card->addSystematic("lumi_8TeV",procname,channame,1+siglumiunc);
 	}
       }
     }
