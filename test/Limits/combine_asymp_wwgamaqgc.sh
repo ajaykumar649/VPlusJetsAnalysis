@@ -1,6 +1,6 @@
 #!/bin/sh
 
-COMBINE_ARGS="-v0 -M Asymptotic --minosAlgo stepping"
+COMBINE_ARGS="-v0 -M Asymptotic --minosAlgo stepping --rMin=0.01 --rMax=2"
 
 for datacard in $*
 do

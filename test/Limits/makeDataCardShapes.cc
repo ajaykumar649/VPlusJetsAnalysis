@@ -181,11 +181,9 @@ makeDataCardContent(const TString& fname,
 
     // tokenize the histo name to determine
     // 1. process name
-    // 2. channel name
-    // 3. mass point
-    // 4. any systematic applied
+    // 2. any systematic applied
     //
-    TString prefix(""), procname(""),systname(""),channname("");
+    TString prefix(""), procname(""),systname("");
 
     if (!tokNameGetInfo(hname, prefix, procname,systname)) {
       cout << "...skipping."  << endl;
