@@ -16,8 +16,8 @@ Card::Card(double         procchanyield,
 	   const bool     issignal
 	   )
 {
-  nbackproc = 0;
-  nsigproc  = 0;
+  nbackproc_ = 0;
+  nsigproc_  = 0;
 
   cout << "\tmake new card ";
 
@@ -32,27 +32,26 @@ Card::Card(double         procchanyield,
   pd.channels.insert(channel);
 
   if( procname.Contains("data") ) {
-    data = pd; // done.
+    data_ = pd; // done.
   } else {
 
     if( issignal) {
 
       assert(!systname.Length());     // don't expect to encounter shape systematic first.
 
-      nsigproc++;
-      pd.procindex = 1-nsigproc; /* process index for signal processes required to be distinct,
+      nsigproc_++;
+      pd.procindex = 1-nsigproc_; /* process index for signal processes required to be distinct,
 				    as well as 0 or negative */
     } else {                                                        //background
-      nbackproc++;
-      pd.procindex = nbackproc;
+      nbackproc_++;
+      pd.procindex = nbackproc_;
     }
       
-    processes.push_back(pd);
-    pname2index[procname]= 0;
+    processes_.push_back(pd);
+    pname2index_[procname]= 0;
 
   } // else not data
 
-  channels.insert(channame);
 }                                                                   // Card::Card
 
 //================================================================================
@@ -62,54 +61,49 @@ Card::addProcessChannel(double         procchanyield,// process/channel yield
 			const TString& procname,     // process name 
 			const TString& channame,     // name of channel
 			const TString& systname,     // name of (shape) systematic applied
-			const int      ichanref,     // channel reference index
-			const int      ichan,        // channel index
-			const int      nchan,        // number of channels in card
 			const bool     issignal
 			)
 {
   cout << "\tadd to card ";
 
   // With each input histogram one must:
-  // 1. If a new process, update the process info in the card: "card.processes", "card.pname2index",
+  // 1. If a new process, update the process info in the card: "card.processes", "card.pname2index_",
   // 2. Update new channel information "processes[procindex].channels" (channel name/rate pairs)
   // 3. Update the systematics information as necessary:
   //    if systname.length, add shape systematic information to
-  //    systematics (if new systematic), processes[procindex].systrates[systname][ichan]
+  //    systematics (if new systematic), processes[procindex].systrates[systname+":"+channame]
   // 
   pair<TString,double> channel;
 
   const pair<double,double> zeropair(0.0,0.0);
 
-  channels.insert(channame);
-
   channel.first  = channame;
   channel.second = procchanyield;
   
-  if( procname.Contains("data") )         // data observation
+  if( procname.Contains("data") )                             // *** DATA OBSERVATION ***
 
-    if (!data.name.Length()) {             // first channel of data encountered
+    if (!data_.name.Length()) {             // first channel of data encountered
       ProcData_t pd;
       pd.name = procname;
       pd.channels.insert(channel);
-      data = pd;
+      data_ = pd;
     }else{                                      // another channel for data, possibly
-      assert(!data.name.CompareTo(procname)); // must be the same
-      data.channels.insert(channel);
+      assert(!data_.name.CompareTo(procname)); // must be the same
+      data_.channels.insert(channel);
     }
 
-  else if( issignal ) { // signal expectation
+  else if( issignal ) {                                      // *** SIGNAL EXPECTATION ***
 
     map<TString,int>::iterator pit;
-    pit = pname2index.find(procname);
-    if (pit == pname2index.end()) {    // new signal process, first channel encountered
-      nsigproc++;
+    pit = pname2index_.find(procname);
+    if (pit == pname2index_.end()) {    // new signal process, first channel encountered
+      nsigproc_++;
 
       assert(!systname.Length());     // don't expect to encounter shape systematic first
 
       ProcData_t pd;
       pd.name      = procname;
-      pd.procindex = 1-nsigproc; /* process index for signal processes required to be distinct,
+      pd.procindex = 1-nsigproc_; /* process index for signal processes required to be distinct,
 					 as well as 0 or negative */
 
       pd.channels.insert(channel);
@@ -117,39 +111,23 @@ Card::addProcessChannel(double         procchanyield,// process/channel yield
       // put new signal in front, have to adjust the mapped indices for all the rest.
       // This maintains the proper ordering of processes in the datacard (for LandS)
       //
-      for (pit = pname2index.begin(); pit != pname2index.end(); pit++)
+      for (pit = pname2index_.begin(); pit != pname2index_.end(); pit++)
 	pit->second++;
 
-      processes.push_front(pd);
+      processes_.push_front(pd);
 
-      pname2index[pd.name] = 0;
+      pname2index_[pd.name] = 0;
 
     } else {                        // another channel for signal, or a shape systematic
 
-      ProcData_t& pd = processes[pit->second];
+      ProcData_t& pd = processes_[pit->second];
       assert(pd.name.Length());             // process should exist here
       assert(!pd.name.CompareTo(procname)); // must be the same
 
       if (systname.Length()) {
-	systematics[systname] = "shape1";
+	systematics_[systname] = "shape1";
 
-#ifdef ISHWW
-	if (procname.Contains("ggH")) {
-	  // In this case particularly we do *not* pay attention to the systematics name, but
-	  // assume this is the common interference shape systematic for ggH signal
-	  //
-	  const pair<double,double> onepair(0.0,1.0);
-
-	  pd.systrates["interf_ggH"].resize(nchan,onepair); /* shape-based systematic,
-							       assume all channels CORRELATED,
-							       so all channels get factor 1.0, */
-	}
-#else
-	pd.systrates[systname].resize(nchan,zeropair); /* shape-based systematic,
-							  assume all channels uncorrelated,
-							  so all channels get factor 0.0, */
-	pd.systrates[systname][ichan].second = 1.0;     // except the current channel
-#endif
+	pd.systrates[systname+":"+channame].second = 1.0;  // except the current channel
 
       } else {
 
@@ -158,36 +136,34 @@ Card::addProcessChannel(double         procchanyield,// process/channel yield
       } // nominal signal histo
     } // signal histo for another channel, or systematic
 
-  } else {                               // background process
+  } else {                                                  // *** BACKGROUND PROCESS ***
 
     map<TString,int>::iterator pit;
-    pit = pname2index.find(procname);
-    if (pit == pname2index.end()) {    // first channel of this background process encountered
-      nbackproc++;
+    pit = pname2index_.find(procname);
+    if (pit == pname2index_.end()) {    // first channel of this background process encountered
+      nbackproc_++;
 
       ProcData_t pd;
       pd.name = procname;
-      pd.procindex = nbackproc;
+      pd.procindex = nbackproc_;
 
-      if (systname.Length()) { // a shape-based limit, all channels get a factor of 0.0
-	systematics[systname] = "shape1";
-	pd.systrates[systname].resize(nchan,zeropair);
-	pd.systrates[systname][ichan].second = 1.0; // except the current channel
+      if (systname.Length()) {               // a shape-based limit
+	systematics_[systname] = "shape1";
+	pd.systrates[systname+":"+channame].second = 1.0;
       }
 
       pd.channels.insert(channel);
 
-      pname2index[pd.name] = (int)processes.size();
-      processes.push_back(pd);
+      pname2index_[pd.name] = (int)processes_.size();
+      processes_.push_back(pd);
 
     } else {                                /* either another channel, or a shape
 					       systematic for an existing channel */
-      ProcData_t& pd = processes[pit->second];
+      ProcData_t& pd = processes_[pit->second];
 
-      if (systname.Length()) { // a shape-based limit, all channels get a factor of 0.0
-	systematics[systname] = "shape1";
-	pd.systrates[systname].resize(nchan,zeropair);
-	pd.systrates[systname][ichan].second = 1.0; // except the current channel
+      if (systname.Length()) {              // a shape-based limit
+	systematics_[systname] = "shape1";
+	pd.systrates[systname+":"+channame].second = 1.0;
       }
       else {
 	assert(pd.name.Length());             // process should exist here
@@ -203,35 +179,42 @@ Card::addProcessChannel(double         procchanyield,// process/channel yield
 void
 Card::addSystematic(const TString& systname,
 		    const TString& procname,
-		    int            ichan,
+		    const TString& channame,
 		    const double   unc)
 {
   //cout<<"addSystematic "<<systname<<" to "<<procname<<endl;
 
   assert( !procname.Contains("data") );
 
-  int nchan = (int)channels.size();
-
   const pair<double,double> zeropair(0.0,0.0);
 
-  std::map<TString,TString>::const_iterator sit = systematics.find(systname);
-  if (sit == systematics.end())
-    systematics[systname] = "lnN";
+  std::map<TString,TString>::const_iterator sit = systematics_.find(systname);
+  if (sit == systematics_.end())
+    systematics_[systname] = "lnN";
 
-  std::map<TString,int>::const_iterator pit = pname2index.find(procname);
-  assert(pit != pname2index.end());
+  std::map<TString,int>::const_iterator pit = pname2index_.find(procname);
+  assert(pit != pname2index_.end());
 
   int index = pit->second;
-  ProcData_t& pd = processes[index];
+  ProcData_t& pd = processes_[index];
 
-  std::map<TString,std::vector<std::pair<double,double> > >::const_iterator rit = 
-    pd.systrates.find(systname);
+  pd.systrates[systname+":"+channame].second = unc;
+}                                                           // Card::addSystematic
 
-  if (rit == pd.systrates.end())
-    pd.systrates[systname].resize(nchan,zeropair);
+//================================================================================
 
-  pd.systrates[systname][ichan].second = unc;
-}                                                                 // addSystematic
+void
+Card::addSyst2ShapeFile(const TString& procname,
+			const TString& systname)
+{
+  size_t i;
+  for (i=0; i<shapespecs_.size(); i++)
+    if (shapespecs_[i].process == procname) {
+      shapespecs_[i].histo_with_syst = systname;
+      break;
+    }
+  assert(i<shapespecs_.size());
+}                                                       // Card::addSyst2ShapeFile
 
 //================================================================================
 
@@ -242,7 +225,7 @@ Card::addModelParam(const TString& paramname,
   ModelParam_t mp;
   mp.name = paramname;
   mp.type = paramtype;
-  modelparams.push_back(mp);
+  modelparams_.push_back(mp);
 }                                                           // Card::addModelParam
 
 //================================================================================
@@ -254,8 +237,11 @@ void Card::Print(const TString& dcardname)
 {
   using namespace std;
 
-  int nbins= processes[0].channels.size();
-  int jmax = processes.size()-1;
+  assert(processes_.size());
+
+  int nbins= processes_[0].channels.size();
+  int jmax = processes_.size()-1;
+
 
 #if 0
   TString outdir;
@@ -280,14 +266,14 @@ void Card::Print(const TString& dcardname)
 
   // these are the data loops
   fprintf(dcFile,"bin                                ");
-  for (map<TString,double>::const_iterator it=data.channels.begin();
-       it != data.channels.end();
+  for (map<TString,double>::const_iterator it=data_.channels.begin();
+       it != data_.channels.end();
        it++) {
     fprintf(dcFile,"%15s",it->first.Data());
   }
   fprintf(dcFile,"\nobservation                        ");
-  for (map<TString,double>::const_iterator it=data.channels.begin();
-       it != data.channels.end();
+  for (map<TString,double>::const_iterator it=data_.channels.begin();
+       it != data_.channels.end();
        it++) {
     //fprintf(dcFile,"%15d",(int)it->second);
     fprintf(dcFile,"%15.5f",it->second);
@@ -295,14 +281,14 @@ void Card::Print(const TString& dcardname)
   
   fprintf(dcFile,"\n--------------------\n");
 
-  if (shapespecs.size()) {
-    for (size_t i = 0; i < shapespecs.size(); i++)
+  if (shapespecs_.size()) {
+    for (size_t i = 0; i < shapespecs_.size(); i++)
       fprintf(dcFile,"shapes %s %s %s %s %s\n",
-	      shapespecs[i].process.Data(),
-	      shapespecs[i].channel.Data(),
-	      shapespecs[i].file.Data(),
-	      shapespecs[i].histo.Data(),
-	      shapespecs[i].histo_with_syst.Data());
+	      shapespecs_[i].process.Data(),
+	      shapespecs_[i].channel.Data(),
+	      shapespecs_[i].file.Data(),
+	      shapespecs_[i].histo.Data(),
+	      shapespecs_[i].histo_with_syst.Data());
 
     fprintf(dcFile,"--------------------\n");
   }
@@ -324,8 +310,8 @@ void Card::Print(const TString& dcardname)
   // these are the signal and background loops
   fprintf(dcFile,"bin                                ");
   for (int j=0; j<=jmax; j++)
-    for (map<TString,double>::const_iterator it=processes[j].channels.begin();
-	 it != processes[j].channels.end();
+    for (map<TString,double>::const_iterator it=processes_[j].channels.begin();
+	 it != processes_[j].channels.end();
 	 it++)
       fprintf(dcFile,"%15s",it->first.Data());
   fprintf(dcFile,"\n");
@@ -333,19 +319,19 @@ void Card::Print(const TString& dcardname)
   fprintf(dcFile,"process                            ");
   for (int j=0; j<=jmax; j++)
     for (int k=0; k<nbins; k++)
-      fprintf(dcFile,"%15s",processes[j].name.Data());
+      fprintf(dcFile,"%15s",processes_[j].name.Data());
   fprintf(dcFile,"\n");
 
   fprintf(dcFile,"process                            ");
   for (int j=0; j<=jmax; j++)
     for (int k=0; k<nbins; k++)
-      fprintf(dcFile,"%15d",processes[j].procindex);
+      fprintf(dcFile,"%15d",processes_[j].procindex);
   fprintf(dcFile,"\n");
 
   fprintf(dcFile,"rate                               ");
   for (int j=0; j<=jmax; j++) 
-    for (map<TString,double>::const_iterator it=processes[j].channels.begin();
-	 it != processes[j].channels.end();
+    for (map<TString,double>::const_iterator it=processes_[j].channels.begin();
+	 it != processes_[j].channels.end();
 	 it++)
       fprintf(dcFile,"%15.2f",max(it->second,0.001));
   fprintf(dcFile,"\n");
@@ -357,22 +343,24 @@ void Card::Print(const TString& dcardname)
    ****************************************/
 
   map<TString,TString>::const_iterator sit;
-  for (sit  = systematics.begin();
-       sit != systematics.end();
+  for (sit  = systematics_.begin();
+       sit != systematics_.end();
        sit++) {
     const TString& name = sit->first;
     const TString& pdf  = sit->second;
     fprintf(dcFile,"%-32s %5s",name.Data(),pdf.Data());
     for (int j=0; j<=jmax; j++) {
-      const ProcData_t& pd = processes[j];
-      map<TString,vector<pair<double,double> > >::const_iterator rit = pd.systrates.find(sit->first);
-      if (rit == pd.systrates.end()) {
-	for (int k=0; k<nbins; k++)
+      const ProcData_t& pd = processes_[j];
+      map<TString,double>::const_iterator chit;
+      for (chit  = pd.channels.begin();
+	   chit != pd.channels.end();
+	   chit++) {
+	TString srchstr = name+":"+chit->first;
+	map<TString,pair<double,double> >::const_iterator rit = pd.systrates.find(srchstr);
+	if (rit == pd.systrates.end()) {
 	  fprintf(dcFile,"        -      ");
-      } else {
-	const vector<pair<double,double> >& rates = rit->second;
-	for (int k=0; k<nbins; k++) {
-	  pair<double,double> rate = rates.at(k);
+	} else {
+	  pair<double,double> rate = rit->second;
 	  if (rate.second == 0.0)        // expect the UP (second) to contain single-sided error values
 	    fprintf(dcFile,"        -      ");
 	  else if (rate.first == 0.0)
@@ -399,8 +387,8 @@ void Card::Print(const TString& dcardname)
 
   // these are the signal and background loops
   fprintf(dcFile,"bin                                ");
-  for (map<TString,double>::const_iterator it=processes[0].channels.begin();
-       it != processes[0].channels.end();
+  for (map<TString,double>::const_iterator it=processes_[0].channels.begin();
+       it != processes_[0].channels.end();
        it++)
     for (int j=0; j<=jmax; j++)
       fprintf(dcFile,"%15s",it->first.Data());
@@ -409,23 +397,23 @@ void Card::Print(const TString& dcardname)
   fprintf(dcFile,"process                            ");
   for (int k=0; k<nbins; k++)
     for (int j=0; j<=jmax; j++)
-      fprintf(dcFile,"%15s",processes[j].name.Data());
+      fprintf(dcFile,"%15s",processes_[j].name.Data());
   fprintf(dcFile,"\n");
 
   fprintf(dcFile,"process                            ");
   for (int k=0; k<nbins; k++)
     for (int j=0; j<=jmax; j++)
-      fprintf(dcFile,"%15d",processes[j].procindex);
+      fprintf(dcFile,"%15d",processes_[j].procindex);
   fprintf(dcFile,"\n");
 
   fprintf(dcFile,"rate                               ");
-  for (map<TString,double>::const_iterator chit=processes[0].channels.begin();
-       chit != processes[0].channels.end();
+  for (map<TString,double>::const_iterator chit=processes_[0].channels.begin();
+       chit != processes_[0].channels.end();
        chit++) {
     TString channame = chit->first;
     for (int j=0; j<=jmax; j++) {
-      map<TString,double>::const_iterator it=processes[j].channels.find(channame);
-      if (it==processes[j].channels.end()) {
+      map<TString,double>::const_iterator it=processes_[j].channels.find(channame);
+      if (it==processes_[j].channels.end()) {
 	cerr << "couldn't find channel " << channame << " for process " << j << endl;
 	exit(-1);
       }
@@ -441,21 +429,25 @@ void Card::Print(const TString& dcardname)
    ****************************************/
 
   map<TString,TString>::const_iterator sit;
-  for (sit  = systematics.begin();
-       sit != systematics.end();
+  for (sit  = systematics_.begin();
+       sit != systematics_.end();
        sit++) {
     const TString& name = sit->first;
     const TString& pdf  = sit->second;
     fprintf(dcFile,"%-32s %5s",name.Data(),pdf.Data());
-    for (int k=0; k<nbins; k++) {
+    map<TString,double>::const_iterator chit;
+    for (chit  = data_.channels.begin();
+	 chit != data_.channels.end();
+	 chit++) {
       for (int j=0; j<=jmax; j++) {
-	const ProcData_t& pd = processes[j];
-	map<TString,vector<pair<double,double> > >::const_iterator rit = pd.systrates.find(sit->first);
+	const ProcData_t& pd = processes_[j];
+
+	TString srchstr = name+":"+chit->first;
+	map<TString,pair<double,double> >::const_iterator rit = pd.systrates.find(srchstr);
 	if (rit == pd.systrates.end()) {
 	  fprintf(dcFile,"        -      ");
 	} else {
-	  const vector<pair<double,double> >& rates = rit->second;
-	  pair<double,double> rate = rates.at(k);
+	  pair<double,double> rate = rit->second;
 	  if (rate.second == 0.0)        // expect the UP (second) to contain single-sided error values
 	    fprintf(dcFile,"        -      ");
 	  else if (rate.first == 0.0)
@@ -463,16 +455,18 @@ void Card::Print(const TString& dcardname)
 	  else
 	    fprintf(dcFile," %g/%g ",rate.first,rate.second);
 	}
-      }
-    }
+      } // proc loop
+    } // chan loop
+
     fprintf(dcFile,"\n");
-  }
+
+  } // syst loop
 
 #endif
 
   fprintf(dcFile,"\n");
-  for (size_t i=0; i<modelparams.size(); i++) {
-    fprintf(dcFile,"%-32s %s\n",modelparams[i].name.Data(),modelparams[i].type.Data());
+  for (size_t i=0; i<modelparams_.size(); i++) {
+    fprintf(dcFile,"%-32s %s\n",modelparams_[i].name.Data(),modelparams_[i].type.Data());
   }
 
   fclose(dcFile);

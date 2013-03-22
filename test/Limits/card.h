@@ -9,11 +9,10 @@ struct ProcData_t {
   TString name;
   int procindex;                                             // index to be put into the datacard!
   std::map<TString,double> channels;
-  std::map<TString,std::vector<std::pair<double,double> > > systrates; /*  TString = systname
-									   vector index over channels
-									   pair of doubles for two-sided errors
-									   first = DOWN, second = UP
-								       */
+  std::map<TString,std::pair<double,double> > systrates; /*  TString = systname+channame
+							     pair of doubles for two-sided errors
+							     first = DOWN, second = UP
+							 */
 };
 
 struct ShapeFiles_t {
@@ -50,16 +49,13 @@ class Card {
 		      const TString& procname,     // process name 
 		      const TString& channame,     // name of channel
 		      const TString& systname,     // name of (shape) systematic applied
-		      const int      ichanref,     // channel reference index
-		      const int      ichan,        // channel index
-		      const int      nchan,        // number of channels in card
 		      const bool     issignal
 		      );
   
   void
     addSystematic(const TString& systname,     // systematic name 
 		  const TString& procname,     // process name 
-		  int            ichan,        // channel index
+		  const TString& channame,     // name of channel
 		  double         uncval
 		  );
 
@@ -69,20 +65,23 @@ class Card {
 		  );
 
   void
-    addShapeFiles(const ShapeFiles_t& shapesfile) { shapespecs.push_back(shapesfile); }
+    addShapeFiles(const ShapeFiles_t& shapesfile) { shapespecs_.push_back(shapesfile); }
+
+  void
+    addSyst2ShapeFile(const TString& procname,
+		      const TString& systname);
 
   void
     Print(const TString& dcardname=""
 	  );
 
  private:
-  int nsigproc;
-  int nbackproc;
-  std::set<TString> channels;
-  ProcData_t data;   // data is identified separately as "observation"
-  std::vector<ShapeFiles_t> shapespecs;
-  std::vector<ModelParam_t> modelparams;
-  std::deque<ProcData_t> processes; // push_front for signal, push_back for background
-  std::map<TString,int> pname2index;  // map from process name to the deque index in "processes"
-  std::map<TString,TString> systematics; // name, pdf function
+  int nsigproc_;
+  int nbackproc_;
+  ProcData_t data_;   // data is identified separately as "observation"
+  std::vector<ShapeFiles_t> shapespecs_;
+  std::vector<ModelParam_t> modelparams_;
+  std::deque<ProcData_t> processes_; // push_front for signal, push_back for background
+  std::map<TString,int> pname2index_;  // map from process name to the deque index in "processes"
+  std::map<TString,TString> systematics_; // name, pdf function
 };
