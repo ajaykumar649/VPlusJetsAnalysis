@@ -31,7 +31,8 @@ using namespace std;
 Card *
 makeDataCardContent(TFile *fp,
 		    int ichan,
-		    const TString& signame)
+		    const TString& signame,
+		    bool doshape)
 {
   Card *card;
 
@@ -44,7 +45,7 @@ makeDataCardContent(TFile *fp,
   char elormu = channame[ELORMUCHAR];
   TString leptsyst   = "CMS_eff_"+TString(elormu);
 
-  datahist = (TH1 *)fp->Get(dataobjname); // only to see if it's there
+  datahist = (TH1 *)fp->Get(dataobjname);
   if (!datahist) {
     cerr << "Couldn't get data histogram from file for channel " << ichan << endl;
     exit(-1);
@@ -71,35 +72,59 @@ makeDataCardContent(TFile *fp,
     exit(-1);
   }
 
-  card = new Card(-1,dataobjname,channame,"",false);
+  if (doshape) {
+    card = new Card(-1,dataobjname,channame,"",false);
+    card->addProcessChannel(sighist->Integral(),"signal",channame,"",true);
+    card->addProcessChannel(backhist->Integral(),bkgdobjname,channame,shapesystname,false);
+  }
+  else {
+    // cut-and-count
+    int lobin = datahist->FindFixBin(photonptmingev);
+    int hibin = datahist->GetNbinsX()+1;
 
-  card->addProcessChannel(sighist->Integral(),"signal",channame,"",ichan,0,1,true);
-  card->addProcessChannel(backhist->Integral(),bkgdobjname,channame,shapesystname,ichan,0,1,false);
+    //cout << lobin<<"-"<<hibin<<endl;
+
+    card = new Card(datahist->Integral(lobin,hibin),
+		    dataobjname,channame,"",false);
+
+    card->addProcessChannel(sighist->Integral(lobin,hibin),"signal",channame,"",true);
+
+    double nombakrate =  backhist->Integral( lobin, hibin );
+
+    card->addProcessChannel(nombakrate, bkgdobjname,channame,"",false);
+
+    // convert shape histo to a normal systematic
+    double hibakrate  = shapehist->Integral(shapehist->FindFixBin(photonptmingev),shapehist->GetNbinsX()+1);
+    card->addSystematic("backshape", bkgdobjname,channame, 1+((hibakrate-nombakrate)/nombakrate));
+  }
 
   // (non-shape) Systematics:
-  card->addSystematic(leptsyst,"signal",0,
+  card->addSystematic(leptsyst,"signal",channame,
 		      1+sqrt(lepteff_unc*lepteff_unc + trigeff_unc*trigeff_unc));
-  card->addSystematic("MET",      "signal",0,1+met_unc);
-  card->addSystematic("lumi_8TeV","signal",0,1+lumi_unc);
-  card->addSystematic("PDF",      "signal",0,1+pdf_unc);
-  card->addSystematic("Scale",    "signal",0,1+scale_unc);
-  card->addSystematic("JER",      "signal",0,1+jer_unc);
-  card->addSystematic("JES",      "signal",0,1+jes_unc);
-  card->addSystematic("antibtag", "signal",0,1+antibtag_unc);
-  card->addSystematic("pileup",   "signal",0,1+pileup_unc);
-  card->addSystematic("mvaseleff_"+channame,"signal",0,1+sigmvaseleffunc);
+  card->addSystematic("MET",      "signal",channame,1+met_unc);
+  card->addSystematic("lumi_8TeV","signal",channame,1+lumi_unc);
+  card->addSystematic("PDF",      "signal",channame,1+pdf_unc);
+  card->addSystematic("Scale",    "signal",channame,1+scale_unc);
+  card->addSystematic("JER",      "signal",channame,1+jer_unc);
+  card->addSystematic("JES",      "signal",channame,1+jes_unc);
+  card->addSystematic("antibtag", "signal",channame,1+antibtag_unc);
+  card->addSystematic("pileup",   "signal",channame,1+pileup_unc);
+
+  /* DISABLE if no MVA applied, or otherwise not relevant:
+   */
+  card->addSystematic("mvaseleff_"+channame,"signal",channame,1+sigmvaseleffunc);
 
 #if 0 // now data-driven
-  card->addSystematic(leptsyst,bkgdobjname,0,
+  card->addSystematic(leptsyst,bkgdobjname,channame,
 		      1+sqrt(lepteff_unc*lepteff_unc + trigeff_unc*trigeff_unc));
-  card->addSystematic("MET",      bkgdobjname,0,1+met_unc);
-  card->addSystematic("lumi_8TeV",bkgdobjname,0,1+lumi_unc);
-  card->addSystematic("PDF",      bkgdobjname,0,1+pdf_unc);
-  card->addSystematic("Scale",    bkgdobjname,0,1+scale_unc);
-  card->addSystematic("JER",      bkgdobjname,0,1+jer_unc);
-  card->addSystematic("JES",      bkgdobjname,0,1+jes_unc);
-  card->addSystematic("antibtag", bkgdobjname,0,1+antibtag_unc);
-  card->addSystematic("pileup",   bkgdobjname,0,1+pileup_unc);
+  card->addSystematic("MET",      bkgdobjname,channame,1+met_unc);
+  card->addSystematic("lumi_8TeV",bkgdobjname,channame,1+lumi_unc);
+  card->addSystematic("PDF",      bkgdobjname,channame,1+pdf_unc);
+  card->addSystematic("Scale",    bkgdobjname,channame,1+scale_unc);
+  card->addSystematic("JER",      bkgdobjname,channame,1+jer_unc);
+  card->addSystematic("JES",      bkgdobjname,channame,1+jes_unc);
+  card->addSystematic("antibtag", bkgdobjname,channame,1+antibtag_unc);
+  card->addSystematic("pileup",   bkgdobjname,channame,1+pileup_unc);
 #endif
 
   return card;
@@ -107,121 +132,112 @@ makeDataCardContent(TFile *fp,
 
 //================================================================================
 
-void
-makeDataCardFiles() // int argc, char*argv[])
+void makeCards4SM(const char *parfiles[],
+		  int ichan,
+		  bool doshape)
 {
   TString fname;
   TFile *fp = NULL;
+  TString channame(channames[ichan]);
 
+  // loop through objects in the input root file and find histograms
+  // that are shape inputs into the limit setting data card
+  //
+  if (strlen(parfiles[ichan])) {
+    fname = TString(dir)+"/"+TString(parfiles[ichan]); // TString(argv[ichan+1]);
+    fp = new TFile(fname);
+  }
+
+  if (!fp) return;
+  if (fp->IsZombie()) {
+    cerr << "Couldn't open file " << fname << endl;
+    exit(-1);
+  }
+
+  cout << "Reading root input file " << fname << endl;
+
+  Card *card = makeDataCardContent(fp,ichan,SMsigfmtstr,doshape);
+    
+  if (doshape) {
+    card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
+    card->addShapeFiles(ShapeFiles_t("signal",channame,fname,SMsigfmtstr));
+    card->addShapeFiles(ShapeFiles_t("background",channame,fname,
+				       "background","$PROCESS_$SYSTEMATIC"));
+  }
+
+  TString cfgtag = Form("wwgamaqgc_%s_SM",channame.Data());
+
+  TString dcardname("./datacard_"+cfgtag+".txt");
+  
+  card->Print(dcardname);
+      
+  delete card;
+}
+
+//================================================================================
+
+void makeCards4param(const char *parname,
+		     const char *parfiles[],
+		     int  npts,
+		     const int parpts[],
+		     int ichan,
+		     bool doshape)
+{
+  TString fname;
+  TFile *fp = NULL;
+  TString channame(channames[ichan]);
+
+  // loop through objects in the input root file and find histograms
+  // that are shape inputs into the limit setting data card
+  //
+  for (int i=0; i<npts; i++) {
+    if (strlen(parfiles[ichan])) {
+      fname = TString(dir)+"/"+TString(parfiles[ichan]); // TString(argv[ichan+1]);
+      fp = new TFile(fname);
+    }
+
+    if (!fp) continue;
+    if (fp->IsZombie()) {
+      cerr << "Couldn't open file " << fname << endl;
+      exit(-1);
+    }
+
+    cout << "Reading root input file " << fname << endl;
+
+    int parval = parpts[i];
+    TString signame = Form(signalfmtstr,parname,(parval<0?"m":""),abs(parval));
+    Card *card = makeDataCardContent(fp,ichan,signame,doshape);
+    
+    if (doshape) {
+      card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
+      card->addShapeFiles(ShapeFiles_t("signal",channame,fname,signame));
+      card->addShapeFiles(ShapeFiles_t("background",channame,fname,
+				       "background","$PROCESS_$SYSTEMATIC"));
+    }
+
+    TString cfgtag = Form("wwgamaqgc_%s_%s:%d",channame.Data(),parname,parval);
+
+    TString dcardname("./datacard_"+cfgtag+".txt");
+      
+    card->Print(dcardname);
+      
+    delete card;
+      
+  } // parval loop
+}
+
+//======================================================================
+
+void
+makeDataCardFiles(bool doshape)
+{
   for (int ichan=0; ichan<NUMCHAN; ichan++) {
     
-    // loop through objects in the input root file and find histograms
-    // that are shape inputs into the limit setting data card
-    //
-    for (int i=0; i<NUMA0WPTS; i++) {
-      if (strlen(a0winputfiles[ichan])) {
-	fname = TString(dir)+"/"+TString(a0winputfiles[ichan]); // TString(argv[ichan+1]);
-	fp = new TFile(fname);
-      }
+    makeCards4param("a0w",a0winputfiles,NUMA0WPTS,a0W_points,ichan,doshape);
+    makeCards4param("aCw",aCwinputfiles,NUMACWPTS,aCW_points,ichan,doshape);
+    makeCards4param("lt0",lt0inputfiles,NUMLT0PTS,lt0_points,ichan,doshape);
 
-      if (!fp) continue;
-      if (fp->IsZombie()) {
-	cerr << "Couldn't open file " << fname << endl;
-	exit(-1);
-      }
-
-      cout << "Reading root input file " << fname << endl;
-
-      int a0w = a0W_points[i];
-      TString signame = Form(signalfmtstr,"a0w",(a0w<0?"m":""),abs(a0w));
-      Card *card = makeDataCardContent(fp,ichan,signame);
-
-      card->addShapeFiles(ShapeFiles_t("data_obs",channames[ichan],fname,"data_obs"));
-      card->addShapeFiles(ShapeFiles_t("signal",channames[ichan],fname,signame));
-      card->addShapeFiles(ShapeFiles_t("background",channames[ichan],fname,
-				       "background","$PROCESS_$SYSTEMATIC"));
-
-      TString cfgtag = Form("wwgamaqgc_%s_a0w:%de-5",channames[ichan],a0w);
-
-      TString dcardname("./datacard_"+cfgtag+".txt");
-      
-      card->Print(dcardname);
-      
-      delete card;
-      
-    } // a0w loop
-    
-    // loop through objects in the input root file and find histograms
-    // that are shape inputs into the limit setting data card
-    //
-    for (int i=0; i<NUMACWPTS; i++) {
-      if (strlen(aCwinputfiles[ichan])) {
-	fname = TString(dir)+"/"+TString(aCwinputfiles[ichan]); // TString(argv[ichan+1]);
-	fp = new TFile(fname);
-      }
-
-      if (!fp) continue;
-      if (fp->IsZombie()) {
-	cerr << "Couldn't open file " << fname << endl;
-	exit(-1);
-      }
-
-      cout << "Reading root input file " << fname << endl;
-
-      int aCw = aCW_points[i];
-      TString signame = Form(signalfmtstr,"aCw",(aCw<0?"m":""),abs(aCw));
-      Card *card = makeDataCardContent(fp,ichan,signame);
-
-      card->addShapeFiles(ShapeFiles_t("data_obs",channames[ichan],fname,"data_obs"));
-      card->addShapeFiles(ShapeFiles_t("signal",channames[ichan],fname,signame));
-      card->addShapeFiles(ShapeFiles_t("background",channames[ichan],fname,
-				       "background","$PROCESS_$SYSTEMATIC"));
-
-      TString cfgtag = Form("wwgamaqgc_%s_aCw:%de-5",channames[ichan],aCw);
-
-      TString dcardname("./datacard_"+cfgtag+".txt");
-      
-      card->Print(dcardname);
-      
-      delete card;
-      
-    } // aCw loop
-    
-    // loop through objects in the input root file and find histograms
-    // that are shape inputs into the limit setting data card
-    //
-    for (int i=0; i<NUMLT0PTS; i++) {
-      if (strlen(lt0inputfiles[ichan])) {
-	fname = TString(dir)+"/"+TString(lt0inputfiles[ichan]); // TString(argv[ichan+1]);
-	fp = new TFile(fname);
-      }
-
-      if (!fp) continue;
-      if (fp->IsZombie()) {
-	cerr << "Couldn't open file " << fname << endl;
-	exit(-1);
-      }
-
-      cout << "Reading root input file " << fname << endl;
-
-      int lt0 = lt0_points[i];
-      TString signame = Form(signalfmtstr,"lt0",(lt0<0?"m":""),abs(lt0));
-      Card *card = makeDataCardContent(fp,ichan,signame);
-
-      card->addShapeFiles(ShapeFiles_t("data_obs",channames[ichan],fname,"data_obs"));
-      card->addShapeFiles(ShapeFiles_t("signal",channames[ichan],fname,signame));
-      card->addShapeFiles(ShapeFiles_t("background",channames[ichan],fname,
-				       "background","$PROCESS_$SYSTEMATIC"));
-
-      TString cfgtag = Form("wwgamaqgc_%s_lt0:%de-11",channames[ichan],lt0);
-
-      TString dcardname("./datacard_"+cfgtag+".txt");
-      
-      card->Print(dcardname);
-      
-      delete card;
-      
-    } // lt0 loop
+    makeCards4SM(SMinputfiles,ichan,doshape);
 
   } // channel loop
 }                                                             // makeDataCardFiles
@@ -248,7 +264,7 @@ int main(int argc, char* argv[]) {
   // more than one means suppress shape info in the card
   // for a cut-and-count limit
   //
-  makeDataCardFiles();
+  makeDataCardFiles(argc <= 1);
   return 0;
 }
 #endif
