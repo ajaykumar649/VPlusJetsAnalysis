@@ -11,12 +11,13 @@ LDFLAGS := `root-config --libs` -L${ROOFITSYS}/lib -L${CMSSW_BASE}/lib/${SCRAM_A
 all : exe
 
 #exe: makeDataCardShapes.exe makeDataCardShapes4tgc.exe makeDataCardFromTable.exe makeDataCardFromRooWorkspace.exe
-exe: makeDataCardShapes4tgc.exe \
+exe:  makeDataCardShapes.exe \
+	makeDataCardShapes4tgc.exe \
 	makeDataCardShapes4wwgamaqgc.exe \
 	makeDataCardFromTable.exe \
 	makeDataCardFromRooWorkspace.exe
 
-makeDataCardShapes.exe: makeDataCardShapes.o
+makeDataCardShapes.exe: makeDataCardShapes.o card.o hwwutils.o
 	${CXX} -g -o $@ $^  ${LDFLAGS}
 
 makeDataCardFromTable.exe: makeDataCardFromTable.o
@@ -31,11 +32,11 @@ makeDataCardShapes4tgc.exe: makeDataCardShapes4tgc.o
 makeDataCardShapes4wwgamaqgc.exe: makeDataCardShapes4wwgamaqgc.o card.o
 	${CXX} -g -o $@ $^  ${LDFLAGS}
 
-makeDataCardShapes.o: makeDataCardShapes.cc hwwshapes.C dcutils.C hwwinputs.h mjjinputs.h hwwutils.C
+makeDataCardShapes.o: makeDataCardShapes.cc card.h hwwutils.h hwwinputs.h mjjinputs.h
 
 makeDataCardFromTable.o: makeDataCardFromTable.cc dcutils.C hwwinputs.h hwwutils.C
 
-makeDataCardFromRooWorkspace.o: makeDataCardFromRooWorkspace.cc card.cc card.h hwwinputs.h hwwutils.h
+makeDataCardFromRooWorkspace.o: makeDataCardFromRooWorkspace.cc card.h hwwinputs.h hwwutils.h
 
 makeDataCardShapes4tgc.o: makeDataCardShapes4tgc.cc dcutils.C atgcinputs.h
 
