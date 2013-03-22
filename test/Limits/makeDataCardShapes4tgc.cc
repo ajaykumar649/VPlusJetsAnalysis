@@ -354,7 +354,7 @@ makeDataCardFiles(bool doshape) // int argc, char*argv[])
 
     shapehists[ichan] = (TH1 *)fps[ichan]->Get(Form("background_%s_backshapeUp",channames[ichan]));
     if (!shapehists[ichan]) {
-      cerr << "Couldn't get background histogram from file for channel " << ichan << endl;
+      cerr << "Couldn't get background shapeUp histogram from file for channel " << ichan << endl;
       exit(-1);
     }
   }
@@ -399,7 +399,8 @@ makeDataCardFiles(bool doshape) // int argc, char*argv[])
 
       } // channel loop
 
-      if (calcEstimatedLimit(card)) {
+      //if (calcEstimatedLimit(card))
+      {
 	cfgtag = Form("lz%.3f_dkg%.2f",lambdaz+LAMBDAZ_INC/100.,deltaKappaGamma+dKG_INC/100.);
 	fmtDataCardFile(0,card,cfgtag);
       }
