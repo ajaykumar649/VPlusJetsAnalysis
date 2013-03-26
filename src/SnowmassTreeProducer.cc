@@ -1,4 +1,3 @@
-
 /*****************************************************************************
  * Project: CMS detector at the CERN
  *
@@ -73,7 +72,7 @@ void ewk::SnowmassTreeProducer::beginJob()
   tree_->Branch("event_met_px", &Met_px,  "event_met_px/F"); 
   tree_->Branch("event_met_py", &Met_py,  "event_met_py/F"); 
   tree_->Branch("event_sumet",  &Met_SumET,"event_sumet/F"); 
-  tree_->Branch("event_met_phi",&Met_Phi,  "event_met_phi/F"); 	
+tree_->Branch("event_met_phi",&Met_Phi,  "event_met_phi/F"); 
   tree_->Branch("event_fastJetRho",&fastJetRho,  "event_fastJetRho/F"); 
 
   // ----------------------- Declare branches -----------------------
@@ -106,8 +105,15 @@ void ewk::SnowmassTreeProducer::beginJob()
   SetBranch( l1_dz000,              "muon_dz000[muon_size]" );
   SetBranch( l1_IP3D,              "muon_IP3D[muon_size]" );
   SetBranch( l1_dzPV,              "muon_dzPV[muon_size]" );
+  SetBranch( l1_globalChi2,          "muon_globalChi2[muon_size]");
+  SetBranch( l1_innerChi2,          "muon_innerChi2[muon_size]");
+  SetBranch( l1_nPixelHits,        "muon_nPixelHits[muon_size]");
+  SetBranch( l1_nTrackerHits,      "muon_nTrackerHits[muon_size]");
+  SetBranch( l1_isPF,        "muon_isPF[muon_size]");
+  SetBranch( l1_isGlobal,      "muon_isGlobal[muon_size]");
+  SetBranch( l1_isTracker,      "muon_isTracker[muon_size]");
+  SetBranch( l1_hasMuonSegment, "muon_hasMuonSegment[muon_size]");
 
-	  
   ////////////////////////////////////////////////////////
   SetBranch( &l2size,           "electron_size" );
   SetBranch( l2px,             "electron_px[electron_size]" );
@@ -286,9 +292,16 @@ void ewk::SnowmassTreeProducer::analyze(const edm::Event& iEvent, const edm::Eve
     l1_dz000[i]= -99999.;
     l1_IP3D[i]= -99999.;
     l1_dzPV[i]= -99999.;
+    l1_globalChi2[i]=-99999.;
+    l1_innerChi2[i]=-99999.;
+    l1_nPixelHits[i]=-99999.;
+    l1_nTrackerHits[i]=-99999.;
+    l1_isPF[i]=-99999;
+    l1_isGlobal[i]=-99999;
+    l1_isTracker[i]=-99999;
+    l1_hasMuonSegment[i]=-99999;
 
-
-    l2Charge[i]           = -99999;	  
+    l2Charge[i]           = -99999;  
     l2px[i]               = -99999.;
     l2py[i]               = -99999.;
     l2pz[i]               = -99999.;
@@ -304,7 +317,7 @@ void ewk::SnowmassTreeProducer::analyze(const edm::Event& iEvent, const edm::Eve
     l2ecaliso[i]        = -99999.;
     l2hcaliso[i]        = -99999.;
     l2_classification[i]  = -99999;
-    l2_HoverE[i] = -99999.;	 
+    l2_HoverE[i] = -99999.; 
     l2_EoverP[i]       = -99999.;
     l2_DeltaEta[i]     = -99999.;
     l2_DeltaPhi[i]     = -99999.;
@@ -394,7 +407,7 @@ void ewk::SnowmassTreeProducer::analyze(const edm::Event& iEvent, const edm::Eve
     genPart_Vx[i]               = -99999.;
     genPart_Vy[i]               = -99999.;
     genPart_Vz[i]               = -99999.;
-    genPart_Y[i]                = -99999.;	  
+    genPart_Y[i]                = -99999.;  
     genPart_Status[i]           = -99999;
     genPart_pdgId[i]            = -99999;
   }
@@ -483,7 +496,17 @@ void ewk::SnowmassTreeProducer::analyze(const edm::Event& iEvent, const edm::Eve
       l1_dz000[iMuon] = patmuon1->dB(pat::Muon::PV2D);
       l1_IP3D[iMuon] = patmuon1->dB(pat::Muon::PV3D);
       if(fabs(l1_IP3D[iMuon])>fabs(l1_dz000[iMuon])&&l1_IP3D[iMuon]<1000) 
-	l1_dzPV[iMuon] = sqrt(l1_IP3D[iMuon]*l1_IP3D[iMuon]-l1_dz000[iMuon]*l1_dz000[iMuon]);
+      l1_dzPV[iMuon] = sqrt(l1_IP3D[iMuon]*l1_IP3D[iMuon]-l1_dz000[iMuon]*l1_dz000[iMuon]);
+
+      if((*muon).isGlobalMuon()) l1_globalChi2[iMuon] = (*muon).globalTrack()->normalizedChi2();
+      l1_innerChi2[iMuon] = (*muon).innerTrack()->normalizedChi2();
+      l1_nPixelHits[iMuon] = (*muon).innerTrack()->hitPattern().numberOfValidPixelHits();
+      l1_nTrackerHits[iMuon] = (*muon).track()->hitPattern().trackerLayersWithMeasurement();
+      l1_isPF[iMuon] = (*muon).isPFMuon();
+      l1_isGlobal[iMuon] = (*muon).isGlobalMuon();
+      l1_isTracker[iMuon] = (*muon).isTrackerMuon();
+      l1_hasMuonSegment[iMuon] = muon::isGoodMuon((*muon),muon::TMOneStationTight);
+
     }
   }
 
@@ -516,7 +539,7 @@ void ewk::SnowmassTreeProducer::analyze(const edm::Event& iEvent, const edm::Eve
       l2hcaliso[iElectron]        = (*electron).dr03HcalTowerSumEt();
       /// ID
       l2_classification[iElectron]  = (*electron).classification();
-      l2_HoverE[iElectron] = (*electron).hadronicOverEm();	 
+      l2_HoverE[iElectron] = (*electron).hadronicOverEm(); 
       l2_EoverP[iElectron]       = (*electron).eSuperClusterOverP();
       l2_DeltaEta[iElectron]     = (*electron).deltaEtaSuperClusterTrackAtVtx();
       l2_DeltaPhi[iElectron]     = (*electron).deltaPhiSuperClusterTrackAtVtx();
@@ -533,16 +556,16 @@ void ewk::SnowmassTreeProducer::analyze(const edm::Event& iEvent, const edm::Eve
       l2pfiso_neutralHadronIso[iElectron]   = (*electron).pfIsolationVariables().neutralHadronIso;
       l2pfiso_EffAreaPU[iElectron] = ElectronEffectiveArea::GetElectronEffectiveArea( ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03 ,  (*electron).superCluster()->eta(), ElectronEffectiveArea::kEleEAData2011);
       l2pfiso_pfIsoEA[iElectron] = (l2pfiso_chargedHadronIso[iElectron] +
-				    max((float)(0.), l2pfiso_neutralHadronIso[iElectron]+
-					l2pfiso_photonIso[iElectron] -
-					l2pfiso_EffAreaPU[iElectron]*fastJetRho)) / l2Pt[iElectron];
+							        max((float)(0.), l2pfiso_neutralHadronIso[iElectron]+
+								    l2pfiso_photonIso[iElectron] -
+								    l2pfiso_EffAreaPU[iElectron]*fastJetRho)) / l2Pt[iElectron];
       // vertex 
       const pat::Electron* patelectron1 = dynamic_cast<const pat::Electron *>( &*electron);
       l2_d0bsp[iElectron] = patelectron1->dB(pat::Electron::BS2D) ;
       l2_dz000[iElectron] = patelectron1->dB(pat::Electron::PV2D);
       l2_IP3D[iElectron] = patelectron1->dB(pat::Electron::PV3D);
       if(fabs(l2_IP3D[iElectron])>fabs(l2_dz000[iElectron])&&l2_IP3D[iElectron]<1000) 
-	l2_dzPV[iElectron] = sqrt(l2_IP3D[iElectron]*l2_IP3D[iElectron]-l2_dz000[iElectron]*l2_dz000[iElectron]);
+      l2_dzPV[iElectron] = sqrt(l2_IP3D[iElectron]*l2_IP3D[iElectron]-l2_dz000[iElectron]*l2_dz000[iElectron]);
     }
   }
 
@@ -567,15 +590,15 @@ void ewk::SnowmassTreeProducer::analyze(const edm::Event& iEvent, const edm::Eve
       jet_Pt[iJet]              = (*jet).pt();
       jet_area[iJet]            = (*jet).jetArea();
 
-      edm::Ptr<reco::Jet> ptrJet = jets->ptrAt( jet - jets->begin() );		  
+      edm::Ptr<reco::Jet> ptrJet = jets->ptrAt( jet - jets->begin() );  
       if ( ptrJet.isNonnull() && ptrJet.isAvailable() ) {
-	const pat::Jet* pjet = dynamic_cast<const pat::Jet *>(ptrJet.get()) ;
-	jet_bDiscriminatorSSVHE[iJet] = (*pjet).bDiscriminator("simpleSecondaryVertexHighEffBJetTags");
-	jet_bDiscriminatorTCHE[iJet] = (*pjet).bDiscriminator("trackCountingHighEffBJetTags");
-	jet_bDiscriminatorCSV[iJet] = (*pjet).bDiscriminator("combinedSecondaryVertexBJetTags");
-	jet_bDiscriminatorJP[iJet] = (*pjet).bDiscriminator("jetProbabilityBJetTags");
-	jet_bDiscriminatorSSVHP[iJet] = (*pjet).bDiscriminator("simpleSecondaryVertexHighPurBJetTags");
-	jet_bDiscriminatorTCHP[iJet] = (*pjet).bDiscriminator("trackCountingHighPurBJetTags");
+      const pat::Jet* pjet = dynamic_cast<const pat::Jet *>(ptrJet.get()) ;
+      jet_bDiscriminatorSSVHE[iJet] = (*pjet).bDiscriminator("simpleSecondaryVertexHighEffBJetTags");
+      jet_bDiscriminatorTCHE[iJet] = (*pjet).bDiscriminator("trackCountingHighEffBJetTags");
+      jet_bDiscriminatorCSV[iJet] = (*pjet).bDiscriminator("combinedSecondaryVertexBJetTags");
+      jet_bDiscriminatorJP[iJet] = (*pjet).bDiscriminator("jetProbabilityBJetTags");
+      jet_bDiscriminatorSSVHP[iJet] = (*pjet).bDiscriminator("simpleSecondaryVertexHighPurBJetTags");
+      jet_bDiscriminatorTCHP[iJet] = (*pjet).bDiscriminator("trackCountingHighPurBJetTags");
       }
     }
   }

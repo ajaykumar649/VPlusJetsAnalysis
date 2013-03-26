@@ -121,7 +121,15 @@ namespace ewk {
     float l1_dz000[999];
     float l1_IP3D[999];
     float l1_dzPV[999];
-	  
+    float l1_globalChi2[999];
+    float l1_innerChi2[999];
+    float l1_nPixelHits[999];
+    float l1_nTrackerHits[999];
+    int l1_isPF[999];
+    int l1_isGlobal[999];
+    int l1_isTracker[999];
+    int l1_hasMuonSegment[999];
+
     ///////////////////
     float l2px[999];
     float l2py[999];
@@ -133,12 +141,12 @@ namespace ewk {
     float l2Vx[999];
     float l2Vy[999];
     float l2Vz[999];
-    float l2Y[999];	  
+float l2Y[999];  
     float l2trackiso[999];
     float l2ecaliso[999];
     float l2hcaliso[999];
     int   l2_classification[999];
-    float l2_HoverE[999];	 
+float l2_HoverE[999]; 
     float l2_EoverP[999];
     float l2_DeltaEta[999];
     float l2_DeltaPhi[999];
@@ -249,5 +257,4 @@ namespace ewk {
 } //namespace
 
 #endif
-
 
