@@ -91,6 +91,11 @@ namespace ewk {
     int genPart_size;
     int genjet_size;
     int track_size;
+    int gsftrack_size;
+    int superCluster_size;
+    int superCluster5x5_size;
+    int caloTower_size;
+    int tau_size;
 
     int l1Charge[999];
     int l2Charge[999];
@@ -141,12 +146,12 @@ namespace ewk {
     float l2Vx[999];
     float l2Vy[999];
     float l2Vz[999];
-float l2Y[999];  
+    float l2Y[999];  
     float l2trackiso[999];
     float l2ecaliso[999];
     float l2hcaliso[999];
     int   l2_classification[999];
-float l2_HoverE[999]; 
+    float l2_HoverE[999]; 
     float l2_EoverP[999];
     float l2_DeltaEta[999];
     float l2_DeltaPhi[999];
@@ -224,6 +229,53 @@ float l2_HoverE[999];
     float track_Pt[999];
     float track_Eta[999];
     float track_Phi[999];
+
+    ///////////////////
+    float gsftrack_px[999];
+    float gsftrack_py[999];
+    float gsftrack_pz[999];
+    float gsftrack_Vx[999];
+    float gsftrack_Vy[999];
+    float gsftrack_Vz[999];
+    float gsftrack_Pt[999];
+    float gsftrack_Eta[999];
+    float gsftrack_Phi[999];
+
+    ///////////////////
+    float superCluster_E    [999];
+    float superCluster_rawE [999];
+    float superCluster_x    [999];
+    float superCluster_y    [999];
+    float superCluster_z    [999];
+    float superCluster_Eta  [999];
+    float superCluster_Phi  [999];
+    float superCluster_nHits[999];
+
+    ///////////////////
+    float superCluster5x5_E    [999];
+    float superCluster5x5_rawE [999];
+    float superCluster5x5_x    [999];
+    float superCluster5x5_y    [999];
+    float superCluster5x5_z    [999];
+    float superCluster5x5_Eta  [999];
+    float superCluster5x5_Phi  [999];
+    float superCluster5x5_nHits[999];
+
+    ///////////////////
+    float caloTower_hadE [999];
+    float caloTower_emE  [999];
+    float caloTower_hadEt[999];
+    float caloTower_emEt [999];
+    float caloTower_Eta  [999];
+    float caloTower_Phi  [999];
+
+    ///////////////////
+    float tau_px[999];
+    float tau_py[999];
+    float tau_pz[999];
+    float tau_Pt[999];
+    float tau_Eta[999];
+    float tau_Phi[999];
 
     ///////////////////
     int genPart_Charge[9999];

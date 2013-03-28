@@ -43,7 +43,8 @@
 #include "DataFormats/ParticleFlowReco/interface/PFClusterFwd.h"
 #include "DataFormats/ParticleFlowReco/interface/PFCluster.h"
 #include "RecoEgamma/EgammaTools/interface/ConversionTools.h"
-
+#include "DataFormats/PatCandidates/interface/Tau.h"
+#include "DataFormats/TauReco/interface/PFTau.h"
 
 ewk::SnowmassTreeProducer::SnowmassTreeProducer(const edm::ParameterSet iConfig) :
 
@@ -194,19 +195,69 @@ tree_->Branch("event_met_phi",&Met_Phi,  "event_met_phi/F");
   SetBranch( photon_hasPixelSeed, "photon_hasPixelSeed[photon_size]");
   SetBranch( photon_passElecVeto, "photon_passElecVeto[photon_size]");
 
-  ////////////////////////////////////////////////////////
-  /*
+  ////////////////////////////////////////////////////////  
   SetBranch( &track_size,            "track_size" );
-  SetBranch( track_px,               "track_px" );
-  SetBranch( track_py,               "track_py" );
-  SetBranch( track_pz,               "track_pz" );
-  SetBranch( track_Vx,               "track_Vx" );
-  SetBranch( track_Vy,               "track_Vy" );
-  SetBranch( track_Vz,               "track_Vz" );
-  SetBranch( track_Pt,               "track_Pt" );
-  SetBranch( track_Eta,              "track_Eta" );
-  SetBranch( track_Phi,              "track_Phi" );
-  */
+  SetBranch( track_px,               "track_px[track_size]" );
+  SetBranch( track_py,               "track_py[track_size]" );
+  SetBranch( track_pz,               "track_pz[track_size]" );
+  SetBranch( track_Vx,               "track_Vx[track_size]" );
+  SetBranch( track_Vy,               "track_Vy[track_size]" );
+  SetBranch( track_Vz,               "track_Vz[track_size]" );
+  SetBranch( track_Pt,               "track_Pt[track_size]" );
+  SetBranch( track_Eta,              "track_Eta[track_size]" );
+  SetBranch( track_Phi,              "track_Phi[track_size]" );
+  
+  ////////////////////////////////////////////////////////
+  SetBranch( &gsftrack_size,            "gsftrack_size" );
+  SetBranch( gsftrack_px,               "gsftrack_px[gsftrack_size]" );
+  SetBranch( gsftrack_py,               "gsftrack_py[gsftrack_size]" );
+  SetBranch( gsftrack_pz,               "gsftrack_pz[gsftrack_size]" );
+  SetBranch( gsftrack_Vx,               "gsftrack_Vx[gsftrack_size]" );
+  SetBranch( gsftrack_Vy,               "gsftrack_Vy[gsftrack_size]" );
+  SetBranch( gsftrack_Vz,               "gsftrack_Vz[gsftrack_size]" );
+  SetBranch( gsftrack_Pt,               "gsftrack_Pt[gsftrack_size]" );
+  SetBranch( gsftrack_Eta,              "gsftrack_Eta[gsftrack_size]" );
+  SetBranch( gsftrack_Phi,              "gsftrack_Phi[gsftrack_size]" );
+
+  ////////////////////////////////////////////////////////  
+  SetBranch( &superCluster_size,              "superCluster_size"  );
+  SetBranch( superCluster_E    ,              "superCluster_E[superCluster_size]"     );
+  SetBranch( superCluster_rawE ,              "superCluster_rawE[superCluster_size]"  );
+  SetBranch( superCluster_x    ,              "superCluster_x[superCluster_size]"     );
+  SetBranch( superCluster_y    ,              "superCluster_y[superCluster_size]"     );
+  SetBranch( superCluster_z    ,              "superCluster_z[superCluster_size]"     );
+  SetBranch( superCluster_Eta  ,              "superCluster_Eta[superCluster_size]"   );
+  SetBranch( superCluster_Phi  ,              "superCluster_Phi[superCluster_size]"   );
+  SetBranch( superCluster_nHits,              "superCluster_nHits[superCluster_size]" );
+
+  ////////////////////////////////////////////////////////  
+  SetBranch( &superCluster5x5_size,              "superCluster5x5_size"  );
+  SetBranch( superCluster5x5_E    ,              "superCluster5x5_E[superCluster5x5_size]"     );
+  SetBranch( superCluster5x5_rawE ,              "superCluster5x5_rawE[superCluster5x5_size]"  );
+  SetBranch( superCluster5x5_x    ,              "superCluster5x5_x[superCluster5x5_size]"     );
+  SetBranch( superCluster5x5_y    ,              "superCluster5x5_y[superCluster5x5_size]"     );
+  SetBranch( superCluster5x5_z    ,              "superCluster5x5_z[superCluster5x5_size]"     );
+  SetBranch( superCluster5x5_Eta  ,              "superCluster5x5_Eta[superCluster5x5_size]"   );
+  SetBranch( superCluster5x5_Phi  ,              "superCluster5x5_Phi[superCluster5x5_size]"   );
+  SetBranch( superCluster5x5_nHits,              "superCluster5x5_nHits[superCluster5x5_size]" );
+
+  ////////////////////////////////////////////////////////  
+  SetBranch( &caloTower_size     ,               "caloTower_size"                 );
+  SetBranch( caloTower_hadE      ,               "caloTower_hadE[caloTower_size]" );
+  SetBranch( caloTower_emE       ,               "caloTower_emE[caloTower_size]"  );
+  SetBranch( caloTower_hadEt     ,               "caloTower_hadEt[caloTower_size]");
+  SetBranch( caloTower_emEt      ,               "caloTower_emEt[caloTower_size]" );
+  SetBranch( caloTower_Eta       ,               "caloTower_Eta[caloTower_size]"  );
+  SetBranch( caloTower_Phi       ,               "caloTower_Phi[caloTower_size]"  );
+
+  ////////////////////////////////////////////////////////  
+  SetBranch( &tau_size,            "tau_size" );
+  SetBranch( tau_px,               "tau_px[tau_size]" );
+  SetBranch( tau_py,               "tau_py[tau_size]" );
+  SetBranch( tau_pz,               "tau_pz[tau_size]" );
+  SetBranch( tau_Pt,               "tau_Pt[tau_size]" );
+  SetBranch( tau_Eta,              "tau_Eta[tau_size]" );
+  SetBranch( tau_Phi,              "tau_Phi[tau_size]" );
 
   ///////////////////////////////////////////////
   SetBranch( &genPart_size,          "genParticle_size" );
@@ -256,6 +307,11 @@ void ewk::SnowmassTreeProducer::analyze(const edm::Event& iEvent, const edm::Eve
   photon_size        = 0;
   genjet_size        = 0;
   track_size         = 0;
+  gsftrack_size      = 0;
+  superCluster_size  = 0;
+  superCluster5x5_size = 0;
+  caloTower_size     = 0;
+  tau_size         = 0;
 
   Met_px              = -99999.;
   Met_py              = -99999.;
@@ -385,6 +441,48 @@ void ewk::SnowmassTreeProducer::analyze(const edm::Event& iEvent, const edm::Eve
     track_Pt[i]                 = -99999.;
     track_Eta[i]                = -99999.;
     track_Phi[i]                = -99999.;
+
+    gsftrack_px[i]                 = -99999.;
+    gsftrack_py[i]                 = -99999.;
+    gsftrack_pz[i]                 = -99999.;
+    gsftrack_Vx[i]                 = -99999.;
+    gsftrack_Vy[i]                 = -99999.;
+    gsftrack_Vz[i]                 = -99999.;
+    gsftrack_Pt[i]                 = -99999.;
+    gsftrack_Eta[i]                = -99999.;
+    gsftrack_Phi[i]                = -99999.;
+
+    superCluster_E[i]      = -99999.;
+    superCluster_rawE[i]   = -99999.;
+    superCluster_x[i]      = -99999.;
+    superCluster_y[i]      = -99999.;
+    superCluster_z[i]      = -99999.;
+    superCluster_Eta[i]    = -99999.;
+    superCluster_Phi[i]    = -99999.;
+    superCluster_nHits[i]  = -99999.;
+
+    superCluster5x5_E[i]      = -99999.;
+    superCluster5x5_rawE[i]   = -99999.;
+    superCluster5x5_x[i]      = -99999.;
+    superCluster5x5_y[i]      = -99999.;
+    superCluster5x5_z[i]      = -99999.;
+    superCluster5x5_Eta[i]    = -99999.;
+    superCluster5x5_Phi[i]    = -99999.;
+    superCluster5x5_nHits[i]  = -99999.;
+
+    caloTower_hadE[i]      = -99999.;
+    caloTower_emE[i]       = -99999.;
+    caloTower_hadEt[i]     = -99999.;
+    caloTower_emEt[i]      = -99999.;
+    caloTower_Eta[i]       = -99999.;
+    caloTower_Phi[i]       = -99999.;
+
+    tau_px[i]                 = -99999.;
+    tau_py[i]                 = -99999.;
+    tau_pz[i]                 = -99999.;
+    tau_Pt[i]                 = -99999.;
+    tau_Eta[i]                = -99999.;
+    tau_Phi[i]                = -99999.;
 
     genjet_px[i]             = -99999.;
     genjet_py[i]             = -99999.;
@@ -554,7 +652,8 @@ void ewk::SnowmassTreeProducer::analyze(const edm::Event& iEvent, const edm::Eve
       l2pfiso_chargedHadronIso[iElectron]   = (*electron).pfIsolationVariables().chargedHadronIso;
       l2pfiso_photonIso[iElectron] = (*electron).pfIsolationVariables().photonIso;
       l2pfiso_neutralHadronIso[iElectron]   = (*electron).pfIsolationVariables().neutralHadronIso;
-      l2pfiso_EffAreaPU[iElectron] = ElectronEffectiveArea::GetElectronEffectiveArea( ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03 ,  (*electron).superCluster()->eta(), ElectronEffectiveArea::kEleEAData2011);
+      l2pfiso_EffAreaPU[iElectron] = ElectronEffectiveArea::GetElectronEffectiveArea( ElectronEffectiveArea::kEleGammaAndNeutralHadronIso03 ,  
+										      (*electron).superCluster()->eta(), ElectronEffectiveArea::kEleEAData2011);
       l2pfiso_pfIsoEA[iElectron] = (l2pfiso_chargedHadronIso[iElectron] +
 							        max((float)(0.), l2pfiso_neutralHadronIso[iElectron]+
 								    l2pfiso_photonIso[iElectron] -
@@ -660,31 +759,133 @@ void ewk::SnowmassTreeProducer::analyze(const edm::Event& iEvent, const edm::Eve
   }
 
 
-  //  ************* Load Tracks **********************
-  /*
+  //  ************* Load Tracks ********************
   edm::Handle<reco::TrackCollection> tracks;
   iEvent.getByLabel("generalTracks", tracks);
-  track_size = (int) (tracks->size());  
   reco::TrackCollection::const_iterator trk;
-  if(track_size > 0) {
-    int iTracks = 0;
+  int iTracks = 0;
+  if(tracks->size() > 0) {
     for ( trk = tracks->begin(); trk != tracks->end(); ++trk){
-      track_px[iTracks] = trk->px();
-      track_py[iTracks] = trk->py();
-      track_pz[iTracks] = trk->pz();
-      track_Vx[iTracks] = trk->px();
-      track_Vy[iTracks] = trk->py();
-      track_Vz[iTracks] = trk->pz();
-      track_Pt[iTracks] = trk->pt();
+      if (fabs(trk->pt()) < 5.) continue;
+      track_px[iTracks]  = trk->px();
+      track_py[iTracks]  = trk->py();
+      track_pz[iTracks]  = trk->pz();
+      track_Vx[iTracks]  = trk->px();
+      track_Vy[iTracks]  = trk->py();
+      track_Vz[iTracks]  = trk->pz();
+      track_Pt[iTracks]  = trk->pt();
       track_Eta[iTracks] = trk->eta();
       track_Phi[iTracks] = trk->phi();
       iTracks++;
-    }
-  }
-  */
-  // ---------------------------------------------
+    } 
+  } 
+  track_size =       iTracks;
 
 
+  //  ************* Load Gsf Tracks ********************
+  edm::Handle<reco::GsfTrackCollection> gsftracks;
+  iEvent.getByLabel("electronGsfTracks", gsftracks);
+  reco::GsfTrackCollection::const_iterator gsftrk;
+  int igsf = 0;
+  if(gsftracks->size() > 0) {
+    for ( gsftrk = gsftracks->begin(); gsftrk != gsftracks->end(); ++gsftrk){
+      if (fabs(gsftrk->pt()) < 5.) continue;
+      gsftrack_px[igsf]  = gsftrk->px();
+      gsftrack_py[igsf]  = gsftrk->py();
+      gsftrack_pz[igsf]  = gsftrk->pz();
+      gsftrack_Vx[igsf]  = gsftrk->px();
+      gsftrack_Vy[igsf]  = gsftrk->py();
+      gsftrack_Vz[igsf]  = gsftrk->pz();
+      gsftrack_Pt[igsf]  = gsftrk->pt();
+      gsftrack_Eta[igsf] = gsftrk->eta();
+      gsftrack_Phi[igsf] = gsftrk->phi();
+      igsf++;
+    } 
+  } 
+  gsftrack_size =       igsf;
+
+
+
+  //  ************* Load SuperClusters  ********************
+  edm::Handle<reco::SuperClusterCollection> superClusters;
+  iEvent.getByLabel("correctedHybridSuperClusters", superClusters);
+  reco::SuperClusterCollection::const_iterator sc;
+  int iSC = 0;
+  if(superClusters->size() > 0) {
+    for ( sc = superClusters->begin(); sc != superClusters->end(); ++sc){
+      if (fabs(sc->energy()) < 5.) continue;
+      superCluster_E[iSC]      = sc->energy();
+      superCluster_rawE[iSC]   = sc->rawEnergy();
+      superCluster_x[iSC]      = sc->x();
+      superCluster_y[iSC]      = sc->y();
+      superCluster_z[iSC]      = sc->z();
+      superCluster_Eta[iSC]    = sc->eta();
+      superCluster_Phi[iSC]    = sc->phi();
+      superCluster_nHits[iSC]  = sc->size();
+      iSC++;
+    } 
+  } 
+  superCluster_size = iSC;
+
+
+  //  ************* Load endcap superclusters  ********************
+  edm::Handle<reco::SuperClusterCollection> superClusters5x5;
+  iEvent.getByLabel("correctedMulti5x5SuperClustersWithPreshower", superClusters5x5);
+  reco::SuperClusterCollection::const_iterator sc5x5;
+  int iSC5x5 = 0;
+  if(superClusters5x5->size() > 0) {
+    for ( sc5x5 = superClusters5x5->begin(); sc5x5 != superClusters5x5->end(); ++sc5x5){
+      if (fabs(sc5x5->energy()) < 5.) continue;
+      superCluster5x5_E[iSC5x5]      = sc5x5->energy();
+      superCluster5x5_rawE[iSC5x5]   = sc5x5->rawEnergy();
+      superCluster5x5_x[iSC5x5]      = sc5x5->x();
+      superCluster5x5_y[iSC5x5]      = sc5x5->y();
+      superCluster5x5_z[iSC5x5]      = sc5x5->z();
+      superCluster5x5_Eta[iSC5x5]    = sc5x5->eta();
+      superCluster5x5_Phi[iSC5x5]    = sc5x5->phi();
+      superCluster5x5_nHits[iSC5x5]  = sc5x5->size();
+      iSC5x5++;
+    } 
+  } 
+  superCluster5x5_size = iSC5x5;
+
+  //  ************* Load CaloTowers  ********************
+  edm::Handle<CaloTowerCollection> caloTowers;
+  iEvent.getByLabel("towerMaker", caloTowers);
+  CaloTowerCollection::const_iterator ct;
+  int iCT = 0;
+  if(caloTowers->size() > 0) {
+    for ( ct = caloTowers->begin(); ct != caloTowers->end(); ++ct){
+      if (ct->hadEt()+ct->emEt() < 2.) continue;
+      caloTower_hadE [iCT]  = ct->hadEnergy();
+      caloTower_emE  [iCT]  = ct->emEnergy();
+      caloTower_hadEt[iCT]  = ct->hadEt();
+      caloTower_emEt [iCT]  = ct->emEt();
+      caloTower_Eta  [iCT]  = ct->eta();
+      caloTower_Phi  [iCT]  = ct->phi();
+      iCT++;
+    } 
+  } 
+  caloTower_size = iCT;
+  
+  //  ************* Load Taus ********************
+  typedef edm::View<pat::Tau> TauView;
+  edm::Handle<TauView> taus;
+  iEvent.getByLabel("selectedPatTausPFlow", taus);
+  edm::View<pat::Tau>::const_iterator tau;
+  int iTaus = 0;
+  tau_size = (int) (taus->size());
+  if(tau_size > 0) {
+    for ( tau = taus->begin(); tau != taus->end(); ++tau){
+      tau_px[iTaus]  = tau->px();
+      tau_py[iTaus]  = tau->py();
+      tau_pz[iTaus]  = tau->pz();
+      tau_Pt[iTaus]  = tau->pt();
+      tau_Eta[iTaus] = tau->eta();
+      tau_Phi[iTaus] = tau->phi();
+      iTaus++;
+    } 
+  } 
 
 
 

@@ -32,9 +32,10 @@ process.load('Configuration.StandardSequences.FrontierConditions_GlobalTag_cff')
 
 ## ############################################
 process.GlobalTag.globaltag = 'POSTLS161_V12::All'
-numEventsToRun = 2000
-eventsToSkip = 0
-outFileName = "test1.root"
+
+## numEventsToRun = 2000
+## eventsToSkip = 0
+## outFileName = "test1.root"
 
 ## numEventsToRun = -1
 ## eventsToSkip = 0
@@ -46,9 +47,9 @@ outFileName = "test1.root"
 ## outFileName = "TTdileptons_14TeV_PU50bx25_POSTLS161.root"
 
 
-## numEventsToRun = -1
-## eventsToSkip = 0
-## outFileName = "DYToLL_M_20_TuneZ2star_14TeV_PU50_POSTLS161.root"
+numEventsToRun = -1
+eventsToSkip = 288328
+outFileName = "DYToLL_M_20_TuneZ2star_14TeV_PU50_POSTLS161.root"
 
 ## numEventsToRun = -1
 ## eventsToSkip = 0
@@ -72,7 +73,7 @@ process.options   = cms.untracked.PSet( wantSummary = cms.untracked.bool(False) 
 
 process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
 
-            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/TTdileptons_14TeV_pythia6/TTdileptons_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_TopPAT/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_10_1_Xqs.root',
+##             'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/TTdileptons_14TeV_pythia6/TTdileptons_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_TopPAT/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_10_1_Xqs.root',
 
     
 ##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/TTdileptons_14TeV_pythia6/TTdileptons_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_TopPAT/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_10_1_Xqs.root',
@@ -99,30 +100,30 @@ process.source = cms.Source("PoolSource", fileNames = cms.untracked.vstring(
 
 
 
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_10_1_w4a.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_11_1_rVq.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_12_1_3K2.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_13_1_hCQ.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_14_1_QVb.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_15_1_NeQ.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_16_1_FBm.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_17_1_e9M.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_18_1_0i9.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_19_1_nlg.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_1_1_KoE.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_20_1_j1e.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_21_1_7TR.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_22_1_Ust.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_23_1_R3u.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_24_1_7be.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_2_1_Luo.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_3_1_JNz.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_4_1_ECl.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_5_1_2nE.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_6_1_bpm.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_7_1_Jwj.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_8_1_7hX.root',
-##            'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_9_1_sVP.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_10_1_w4a.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_11_1_rVq.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_12_1_3K2.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_13_1_hCQ.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_14_1_QVb.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_15_1_NeQ.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_16_1_FBm.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_17_1_e9M.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_18_1_0i9.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_19_1_nlg.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_1_1_KoE.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_20_1_j1e.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_21_1_7TR.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_22_1_Ust.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_23_1_R3u.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_24_1_7be.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_2_1_Luo.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_3_1_JNz.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_4_1_ECl.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_5_1_2nE.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_6_1_bpm.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_7_1_Jwj.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_8_1_7hX.root',
+           'dcache:/pnfs/cms/WAX/11/store/user/jstupak/snowmass/jstupak/DYToLL_M_20_TuneZ2star_14TeV_pythia6/DYToLL_M_20_TuneZ2star_14TeV_pythia6_Summer12_PU50_POSTLS161_V12_v1_AODSIM/0b89362859f64009081d5401e4e9f0ea/pat_53x_test_v03_9_1_sVP.root',
 
 
            
