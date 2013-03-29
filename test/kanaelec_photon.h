@@ -735,9 +735,9 @@ kanaelec_photon::kanaelec_photon(TTree *tree)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/uscms_data/d3/weizou/MakeNtuple/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/el_STopS_Tbar_CMSSW532.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/uscms/home/jdamgov/scratch/Moriond2013/MergedNtuples/el_WAp23Jets.root");
       if (!f) {
-         f = new TFile("/uscms_data/d3/weizou/MakeNtuple/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/el_STopS_Tbar_CMSSW532.root");
+         f = new TFile("/uscms/home/jdamgov/scratch/Moriond2013/MergedNtuples/el_WAp23Jets.root");
       }
       tree = (TTree*)gDirectory->Get("WJet");
 
