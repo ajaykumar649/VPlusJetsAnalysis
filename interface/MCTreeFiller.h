@@ -315,8 +315,43 @@ namespace ewk {
     float TagQuark_Y[2];
     int TagQuark_Id[2];
 
+    ///////////////////
+    //Tag Jet information in EWKW2Jets
+    int EWKW_Charge;
+    float EWKW_px;
+    float EWKW_py;
+    float EWKW_pz;
+    float EWKW_E;
+    float EWKW_Pt;
+    float EWKW_Et;
+    float EWKW_Eta;
+    float EWKW_Theta;
+    float EWKW_Phi;
+    float EWKW_Vx;
+    float EWKW_Vy;
+    float EWKW_Vz;
+    float EWKW_Y;
+    int EWKW_Id;
 
+    int EWKTagQuark_Charge[2];
+    float EWKTagQuark_px[2];
+    float EWKTagQuark_py[2];
+    float EWKTagQuark_pz[2];
+    float EWKTagQuark_E[2];
+    float EWKTagQuark_Pt[2];
+    float EWKTagQuark_Et[2];
+    float EWKTagQuark_Eta[2];
+    float EWKTagQuark_Theta[2];
+    float EWKTagQuark_Phi[2];
+    float EWKTagQuark_Vx[2];
+    float EWKTagQuark_Vy[2];
+    float EWKTagQuark_Vz[2];
+    float EWKTagQuark_Y[2];
+    int EWKTagQuark_Id[2];
 
+    ////////////////////
+    //Number of Partons in the W inclusive sample
+    int nParton_Winclusive;
   };
 
 } //namespace

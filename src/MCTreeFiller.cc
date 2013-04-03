@@ -307,7 +307,43 @@ void ewk::MCTreeFiller::SetBranches()
   SetBranch( TagQuark_Vz,             "TagQuark_vz[2]" );
   SetBranch( TagQuark_Y,              "TagQuark_y[2]" );
   SetBranch( TagQuark_Id,              "TagQuark_Id[2]" );
-    
+  
+  ////////////////////////////////////////////////
+
+  SetBranch( &EWKW_px,             "EWKW_px" );
+  SetBranch( &EWKW_py,             "EWKW_py" );
+  SetBranch( &EWKW_pz,             "EWKW_pz" );
+  SetBranch( &EWKW_E,              "EWKW_E" );
+  SetBranch( &EWKW_Pt,             "EWKW_pt" );
+  SetBranch( &EWKW_Et,             "EWKW_et" );
+  SetBranch( &EWKW_Eta,            "EWKW_eta" ); 
+  SetBranch( &EWKW_Theta,          "EWKW_theta" );    
+  SetBranch( &EWKW_Phi,            "EWKW_phi" );
+  SetBranch( &EWKW_Charge,         "EWKW_charge" );
+  SetBranch( &EWKW_Vx,             "EWKW_vx" );
+  SetBranch( &EWKW_Vy,             "EWKW_vy" );
+  SetBranch( &EWKW_Vz,             "EWKW_vz" );
+  SetBranch( &EWKW_Y,              "EWKW_y" );
+  SetBranch( &EWKW_Id,              "EWKW_Id" );
+
+  SetBranch( EWKTagQuark_px,             "EWKTagQuark_px[2]" );
+  SetBranch( EWKTagQuark_py,             "EWKTagQuark_py[2]" );
+  SetBranch( EWKTagQuark_pz,             "EWKTagQuark_pz[2]" );
+  SetBranch( EWKTagQuark_E,              "EWKTagQuark_E[2]" );
+  SetBranch( EWKTagQuark_Pt,             "EWKTagQuark_pt[2]" );
+  SetBranch( EWKTagQuark_Et,             "EWKTagQuark_et[2]" );
+  SetBranch( EWKTagQuark_Eta,            "EWKTagQuark_eta[2]" ); 
+  SetBranch( EWKTagQuark_Theta,          "EWKTagQuark_theta[2]" );    
+  SetBranch( EWKTagQuark_Phi,            "EWKTagQuark_phi[2]" );
+  SetBranch( EWKTagQuark_Charge,         "EWKTagQuark_charge[2]" );
+  SetBranch( EWKTagQuark_Vx,             "EWKTagQuark_vx[2]" );
+  SetBranch( EWKTagQuark_Vy,             "EWKTagQuark_vy[2]" );
+  SetBranch( EWKTagQuark_Vz,             "EWKTagQuark_vz[2]" );
+  SetBranch( EWKTagQuark_Y,              "EWKTagQuark_y[2]" );
+  SetBranch( EWKTagQuark_Id,              "EWKTagQuark_Id[2]" );
+
+  /////////////////////////////////////////////////////////
+  SetBranch( &nParton_Winclusive,              "nParton_Winclusive" );
 }
 /////////////////////////////////////////////////////////////////////////
 
@@ -549,7 +585,40 @@ for ( int i =0; i<2; i++){
     TagQuark_Id[i]              = 0;
   }
 
+ 
+    EWKW_px              = -99999.;
+    EWKW_py              = -99999.;
+    EWKW_pz              = -99999.;
+    EWKW_E               = -1.;
+    EWKW_Pt              = -1.;
+    EWKW_Et              = -1.;
+    EWKW_Eta             = -10.;
+    EWKW_Theta           = -99999.;
+    EWKW_Phi             = -10.;
+    EWKW_Vx              = -10.;
+    EWKW_Vy              = -10.;
+    EWKW_Vz              = -10.;
+    EWKW_Y              =  -10.;
+    EWKW_Id              = 0;
 
+  for ( int i =0; i<2; i++){
+    EWKTagQuark_px[i]              = -99999.;
+    EWKTagQuark_py[i]              = -99999.;
+    EWKTagQuark_pz[i]              = -99999.;
+    EWKTagQuark_E[i]               = -1.;
+    EWKTagQuark_Pt[i]              = -1.;
+    EWKTagQuark_Et[i]              = -1.;
+    EWKTagQuark_Eta[i]             = -10.;
+    EWKTagQuark_Theta[i]           = -99999.;
+    EWKTagQuark_Phi[i]             = -10.;
+    EWKTagQuark_Vx[i]              = -10.;
+    EWKTagQuark_Vy[i]              = -10.;
+    EWKTagQuark_Vz[i]              = -10.;
+    EWKTagQuark_Y[i]              =  -10.;
+    EWKTagQuark_Id[i]              = 0;
+  }
+  
+  nParton_Winclusive = -4; //Incoming Particles Calculated Twice
 
   // initialization done
 }
@@ -600,6 +669,10 @@ void ewk::MCTreeFiller::fill(const edm::Event& iEvent)
 
   const reco::Candidate *TagQuark1=NULL;
   const reco::Candidate *TagQuark2=NULL;
+
+  const reco::Candidate *EWKW = NULL;
+  const reco::Candidate *EWKTagQuark1=NULL;
+  const reco::Candidate *EWKTagQuark2=NULL;
 
   // Vector Bosons Info 
   for(size_t i = 0; i < nGen; ++ i) {
@@ -807,346 +880,434 @@ if(H==NULL) return;
 
 } //nGen loop end
 
+//#################################EWKW2Jets###################################
+for(size_t i = 0; i < nGen; ++ i) {
+   EWKW = &((*genParticles)[i]);
+   //Generated W from Matrix Element
+   if( !((abs(EWKW->status())==3) && (abs(EWKW->pdgId())==24) ))continue;
 
+   if( EWKW!=NULL && (abs(EWKW->status())==3) && (abs(EWKW->pdgId())==24) ) {
+      EWKW_Charge          = EWKW->charge();
+      EWKW_Vx              = EWKW->vx();
+      EWKW_Vy              = EWKW->vy();
+      EWKW_Vz              = EWKW->vz();
+      EWKW_Y               = EWKW->rapidity();
+      EWKW_Theta           = EWKW->theta();
+      EWKW_Eta             = EWKW->eta();
+      EWKW_Phi             = EWKW->phi();
+      EWKW_E               = EWKW->energy();
+      EWKW_px              = EWKW->px();
+      EWKW_py              = EWKW->py();
+      EWKW_pz              = EWKW->pz();
+      EWKW_Pt              = EWKW->pt();
+      EWKW_Et              = EWKW->et(); 
+      EWKW_Id              = EWKW->pdgId();
 
-  ////////// lepton #1 quantities //////////////
-  if( !(lepton1 == NULL) ) {
-    l1Charge           = lepton1-> charge();
-    l1Vx               = lepton1->vx();
-    l1Vy               = lepton1->vy();
-    l1Vz               = lepton1->vz();
-    l1Y                = lepton1->rapidity();
-    l1Theta            = lepton1->theta();
-    l1Eta              = lepton1->eta();    
-    l1Phi              = lepton1->phi();
-    l1E                = lepton1->energy();
-    l1px               = lepton1->px();
-    l1py               = lepton1->py();
-    l1pz               = lepton1->pz();
-    l1Pt               = lepton1->pt();
-    l1Et               = lepton1->et();	  
-  }
+      int tmp1 = i + 2;
+      int tmp2 = i + 1;
+      EWKTagQuark1 = &((*genParticles)[tmp1]);
+      EWKTagQuark2 = &((*genParticles)[tmp2]);
 
-  ////////// lepton #2 quantities: in case of Z ///////
-  if( !(lepton2 == NULL) ) {
-    l2Charge          = lepton2->charge();
-    l2Vx              = lepton2->vx();
-    l2Vy              = lepton2->vy();
-    l2Vz              = lepton2->vz();
-    l2Y               = lepton2->rapidity();
-    l2Theta           = lepton2->theta();
-    l2Eta             = lepton2->eta();    
-    l2Phi             = lepton2->phi();
-    l2E               = lepton2->energy();
-    l2px              = lepton2->px();
-    l2py              = lepton2->py();
-    l2pz              = lepton2->pz();
-    l2Pt              = lepton2->pt();
-    l2Et              = lepton2->et();	 
-  } 
+   }
+
+} //nGen loop end
+
+for(size_t i = 0; i < nGen; ++ i) {
+   const reco::Candidate* tmp = &((*genParticles)[i]);
+   //Generated W from Matrix Element
+   if( !((abs(tmp->status())==3) && (abs(tmp->pdgId())==24) )) continue;
+
+   if((abs(tmp->status())==3) && (abs(tmp->pdgId())==24) )
+   {
+      for(reco::GenParticleCollection::const_iterator p = genParticles -> begin();p != genParticles -> end(); ++p){
+
+         const reco::Candidate* pCurrent = &(*p);
+
+         if((pCurrent->status())==3 && (abs(pCurrent->pdgId())<=5 || abs(pCurrent->pdgId()) == 21) )
+         {
+            nParton_Winclusive++;
+         }
+      }
+   }
+} //nGen loop end
+
+//std::cout << "nPartons: " << nParton_Winclusive << std::endl;
+
+////////// lepton #1 quantities //////////////
+if( !(lepton1 == NULL) ) {
+   l1Charge           = lepton1-> charge();
+   l1Vx               = lepton1->vx();
+   l1Vy               = lepton1->vy();
+   l1Vz               = lepton1->vz();
+   l1Y                = lepton1->rapidity();
+   l1Theta            = lepton1->theta();
+   l1Eta              = lepton1->eta();    
+   l1Phi              = lepton1->phi();
+   l1E                = lepton1->energy();
+   l1px               = lepton1->px();
+   l1py               = lepton1->py();
+   l1pz               = lepton1->pz();
+   l1Pt               = lepton1->pt();
+   l1Et               = lepton1->et();	  
+}
+
+////////// lepton #2 quantities: in case of Z ///////
+if( !(lepton2 == NULL) ) {
+   l2Charge          = lepton2->charge();
+   l2Vx              = lepton2->vx();
+   l2Vy              = lepton2->vy();
+   l2Vz              = lepton2->vz();
+   l2Y               = lepton2->rapidity();
+   l2Theta           = lepton2->theta();
+   l2Eta             = lepton2->eta();    
+   l2Phi             = lepton2->phi();
+   l2E               = lepton2->energy();
+   l2px              = lepton2->px();
+   l2py              = lepton2->py();
+   l2pz              = lepton2->pz();
+   l2Pt              = lepton2->pt();
+   l2Et              = lepton2->et();	 
+} 
 
 //Parton filling
-  if( !(Parton1 == NULL) ) {
-  
-    Parton_Charge[0]          = Parton1->charge();
-    Parton_Vx[0]              = Parton1->vx();
-    Parton_Vy[0]              = Parton1->vy();
-    Parton_Vz[0]              = Parton1->vz();
-    Parton_Y[0]               = Parton1->rapidity();
-    Parton_Theta[0]           = Parton1->theta();
-    Parton_Eta[0]             = Parton1->eta();
-    Parton_Phi[0]             = Parton1->phi();
-    Parton_E[0]               = Parton1->energy();
-    Parton_px[0]              = Parton1->px();
-    Parton_py[0]              = Parton1->py();
-    Parton_pz[0]              = Parton1->pz();
-    Parton_Pt[0]              = Parton1->pt();
-    Parton_Et[0]              = Parton1->et(); 
-    Parton_Id[0]              = Parton1->pdgId();
+if( !(Parton1 == NULL) ) {
+
+   Parton_Charge[0]          = Parton1->charge();
+   Parton_Vx[0]              = Parton1->vx();
+   Parton_Vy[0]              = Parton1->vy();
+   Parton_Vz[0]              = Parton1->vz();
+   Parton_Y[0]               = Parton1->rapidity();
+   Parton_Theta[0]           = Parton1->theta();
+   Parton_Eta[0]             = Parton1->eta();
+   Parton_Phi[0]             = Parton1->phi();
+   Parton_E[0]               = Parton1->energy();
+   Parton_px[0]              = Parton1->px();
+   Parton_py[0]              = Parton1->py();
+   Parton_pz[0]              = Parton1->pz();
+   Parton_Pt[0]              = Parton1->pt();
+   Parton_Et[0]              = Parton1->et(); 
+   Parton_Id[0]              = Parton1->pdgId();
 }
 
 //Parton filling
-  if( !(Parton2 == NULL) ) {
+if( !(Parton2 == NULL) ) {
 
-    Parton_Charge[1]          = Parton2->charge();
-    Parton_Vx[1]              = Parton2->vx();
-    Parton_Vy[1]              = Parton2->vy();
-    Parton_Vz[1]              = Parton2->vz();
-    Parton_Y[1]               = Parton2->rapidity();
-    Parton_Theta[1]           = Parton2->theta();
-    Parton_Eta[1]             = Parton2->eta();
-    Parton_Phi[1]             = Parton2->phi();
-    Parton_E[1]               = Parton2->energy();
-    Parton_px[1]              = Parton2->px();
-    Parton_py[1]              = Parton2->py();
-    Parton_pz[1]              = Parton2->pz();
-    Parton_Pt[1]              = Parton2->pt();
-    Parton_Et[1]              = Parton2->et();
-    Parton_Id[1]              = Parton2->pdgId();
+   Parton_Charge[1]          = Parton2->charge();
+   Parton_Vx[1]              = Parton2->vx();
+   Parton_Vy[1]              = Parton2->vy();
+   Parton_Vz[1]              = Parton2->vz();
+   Parton_Y[1]               = Parton2->rapidity();
+   Parton_Theta[1]           = Parton2->theta();
+   Parton_Eta[1]             = Parton2->eta();
+   Parton_Phi[1]             = Parton2->phi();
+   Parton_E[1]               = Parton2->energy();
+   Parton_px[1]              = Parton2->px();
+   Parton_py[1]              = Parton2->py();
+   Parton_pz[1]              = Parton2->pz();
+   Parton_Pt[1]              = Parton2->pt();
+   Parton_Et[1]              = Parton2->et();
+   Parton_Id[1]              = Parton2->pdgId();
 }
 
 //Lepton filling
 
-  if( !(Lepton == NULL) ) {
-    Lepton_Charge          = Lepton->charge();
-    Lepton_Vx              = Lepton->vx();
-    Lepton_Vy              = Lepton->vy();
-    Lepton_Vz              = Lepton->vz();
-    Lepton_Y               = Lepton->rapidity();
-    Lepton_Theta           = Lepton->theta();
-    Lepton_Eta             = Lepton->eta();
-    Lepton_Phi             = Lepton->phi();
-    Lepton_E               = Lepton->energy();
-    Lepton_px              = Lepton->px();
-    Lepton_py              = Lepton->py();
-    Lepton_pz              = Lepton->pz();
-    Lepton_Pt              = Lepton->pt();
-    Lepton_Et              = Lepton->et();
-    Lepton_Id              = Lepton->pdgId();
-  }
+if( !(Lepton == NULL) ) {
+   Lepton_Charge          = Lepton->charge();
+   Lepton_Vx              = Lepton->vx();
+   Lepton_Vy              = Lepton->vy();
+   Lepton_Vz              = Lepton->vz();
+   Lepton_Y               = Lepton->rapidity();
+   Lepton_Theta           = Lepton->theta();
+   Lepton_Eta             = Lepton->eta();
+   Lepton_Phi             = Lepton->phi();
+   Lepton_E               = Lepton->energy();
+   Lepton_px              = Lepton->px();
+   Lepton_py              = Lepton->py();
+   Lepton_pz              = Lepton->pz();
+   Lepton_Pt              = Lepton->pt();
+   Lepton_Et              = Lepton->et();
+   Lepton_Id              = Lepton->pdgId();
+}
 
 
 //Met filling
 
-  if( !(Met == NULL) ) {
-    Met_Charge          = Met->charge();
-    Met_Vx              = Met->vx();
-    Met_Vy              = Met->vy();
-    Met_Vz              = Met->vz();
-    Met_Y               = Met->rapidity();
-    Met_Theta           = Met->theta();
-    Met_Eta             = Met->eta();
-    Met_Phi             = Met->phi();
-    Met_E               = Met->energy();
-    Met_px              = Met->px();
-    Met_py              = Met->py();
-    Met_pz              = Met->pz();
-    Met_Pt              = Met->pt();
-    Met_Et              = Met->et();
-    Met_Id              = Met->pdgId();
-  }
+if( !(Met == NULL) ) {
+   Met_Charge          = Met->charge();
+   Met_Vx              = Met->vx();
+   Met_Vy              = Met->vy();
+   Met_Vz              = Met->vz();
+   Met_Y               = Met->rapidity();
+   Met_Theta           = Met->theta();
+   Met_Eta             = Met->eta();
+   Met_Phi             = Met->phi();
+   Met_E               = Met->energy();
+   Met_px              = Met->px();
+   Met_py              = Met->py();
+   Met_pz              = Met->pz();
+   Met_Pt              = Met->pt();
+   Met_Et              = Met->et();
+   Met_Id              = Met->pdgId();
+}
 
 
 //tParton filling
-  if( !(tParton1 == NULL) ) {
-  
-    tParton_Charge[0]          = tParton1->charge();
-    tParton_Vx[0]              = tParton1->vx();
-    tParton_Vy[0]              = tParton1->vy();
-    tParton_Vz[0]              = tParton1->vz();
-    tParton_Y[0]               = tParton1->rapidity();
-    tParton_Theta[0]           = tParton1->theta();
-    tParton_Eta[0]             = tParton1->eta();
-    tParton_Phi[0]             = tParton1->phi();
-    tParton_E[0]               = tParton1->energy();
-    tParton_px[0]              = tParton1->px();
-    tParton_py[0]              = tParton1->py();
-    tParton_pz[0]              = tParton1->pz();
-    tParton_Pt[0]              = tParton1->pt();
-    tParton_Et[0]              = tParton1->et(); 
-    tParton_Id[0]              = tParton1->pdgId();
+if( !(tParton1 == NULL) ) {
+
+   tParton_Charge[0]          = tParton1->charge();
+   tParton_Vx[0]              = tParton1->vx();
+   tParton_Vy[0]              = tParton1->vy();
+   tParton_Vz[0]              = tParton1->vz();
+   tParton_Y[0]               = tParton1->rapidity();
+   tParton_Theta[0]           = tParton1->theta();
+   tParton_Eta[0]             = tParton1->eta();
+   tParton_Phi[0]             = tParton1->phi();
+   tParton_E[0]               = tParton1->energy();
+   tParton_px[0]              = tParton1->px();
+   tParton_py[0]              = tParton1->py();
+   tParton_pz[0]              = tParton1->pz();
+   tParton_Pt[0]              = tParton1->pt();
+   tParton_Et[0]              = tParton1->et(); 
+   tParton_Id[0]              = tParton1->pdgId();
 }
 
 //tParton filling
-  if( !(tParton2 == NULL) ) {
+if( !(tParton2 == NULL) ) {
 
-    tParton_Charge[1]          = tParton2->charge();
-    tParton_Vx[1]              = tParton2->vx();
-    tParton_Vy[1]              = tParton2->vy();
-    tParton_Vz[1]              = tParton2->vz();
-    tParton_Y[1]               = tParton2->rapidity();
-    tParton_Theta[1]           = tParton2->theta();
-    tParton_Eta[1]             = tParton2->eta();
-    tParton_Phi[1]             = tParton2->phi();
-    tParton_E[1]               = tParton2->energy();
-    tParton_px[1]              = tParton2->px();
-    tParton_py[1]              = tParton2->py();
-    tParton_pz[1]              = tParton2->pz();
-    tParton_Pt[1]              = tParton2->pt();
-    tParton_Et[1]              = tParton2->et();
-    tParton_Id[1]              = tParton2->pdgId();
+   tParton_Charge[1]          = tParton2->charge();
+   tParton_Vx[1]              = tParton2->vx();
+   tParton_Vy[1]              = tParton2->vy();
+   tParton_Vz[1]              = tParton2->vz();
+   tParton_Y[1]               = tParton2->rapidity();
+   tParton_Theta[1]           = tParton2->theta();
+   tParton_Eta[1]             = tParton2->eta();
+   tParton_Phi[1]             = tParton2->phi();
+   tParton_E[1]               = tParton2->energy();
+   tParton_px[1]              = tParton2->px();
+   tParton_py[1]              = tParton2->py();
+   tParton_pz[1]              = tParton2->pz();
+   tParton_Pt[1]              = tParton2->pt();
+   tParton_Et[1]              = tParton2->et();
+   tParton_Id[1]              = tParton2->pdgId();
 }
 
 //Lepton filling
 
-  if( !(tLepton == NULL) ) {
-    tLepton_Charge          = tLepton->charge();
-    tLepton_Vx              = tLepton->vx();
-    tLepton_Vy              = tLepton->vy();
-    tLepton_Vz              = tLepton->vz();
-    tLepton_Y               = tLepton->rapidity();
-    tLepton_Theta           = tLepton->theta();
-    tLepton_Eta             = tLepton->eta();
-    tLepton_Phi             = tLepton->phi();
-    tLepton_E               = tLepton->energy();
-    tLepton_px              = tLepton->px();
-    tLepton_py              = tLepton->py();
-    tLepton_pz              = tLepton->pz();
-    tLepton_Pt              = tLepton->pt();
-    tLepton_Et              = tLepton->et();
-    tLepton_Id              = tLepton->pdgId();
-  }
+if( !(tLepton == NULL) ) {
+   tLepton_Charge          = tLepton->charge();
+   tLepton_Vx              = tLepton->vx();
+   tLepton_Vy              = tLepton->vy();
+   tLepton_Vz              = tLepton->vz();
+   tLepton_Y               = tLepton->rapidity();
+   tLepton_Theta           = tLepton->theta();
+   tLepton_Eta             = tLepton->eta();
+   tLepton_Phi             = tLepton->phi();
+   tLepton_E               = tLepton->energy();
+   tLepton_px              = tLepton->px();
+   tLepton_py              = tLepton->py();
+   tLepton_pz              = tLepton->pz();
+   tLepton_Pt              = tLepton->pt();
+   tLepton_Et              = tLepton->et();
+   tLepton_Id              = tLepton->pdgId();
+}
 
 
 //Met filling
 
-  if( !(tMet == NULL) ) {
-    tMet_Charge          = tMet->charge();
-    tMet_Vx              = tMet->vx();
-    tMet_Vy              = tMet->vy();
-    tMet_Vz              = tMet->vz();
-    tMet_Y               = tMet->rapidity();
-    tMet_Theta           = tMet->theta();
-    tMet_Eta             = tMet->eta();
-    tMet_Phi             = tMet->phi();
-    tMet_E               = tMet->energy();
-    tMet_px              = tMet->px();
-    tMet_py              = tMet->py();
-    tMet_pz              = tMet->pz();
-    tMet_Pt              = tMet->pt();
-    tMet_Et              = tMet->et();
-    tMet_Id              = tMet->pdgId();
-  }
+if( !(tMet == NULL) ) {
+   tMet_Charge          = tMet->charge();
+   tMet_Vx              = tMet->vx();
+   tMet_Vy              = tMet->vy();
+   tMet_Vz              = tMet->vz();
+   tMet_Y               = tMet->rapidity();
+   tMet_Theta           = tMet->theta();
+   tMet_Eta             = tMet->eta();
+   tMet_Phi             = tMet->phi();
+   tMet_E               = tMet->energy();
+   tMet_px              = tMet->px();
+   tMet_py              = tMet->py();
+   tMet_pz              = tMet->pz();
+   tMet_Pt              = tMet->pt();
+   tMet_Et              = tMet->et();
+   tMet_Id              = tMet->pdgId();
+}
 
 
 
-  if( !(tb == NULL) ) {
-    tb_Charge          = tb->charge();
-    tb_Vx              = tb->vx();
-    tb_Vy              = tb->vy();
-    tb_Vz              = tb->vz();
-    tb_Y               = tb->rapidity();
-    tb_Theta           = tb->theta();
-    tb_Eta             = tb->eta();
-    tb_Phi             = tb->phi();
-    tb_E               = tb->energy();
-    tb_px              = tb->px();
-    tb_py              = tb->py();
-    tb_pz              = tb->pz();
-    tb_Pt              = tb->pt();
-    tb_Et              = tb->et();
-    tb_Id              = tb->pdgId();
-  }
+if( !(tb == NULL) ) {
+   tb_Charge          = tb->charge();
+   tb_Vx              = tb->vx();
+   tb_Vy              = tb->vy();
+   tb_Vz              = tb->vz();
+   tb_Y               = tb->rapidity();
+   tb_Theta           = tb->theta();
+   tb_Eta             = tb->eta();
+   tb_Phi             = tb->phi();
+   tb_E               = tb->energy();
+   tb_px              = tb->px();
+   tb_py              = tb->py();
+   tb_pz              = tb->pz();
+   tb_Pt              = tb->pt();
+   tb_Et              = tb->et();
+   tb_Id              = tb->pdgId();
+}
 
 
- if( !(tbbar == NULL) ) {
-    tbbar_Charge          = tbbar->charge();
-    tbbar_Vx              = tbbar->vx();
-    tbbar_Vy              = tbbar->vy();
-    tbbar_Vz              = tbbar->vz();
-    tbbar_Y               = tbbar->rapidity();
-    tbbar_Theta           = tbbar->theta();
-    tbbar_Eta             = tbbar->eta();
-    tbbar_Phi             = tbbar->phi();
-    tbbar_E               = tbbar->energy();
-    tbbar_px              = tbbar->px();
-    tbbar_py              = tbbar->py();
-    tbbar_pz              = tbbar->pz();
-    tbbar_Pt              = tbbar->pt();
-    tbbar_Et              = tbbar->et();
-    tbbar_Id              = tbbar->pdgId();
-  }
+if( !(tbbar == NULL) ) {
+   tbbar_Charge          = tbbar->charge();
+   tbbar_Vx              = tbbar->vx();
+   tbbar_Vy              = tbbar->vy();
+   tbbar_Vz              = tbbar->vz();
+   tbbar_Y               = tbbar->rapidity();
+   tbbar_Theta           = tbbar->theta();
+   tbbar_Eta             = tbbar->eta();
+   tbbar_Phi             = tbbar->phi();
+   tbbar_E               = tbbar->energy();
+   tbbar_px              = tbbar->px();
+   tbbar_py              = tbbar->py();
+   tbbar_pz              = tbbar->pz();
+   tbbar_Pt              = tbbar->pt();
+   tbbar_Et              = tbbar->et();
+   tbbar_Id              = tbbar->pdgId();
+}
 
 
- if( !(Hb == NULL) ) {
-    Hb_Charge          = Hb->charge();
-    Hb_Vx              = Hb->vx();
-    Hb_Vy              = Hb->vy();
-    Hb_Vz              = Hb->vz();
-    Hb_Y               = Hb->rapidity();
-    Hb_Theta           = Hb->theta();
-    Hb_Eta             = Hb->eta();
-    Hb_Phi             = Hb->phi();
-    Hb_E               = Hb->energy();
-    Hb_px              = Hb->px();
-    Hb_py              = Hb->py();
-    Hb_pz              = Hb->pz();
-    Hb_Pt              = Hb->pt();
-    Hb_Et              = Hb->et();
-    Hb_Id              = Hb->pdgId();
-  }
+if( !(Hb == NULL) ) {
+   Hb_Charge          = Hb->charge();
+   Hb_Vx              = Hb->vx();
+   Hb_Vy              = Hb->vy();
+   Hb_Vz              = Hb->vz();
+   Hb_Y               = Hb->rapidity();
+   Hb_Theta           = Hb->theta();
+   Hb_Eta             = Hb->eta();
+   Hb_Phi             = Hb->phi();
+   Hb_E               = Hb->energy();
+   Hb_px              = Hb->px();
+   Hb_py              = Hb->py();
+   Hb_pz              = Hb->pz();
+   Hb_Pt              = Hb->pt();
+   Hb_Et              = Hb->et();
+   Hb_Id              = Hb->pdgId();
+}
 
 
- if( !(Hbbar == NULL) ) {
-    Hbbar_Charge          = Hbbar->charge();
-    Hbbar_Vx              = Hbbar->vx();
-    Hbbar_Vy              = Hbbar->vy();
-    Hbbar_Vz              = Hbbar->vz();
-    Hbbar_Y               = Hbbar->rapidity();
-    Hbbar_Theta           = Hbbar->theta();
-    Hbbar_Eta             = Hbbar->eta();
-    Hbbar_Phi             = Hbbar->phi();
-    Hbbar_E               = Hbbar->energy();
-    Hbbar_px              = Hbbar->px();
-    Hbbar_py              = Hbbar->py();
-    Hbbar_pz              = Hbbar->pz();
-    Hbbar_Pt              = Hbbar->pt();
-    Hbbar_Et              = Hbbar->et();
-    Hbbar_Id              = Hbbar->pdgId();
-  }
+if( !(Hbbar == NULL) ) {
+   Hbbar_Charge          = Hbbar->charge();
+   Hbbar_Vx              = Hbbar->vx();
+   Hbbar_Vy              = Hbbar->vy();
+   Hbbar_Vz              = Hbbar->vz();
+   Hbbar_Y               = Hbbar->rapidity();
+   Hbbar_Theta           = Hbbar->theta();
+   Hbbar_Eta             = Hbbar->eta();
+   Hbbar_Phi             = Hbbar->phi();
+   Hbbar_E               = Hbbar->energy();
+   Hbbar_px              = Hbbar->px();
+   Hbbar_py              = Hbbar->py();
+   Hbbar_pz              = Hbbar->pz();
+   Hbbar_Pt              = Hbbar->pt();
+   Hbbar_Et              = Hbbar->et();
+   Hbbar_Id              = Hbbar->pdgId();
+}
 
- ///////////////////////////////// Fill Tag Quark info for VBF case
+///////////////////////////////// Fill Tag Quark info for VBF case
 
 //Parton filling
-  if( H!=NULL && TagQuark1 != NULL && TagQuark2!=NULL) {
+if( H!=NULL && TagQuark1 != NULL && TagQuark2!=NULL) {
 
-    TagQuark_Charge[0]          = TagQuark1->charge();
-    TagQuark_Vx[0]              = TagQuark1->vx();
-    TagQuark_Vy[0]              = TagQuark1->vy();
-    TagQuark_Vz[0]              = TagQuark1->vz();
-    TagQuark_Y[0]               = TagQuark1->rapidity();
-    TagQuark_Theta[0]           = TagQuark1->theta();
-    TagQuark_Eta[0]             = TagQuark1->eta();
-    TagQuark_Phi[0]             = TagQuark1->phi();
-    TagQuark_E[0]               = TagQuark1->energy();
-    TagQuark_px[0]              = TagQuark1->px();
-    TagQuark_py[0]              = TagQuark1->py();
-    TagQuark_pz[0]              = TagQuark1->pz();
-    TagQuark_Pt[0]              = TagQuark1->pt();
-    TagQuark_Et[0]              = TagQuark1->et(); 
-    TagQuark_Id[0]              = TagQuark1->pdgId();
+   TagQuark_Charge[0]          = TagQuark1->charge();
+   TagQuark_Vx[0]              = TagQuark1->vx();
+   TagQuark_Vy[0]              = TagQuark1->vy();
+   TagQuark_Vz[0]              = TagQuark1->vz();
+   TagQuark_Y[0]               = TagQuark1->rapidity();
+   TagQuark_Theta[0]           = TagQuark1->theta();
+   TagQuark_Eta[0]             = TagQuark1->eta();
+   TagQuark_Phi[0]             = TagQuark1->phi();
+   TagQuark_E[0]               = TagQuark1->energy();
+   TagQuark_px[0]              = TagQuark1->px();
+   TagQuark_py[0]              = TagQuark1->py();
+   TagQuark_pz[0]              = TagQuark1->pz();
+   TagQuark_Pt[0]              = TagQuark1->pt();
+   TagQuark_Et[0]              = TagQuark1->et(); 
+   TagQuark_Id[0]              = TagQuark1->pdgId();
 
-    TagQuark_Charge[1]          = TagQuark2->charge();
-    TagQuark_Vx[1]              = TagQuark2->vx();
-    TagQuark_Vy[1]              = TagQuark2->vy();
-    TagQuark_Vz[1]              = TagQuark2->vz();
-    TagQuark_Y[1]               = TagQuark2->rapidity();
-    TagQuark_Theta[1]           = TagQuark2->theta();
-    TagQuark_Eta[1]             = TagQuark2->eta();
-    TagQuark_Phi[1]             = TagQuark2->phi();
-    TagQuark_E[1]               = TagQuark2->energy();
-    TagQuark_px[1]              = TagQuark2->px();
-    TagQuark_py[1]              = TagQuark2->py();
-    TagQuark_pz[1]              = TagQuark2->pz();
-    TagQuark_Pt[1]              = TagQuark2->pt();
-    TagQuark_Et[1]              = TagQuark2->et();
-    TagQuark_Id[1]              = TagQuark2->pdgId();
- 
- }
+   TagQuark_Charge[1]          = TagQuark2->charge();
+   TagQuark_Vx[1]              = TagQuark2->vx();
+   TagQuark_Vy[1]              = TagQuark2->vy();
+   TagQuark_Vz[1]              = TagQuark2->vz();
+   TagQuark_Y[1]               = TagQuark2->rapidity();
+   TagQuark_Theta[1]           = TagQuark2->theta();
+   TagQuark_Eta[1]             = TagQuark2->eta();
+   TagQuark_Phi[1]             = TagQuark2->phi();
+   TagQuark_E[1]               = TagQuark2->energy();
+   TagQuark_px[1]              = TagQuark2->px();
+   TagQuark_py[1]              = TagQuark2->py();
+   TagQuark_pz[1]              = TagQuark2->pz();
+   TagQuark_Pt[1]              = TagQuark2->pt();
+   TagQuark_Et[1]              = TagQuark2->et();
+   TagQuark_Id[1]              = TagQuark2->pdgId();
+
+}
+
+
+if( EWKTagQuark1 != NULL && EWKTagQuark2!=NULL) {
+
+   EWKTagQuark_Charge[0]          = EWKTagQuark1->charge();
+   EWKTagQuark_Vx[0]              = EWKTagQuark1->vx();
+   EWKTagQuark_Vy[0]              = EWKTagQuark1->vy();
+   EWKTagQuark_Vz[0]              = EWKTagQuark1->vz();
+   EWKTagQuark_Y[0]               = EWKTagQuark1->rapidity();
+   EWKTagQuark_Theta[0]           = EWKTagQuark1->theta();
+   EWKTagQuark_Eta[0]             = EWKTagQuark1->eta();
+   EWKTagQuark_Phi[0]             = EWKTagQuark1->phi();
+   EWKTagQuark_E[0]               = EWKTagQuark1->energy();
+   EWKTagQuark_px[0]              = EWKTagQuark1->px();
+   EWKTagQuark_py[0]              = EWKTagQuark1->py();
+   EWKTagQuark_pz[0]              = EWKTagQuark1->pz();
+   EWKTagQuark_Pt[0]              = EWKTagQuark1->pt();
+   EWKTagQuark_Et[0]              = EWKTagQuark1->et(); 
+   EWKTagQuark_Id[0]              = EWKTagQuark1->pdgId();
+
+   EWKTagQuark_Charge[1]          = EWKTagQuark2->charge();
+   EWKTagQuark_Vx[1]              = EWKTagQuark2->vx();
+   EWKTagQuark_Vy[1]              = EWKTagQuark2->vy();
+   EWKTagQuark_Vz[1]              = EWKTagQuark2->vz();
+   EWKTagQuark_Y[1]               = EWKTagQuark2->rapidity();
+   EWKTagQuark_Theta[1]           = EWKTagQuark2->theta();
+   EWKTagQuark_Eta[1]             = EWKTagQuark2->eta();
+   EWKTagQuark_Phi[1]             = EWKTagQuark2->phi();
+   EWKTagQuark_E[1]               = EWKTagQuark2->energy();
+   EWKTagQuark_px[1]              = EWKTagQuark2->px();
+   EWKTagQuark_py[1]              = EWKTagQuark2->py();
+   EWKTagQuark_pz[1]              = EWKTagQuark2->pz();
+   EWKTagQuark_Pt[1]              = EWKTagQuark2->pt();
+   EWKTagQuark_Et[1]              = EWKTagQuark2->et();
+   EWKTagQuark_Id[1]              = EWKTagQuark2->pdgId();
+
+}
 
 }
 
 
 
 ////////////////// utilities, helpers ///////////////////
- 
+
 void ewk::MCTreeFiller::SetBranch( float* x, std::string name)
 {
-  std::string brName = std::string(name_) + "_" + name;
-  tree_->Branch( brName.c_str(), x, ( brName+"/F").c_str() );
+   std::string brName = std::string(name_) + "_" + name;
+   tree_->Branch( brName.c_str(), x, ( brName+"/F").c_str() );
 }
 
 
 void ewk::MCTreeFiller::SetBranch( int* x, std::string name)
 {
-  std::string brName = std::string(name_) + "_" + name;
-  tree_->Branch( brName.c_str(), x, ( brName+"/I").c_str() );
+   std::string brName = std::string(name_) + "_" + name;
+   tree_->Branch( brName.c_str(), x, ( brName+"/I").c_str() );
 }
 
 
 void ewk::MCTreeFiller::SetBranch( bool* x, std::string name)
 {
-  std::string brName = std::string(name_) + "_" + name;
-  tree_->Branch( brName.c_str(), x, ( brName+"/O").c_str() );
+   std::string brName = std::string(name_) + "_" + name;
+   tree_->Branch( brName.c_str(), x, ( brName+"/O").c_str() );
 }
 
