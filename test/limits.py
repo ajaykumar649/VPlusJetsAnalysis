@@ -1,6 +1,6 @@
 from ROOT import RooStats, Double, RooArgSet, RooFit
 
-# one parameter limit
+# profiled likelihood limit
 def plcLimit(obs_, poi_, model, ws, data, CL = 0.95, verbose = False):
     # obs : observable variable or RooArgSet of observables
     # poi : parameter of interest or RooArgSet of parameters
@@ -64,7 +64,8 @@ def expectedPlcLimit(obs_, poi_, model, ws, ntoys = 30, CL = 0.95):
     # ntoys : number of toy datsets to generate to get expected limit
     # CL : confidence level for interval
     # returns a dictionary containing the expected limits and their 1 sigma
-    # errors and a list of the results from the individual toys.
+    # errors for the first/only parameter in poi_ and a list of the results
+    # from the individual toys.
 
     from math import sqrt
     obs = RooArgSet(obs_)

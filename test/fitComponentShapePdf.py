@@ -205,6 +205,9 @@ if opts.interference == 3:
 if fitter.ws.var('mean_%s_fit_mlvjj_core%s' % (compName,extraTag)):
     fitter.ws.var('mean_%s_fit_mlvjj_core%s' % \
                       (compName,extraTag)).setVal(opts.mH)
+if fitter.ws.var('mean_%s_fit_mlvjj%s' % (compName,extraTag)):
+    fitter.ws.var('mean_%s_fit_mlvjj%s' % \
+                      (compName,extraTag)).setVal(opts.mH)
 if fitter.ws.var('mean_%s_fit_mlvjj_tail%s' % (compName,extraTag)):
     fitter.ws.var('mean_%s_fit_mlvjj_tail%s' % \
                       (compName,extraTag)).setVal(opts.mH)
@@ -214,6 +217,9 @@ if fitter.ws.var('sigma_%s_fit_mlvjj_tail%s' % (compName,extraTag)):
 if fitter.ws.var('sigma_%s_fit_mlvjj_core%s' % (compName,extraTag)):
     fitter.ws.var('sigma_%s_fit_mlvjj_core%s' % \
                       (compName,extraTag)).setVal(opts.mH*0.1)
+if fitter.ws.var('width_%s_fit_mlvjj%s' % (compName,extraTag)):
+    fitter.ws.var('width_%s_fit_mlvjj%s' % \
+                      (compName,extraTag)).setVal(HWWSignalShapes.HiggsWidth[int(opts.mH)])
 
 params = sigPdf.getParameters(data)
 parCopy = params.snapshot()
@@ -335,6 +341,13 @@ if hist2d:
     hist2d.Write()
 
 sigFile.Close()
+
+parIter = finalPars.createIterator()
+p = parIter.Next()
+while p:
+    if not p.isConstant():
+        p.setRange(p.getVal()-p.getError()*10., p.getVal()+p.getError()*10.)
+    p = parIter.Next()
 
 if opts.makeConstant:
     finalPars.setAttribAll('Constant', True)

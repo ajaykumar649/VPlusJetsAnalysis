@@ -70,6 +70,10 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.qqHFiles = pars_mjj.qqHFiles
     pars.qqHModels = [ modePars[mH][5]['qqH'][1] ]
 
+    pars.QCDFiles = pars_mjj.QCDFiles
+    pars.QCDModels = pars_mjj.QCDModels
+    pars.QCDFracOfData = pars_mjj.QCDFracOfData
+
     pars.dibosonPlotting = pars_mjj.dibosonPlotting
     pars.WpJPlotting = pars_mjj.WpJPlotting
     pars.topPlotting = pars_mjj.topPlotting
@@ -79,7 +83,8 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.var = ['fit_mlvjj', 'Mass2j_PFCor']
     pars.varRanges = pars_mjj.varRanges
     pars.varTitles = pars_mjj.varTitles
-    pars.exclude = {}
+    pars.exclude = pars_mjj.exclude
+    pars.doExclude = False
     pars.blind = pars_mjj.blind
 
     pars.binData = pars_mjj.binData

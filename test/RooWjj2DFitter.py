@@ -294,7 +294,7 @@ class Wjj2DFitter:
         # print
 
         rangeCmd = RooCmdArg.none()
-        if self.rangeString:
+        if self.rangeString and self.pars.doExclude:
             rangeCmd = RooFit.Range(self.rangeString)
 
         print 'fitting ...'
@@ -320,10 +320,31 @@ class Wjj2DFitter:
             thePdf = self.makeComponentHistPdf(component, files)
         elif (models[0] == -2):
             thePdf = self.makeMorphingPdf(component)
+        elif (models[0] == -3):
         else:
             thePdf = self.makeComponentAnalyticPdf(component, models)
         return thePdf
-            
+
+    def makeConvolvedPdf(self, component, files, models):
+        if self.ws.pdf(component):
+            return self.ws.pdf(component)
+
+        baseModel = blah
+        basePdf = self.makeComponentPdf(self, component + '_base',
+                                        files, baseModel)
+        convModel = blah2
+        convPdf = self.makeComponentPdf(self, component + '_conv',
+                                        files, convModel)
+        var = self.pars.var[0]
+        try:
+            vName = self.pars.varNames[0]
+        except AttributeError:
+            vName = var
+        self.ws.factory('RooFFTConvPdf::%s(%s,%s,%s)' % \
+                        (component, vName, basePdf.GetName(),
+                         convPdf.GetName()))
+        return self.ws.pdf(component)
+        
     #create a simple 2D histogram pdf
     def makeComponentHistPdf(self, component, files):
         if self.ws.pdf(component):
@@ -550,16 +571,21 @@ class Wjj2DFitter:
         bname = var
         if not excluded:
             for v in self.pars.exclude:
-                if self.pars.varNames[v] == var:
+                if hasattr(self.pars, 'varNames') and \
+                       (self.pars.varNames[v] == var):
                     excluded = True
                     bname = v
-        if self.pars.blind and excluded:
+        if excluded:
             blinder = TBox(self.pars.exclude[bname][0], sframe.GetMinimum(),
                            self.pars.exclude[bname][1], sframe.GetMaximum())
             # blinder.SetName('blinder')
             # blinder.SetTitle('signal region')
             blinder.SetFillColor(kBlack)
-            blinder.SetFillStyle(1001)
+            if self.pars.blind:  
+                blinder.SetFillStyle(1001)
+            else:
+                blinder.SetFillStyle(0)
+            blinder.SetLineStyle(2)
             sframe.addObject(blinder)
         elif self.pars.blind:
             if not Silent:
@@ -649,7 +675,7 @@ class Wjj2DFitter:
         if left:
             theLeg = TLegend(0.2, 0.62, 0.55, 0.92, "", "NDC")
         else:
-            theLeg = TLegend(0.55, 0.62, 0.92, 0.92, "", "NDC")
+            theLeg = TLegend(0.60, 0.62, 0.92, 0.92, "", "NDC")
         theLeg.SetName('theLegend')
 
         theLeg.SetBorderSize(0)

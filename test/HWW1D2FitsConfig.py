@@ -88,6 +88,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars = Wjj2DFitterPars()
 
     pars.MCDirectory = '/uscms_data/d2/andersj/Wjj/2012/data/Moriond2013/ReducedTrees/'
+    pars.QCDDirectory = "/uscms_data/d3/ilyao/QCD8TeV/Moriond13/"
     # pars.MCDirectory = "root://cmseos:1094//eos/uscms/store/user/lnujj/Moriond2013/RD_includingDiboson/"
     # pars.MCDirectory = "root://cmseos:1094//eos/uscms/store/user/lnujj/HCP2012METfix/ReducedTrees/"
 
@@ -185,6 +186,13 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
         ]
     pars.topModels = [ modePars[mH][5]['top'][0] ]
 
+    pars.QCDFracOfData = 0.05
+    pars.QCDFiles = [
+        (pars.QCDDirectory + 'RDQCD_WenuJets_Isog0p3NoElMVA_19p2invfb.root',
+         1,1), #The events come from the data sideband
+        ]
+    pars.QCDModels = [27]
+
     ngen = HWWSignalShapes.NgenHiggs(mH, 'ggH')
     pars.ggHFiles = [
         (pars.MCDirectory + HWWSignalShapes.makeSignalFilename(mH, "ggH",
@@ -210,6 +218,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.ggHPlotting = {'color' : kBlue, 'title' : "H(%i) #rightarrow WW" % mH}
     pars.qqHPlotting = {'color' : kBlue, 'title' : "H(%i) #rightarrow WW" % mH,
                         'visible' : True}
+    pars.QCDPlotting = {'color' : kGray, 'title' : 'multijet'}
 
     pars.var = ['Mass2j_PFCor', 'fit_mlvjj']
     pars.varRanges = {'Mass2j_PFCor': (12, 50., 146., []),
@@ -220,6 +229,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
                       'fit_mlvjj' : 'm_{l#nujj}'
                       }
     pars.exclude = {'Mass2j_PFCor' : (66., 66.+32.)}
+    pars.doExclude = True
     pars.blind = True
 
     pars.binData = False
@@ -231,22 +241,6 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 def customizeElectrons(pars):
     pars.DataFile = pars.DataDirectory + 'RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root'
     pars.integratedLumi = 19200
-
-    # pars.backgrounds.append('multijet')
-
-    # pars.multijetFraction = 0.0637
-    # pars.multijetFiles = [
-    #     (pars.MCDirectory + 'RDQCD_WenuJets_Isog0p3NoElMVA_11p9invfb.root',
-    #      1, pars.multijetFraction/pars.integratedLumi)
-    #     ]
-    # pars.multijetModels = (11, 1)
-    # pars.yieldConstraints['multijet'] = 0.2
-    # pars.multijetPlotting = {'color' : kGray+1, 'title' : 'multijet'}
-
-    # pars.multijet_cuts = '(ggdevt==%i)&&(fit_status==0)&&(W_mt>30)' % pars.Njets
-    # pars.multijet_cuts += '&&(abs(JetPFCor_dphiMET[0])>0.8)' + \
-    #     '&&(W_electron_pt>35)' + \
-    #     '&&(W_electron_pfIsoEA>0.3)'
 
     pars.doEffCorrections = True
     pars.effToDo = ['lepton']

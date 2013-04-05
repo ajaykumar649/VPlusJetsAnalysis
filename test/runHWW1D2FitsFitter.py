@@ -27,7 +27,7 @@ parser.add_option('--debug', dest='debug', action='store_true', default=False,
                   help='turn on extra debugging information')
 parser.add_option('--limit', dest='doLimit', action='store_true',
                   default=False,
-                  help='calculate limits using profile likelihood')
+                  help='calculate expected limits using profile likelihood')
 parser.add_option('--obsLimit', dest='obsLimit', action='store_true',
                   default=False,
                   help='calculate observed limit too')
@@ -43,7 +43,7 @@ import RooWjj2DFitter
 from ROOT import TCanvas, RooFit, RooLinkedListIter, TMath, RooRandom, TFile, \
     RooDataHist, RooMsgService, TStopwatch, RooAbsPdf, TBox, kBlack, kRed, \
     kBlue, kOrange, kDashed, RooAbsCollection, RooArgSet, RooStats, Double, \
-    RooAbsReal, RooAbsData
+    RooAbsReal, RooAbsData, TH1F
 import pulls
 
 timer = TStopwatch()
@@ -246,7 +246,7 @@ predictedPars = params_mWW.snapshot()
 fitter_mWW.ws.var('r_signal').setVal(0.0)
 fitter_mWW.ws.var('r_signal').setConstant(True)
 fitter_mWW.ws.var('r_signal').setError(0.1)
-fitter_mWW.ws.var('r_signal').setRange(-1., 10.)
+fitter_mWW.ws.var('r_signal').setRange(-0.5, 5.)
 
 params_mWW.Print("v")
 #fitter_mWW.ws.Print()
@@ -337,12 +337,12 @@ bkgHisto.Scale(full_pdf.expectedEvents(fitter_mWW.ws.set('obsSet'))/bkgHisto.Int
 bkgHisto.SetName("HWW%snujj_bkg" % mode)
 # c_debug = TCanvas('c_debug', 'debug')
 bkgHisto_up = fitter_mWW.utils.newEmptyHist(
-    'HWW%snujj_bkg_bkgshapeUp' % (mode), 1)
+    'HWW%snujj_bkg_%sbkgshapeUp' % (mode, mode), 1)
 bkgHisto_up = pulls.curveToHist(upper, bkgHisto_up)
 bkgHisto_up.SetLineColor(kOrange+2)
 bkgHisto_up.SetLineStyle(kDashed)
 bkgHisto_dwn = fitter_mWW.utils.newEmptyHist(
-    'HWW%snujj_bkg_bkgshapeDown' % (mode), 1)
+    'HWW%snujj_bkg_%sbkgshapeDown' % (mode, mode), 1)
 bkgHisto_dwn = pulls.curveToHist(lower, bkgHisto_dwn)
 bkgHisto_dwn.SetLineColor(kOrange+4)
 bkgHisto_dwn.SetLineStyle(kDashed)
@@ -391,15 +391,40 @@ dataHisto = RooAbsData.createHistogram(fitter_mWW.ws.data('data_obs'),
 dataHisto.SetMarkerStyle(20)
 dataHisto.SetName('HWW%snujj_data_obs' % mode)
 dataHisto.Draw('same')
+c_bkg.Update()
 
 if opts.doLimit:
     (expectedLimit, toys) = \
                     limits.expectedPlcLimit(fitter_mWW.ws.var(pars_mWW.var[0]),
                                             fitter_mWW.ws.var('r_signal'),
-                                            full_pdf, fitter_mWW.ws)
+                                            full_pdf, fitter_mWW.ws,
+                                            ntoys = 30)
 
+    upperHist = TH1F('upperHist', 'upper limit hist',
+                     60,
+                     fitter_mWW.ws.var('r_signal').getMin(),
+                     fitter_mWW.ws.var('r_signal').getMax())
+    nUpperGood = 0
+    sumUpper = 0.
+    sumUpper2 = 0.
+    for toy in toys:
+        if (toy['ok']) and \
+           (toy['upper'] < (fitter_mWW.ws.var('r_signal').getMax()-0.02)):
+            upperHist.Fill(toy['upper'])
+            nUpperGood += 1
+            sumUpper += toy['upper']
+            sumUpper2 += toy['upper']**2
+            
+            
+        
     print 'expected 95%% CL upper limit: %0.4f +/- %0.4f' % \
           (expectedLimit['upper'], expectedLimit['upperErr'])
+    print 'sensible expected 95%% CL upper limit: %.4f +/- %.4f' % \
+          (sumUpper/nUpperGood,
+           TMath.Sqrt(sumUpper2/(nUpperGood-1)-sumUpper**2/nUpperGood/(nUpperGood-1)))
+    c_upper = TCanvas('c_upper', 'toy upper limits')
+    upperHist.Draw()
+    c_upper.Update()
     print 'expected 95%% CL lower limit: %0.4f +/- %0.4f' % \
           (expectedLimit['lower'], expectedLimit['lowerErr'])
 

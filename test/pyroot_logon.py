@@ -135,7 +135,8 @@ if (gSystem.DynamicPathName("libFWCoreFWLite.so",True)):
         gROOT.ProcessLine('.L RooChebyshevPDF.cc+')
     if not TClass.GetClass('alphaFunction'):
         gROOT.ProcessLine('.L alphaFunction.cxx+')
-
+    if not TClass.GetClass('RooDibosonHistPdf'):
+        gROOT.ProcessLine('.L RooDibosonHistPdf.cxx+')
         
 
 print 'end of pyroot_logon'
