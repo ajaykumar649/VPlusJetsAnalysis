@@ -1,12 +1,14 @@
-{
+void MakeATGCRatioHistograms() {
   char* dir = "/uscms_data/d2/andersj/Wjj/2012/data/Moriond2013/ReducedTrees/";
   TFile* fSM = new TFile((dir + string("Lambda00_Kappa00_G00.root")).c_str());
-  TFile* f_L01K00G00 = new TFile((dir + string("Lambda01_Kappa00_G00.root")).c_str());
-  TFile* f_L03K00G00 = new TFile((dir + string("Lambda03_Kappa00_G00.root")).c_str());
-  TFile* f_L05K00G00 = new TFile((dir + string("Lambda05_Kappa00_G00.root")).c_str());
+  TFile* fSM2 = new TFile((string("Lambda00_Kappa00_G00.root")).c_str());
+  TFile* f_L01K00G00 = new TFile((string("Lambda01_Kappa00_G00.root")).c_str());
+  TFile* f_L03K00G00 = new TFile((string("Lambda03_Kappa00_G00.root")).c_str());
+  TFile* f_L05K00G00 = new TFile((string("Lambda05_Kappa00_G00.root")).c_str());
   TFile* f_L07K00G00 = new TFile((dir + string("Lambda07_Kappa00_G00.root")).c_str());
   TFile* f_L09K00G00 = new TFile((dir + string("Lambda09_Kappa00_G00.root")).c_str());
   TFile* f_L11K00G00 = new TFile((dir + string("Lambda11_Kappa00_G00.root")).c_str());
+  TFile* f_L00K05G00 = new TFile((string("Lambda00_Kappa05_G00.root")).c_str());
   TFile* f_L00K11G00 = new TFile((dir + string("Lambda00_Kappa11_G00.root")).c_str());
   TFile* f_L00K16G00 = new TFile((dir + string("Lambda00_Kappa16_G00.root")).c_str());
   TFile* f_L00K20G00 = new TFile((dir + string("Lambda00_Kappa20_G00.root")).c_str());
@@ -16,12 +18,14 @@
 
 
   TTree* trSM = (TTree*) fSM->Get("WJet");
+  TTree* trSM2 = (TTree*) fSM2->Get("WJet");
   TTree* tr_L01K00G00 = (TTree*) f_L01K00G00->Get("WJet");
   TTree* tr_L03K00G00 = (TTree*) f_L03K00G00->Get("WJet");
   TTree* tr_L05K00G00 = (TTree*) f_L05K00G00->Get("WJet");
   TTree* tr_L07K00G00 = (TTree*) f_L07K00G00->Get("WJet");
   TTree* tr_L09K00G00 = (TTree*) f_L09K00G00->Get("WJet");
   TTree* tr_L11K00G00 = (TTree*) f_L11K00G00->Get("WJet");
+  TTree* tr_L00K05G00 = (TTree*) f_L00K05G00->Get("WJet");
   TTree* tr_L00K11G00 = (TTree*) f_L00K11G00->Get("WJet");
   TTree* tr_L00K16G00 = (TTree*) f_L00K16G00->Get("WJet");
   TTree* tr_L00K20G00 = (TTree*) f_L00K20G00->Get("WJet");
@@ -32,12 +36,14 @@
 
   char* dijetPt = "sqrt(JetPFCor_Pt[0]**2+JetPFCor_Pt[1]**2+2*JetPFCor_Pt[0]*JetPFCor_Pt[1]*cos(JetPFCor_Phi[0]-JetPFCor_Phi[1]))";
   trSM->SetAlias("dijetPt", dijetPt);
+  trSM2->SetAlias("dijetPt", dijetPt);
   tr_L01K00G00->SetAlias("dijetPt", dijetPt);
   tr_L03K00G00->SetAlias("dijetPt", dijetPt);
   tr_L05K00G00->SetAlias("dijetPt", dijetPt);
   tr_L07K00G00->SetAlias("dijetPt", dijetPt);
   tr_L09K00G00->SetAlias("dijetPt", dijetPt);
   tr_L11K00G00->SetAlias("dijetPt", dijetPt);
+  tr_L00K05G00->SetAlias("dijetPt", dijetPt);
   tr_L00K11G00->SetAlias("dijetPt", dijetPt);
   tr_L00K16G00->SetAlias("dijetPt", dijetPt);
   tr_L00K20G00->SetAlias("dijetPt", dijetPt);
@@ -46,25 +52,39 @@
   tr_L00K00G60->SetAlias("dijetPt", dijetPt);
 
 
-  char* cutsNoBoost = "(effwt*puwt)*((W_pt<200.) && (dijetPt>70.) &&(abs(JetPFCor_Eta[0])<2.4) &&(abs(JetPFCor_Eta[1])<2.4) &&(abs(JetPFCor_Eta[0]-JetPFCor_Eta[1])<1.5) &&(abs(JetPFCor_dphiMET[0])>0.4) &&(event_met_pfmet>25) &&(W_mt>30.) &&(JetPFCor_Pt[0]>40.) &&(JetPFCor_Pt[1]>35.) &&(JetPFCor_Pt[2]<30.) &&(JetPFCor_bDiscriminatorCSV[0]<0.244) &&(JetPFCor_bDiscriminatorCSV[1]<0.244))";
+//   char* cutsNoBoost = "(effwt*puwt)*((W_pt<200.) && (dijetPt>70.) && (event_met_pfmet >25) &&(abs(W_muon_eta)<2.1) && (W_muon_pt>25.) && (abs(JetPFCor_Eta[0])<2.4) && (abs(JetPFCor_Eta[1])<2.4) && (abs(JetPFCor_Eta[0]-JetPFCor_Eta[1])<1.5) &&(abs(JetPFCor_dphiMET[0])>0.4) &&(W_mt>30.) &&(JetPFCor_Pt[0]>40.) &&(JetPFCor_Pt[1]>35.) &&(JetPFCor_Pt[2]<30.) &&(JetPFCor_bDiscriminatorCSV[0]<0.244) &&(JetPFCor_bDiscriminatorCSV[1]<0.244) && (Mass2j_PFCor>70. && Mass2j_PFCor<100.))";
 
- char* cutsBoosted = "(effwt*puwt)*((W_pt>200.) &&(event_met_pfmet>65) &&(W_mt>30.) &&(GroomedJet_CA8_pt[0] > 200) &&(abs(GroomedJet_CA8_eta[0])<2.4) &&(JetPFCor_bDiscriminatorCSV[0]<0.244) &&(JetPFCor_bDiscriminatorCSV[1]<0.244) &&(ggdboostedWevt == 1) &&(event_metMVA_met > 65) &&(GroomedJet_numberbjets <1) &&(GroomedJet_CA8_deltaphi_METca8jet > 2.0))";
+//  char* cutsBoosted = "(effwt*puwt)*((W_pt>200.) && (event_met_pfmet >50) &&(abs(W_muon_eta)<2.1) && (W_muon_pt>30.) && (GroomedJet_CA8_pt[0]>200.) &&(abs(GroomedJet_CA8_eta[0])<2.4) &&(JetPFCor_bDiscriminatorCSV[0]<0.244) &&(GroomedJet_numberbjets <1)&&(ggdboostedWevt==1) && (GroomedJet_CA8_tau2tau1[0]<0.55) && (GroomedJet_CA8_mass[0]>70. && GroomedJet_CA8_mass[0]<100.))";
+
+
+
+  char* cutsNoBoost = "(effwt*puwt)*((W_pt<200.) && (dijetPt>70.) && (event_met_pfmet >25) && (abs(JetPFCor_Eta[0])<2.4) && (abs(JetPFCor_Eta[1])<2.4) && (abs(JetPFCor_Eta[0]-JetPFCor_Eta[1])<1.5) &&(abs(JetPFCor_dphiMET[0])>0.4) &&(W_mt>30.) &&(JetPFCor_Pt[0]>40.) &&(JetPFCor_Pt[1]>35.) &&(JetPFCor_Pt[2]<30.) )";
+
+ char* cutsBoosted = "(effwt*puwt)*((W_pt>200.) && (event_met_pfmet >50) && (GroomedJet_CA8_pt[0]>200.) &&(abs(GroomedJet_CA8_eta[0])<2.4) )";
+
+
+  char* cutsNoBoostWt = "(effwt*puwt*weight)*((W_pt<200.) && (dijetPt>70.) && (event_met_pfmet >25) && (abs(JetPFCor_Eta[0])<2.4) && (abs(JetPFCor_Eta[1])<2.4) && (abs(JetPFCor_Eta[0]-JetPFCor_Eta[1])<1.5) &&(abs(JetPFCor_dphiMET[0])>0.4) &&(W_mt>30.) &&(JetPFCor_Pt[0]>40.) &&(JetPFCor_Pt[1]>35.) &&(JetPFCor_Pt[2]<30.) )";
+
+ char* cutsBoostedWt = "(effwt*puwt*weight)*((W_pt>200.) && (event_met_pfmet >50) && (GroomedJet_CA8_pt[0]>200.) &&(abs(GroomedJet_CA8_eta[0])<2.4) )";
+
 
   ///// ----- Create all the histograms ----------
- double xbins[] = {100., 120., 140., 160., 200., 300., 400., 600.};
+ double xbins[] = {100., 110., 120., 130., 140., 150., 160., 180., 200., 220., 240., 260., 300., 340., 
+		   380., 420., 500., 600.};
   TH1D* hSMNoBoost = new TH1D("hSMNoBoost", "", sizeof(xbins)/ sizeof(xbins[0])-1, xbins);
   hSMNoBoost->Sumw2();
   hSMNoBoost->SetLineWidth(2);
   hSMNoBoost->GetXaxis()->SetTitle("dijet p_{T} (GeV)");
   hSMNoBoost->GetYaxis()->SetTitle("Ratio over SM");
 
-
+  TH1D* hSMNoBoost2 = hSMNoBoost->Clone("hSMNoBoost2");
   TH1D* h_L01K00G00_NoBoost = hSMNoBoost->Clone("h_L01K00G00_NoBoost");
   TH1D* h_L03K00G00_NoBoost = hSMNoBoost->Clone("h_L03K00G00_NoBoost");
   TH1D* h_L05K00G00_NoBoost = hSMNoBoost->Clone("h_L05K00G00_NoBoost");
   TH1D* h_L07K00G00_NoBoost = hSMNoBoost->Clone("h_L07K00G00_NoBoost");
   TH1D* h_L09K00G00_NoBoost = hSMNoBoost->Clone("h_L09K00G00_NoBoost");
   TH1D* h_L11K00G00_NoBoost = hSMNoBoost->Clone("h_L11K00G00_NoBoost");
+  TH1D* h_L00K05G00_NoBoost = hSMNoBoost->Clone("h_L00K05G00_NoBoost");
   TH1D* h_L00K11G00_NoBoost = hSMNoBoost->Clone("h_L00K11G00_NoBoost");
   TH1D* h_L00K16G00_NoBoost = hSMNoBoost->Clone("h_L00K16G00_NoBoost");
   TH1D* h_L00K20G00_NoBoost = hSMNoBoost->Clone("h_L00K20G00_NoBoost");
@@ -73,12 +93,14 @@
   TH1D* h_L00K00G60_NoBoost = hSMNoBoost->Clone("h_L00K00G60_NoBoost");
 
   TH1D* hSMBoosted = hSMNoBoost->Clone("hSMBoosted");
+  TH1D* hSMBoosted2 = hSMNoBoost->Clone("hSMBoosted2");
   TH1D* h_L01K00G00_Boosted = hSMNoBoost->Clone("h_L01K00G00_Boosted");
   TH1D* h_L03K00G00_Boosted = hSMNoBoost->Clone("h_L03K00G00_Boosted");
   TH1D* h_L05K00G00_Boosted = hSMNoBoost->Clone("h_L05K00G00_Boosted");
   TH1D* h_L07K00G00_Boosted = hSMNoBoost->Clone("h_L07K00G00_Boosted");
   TH1D* h_L09K00G00_Boosted = hSMNoBoost->Clone("h_L09K00G00_Boosted");
   TH1D* h_L11K00G00_Boosted = hSMNoBoost->Clone("h_L11K00G00_Boosted");
+  TH1D* h_L00K05G00_Boosted = hSMNoBoost->Clone("h_L00K05G00_Boosted");
   TH1D* h_L00K11G00_Boosted = hSMNoBoost->Clone("h_L00K11G00_Boosted");
   TH1D* h_L00K16G00_Boosted = hSMNoBoost->Clone("h_L00K16G00_Boosted");
   TH1D* h_L00K20G00_Boosted = hSMNoBoost->Clone("h_L00K20G00_Boosted");
@@ -88,12 +110,14 @@
 
   ///// ----- fill the unboosted histograms -----------
   trSM->Draw("dijetPt>>hSMNoBoost", cutsNoBoost,"goff");
-  tr_L01K00G00->Draw("dijetPt>>h_L01K00G00_NoBoost", cutsNoBoost,"goff");
-  tr_L03K00G00->Draw("dijetPt>>h_L03K00G00_NoBoost", cutsNoBoost,"goff");
-  tr_L05K00G00->Draw("dijetPt>>h_L05K00G00_NoBoost", cutsNoBoost,"goff");
+  trSM2->Draw("dijetPt>>hSMNoBoost2", cutsNoBoostWt,"goff");
+  tr_L01K00G00->Draw("dijetPt>>h_L01K00G00_NoBoost", cutsNoBoostWt,"goff");
+  tr_L03K00G00->Draw("dijetPt>>h_L03K00G00_NoBoost", cutsNoBoostWt,"goff");
+  tr_L05K00G00->Draw("dijetPt>>h_L05K00G00_NoBoost", cutsNoBoostWt,"goff");
   tr_L07K00G00->Draw("dijetPt>>h_L07K00G00_NoBoost", cutsNoBoost,"goff");
   tr_L09K00G00->Draw("dijetPt>>h_L09K00G00_NoBoost", cutsNoBoost,"goff");
   tr_L11K00G00->Draw("dijetPt>>h_L11K00G00_NoBoost", cutsNoBoost,"goff");
+  tr_L00K05G00->Draw("dijetPt>>h_L00K05G00_NoBoost", cutsNoBoostWt,"goff");
   tr_L00K11G00->Draw("dijetPt>>h_L00K11G00_NoBoost", cutsNoBoost,"goff");
   tr_L00K16G00->Draw("dijetPt>>h_L00K16G00_NoBoost", cutsNoBoost,"goff");
   tr_L00K20G00->Draw("dijetPt>>h_L00K20G00_NoBoost", cutsNoBoost,"goff");
@@ -102,19 +126,21 @@
   tr_L00K00G60->Draw("dijetPt>>h_L00K00G60_NoBoost", cutsNoBoost,"goff");
 
   ///// ----- now fill the boosted histograms -----------
-  trSM->Draw("dijetPt>>hSMBoosted", cutsBoosted,"goff");
-  tr_L01K00G00->Draw("dijetPt>>h_L01K00G00_Boosted", cutsBoosted,"goff");
-  tr_L03K00G00->Draw("dijetPt>>h_L03K00G00_Boosted", cutsBoosted,"goff");
-  tr_L05K00G00->Draw("dijetPt>>h_L05K00G00_Boosted", cutsBoosted,"goff");
-  tr_L07K00G00->Draw("dijetPt>>h_L07K00G00_Boosted", cutsBoosted,"goff");
-  tr_L09K00G00->Draw("dijetPt>>h_L09K00G00_Boosted", cutsBoosted,"goff");
-  tr_L11K00G00->Draw("dijetPt>>h_L11K00G00_Boosted", cutsBoosted,"goff");
-  tr_L00K11G00->Draw("dijetPt>>h_L00K11G00_Boosted", cutsBoosted,"goff");
-  tr_L00K16G00->Draw("dijetPt>>h_L00K16G00_Boosted", cutsBoosted,"goff");
-  tr_L00K20G00->Draw("dijetPt>>h_L00K20G00_Boosted", cutsBoosted,"goff");
-  tr_L00K00G11->Draw("dijetPt>>h_L00K00G11_Boosted", cutsBoosted,"goff");
-  tr_L00K00G40->Draw("dijetPt>>h_L00K00G40_Boosted", cutsBoosted,"goff");
-  tr_L00K00G60->Draw("dijetPt>>h_L00K00G60_Boosted", cutsBoosted,"goff");
+  trSM->Draw("GroomedJet_CA8_pt[0]>>hSMBoosted", cutsBoosted,"goff");
+  trSM2->Draw("GroomedJet_CA8_pt[0]>>hSMBoosted2", cutsBoostedWt,"goff");
+  tr_L01K00G00->Draw("GroomedJet_CA8_pt[0]>>h_L01K00G00_Boosted", cutsBoostedWt,"goff");
+  tr_L03K00G00->Draw("GroomedJet_CA8_pt[0]>>h_L03K00G00_Boosted", cutsBoostedWt,"goff");
+  tr_L05K00G00->Draw("GroomedJet_CA8_pt[0]>>h_L05K00G00_Boosted", cutsBoostedWt,"goff");
+  tr_L07K00G00->Draw("GroomedJet_CA8_pt[0]>>h_L07K00G00_Boosted", cutsBoosted,"goff");
+  tr_L09K00G00->Draw("GroomedJet_CA8_pt[0]>>h_L09K00G00_Boosted", cutsBoosted,"goff");
+  tr_L11K00G00->Draw("GroomedJet_CA8_pt[0]>>h_L11K00G00_Boosted", cutsBoosted,"goff");
+  tr_L00K05G00->Draw("GroomedJet_CA8_pt[0]>>h_L00K05G00_Boosted", cutsBoostedWt,"goff");
+  tr_L00K11G00->Draw("GroomedJet_CA8_pt[0]>>h_L00K11G00_Boosted", cutsBoosted,"goff");
+  tr_L00K16G00->Draw("GroomedJet_CA8_pt[0]>>h_L00K16G00_Boosted", cutsBoosted,"goff");
+  tr_L00K20G00->Draw("GroomedJet_CA8_pt[0]>>h_L00K20G00_Boosted", cutsBoosted,"goff");
+  tr_L00K00G11->Draw("GroomedJet_CA8_pt[0]>>h_L00K00G11_Boosted", cutsBoosted,"goff");
+  tr_L00K00G40->Draw("GroomedJet_CA8_pt[0]>>h_L00K00G40_Boosted", cutsBoosted,"goff");
+  tr_L00K00G60->Draw("GroomedJet_CA8_pt[0]>>h_L00K00G60_Boosted", cutsBoosted,"goff");
 
 
   // --- normalization scales ------ 
@@ -135,9 +161,9 @@
   const double L00K00G60_scale = 2.940 / 127922;
 
   hSMNoBoost->Scale(SM_scale);
-  h_L01K00G00_NoBoost->Scale(L01K00G00_scale);
-  h_L03K00G00_NoBoost->Scale(L03K00G00_scale);
-  h_L05K00G00_NoBoost->Scale(L05K00G00_scale);
+//   h_L01K00G00_NoBoost->Scale(L01K00G00_scale);
+//   h_L03K00G00_NoBoost->Scale(L03K00G00_scale);
+//   h_L05K00G00_NoBoost->Scale(L05K00G00_scale);
   h_L07K00G00_NoBoost->Scale(L07K00G00_scale);
   h_L09K00G00_NoBoost->Scale(L09K00G00_scale);
   h_L11K00G00_NoBoost->Scale(L11K00G00_scale);
@@ -150,9 +176,16 @@
 
 
   hSMBoosted->Scale(SM_scale);
-  h_L01K00G00_Boosted->Scale(L01K00G00_scale);
-  h_L03K00G00_Boosted->Scale(L03K00G00_scale);
-  h_L05K00G00_Boosted->Scale(L05K00G00_scale);
+//   h_L01K00G00_Boosted->Scale(L01K00G00_scale);
+//   h_L03K00G00_Boosted->Scale(L03K00G00_scale);
+//   h_L05K00G00_Boosted->Scale(L05K00G00_scale);
+
+  float kscale = 3.;
+
+//   h_L01K00G00_Boosted->Scale(kscale);
+//   h_L03K00G00_Boosted->Scale(kscale);
+//   h_L05K00G00_Boosted->Scale(kscale);
+
   h_L07K00G00_Boosted->Scale(L07K00G00_scale);
   h_L09K00G00_Boosted->Scale(L09K00G00_scale);
   h_L11K00G00_Boosted->Scale(L11K00G00_scale);
@@ -167,7 +200,26 @@
 
 
   //----- combine boosted & unboosted histograms ------
+  /*
+  TH1D* hSM = hSMBoosted->Clone("hSM");
+  TH1D* hSM2 = hSMBoosted2->Clone("hSM2");
+  TH1D* h_L01K00G00 = h_L01K00G00_Boosted->Clone("h_L01K00G00");
+  TH1D* h_L03K00G00 = h_L03K00G00_Boosted->Clone("h_L03K00G00");
+  TH1D* h_L05K00G00 = h_L05K00G00_Boosted->Clone("h_L05K00G00");
+  TH1D* h_L07K00G00 = h_L07K00G00_Boosted->Clone("h_L07K00G00");
+  TH1D* h_L09K00G00 = h_L09K00G00_Boosted->Clone("h_L09K00G00");
+  TH1D* h_L11K00G00 = h_L11K00G00_Boosted->Clone("h_L11K00G00");
+  TH1D* h_L00K11G00 = h_L00K11G00_Boosted->Clone("h_L00K11G00");
+  TH1D* h_L00K16G00 = h_L00K16G00_Boosted->Clone("h_L00K16G00");
+  TH1D* h_L00K20G00 = h_L00K20G00_Boosted->Clone("h_L00K20G00");
+  TH1D* h_L00K00G11 = h_L00K00G11_Boosted->Clone("h_L00K00G11");
+  TH1D* h_L00K00G40 = h_L00K00G40_Boosted->Clone("h_L00K00G40");
+  TH1D* h_L00K00G60 = h_L00K00G60_Boosted->Clone("h_L00K00G60");
+
+
+
   TH1D* hSM = hSMNoBoost->Clone("hSM");
+  TH1D* hSM2 = hSMBoosted2->Clone("hSM2");
   TH1D* h_L01K00G00 = h_L01K00G00_NoBoost->Clone("h_L01K00G00");
   TH1D* h_L03K00G00 = h_L03K00G00_NoBoost->Clone("h_L03K00G00");
   TH1D* h_L05K00G00 = h_L05K00G00_NoBoost->Clone("h_L05K00G00");
@@ -181,6 +233,7 @@
   TH1D* h_L00K00G40 = h_L00K00G40_NoBoost->Clone("h_L00K00G40");
   TH1D* h_L00K00G60 = h_L00K00G60_NoBoost->Clone("h_L00K00G60");
   hSM->Add(hSMBoosted);
+  hSM2->Add(hSMBoosted2);
   h_L01K00G00->Add(h_L01K00G00_Boosted);
   h_L03K00G00->Add(h_L03K00G00_Boosted);
   h_L05K00G00->Add(h_L05K00G00_Boosted);
@@ -194,15 +247,16 @@
   h_L00K00G40->Add(h_L00K00G40_Boosted);
   h_L00K00G60->Add(h_L00K00G60_Boosted);
 
-
+  */
 
   // --- divide aTGC histograms by the SM histogram ------ 
-  h_L01K00G00_NoBoost->Divide(hSMNoBoost);
-  h_L03K00G00_NoBoost->Divide(hSMNoBoost);
-  h_L05K00G00_NoBoost->Divide(hSMNoBoost);
+  h_L01K00G00_NoBoost->Divide(hSMNoBoost2);
+  h_L03K00G00_NoBoost->Divide(hSMNoBoost2);
+  h_L05K00G00_NoBoost->Divide(hSMNoBoost2);
   h_L07K00G00_NoBoost->Divide(hSMNoBoost);
   h_L09K00G00_NoBoost->Divide(hSMNoBoost);
   h_L11K00G00_NoBoost->Divide(hSMNoBoost);
+  h_L00K05G00_NoBoost->Divide(hSMNoBoost);
   h_L00K11G00_NoBoost->Divide(hSMNoBoost);
   h_L00K16G00_NoBoost->Divide(hSMNoBoost);
   h_L00K20G00_NoBoost->Divide(hSMNoBoost);
@@ -210,12 +264,13 @@
   h_L00K00G40_NoBoost->Divide(hSMNoBoost);
   h_L00K00G60_NoBoost->Divide(hSMNoBoost);
 
-  h_L01K00G00_Boosted->Divide(hSMBoosted);
-  h_L03K00G00_Boosted->Divide(hSMBoosted);
-  h_L05K00G00_Boosted->Divide(hSMBoosted);
+  h_L01K00G00_Boosted->Divide(hSMBoosted2);
+  h_L03K00G00_Boosted->Divide(hSMBoosted2);
+  h_L05K00G00_Boosted->Divide(hSMBoosted2);
   h_L07K00G00_Boosted->Divide(hSMBoosted);
   h_L09K00G00_Boosted->Divide(hSMBoosted);
   h_L11K00G00_Boosted->Divide(hSMBoosted);
+  h_L00K05G00_Boosted->Divide(hSMBoosted);
   h_L00K11G00_Boosted->Divide(hSMBoosted);
   h_L00K16G00_Boosted->Divide(hSMBoosted);
   h_L00K20G00_Boosted->Divide(hSMBoosted);
@@ -223,18 +278,34 @@
   h_L00K00G40_Boosted->Divide(hSMBoosted);
   h_L00K00G60_Boosted->Divide(hSMBoosted);
 
-  h_L01K00G00->Divide(hSM);
-  h_L03K00G00->Divide(hSM);
-  h_L05K00G00->Divide(hSM);
-  h_L07K00G00->Divide(hSM);
-  h_L09K00G00->Divide(hSM);
-  h_L11K00G00->Divide(hSM);
-  h_L00K11G00->Divide(hSM);
-  h_L00K16G00->Divide(hSM);
-  h_L00K20G00->Divide(hSM);
-  h_L00K00G11->Divide(hSM);
-  h_L00K00G40->Divide(hSM);
-  h_L00K00G60->Divide(hSM);
+
+
+  TH1D* h_L01K00G00 = getWeightedAverage(h_L01K00G00_NoBoost, h_L01K00G00_Boosted,"h_L01K00G00");
+  TH1D* h_L03K00G00 = getWeightedAverage(h_L03K00G00_NoBoost, h_L03K00G00_Boosted, "h_L03K00G00");
+  TH1D* h_L05K00G00 = getWeightedAverage(h_L05K00G00_NoBoost, h_L05K00G00_Boosted, "h_L05K00G00");
+  TH1D* h_L07K00G00 = getWeightedAverage(h_L07K00G00_NoBoost, h_L07K00G00_Boosted, "h_L07K00G00");
+  TH1D* h_L09K00G00 = getWeightedAverage(h_L09K00G00_NoBoost, h_L09K00G00_Boosted, "h_L09K00G00");
+  TH1D* h_L11K00G00 = getWeightedAverage(h_L11K00G00_NoBoost, h_L11K00G00_Boosted, "h_L11K00G00");
+  TH1D* h_L00K05G00 = getWeightedAverage(h_L00K05G00_NoBoost, h_L00K05G00_Boosted, "h_L00K05G00");
+  TH1D* h_L00K11G00 = getWeightedAverage(h_L00K11G00_NoBoost, h_L00K11G00_Boosted, "h_L00K11G00");
+  TH1D* h_L00K16G00 = getWeightedAverage(h_L00K16G00_NoBoost, h_L00K16G00_Boosted, "h_L00K16G00");
+  TH1D* h_L00K20G00 = getWeightedAverage(h_L00K20G00_NoBoost, h_L00K20G00_Boosted, "h_L00K20G00");
+  TH1D* h_L00K00G11 = getWeightedAverage(h_L00K00G11_NoBoost, h_L00K00G11_Boosted, "h_L00K00G11");
+  TH1D* h_L00K00G40 = getWeightedAverage(h_L00K00G40_NoBoost, h_L00K00G40_Boosted, "h_L00K00G40");
+  TH1D* h_L00K00G60 = getWeightedAverage(h_L00K00G60_NoBoost, h_L00K00G60_Boosted, "h_L00K00G60");
+
+//   h_L01K00G00->Divide(hSM2);
+//   h_L03K00G00->Divide(hSM2);
+//   h_L05K00G00->Divide(hSM2);
+//   h_L07K00G00->Divide(hSM);
+//   h_L09K00G00->Divide(hSM);
+//   h_L11K00G00->Divide(hSM);
+//   h_L00K11G00->Divide(hSM);
+//   h_L00K16G00->Divide(hSM);
+//   h_L00K20G00->Divide(hSM);
+//   h_L00K00G11->Divide(hSM);
+//   h_L00K00G40->Divide(hSM);
+//   h_L00K00G60->Divide(hSM);
 
 
   // --- plot histograms ------ 
@@ -386,8 +457,10 @@
 
 
  // --- Fit to a quadratic function ------ 
- // TF1 *func = new TF1("func", "[0]+[1]*x*x", 100., 500.);
-  TF1 *func = new TF1("func", "pol2", 100., 500.);
+ // TF1 *func = new TF1("func", "1.+ [0]*x +[1]*x*x", 100., 500.);
+  //  TF1 *func = new TF1("func", "[0]+[1]*x*x", 100., 500.);
+  TF1 *func = new TF1("func", "[0]+[1]*x+[2]*x*x", 50., 1500.);
+  TF1 *func2 = new TF1("func2", "[0]+[1]*x*x", 50., 1500.);
   func->SetLineWidth(3);
   func->SetLineColor(1);
   h_L01K00G00->Fit("func","I","");
@@ -521,11 +594,11 @@
   grLC0->GetXaxis()->SetTitle("#lambda");
   grLC0->GetYaxis()->SetTitle("C_{i}");
   grLC0->Draw("ap");
-  grLC0->Fit("pol2","","");
+  grLC0->Fit("func2","","");
   grLC1->Draw("p");
-  //grLC1->Fit("pol2","","");
+  grLC1->Fit("func2","","");
   grLC2->Draw("p");
-  grLC2->Fit("pol2","","");
+  grLC2->Fit("func2","","");
   TLegend* legend = new TLegend(0.7,0.16,0.88,0.35);
   legend->SetFillColor(0);
   legend->AddEntry(grLC0, "C0", "P");  
@@ -553,11 +626,11 @@
   grKC0->GetXaxis()->SetTitle("#Delta_{#kappa}");
   grKC0->GetYaxis()->SetTitle("C_{i}'");
   grKC0->Draw("ap");
-  grKC0->Fit("pol2","","");
+  grKC0->Fit("func2","","");
   grKC1->Draw("p");
-  grKC1->Fit("pol2","","");
+  grKC1->Fit("func2","","");
   grKC2->Draw("p");
-  grKC2->Fit("pol2","","");
+  grKC2->Fit("func2","","");
   TLegend* legend = new TLegend(0.7,0.16,0.88,0.35);
   legend->SetFillColor(0);
   legend->AddEntry(grKC0, "C0'", "P");  
@@ -585,11 +658,11 @@
   grG1C0->GetXaxis()->SetTitle("#Delta_{g1}");
   grG1C0->GetYaxis()->SetTitle("C_{i}''");
   grG1C0->Draw("ap");
-  grG1C0->Fit("pol2","","");
+  grG1C0->Fit("func2","","");
   grG1C1->Draw("p");
-  grG1C1->Fit("pol2","","");
+  grG1C1->Fit("func2","","");
   grG1C2->Draw("p");
-  grG1C2->Fit("pol2","","");
+  grG1C2->Fit("func2","","");
   TLegend* legend = new TLegend(0.7,0.16,0.88,0.35);
   legend->SetFillColor(0);
   legend->AddEntry(grG1C0, "C0''", "P");  
@@ -607,4 +680,37 @@
 
 
 
+}
+
+
+
+TH1* getWeightedAverage(TH1* h1, TH1* h2, char* histName) {
+
+
+  TH1* h = h1->Clone(histName);
+
+  int NBinsMax = h1->GetNbinsX() +2;
+
+  for(int i=0; i < NBinsMax; ++i) {
+
+    double x1 = h1->GetBinContent(i);
+    double e1 = h1->GetBinError(i);
+    double x2 = h2->GetBinContent(i);
+    double e2 = h2->GetBinError(i);
+
+    double x = 0.0;
+    double e = 0.0;
+
+    if(x1 < 0.1) {x = x2; e = e2; }
+    else if(x2 < 0.1) {x = x1; e = e1; }
+    else {
+      x = (x1/(e1*e1) + x2/(e2*e2)) / (1.0/(e1*e1) + 1.0/(e2*e2));
+      e = 1.0 / sqrt(1.0/(e1*e1) + 1.0/(e2*e2));
+    }
+
+    h->SetBinContent(i, x);
+    h->SetBinError(i, e);
+  }
+
+  return h;
 }

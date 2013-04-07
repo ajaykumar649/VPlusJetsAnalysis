@@ -203,48 +203,26 @@ void makeATGCLimitDataCards(int channel=0) {
     tree66->Draw(TString(observable)+TString(">>th1stopptw"), the_cut, "goff");
 
 
-    // Scale the histos
+    // ---- Scale the histos ---- 
     ScaleHistos(channel);
-
-
-
+    
     // ---- Make smooth diboson shape ----------
     TH1D* th1wwclone = th1ww->Clone("th1wwclone");
-    gaus2 = new TF1("gaus2","gaus",dm_min, dm_max);
-    th1ww->Fit(gaus2,"I0","");
-    // delete th1wwclone;
-
-
-
-    /////////////////////
+    gaus2 = new TF1("gaus2","gaus",300., 1000000000.);
+    th1wwclone->Fit(gaus2,"I0","");
+    
+    // ---- Empty histograms for display/plotting ---- 
     SetupEmptyHistogram(bins, dm_min, dm_max, xtitle);
-    SumAllBackgrounds(dm_max);
-    /////////////////////
+
+    // ---- Sum all backgrounds ----------
+    TH1D* th1ww_no_overflow = th1ww->Clone("th1ww_no_overflow");
+    SumAllBackgrounds();
+
+    // ---- Get signal histogram ----------
+    signalForDisplay = GetSignalHistogram(0.05, 0.0, 0.0, "signalForDisplay", th1wwclone);
 
 
-//     double overflow = th1wjets->GetBinContent(bins+1);
-//     overflow += gaus2->Integral(dm_max, dm_max + 400.);
-//     overflow += th1zjets->GetBinContent(bins+1);
-//     overflow += th1qcd->GetBinContent(bins+1);
-//     overflow += th1Top->GetBinContent(bins+1);
-//     cout << "---------- overflow for bkg = " << overflow << endl;
-
-
-    //Get signal histogram
-    signalForDisplay = GetSignalHistogram(0.05, 0.0, 0.0, "signalForDisplay", dm_max, th1wwclone);
-
-//     // ratio histogram for aTGC display
-//     signalRatioForDisplay = 
-//       (TH1D*) signalForDisplay->Clone("signaRatiolForDisplay");
-//     signalRatioForDisplay->Divide(th1tot);
-//     for(int j=1; j<signalRatioForDisplay->GetNbinsX()+1; ++j) {
-//       double entry = signalRatioForDisplay->GetBinContent(j);
-//       if() signalRatioForDisplay->SetBinContent(j, 1.+entry);
-//     }
-   
-
-
-    // Compose the stack
+    // ---- Compose the stack ----------
     THStack* hs = new THStack("hs","MC contribution");
     hs->Add(th1zjets);
     hs->Add(th1qcd);
@@ -255,10 +233,9 @@ void makeATGCLimitDataCards(int channel=0) {
 
 
 
-    // Stack for systematics Up
+    // ---- Stack for shape systematics Up ----------
     TF1* formScaleUp = new TF1("formScaleUp", "1.0+0.4*log(x/5)", dm_min, dm_max);
     TF1* formScaleDown = new TF1("formScaleDown", "1.0-0.2*log(x/5)", dm_min, dm_max);
-
     systUp = (TH1D*) th1wjets->Clone("systUp");
     systUp->Multiply(formScaleUp);
     systUp->Add(th1zjets);
@@ -269,8 +246,6 @@ void makeATGCLimitDataCards(int channel=0) {
     systUp->SetLineStyle(2);
     systUp->SetLineColor(2);
     systUp->SetLineWidth(3);
-
-
     hhratioUp    = (TH1F*) th1data->Clone("hhratioUp")  ;
     hhratioUp->GetYaxis()->SetRangeUser(yRatioMin, yRatioMax);
     hhratioUp->Divide(systUp);
@@ -279,7 +254,7 @@ void makeATGCLimitDataCards(int channel=0) {
     hhratioUp->SetLineWidth(3);
 
 
-    // Stack for systematics Down
+    // ---- Stack for shape systematics Down ----------
     TH1D* systDown = (TH1D*) th1wjets->Clone("systDown");
     systDown->Multiply(formScaleDown);
     systDown->Add(th1zjets);
@@ -362,26 +337,20 @@ void makeATGCLimitDataCards(int channel=0) {
 
 
     d2->cd();
-    // gPad->SetLeftMargin(0.14);
     gPad->SetTopMargin(0.02);
     gPad->SetRightMargin(0.04);
-    // gPad->SetRightMargin(0.05);
     gPad->SetFrameBorderSize(0);
-    //gPad->SetBottomMargin(0.3);
     gPad->SetTickx();
 
     th1emptyclone->Draw();
     hhratio->Draw("esame");
     hhratioUp->Draw("hist lsame");
     hhratioDown->Draw("hist lsame");
-    // signalRatioForDisplay->Draw("hist same");
     TLine *line; line = new TLine(dm_min,1.0,dm_max,1.0);
     line->SetLineStyle(1);
     line->SetLineWidth(1);
     line->SetLineColor(1);
     line->Draw();
-    //d2->SetLogy();
-    //d2->SetGridy();
     c1->Print(TString("OutDir/")+outfile+TString("_dijetPt.png"));
     //gPad->WaitPrimitive();
     c1->Modified();
@@ -391,7 +360,6 @@ void makeATGCLimitDataCards(int channel=0) {
 
    
 
-
     ///// -------------------------------//////
 
     if(saveDataCards_) {
@@ -400,6 +368,9 @@ void makeATGCLimitDataCards(int channel=0) {
       th1data->Write("data_obs");
       th1tot->SetName("background");
       th1tot->Write("background");
+      th1ww->SetName("diboson");
+      th1ww->Write("diboson");
+      th1ww_no_overflow->Write("th1ww_no_overflow");
       char* tempname = "background_backshapeUp";
       if(channel==0) tempname = "background_mudijet_backshapeUp";
       if(channel==1) tempname = "background_eldijet_backshapeUp";
@@ -425,14 +396,14 @@ void makeATGCLimitDataCards(int channel=0) {
 // 		  "signal_lambdaZ_%0.3f_deltaKappaGamma_%0.3f_deltaG1_%0.3f", 
 // 		  m+0.00001, n+0.00001, q+0.00001);
 // 	  TH1D* stackhist = GetSignalHistogram(m+0.00001, n+0.00001, 
-// 					       q+0.00001, mysighistname, 
-// 					       dm_max, overflow);
+// 					       q+0.00001, mysighistname,th1wwclone);
 // 	  outputForLimit->cd();
 // 	  stackhist->Write(); 
 // 	  delete stackhist;
 // 	  }
 // 	}
 //       }
+
 
 
       char mysighistname[100];
@@ -442,8 +413,7 @@ void makeATGCLimitDataCards(int channel=0) {
 		  "signal_lambdaZ_%0.3f_deltaKappaGamma_%0.3f", 
 		  m+0.00001, n+0.00001);
 	  TH1D* stackhist = GetSignalHistogram(m, n, 0.0, 
-					       mysighistname, 
-					       dm_max, th1wwclone);
+					       mysighistname, th1wwclone);
 	  outputForLimit->cd();
 	  stackhist->Write(); 
 	  delete stackhist;
@@ -458,8 +428,7 @@ void makeATGCLimitDataCards(int channel=0) {
 		  "signal_lambdaZ_%0.3f_deltaG1_%0.3f", 
 		  m+0.00001, n+0.00001);
 	  TH1D* stackhist = GetSignalHistogram(m, 0.0, n, 
-					       mysighistname, 
-					       dm_max, th1wwclone);
+					       mysighistname, th1wwclone);
 	  outputForLimit->cd();
 	  stackhist->Write(); 
 	  delete stackhist;
@@ -472,6 +441,7 @@ void makeATGCLimitDataCards(int channel=0) {
 
     } ///// close if saveDataCards_
 
+    delete th1wwclone;
 }
 
 
@@ -658,7 +628,7 @@ void ScaleHistos(int channel)
     qcd_scale = 0.0 ;//muon
   else
     qcd_scale = 0.03; //electron
-  if(channel==3) qcd_scale = 0.01; //electron boosted 
+  if(channel==3) qcd_scale = 0.0; //electron boosted 
 
 
   std::cout << " qcd_scale  " << qcd_scale <<std::endl;
@@ -710,11 +680,9 @@ void ScaleHistos(int channel)
 
 
   // Sum all the backgrounds
-void SumAllBackgrounds(double dm_max) {
-
+void SumAllBackgrounds() {
 
   //-------- First add overflow bin ----------------
-  // AddOverflowBin(th1ww, gaus2, dm_max);
   AddOverflowBin(th1ww);
   AddOverflowBin(th1wjets);
   AddOverflowBin(th1zjets);
@@ -841,78 +809,115 @@ void SetupEmptyHistogram(int bins, double dm_min, double dm_max, char* xtitle)
 
 //------- Get signal histogram -------
 TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1, 
-			 char* histName, double dm_max, TH1D* smww) {
+			 char* histName, TH1D* smww) {
 
   //---- first we clone the diboson histogram  
   TH1D* newsighist = (TH1D*) smww->Clone(histName);
 
-  // --- now define the enhancement ratio function 
-  double lambdaZC0 = 0.937435 - 5.57827*lambdaZ + 129.292*lambdaZ*lambdaZ;
-  double lambdaZC1 = 0.0;
-  double lambdaZC2 = 0.0000015989 - 0.000145525*lambdaZ + 
-    0.00689186*lambdaZ*lambdaZ;
+  /*  
+// --- now define the enhancement ratio function 
+  double lambdaZC0 = 1.21938 + 182.208*lambdaZ*lambdaZ; // 
+  double lambdaZC1 =  -0.00182372 - 2.98963*lambdaZ*lambdaZ;
+  double lambdaZC2 =   0.00000354713 + 0.0116306*lambdaZ*lambdaZ;
 
-  double kappaGC0 = 2.88936 - 29.3189*dkappaGamma + 
-    97.749*dkappaGamma*dkappaGamma;
-  double kappaGC1 = 0.0;
-  double kappaGC2 = 0.0000795061e - 0.00120206*dkappaGamma + 
-    0.00844054*dkappaGamma*dkappaGamma;
+  double kappaGC0 =  1.47302 + 56.0842*dkappaGamma*dkappaGamma;
+  double kappaGC1 =  0.0 -0.723 *dkappaGamma*dkappaGamma;
+  double kappaGC2 =  0.0000101017 + 0.00468047*dkappaGamma *dkappaGamma;
 
-  double g1C0 =  0.949535 -  0.264428*deltaG1  +  1.17098*deltaG1*deltaG1;
-  double g1C1 =  0.0;
-  double g1C2 =  0.000000285246 - 0.00000118628*deltaG1  +  
-    0.0000660855 *deltaG1*deltaG1;
+  double g1C0 =  0.87463 - 0.697297*deltaG1*deltaG1;
+  double g1C1 =  0.000791995 + 0.0090919*deltaG1*deltaG1;
+  double g1C2 =  0.00000180715 + 0.0000394048 *deltaG1*deltaG1;
 
 
-  TF1* sigratio = 
-    new TF1("sigratio",
-	    "([0]+[1]*x+[2]*x*x)*([3]+[4]*x+[5]*x*x)*([6]+[7]*x+[8]*x*x)", 
-	    50., 1500.);
+  TF1* sigratio = new TF1("sigratio",
+			  "([0]+[1]*x+[2]*x*x)*([3]+[4]*x+[5]*x*x)*([6]+[7]*x+[8]*x*x)", 
+			  50., 1500.);
+  if(fabs(lambdaZ)<0.0005) { 
+    lambdaZC0 = 1.0;
+    lambdaZC1 = 0.0;
+    lambdaZC2 = 0.0;
+  }
+  if(fabs(dkappaGamma)<0.0005) { 
+    kappaGC0 = 1.0;
+    kappaGC1 = 0.0;
+    kappaGC2 = 0.0;
+  }
+  if(fabs(deltaG1)<0.0005) { 
+    g1C0 = 1.0;
+    g1C1 = 0.0;
+    g1C2 = 0.0;
+  }
 
-  if(fabs(lambdaZ)>0.001) 
-    sigratio->SetParameter(0, lambdaZC0); 
-  else sigratio->SetParameter(0, 1.0);
+  sigratio->SetParameter(0, lambdaZC0); 
   sigratio->SetParameter(1, lambdaZC1);
   sigratio->SetParameter(2, lambdaZC2);
-
- 
-  if(fabs(dkappaGamma)>0.001)
-    sigratio->SetParameter(3, kappaGC0);
-  else sigratio->SetParameter(3, 1.0);
+  sigratio->SetParameter(3, kappaGC0);
   sigratio->SetParameter(4, kappaGC1);
   sigratio->SetParameter(5, kappaGC2);
-
-
-  if(fabs(deltaG1)>0.001) 
-    sigratio->SetParameter(6, g1C0);
-  else sigratio->SetParameter(6, 1.0);
+  sigratio->SetParameter(6, g1C0);
   sigratio->SetParameter(7, g1C1);
   sigratio->SetParameter(8, g1C2);
 
+  */
 
-//   TCanvas* c5 = new TCanvas("c5", "", 500, 500);
-//   sigratio->Draw();
+
+  TFile f("ATGC_shape_coefficients.root");
+  TProfile2D* p0_prof; 
+  TProfile2D* p1_prof; 
+  TProfile2D* p2_prof; 
+  TProfile2D* p3_prof; 
+  TProfile2D* p4_prof; 
+  TProfile2D* p5_prof; 
+  TProfile2D* p6_prof; 
+  float var1, var2;
+
+  if(fabs(deltaG1)<0.000001) {
+    p0_prof = (TProfile2D*) f.Get("p0_lambda_dk");
+    p1_prof = (TProfile2D*) f.Get("p1_lambda_dk");
+    p2_prof = (TProfile2D*) f.Get("p2_lambda_dk");
+    p3_prof = (TProfile2D*) f.Get("p3_lambda_dk");
+    p4_prof = (TProfile2D*) f.Get("p4_lambda_dk");
+    p5_prof = (TProfile2D*) f.Get("p5_lambda_dk");
+    p6_prof = (TProfile2D*) f.Get("p6_lambda_dk");
+    var1 = lambdaZ; 
+    var2 = dkappaGamma; 
+  }
+  else {
+    p0_prof = (TProfile2D*) f.Get("p0_lambda_dg1");
+    p1_prof = (TProfile2D*) f.Get("p1_lambda_dg1");
+    p2_prof = (TProfile2D*) f.Get("p2_lambda_dg1");
+    p3_prof = (TProfile2D*) f.Get("p3_lambda_dg1");
+    p4_prof = (TProfile2D*) f.Get("p4_lambda_dg1");
+    p5_prof = (TProfile2D*) f.Get("p5_lambda_dg1");
+    p6_prof = (TProfile2D*) f.Get("p6_lambda_dg1");
+    var1 = lambdaZ; 
+    var2 = deltaG1;
+  }
+
+
+  TF1* sigratio = new TF1("sigratio",
+			  "[0]+[1]*x +[2]*x*x + [3]*x*x*x +[4]*x*x*x*x +[5]*x*x*x*x*x +[6]*x*x*x*x*x*x", 
+			  50., 1500.);
+
+  sigratio->SetParameter(0, p0_prof->Interpolate(var1, var2));
+  sigratio->SetParameter(1, p1_prof->Interpolate(var1, var2));
+  sigratio->SetParameter(2, p2_prof->Interpolate(var1, var2));
+  sigratio->SetParameter(3, p3_prof->Interpolate(var1, var2));
+  sigratio->SetParameter(4, p4_prof->Interpolate(var1, var2));
+  sigratio->SetParameter(5, p5_prof->Interpolate(var1, var2));
+  sigratio->SetParameter(6, p6_prof->Interpolate(var1, var2));
+
 
   // ---- multiply the diboson histogram with enhancement function
   newsighist->Multiply(sigratio);
 
   // ----- need to subtract the diboson contribution 
   newsighist->Add(smww, -1.);
-
-
-
-  //    newsighist->Smooth(10);
-
-
   newsighist->SetLineWidth(2);
   newsighist->SetLineColor(1);
   newsighist->SetFillColor(0);
 
-
   //-------- Add overflow bin ----------------
-//   TF1 *fSignal = new TF1 ("fSignal", "gaus2*sigratio");
-//   AddOverflowBin(newsighist, fSignal, dm_max);
-
   AddOverflowBin(newsighist);
   return newsighist;
 }
