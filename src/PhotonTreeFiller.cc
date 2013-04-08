@@ -269,6 +269,7 @@ void ewk::PhotonTreeFiller::fill(const edm::Event& iEvent)
      iEvent.getByLabel("selectedPatPhotons",phoHandle);
      edm::View<pat::Photon>::const_iterator photon;
 */
+
      unsigned nTypes=3;
      IsoDepositVals photonIsoValPFId(nTypes);
      for (size_t j = 0; j<inputTagIsoValPhotonsPFId_.size(); ++j) {
@@ -312,7 +313,7 @@ void ewk::PhotonTreeFiller::fill(const edm::Event& iEvent)
          trkSumPtHollConeDR04_Pho11[NumPhotons] = myPhotonRef->trkSumPtHollowConeDR04();
          ecalRecHitSumEtConeDR04_Pho11[NumPhotons] = myPhotonRef->ecalRecHitSumEtConeDR04();
          hcalTowSumEtConeDR04_Pho11[NumPhotons] = myPhotonRef->hcalTowerSumEtConeDR04();
-
+         
          SC_Et[NumPhotons] = (myPhotonRef->superCluster()->energy())/(cosh(myPhotonRef->superCluster()->position().eta()));
          SC_E[NumPhotons] = myPhotonRef->superCluster()->energy();
          SC_Eta[NumPhotons] = myPhotonRef->superCluster()->position().eta();
@@ -328,13 +329,17 @@ void ewk::PhotonTreeFiller::fill(const edm::Event& iEvent)
 
          SigmaIetaIeta[NumPhotons]= myPhotonRef->sigmaIetaIeta();
 	 
-         // Photon ID 2012 - Medium (80%)
+         // Photon ID 2012 - Medium (EB 80%)
          if ( myPhotonRef->hadTowOverEm()<0.05 
               && ((myPhotonRef->isEB()&& myPhotonRef->sigmaIetaIeta()<0.011)||(myPhotonRef->isEE()&& myPhotonRef->sigmaIetaIeta()<0.033))
               && passElecVeto[NumPhotons]
-              && ((myPhotonRef->isEB()&& PFisocharged03[NumPhotons] <1.5 ) || (myPhotonRef->isEE()&& PFisocharged03[NumPhotons] <1.2 ))
-              && ( (myPhotonRef->isEB()&& PFisophoton03[NumPhotons] <(0.7+0.005*(myPhotonRef->et())) )|| (myPhotonRef->isEE()&& PFisophoton03[NumPhotons] <(1.0+0.005*(myPhotonRef->et()))) )
-              && ( (myPhotonRef->isEB()&& PFisoneutral03[NumPhotons] <(1.0+0.04*(myPhotonRef->et())) )||(myPhotonRef->isEE()&& PFisoneutral03[NumPhotons] <(1.5+0.04*(myPhotonRef->et()))) )
+//              && ((myPhotonRef->isEB()&& PFisocharged03[NumPhotons] <1.5 ) || (myPhotonRef->isEE()&& PFisocharged03[NumPhotons] <1.2 ))
+//              && ( (myPhotonRef->isEB()&& PFisophoton03[NumPhotons] <(0.7+0.005*(myPhotonRef->et())) )|| (myPhotonRef->isEE()&& PFisophoton03[NumPhotons] <(1.0+0.005*(myPhotonRef->et()))) )
+//              && ( (myPhotonRef->isEB()&& PFisoneutral03[NumPhotons] <(1.0+0.04*(myPhotonRef->et())) )||(myPhotonRef->isEE()&& PFisoneutral03[NumPhotons] <(1.5+0.04*(myPhotonRef->et()))) )
+//       Tight (EB 70%)
+              && ((myPhotonRef->isEB()&& PFisocharged03[NumPhotons] <0.7 ) || (myPhotonRef->isEE()&& PFisocharged03[NumPhotons] <0.5 ))
+              && ( (myPhotonRef->isEB()&& PFisophoton03[NumPhotons] <(0.5+0.005*(myPhotonRef->et())) )|| (myPhotonRef->isEE()&& PFisophoton03[NumPhotons] <(1.0+0.005*(myPhotonRef->et()))) )
+              && ( (myPhotonRef->isEB()&& PFisoneutral03[NumPhotons] <(0.4+0.04*(myPhotonRef->et())) )||(myPhotonRef->isEE()&& PFisoneutral03[NumPhotons] <(1.5+0.04*(myPhotonRef->et()))) )
          ) Id2012[NumPhotons] =1;
 
          // Photon ID 2011 - Vgamma
