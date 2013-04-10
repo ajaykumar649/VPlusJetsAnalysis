@@ -134,7 +134,8 @@
 //const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/weizountuple/";
 //const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples/";
 //const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
-const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
+//const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
+const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v2_nojetnum/";
 //const TString inDataDir  = "/uscms_data/d2/andersj/Wjj/2012/data/Moriond2013/trees/";
 //const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/HCPlnjj/MergedNtuples/";
 //const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/weizountuple/";
@@ -142,7 +143,7 @@ const TString inQCDDir   = "/eos/uscms/store/user/lnujj/HCP2012METfix/MergedNtup
 //const TString outDataDir = "/uscms_data/d3/weizou/MakeNtuple/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/";
 //const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/ttHsample/";
 //const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/BoostedWSample_v2/";
-const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/EWKW2jetsSample_2013_3_15/";
+const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/EWKW2jetsSample_2013_3_23/";
 //const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/ttHsample_New_v14/";
 const std::string fDir   = "EffTable2012/";
 const std::string fInterferenceDir   = "InterferenceTable2012/";
@@ -205,7 +206,6 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          Init(myChain);Loop( h_events, h_events_weighted, 20110000,runflag, outDataDir + "RDQCD_WenuJets_DataAll_GoldenJSON_2p1invfb", isQCD);
       }
    }
-
    if (myflag == 20120000 || myflag == -100){
       myChain = new TChain("WJet"); 
 
@@ -224,9 +224,13 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          myChain->Add(                    inDataDir + "WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb");
       } else {
-         InitCounters( inDataDir + "QCD_WenuJets_DataAll_GoldenJSON_9p3invfb.root", h_events, h_events_weighted);
+         /*InitCounters( inDataDir + "QCD_WenuJets_DataAll_GoldenJSON_9p3invfb.root", h_events, h_events_weighted);
          myChain->Add(                    inQCDDir +     "QCD_WenuJets_DataAll_GoldenJSON_9p3invfb.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RDQCD_WenuJets_DataAll_GoldenJSON_9p3invfb.root", isQCD);
+         */
+         InitCounters( inDataDir + "QCD_WenuJets_DataAll_GoldenJSON_19p2invfb.root", h_events, h_events_weighted);
+         myChain->Add(                    inQCDDir +     "QCD_WenuJets_DataAll_GoldenJSON_19p2invfb.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RDQCD_WenuJets_DataAll_GoldenJSON_19p2invfb.root", isQCD);
       }
    }
 
@@ -350,12 +354,27 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          Init(myChain);Loop( h_events, h_events_weighted, 20111009,runflag, outDataDir + "RD_el_WpJ_CMSSW428");
       }
 
-      if (myflag == 20121009 || myflag == -500){
-         InitCounters( inDataDir + "el_WJets_CMSSW532.root", h_events, h_events_weighted);
-         //InitCounters( inDataDir + "el_WpJ_CMSSW532.root", h_events, h_events_weighted);
+      if (myflag == 201210091 || myflag == -500){
+         /*InitCounters( inDataDir + "el_WJets_CMSSW532_pt1.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");  
-         myChain->Add(                    inDataDir + "el_WJets_CMSSW532.root"); 
-         Init(myChain);Loop( h_events, h_events_weighted, 20121009,runflag, outDataDir + "RD_el_WpJ_CMSSW532");
+         myChain->Add(                    inDataDir + "el_WJets_CMSSW532_pt1.root"); 
+         Init(myChain);Loop( h_events, h_events_weighted, 201210091,runflag, outDataDir + "RD_el_WJets_CMSSW532_pt1");
+         */
+         InitCounters( inDataDir + "el_WJets_CMSSW532_pt1_v2.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");  
+         myChain->Add(                    inDataDir + "el_WJets_CMSSW532_pt1_v2.root"); 
+         Init(myChain);Loop( h_events, h_events_weighted, 201210091,runflag, outDataDir + "RD_el_WJets_CMSSW532_pt1_v2");
+      }
+      if (myflag == 201210092 || myflag == -500){
+         /*InitCounters( inDataDir + "el_WJets_pt2.root", h_events, h_events_weighted); 
+         myChain = new TChain("WJet");  
+         myChain->Add(                    inDataDir + "el_WJets_pt2.root"); 
+         Init(myChain);Loop( h_events, h_events_weighted, 201210092,runflag, outDataDir + "RD_el_WJets_CMSSW532_pt2");
+         */
+         InitCounters( inDataDir + "el_WJets_CMSSW532_pt2_v2.root", h_events, h_events_weighted); 
+         myChain = new TChain("WJet");  
+         myChain->Add(                    inDataDir + "el_WJets_CMSSW532_pt2_v2.root"); 
+         Init(myChain);Loop( h_events, h_events_weighted, 201210092,runflag, outDataDir + "RD_el_WJets_CMSSW532_pt2_v2");
       }
 
       if (myflag == 20111010 || myflag == -200){
@@ -480,10 +499,10 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          Init(myChain);Loop(  h_events, h_events_weighted,20121025,runflag, outDataDir + "RD_el_W3Jets_CMSSW532");
       }
       if (myflag == 20121026 || myflag == -200){
-         InitCounters( inDataDir + "el_W4Jets_CMSSW532.root", h_events, h_events_weighted);
+         InitCounters( inDataDir + "el_W4Jets_CMSSW532_old.root", h_events, h_events_weighted);
          myChain = new TChain("WJet");
-         myChain->Add(                    inDataDir + "el_W4Jets_CMSSW532.root");
-         Init(myChain);Loop(  h_events, h_events_weighted,20121026,runflag, outDataDir + "RD_el_W4Jets_CMSSW532");
+         myChain->Add(                    inDataDir + "el_W4Jets_CMSSW532_old.root");
+         Init(myChain);Loop(  h_events, h_events_weighted,20121026,runflag, outDataDir + "RD_el_W4Jets_CMSSW532_old");
       }
       if (myflag == 20121027 || myflag == -200){
          InitCounters( inDataDir + "el_ttZ_CMSSW532.root", h_events, h_events_weighted);
@@ -520,6 +539,29 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          myChain = new TChain("WJet");
          myChain->Add(                    inDataDir + "el_WJets_madgraph_CMSSW532.root");
          Init(myChain);Loop(  h_events, h_events_weighted,20121030,runflag, outDataDir + "RD_el_WJets_madgraph_CMSSW532");
+      }
+      if (myflag == 20121033 || myflag == -200){
+         InitCounters( inDataDir + "el_W2Jets_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add(                    inDataDir + "el_W2Jets_CMSSW532.root");
+         Init(myChain);Loop(  h_events, h_events_weighted,20121033,runflag, outDataDir + "RD_el_W2Jets_CMSSW532");
+      }
+      if (myflag == 20121034 || myflag == -200){
+         InitCounters( inDataDir + "el_W1Jets_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add(                    inDataDir + "el_W1Jets_CMSSW532.root");
+         Init(myChain);Loop(  h_events, h_events_weighted,20121034,runflag, outDataDir + "RD_el_W1Jets_CMSSW532");
+      }
+      if (myflag == 20121035 || myflag == -200){
+         /*InitCounters( inDataDir + "el_EWKW2Jets_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add(                    inDataDir + "el_EWKW2Jets_CMSSW532.root");
+         Init(myChain);Loop(  h_events, h_events_weighted,20121035,runflag, outDataDir + "RD_el_EWKW2Jets_CMSSW532");
+         */
+         InitCounters( inDataDir + "el_EWKW2Jets_CMSSW532_v2.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add(                    inDataDir + "el_EWKW2Jets_CMSSW532_v2.root");
+         Init(myChain);Loop(  h_events, h_events_weighted,20121035,runflag, outDataDir + "RD_el_EWKW2Jets_CMSSW532_v2");
       }
 
       // Higgs Signal Samples
@@ -1057,7 +1099,7 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
 void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runflag, const char *outfilename, bool isQCD)
 {
    if (fChain == 0) return;
-   Long64_t nentries = fChain->GetEntries();
+   //Long64_t nentries = fChain->GetEntries();
    // Out Put File Here
    char rootfn[200]; 
    if (runflag ==0 ) {sprintf(rootfn, "%s.root",outfilename);}
@@ -1109,12 +1151,21 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    fChain->SetBranchStatus("JetPFCorVBFTag_E",    1);
    fChain->SetBranchStatus("JetPFCorVBFTag_bDiscriminator",    1);
    fChain->SetBranchStatus("JetPFCorVBFTag_bDiscriminatorCSV",    1);
+   fChain->SetBranchStatus("numPFCorVBFTagJets",    1);
    // Drop gen jet information
    fChain->SetBranchStatus("*Gen*",    0);
    //fChain->SetBranchStatus("W_H_*",    0);
    fChain->SetBranchStatus("W_Parton_*",    0);
    fChain->SetBranchStatus("W_Lepton_*",    0);
    fChain->SetBranchStatus("W_Met_*",    0);
+   fChain->SetBranchStatus("W_tParton_*",    0);  
+   fChain->SetBranchStatus("W_tLepton_*",    0);  
+   fChain->SetBranchStatus("W_tMet_*",    0);  
+   fChain->SetBranchStatus("W_tb_*",    0);  
+   fChain->SetBranchStatus("W_tbbar_*",    0);  
+   fChain->SetBranchStatus("W_Hb_*",    0);  
+   fChain->SetBranchStatus("W_Hbbar_*",    0);  
+   fChain->SetBranchStatus("W_TagQuark_*",    0);
 
    //Drop Some Groomed information
    fChain->SetBranchStatus("GroomedJet_*_pt_uncorr" , 0);
@@ -1137,7 +1188,9 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    fChain->SetBranchStatus("GroomedJet_*_constituents0pr_e", 0);
    fChain->SetBranchStatus("GroomedJet_*_nconstituents0pr", 0);
 
-   TTree *newtree = fChain->CloneTree();
+   //TTree *newtree = fChain->CloneTree();
+   TTree *newtree = fChain->CopyTree("numPFCorJets+numPFCorVBFTagJets>=2");
+   Long64_t nentries = newtree->GetEntries();
    char textfn[100]; 
    sprintf(textfn,"%s.txt", rootfn);
    FILE *textfile = fopen(textfn,"w");
@@ -1742,7 +1795,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_EWK_W_2jets_tagjet2_e = newtree->Branch("EWK_W_2jets_tagjet2_e", &EWK_W_2jets_tagjet2_e, "EWK_W_2jets_tagjet2_e/F");
    TBranch *branch_EWK_W_2jets_tagjet2_m = newtree->Branch("EWK_W_2jets_tagjet2_m", &EWK_W_2jets_tagjet2_m, "EWK_W_2jets_tagjet2_m/F");
 
-   Int_t EWK_W_2jets_tagjet_etasign = 0;
+   Int_t EWK_W_2jets_tagjet_etasign = -999;
    Float_t EWK_W_2jets_tagjet_deltaeta =  -999, EWK_W_2jets_tagjet_sumeta = -999;
    Float_t EWK_W_2jets_tagjet_deltaphi = -999, EWK_W_2jets_tagjet_deltaR = -999, EWK_W_2jets_tagjet_mass = -999;
    TBranch *branch_EWK_W_2jets_tagjet_etasign = newtree->Branch("EWK_W_2jets_tagjet_etasign", &EWK_W_2jets_tagjet_etasign, "EWK_W_2jets_tagjet_etasign/I");
@@ -1769,12 +1822,13 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_EWK_W_2jets_l_tagjet2_deltaphi = newtree->Branch("EWK_W_2jets_l_tagjet2_deltaphi", &EWK_W_2jets_l_tagjet2_deltaphi, "EWK_W_2jets_l_tagjet2_deltaphi/F");
    TBranch *branch_EWK_W_2jets_l_tagjet2_deltaR = newtree->Branch("EWK_W_2jets_l_tagjet2_deltaR", &EWK_W_2jets_l_tagjet2_deltaR, "EWK_W_2jets_l_tagjet2_deltaR/F");
 
-   Float_t EWK_W_2jets_W_pt = -999, EWK_W_2jets_W_eta = -999, EWK_W_2jets_W_rap = -999, EWK_W_2jets_W_phi = -999, EWK_W_2jets_W_e = -999;
+   Float_t EWK_W_2jets_W_pt = -999, EWK_W_2jets_W_eta = -999, EWK_W_2jets_W_rap = -999, EWK_W_2jets_W_phi = -999, EWK_W_2jets_W_e = -999, EWK_W_2jets_W_mT = -999;
    TBranch *branch_EWK_W_2jets_W_pt = newtree->Branch("EWK_W_2jets_W_pt", &EWK_W_2jets_W_pt, "EWK_W_2jets_W_pt/F");
    TBranch *branch_EWK_W_2jets_W_rap = newtree->Branch("EWK_W_2jets_W_rap", &EWK_W_2jets_W_rap, "EWK_W_2jets_W_rap/F");
    TBranch *branch_EWK_W_2jets_W_eta = newtree->Branch("EWK_W_2jets_W_eta", &EWK_W_2jets_W_eta, "EWK_W_2jets_W_eta/F");
    TBranch *branch_EWK_W_2jets_W_phi = newtree->Branch("EWK_W_2jets_W_phi", &EWK_W_2jets_W_phi, "EWK_W_2jets_W_phi/F");
    TBranch *branch_EWK_W_2jets_W_e = newtree->Branch("EWK_W_2jets_W_e", &EWK_W_2jets_W_e, "EWK_W_2jets_W_e");
+   TBranch *branch_EWK_W_2jets_W_mT = newtree->Branch("EWK_W_2jets_W_mT", &EWK_W_2jets_W_mT, "EWK_W_2jets_W_mT");
 
    Float_t EWK_W_2jets_W_tagjet1_deltaphi = -999, EWK_W_2jets_W_tagjet1_deltaeta = -999, EWK_W_2jets_W_tagjet1_deltaR = -999;
    Float_t EWK_W_2jets_W_tagjet2_deltaphi = -999, EWK_W_2jets_W_tagjet2_deltaeta = -999, EWK_W_2jets_W_tagjet2_deltaR = -999;
@@ -1787,6 +1841,11 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
    Float_t EWK_W_2jets_W_tagjet_Zeppenfield = -999;
    TBranch *branch_EWK_W_2jets_W_tagjet_Zeppenfield = newtree->Branch("EWK_W_2jets_W_tagjet_Zeppenfield", &EWK_W_2jets_W_tagjet_Zeppenfield, "EWK_W_2jets_W_tagjet_Zeppenfield/F");
+
+   Int_t EWK_W_2jets_centraljetnum_20 = 0, EWK_W_2jets_centraljetnum_25 = 0, EWK_W_2jets_centraljetnum_30 = 0;
+   TBranch *branch_EWK_W_2jets_centraljetnum_20 = newtree->Branch("EWK_W_2jets_centraljetnum_20", &EWK_W_2jets_centraljetnum_20, "EWK_W_2jets_centraljetnum_20/I");
+   TBranch *branch_EWK_W_2jets_centraljetnum_25 = newtree->Branch("EWK_W_2jets_centraljetnum_25", &EWK_W_2jets_centraljetnum_25, "EWK_W_2jets_centraljetnum_25/I");
+   TBranch *branch_EWK_W_2jets_centraljetnum_30 = newtree->Branch("EWK_W_2jets_centraljetnum_30", &EWK_W_2jets_centraljetnum_30, "EWK_W_2jets_centraljetnum_30/I");
 
    Int_t EWK_W_2jets_findcentraljet = 0;
    TBranch *branch_EWK_W_2jets_findcentraljet = newtree->Branch("EWK_W_2jets_findcentraljet", &EWK_W_2jets_findcentraljet, "EWK_W_2jets_findcentraljet/I");
@@ -1819,6 +1878,36 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    Float_t EWK_W_2jets_tagjet2_btagCSV = -999;
    TBranch *branch_EWK_W_2jets_tagjet1_btagCSV = newtree->Branch("EWK_W_2jets_tagjet1_btagCSV", &EWK_W_2jets_tagjet1_btagCSV, "EWK_W_2jets_tagjet1_btagCSV/F");
    TBranch *branch_EWK_W_2jets_tagjet2_btagCSV = newtree->Branch("EWK_W_2jets_tagjet2_btagCSV", &EWK_W_2jets_tagjet2_btagCSV, "EWK_W_2jets_tagjet2_btagCSV/F");
+
+   //EWK GEN information
+   Float_t EWK_W_2jets_genW_pt = -999, EWK_W_2jets_genW_eta = -999, EWK_W_2jets_genW_phi = -999, EWK_W_2jets_genW_e = -999;
+   TBranch *branch_EWK_W_2jets_genW_pt = newtree->Branch("EWK_W_2jets_genW_pt",&EWK_W_2jets_genW_pt, "EWK_W_2jets_genW_pt/F");
+   TBranch *branch_EWK_W_2jets_genW_eta = newtree->Branch("EWK_W_2jets_genW_eta",&EWK_W_2jets_genW_eta, "EWK_W_2jets_genW_eta/F");
+   TBranch *branch_EWK_W_2jets_genW_phi = newtree->Branch("EWK_W_2jets_genW_phi",&EWK_W_2jets_genW_phi, "EWK_W_2jets_genW_phi/F");
+   TBranch *branch_EWK_W_2jets_genW_e = newtree->Branch("EWK_W_2jets_genW_e",&EWK_W_2jets_genW_e, "EWK_W_2jets_genW_e/F");
+
+   Float_t EWK_W_2jets_genTagquark1_pt = -999, EWK_W_2jets_genTagquark1_eta = -999, EWK_W_2jets_genTagquark1_phi = -999, EWK_W_2jets_genTagquark1_e = -999;
+   Int_t   EWK_W_2jets_genTagquark1_id = 0;
+   TBranch *branch_EWK_W_2jets_genTagquark1_pt = newtree->Branch("EWK_W_2jets_genTagquark1_pt",&EWK_W_2jets_genTagquark1_pt, "EWK_W_2jets_genTagquark1_pt/F");
+   TBranch *branch_EWK_W_2jets_genTagquark1_eta = newtree->Branch("EWK_W_2jets_genTagquark1_eta",&EWK_W_2jets_genTagquark1_eta, "EWK_W_2jets_genTagquark1_eta/F");
+   TBranch *branch_EWK_W_2jets_genTagquark1_phi = newtree->Branch("EWK_W_2jets_genTagquark1_phi",&EWK_W_2jets_genTagquark1_phi, "EWK_W_2jets_genTagquark1_phi/F");
+   TBranch *branch_EWK_W_2jets_genTagquark1_e = newtree->Branch("EWK_W_2jets_genTagquark1_e",&EWK_W_2jets_genTagquark1_e, "EWK_W_2jets_genTagquark1_e/F");
+   TBranch *branch_EWK_W_2jets_genTagquark1_id = newtree->Branch("EWK_W_2jets_genTagquark1_id",&EWK_W_2jets_genTagquark1_id, "EWK_W_2jets_genTagquark1_id/I");
+
+   Float_t EWK_W_2jets_genTagquark2_pt = -999, EWK_W_2jets_genTagquark2_eta = -999, EWK_W_2jets_genTagquark2_phi = -999, EWK_W_2jets_genTagquark2_e = -999;
+   Int_t   EWK_W_2jets_genTagquark2_id = 0;
+   TBranch *branch_EWK_W_2jets_genTagquark2_pt = newtree->Branch("EWK_W_2jets_genTagquark2_pt",&EWK_W_2jets_genTagquark2_pt, "EWK_W_2jets_genTagquark2_pt/F");
+   TBranch *branch_EWK_W_2jets_genTagquark2_eta = newtree->Branch("EWK_W_2jets_genTagquark2_eta",&EWK_W_2jets_genTagquark2_eta, "EWK_W_2jets_genTagquark2_eta/F");
+   TBranch *branch_EWK_W_2jets_genTagquark2_phi = newtree->Branch("EWK_W_2jets_genTagquark2_phi",&EWK_W_2jets_genTagquark2_phi, "EWK_W_2jets_genTagquark2_phi/F");
+   TBranch *branch_EWK_W_2jets_genTagquark2_e = newtree->Branch("EWK_W_2jets_genTagquark2_e",&EWK_W_2jets_genTagquark2_e, "EWK_W_2jets_genTagquark2_e/F");
+   TBranch *branch_EWK_W_2jets_genTagquark2_id = newtree->Branch("EWK_W_2jets_genTagquark2_id",&EWK_W_2jets_genTagquark2_id, "EWK_W_2jets_genTagquark2_id/I");
+
+   //WJets for Counting the Number of Partons
+   Int_t W_gen_numPartons = 0;
+   TBranch *branch_W_gen_numPartons = newtree->Branch("W_gen_numPartons", &W_gen_numPartons, "W_gen_numPartons/I");
+
+   Float_t W_nParton_weight = 1.0;
+   TBranch *branch_W_nParton_weight = newtree->Branch("W_nParton_weight", &W_nParton_weight, "W_nParton_weight/F");
    //End for EWK W+2jets Analysis
 
    //New Category for ttH analysis
@@ -2303,8 +2392,12 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    const double VBF_MaxEta            = 4.7;   // VBF jet max eta to 4.7
    const double mtop                  = 172.5; //Top mass
    // Loop over all events
+   cout <<"Total Entries: " << nentries <<endl;
    Long64_t nbytes = 0, nb = 0;
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
+
+      if(jentry%100000==0){cout<< "jentry: " << jentry << endl;}
+
       //Long64_t ientry = LoadTree(jentry);
       //if (ientry < 0) break;
       nb = newtree->GetEntry(jentry);   nbytes += nb;
@@ -2452,7 +2545,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       EWK_W_2jets_tagjet1_pt = -999; EWK_W_2jets_tagjet1_eta = -999; EWK_W_2jets_tagjet1_phi = -999; EWK_W_2jets_tagjet1_e = -999; EWK_W_2jets_tagjet1_m = -999;
       EWK_W_2jets_tagjet2_pt = -999; EWK_W_2jets_tagjet2_eta = -999; EWK_W_2jets_tagjet2_phi = -999; EWK_W_2jets_tagjet2_e = -999; EWK_W_2jets_tagjet2_m = -999;
 
-      EWK_W_2jets_tagjet_etasign = 0;
+      EWK_W_2jets_tagjet_etasign = -999;
       EWK_W_2jets_tagjet_deltaeta =  -999; EWK_W_2jets_tagjet_sumeta = -999;
       EWK_W_2jets_tagjet_deltaphi = -999; EWK_W_2jets_tagjet_deltaR = -999; EWK_W_2jets_tagjet_mass = -999;
 
@@ -2462,12 +2555,14 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       EWK_W_2jets_l_tagjet1_deltaeta = -999; EWK_W_2jets_l_tagjet1_deltaphi = -999; EWK_W_2jets_l_tagjet1_deltaR = -999;
       EWK_W_2jets_l_tagjet2_deltaeta = -999; EWK_W_2jets_l_tagjet2_deltaphi = -999; EWK_W_2jets_l_tagjet2_deltaR = -999;
 
-      EWK_W_2jets_W_pt = -999; EWK_W_2jets_W_eta = -999; EWK_W_2jets_W_rap = -999; EWK_W_2jets_W_phi = -999; EWK_W_2jets_W_e = -999;
+      EWK_W_2jets_W_pt = -999; EWK_W_2jets_W_eta = -999; EWK_W_2jets_W_rap = -999; EWK_W_2jets_W_phi = -999; EWK_W_2jets_W_e = -999; EWK_W_2jets_W_mT = -999;
 
       EWK_W_2jets_W_tagjet1_deltaphi = -999; EWK_W_2jets_W_tagjet1_deltaeta = -999; EWK_W_2jets_W_tagjet1_deltaR = -999;
       EWK_W_2jets_W_tagjet2_deltaphi = -999; EWK_W_2jets_W_tagjet2_deltaeta = -999; EWK_W_2jets_W_tagjet2_deltaR = -999;
 
       EWK_W_2jets_W_tagjet_Zeppenfield = -999;
+
+      EWK_W_2jets_centraljetnum_20 = 0; EWK_W_2jets_centraljetnum_25 = 0; EWK_W_2jets_centraljetnum_30 = 0;
 
       EWK_W_2jets_findcentraljet = 0;
 
@@ -2483,6 +2578,19 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       EWK_W_2jets_tagjet1_btagCSV = -999;
       EWK_W_2jets_tagjet2_btagCSV = -999;
+
+      EWK_W_2jets_genW_pt = -999; EWK_W_2jets_genW_eta = -999; EWK_W_2jets_genW_phi = -999; EWK_W_2jets_genW_e = -999;
+
+      EWK_W_2jets_genTagquark1_pt = -999; EWK_W_2jets_genTagquark1_eta = -999; EWK_W_2jets_genTagquark1_phi = -999; EWK_W_2jets_genTagquark1_e = -999;
+      EWK_W_2jets_genTagquark1_id = 0;
+
+      EWK_W_2jets_genTagquark2_pt = -999; EWK_W_2jets_genTagquark2_eta = -999; EWK_W_2jets_genTagquark2_phi = -999; EWK_W_2jets_genTagquark2_e = -999;
+      EWK_W_2jets_genTagquark2_id = 0;
+
+      //WJets for Counting the Number of Partons
+      W_gen_numPartons = 0;
+
+      W_nParton_weight = 1.0;
       //End for EWK W+2jets Analysis
 
       //ttH initilization
@@ -3575,6 +3683,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       //Next is for EWK W+2jets analysis
       if(isgendevtnojetevt)//One good muon, no jet requirement
       {
+
          vector<TLorentzVector*> sortjets;
          sortjets.clear();
          TMap jetsp4QGd;//Quark-Gluon Discriminator Map
@@ -3628,6 +3737,72 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
          if(sortjets.size() > 1 && sortjets[0]->Pt() > firsttagjetpt && sortjets[1]->Pt() > secondtagjetpt && fabs(sortjets[0]->Eta()) < tagjeteta && fabs(sortjets[1]->Eta()) < tagjeteta)
          {
 
+            //Fill the gen level information for the signal sample
+            TString tmpfilename(outfilename);
+
+            if(tmpfilename.Contains("EWKW2Jets"))
+            {
+               EWK_W_2jets_genW_pt = W_EWKW_pt;
+               EWK_W_2jets_genW_eta = W_EWKW_eta;
+               EWK_W_2jets_genW_phi = W_EWKW_phi;
+               EWK_W_2jets_genW_e = W_EWKW_E;
+
+               EWK_W_2jets_genTagquark1_pt = W_EWKTagQuark_pt[0];
+               EWK_W_2jets_genTagquark1_eta = W_EWKTagQuark_eta[0];
+               EWK_W_2jets_genTagquark1_phi = W_EWKTagQuark_phi[0];
+               EWK_W_2jets_genTagquark1_e = W_EWKTagQuark_E[0];
+               EWK_W_2jets_genTagquark1_id = W_EWKTagQuark_Id[0];
+
+               EWK_W_2jets_genTagquark2_pt = W_EWKTagQuark_pt[1];
+               EWK_W_2jets_genTagquark2_eta = W_EWKTagQuark_eta[1];
+               EWK_W_2jets_genTagquark2_phi = W_EWKTagQuark_phi[1];
+               EWK_W_2jets_genTagquark2_e = W_EWKTagQuark_E[1];
+               EWK_W_2jets_genTagquark2_id = W_EWKTagQuark_Id[1];
+
+            }
+
+            if(tmpfilename.Contains("WJets"))
+            {
+               W_gen_numPartons = W_nParton_Winclusive;
+
+               Int_t NWJets  = 76102995;
+               Int_t NW1Jets = 23141598;
+               Int_t NW2Jets = 34044921;
+               Int_t NW3Jets = 15539503;
+               Int_t NW4Jets = 4369420;
+               Float_t f_1 = 5400.0 / 30400.0; //LO W1Jets/ LO WJets inclusive
+               Float_t f_2 = 1750.0 / 30400.0; //LO W2Jets/ LO WJets inclusive
+               Float_t f_3 = 519.0 / 30400.0; //LO W3Jets/ LO WJets inclusive
+               Float_t f_4 = 214.0 / 30400.0;//LO W4Jets/ LO WJets inclusive 
+
+               //The assumption we put here: we think the LO/LO inclusive = NLO/NLO inclusive
+               if(W_nParton_Winclusive != -4){
+
+                  switch (W_nParton_Winclusive)
+                  {
+                     case 1:
+                        W_nParton_weight = NWJets * f_1 /(NWJets * f_1 + NW1Jets);
+                        break;
+                     case 2:
+                        W_nParton_weight = NWJets * f_2 /(NWJets * f_2 + NW2Jets);
+                        break;
+                     case 3:
+                        W_nParton_weight = NWJets * f_3 /(NWJets * f_3 + NW3Jets);
+                        break;
+                     case 4:
+                        W_nParton_weight = NWJets *  f_4 /(NWJets * f_4 + NW4Jets);
+                        break;
+                     case 0:
+                        W_nParton_weight = NWJets * (1.0 - f_1 - f_2 -f_3 - f_4) / (NWJets * (1.0 - f_1 - f_2 -f_3 - f_4));
+                        break;
+                     default:
+                        W_nParton_weight = 1.0;
+                        break;
+                  }
+               }
+            }
+            //End the gen level information
+
             leadingjetp4.SetPtEtaPhiE(sortjets[0]->Pt(), sortjets[0]->Eta(), sortjets[0]->Phi(), sortjets[0]->E());
             secondjetp4.SetPtEtaPhiE(sortjets[1]->Pt(), sortjets[1]->Eta(), sortjets[1]->Phi(), sortjets[1]->E());
 
@@ -3651,10 +3826,10 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             EWK_W_2jets_tagjet2_m = secondjetp4.M();
 
             //Tag Jet pair
-            EWK_W_2jets_tagjet_etasign = leadingjetp4.Eta() * secondjetp4.Eta();
+            EWK_W_2jets_tagjet_etasign = (leadingjetp4.Eta() * secondjetp4.Eta()< 0? -1 : 1);
             EWK_W_2jets_tagjet_deltaeta = fabs(leadingjetp4.Eta() - secondjetp4.Eta());
             EWK_W_2jets_tagjet_sumeta = leadingjetp4.Eta() + secondjetp4.Eta();
-            EWK_W_2jets_tagjet_deltaphi = fabs(leadingjetp4.Phi() - secondjetp4.Phi());
+            EWK_W_2jets_tagjet_deltaphi = getDeltaPhi(leadingjetp4.Phi(), secondjetp4.Phi());
             EWK_W_2jets_tagjet_deltaR = leadingjetp4.DeltaR(secondjetp4); 
             EWK_W_2jets_tagjet_mass = lstagjetmass;
 
@@ -3663,14 +3838,14 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             EWK_W_2jets_l_eta = mup.Eta();
             EWK_W_2jets_l_phi = mup.Phi();
             EWK_W_2jets_l_e = mup.E();
-            EWK_W_2jets_l_MET_deltaphi = fabs(mup.Phi() - nvp.Phi());
+            EWK_W_2jets_l_MET_deltaphi = getDeltaPhi(mup.Phi(), nvp.Phi());
 
             //Lepton and tag jet pair
             EWK_W_2jets_l_tagjet1_deltaeta = fabs(mup.Eta() - leadingjetp4.Eta());
-            EWK_W_2jets_l_tagjet1_deltaphi = fabs(mup.Phi() - leadingjetp4.Phi());
+            EWK_W_2jets_l_tagjet1_deltaphi = getDeltaPhi(mup.Phi(), leadingjetp4.Phi());
             EWK_W_2jets_l_tagjet1_deltaR = mup.DeltaR(leadingjetp4);
             EWK_W_2jets_l_tagjet2_deltaeta = fabs(mup.Eta() - secondjetp4.Eta());
-            EWK_W_2jets_l_tagjet2_deltaphi = fabs(mup.Phi() - secondjetp4.Phi());
+            EWK_W_2jets_l_tagjet2_deltaphi = getDeltaPhi(mup.Phi(), secondjetp4.Phi());
             EWK_W_2jets_l_tagjet2_deltaR = mup.DeltaR(secondjetp4);
 
             EWK_W_2jets_W_pt = wlv_p.Pt();
@@ -3678,12 +3853,13 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             EWK_W_2jets_W_rap = wlv_p.Rapidity();
             EWK_W_2jets_W_phi = wlv_p.Phi();
             EWK_W_2jets_W_e = wlv_p.E();
+            EWK_W_2jets_W_mT = W_mt; //W Boson Transverse Mass  
 
             //W boson and tag jet pair
-            EWK_W_2jets_W_tagjet1_deltaphi = fabs(wlv_p.Phi() - leadingjetp4.Phi());
+            EWK_W_2jets_W_tagjet1_deltaphi = getDeltaPhi(wlv_p.Phi(), leadingjetp4.Phi());
             EWK_W_2jets_W_tagjet1_deltaeta = fabs(wlv_p.Eta() - leadingjetp4.Eta());
             EWK_W_2jets_W_tagjet1_deltaR = wlv_p.DeltaR(leadingjetp4);
-            EWK_W_2jets_W_tagjet2_deltaphi = fabs(wlv_p.Phi() - secondjetp4.Phi());
+            EWK_W_2jets_W_tagjet2_deltaphi = getDeltaPhi(wlv_p.Phi(), secondjetp4.Phi());
             EWK_W_2jets_W_tagjet2_deltaeta = fabs(wlv_p.Eta() - secondjetp4.Eta());
             EWK_W_2jets_W_tagjet2_deltaR = wlv_p.DeltaR(secondjetp4);
 
@@ -3693,6 +3869,31 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             tagjet_1_2_eta.push_back(EWK_W_2jets_tagjet1_eta);
             tagjet_1_2_eta.push_back(EWK_W_2jets_tagjet2_eta);
             sort(tagjet_1_2_eta.begin(), tagjet_1_2_eta.end()); //Sort the jet eta from smallest to largest
+
+            //Just count the central jet number when changing the Jet Pt threshold
+            if(sortjets.size() > 2 && sortjets[2]->Pt() > 20.0)
+            {
+               for(unsigned int i = 2; i < sortjets.size(); i++)
+               {    
+                  TLorentzVector tmpp4;
+                  tmpp4.SetPtEtaPhiE(sortjets[i]->Pt(), sortjets[i]->Eta(), sortjets[i]->Phi(), sortjets[i]->E());
+
+                  if(tmpp4.Pt() > 20.0 && tmpp4.Eta() > tagjet_1_2_eta[0] && tmpp4.Eta() < tagjet_1_2_eta[1]) 
+                  {
+                     EWK_W_2jets_centraljetnum_20++;
+                  }
+
+                  if(tmpp4.Pt() > 25.0 && tmpp4.Eta() > tagjet_1_2_eta[0] && tmpp4.Eta() < tagjet_1_2_eta[1]) 
+                  {
+                     EWK_W_2jets_centraljetnum_25++;
+                  }
+
+                  if(tmpp4.Pt() > 30.0 && tmpp4.Eta() > tagjet_1_2_eta[0] && tmpp4.Eta() < tagjet_1_2_eta[1]) 
+                  {
+                     EWK_W_2jets_centraljetnum_30++;
+                  }
+               }
+            }
 
             //Find the left FIRST central jet between the tag jet eta
             int findcentraljet = 0;
@@ -3717,10 +3918,10 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                      EWK_W_2jets_centraljet_m = tmpp4.M();
 
                      EWK_W_2jets_centraljet_tagjet1_deltaeta = fabs(tmpp4.Eta() - leadingjetp4.Eta());
-                     EWK_W_2jets_centraljet_tagjet1_deltaphi = fabs(tmpp4.Phi() - leadingjetp4.Phi());
+                     EWK_W_2jets_centraljet_tagjet1_deltaphi = getDeltaPhi(tmpp4.Phi(), leadingjetp4.Phi());
                      EWK_W_2jets_centraljet_tagjet1_deltaR = tmpp4.DeltaR(leadingjetp4);
                      EWK_W_2jets_centraljet_tagjet2_deltaeta = fabs(tmpp4.Eta() - secondjetp4.Eta());
-                     EWK_W_2jets_centraljet_tagjet2_deltaphi = fabs(tmpp4.Phi() - secondjetp4.Phi());
+                     EWK_W_2jets_centraljet_tagjet2_deltaphi = getDeltaPhi(tmpp4.Phi(), secondjetp4.Phi());
                      EWK_W_2jets_centraljet_tagjet2_deltaR = tmpp4.DeltaR(secondjetp4);
 
                      EWK_W_2jets_centraljet_tagjet_Zeppenfield = fabs(tmpp4.Rapidity() - (leadingjetp4.Rapidity() + secondjetp4.Rapidity())/2.0);
@@ -3745,7 +3946,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                EWK_W_2jets_tagjet1_btagCSV = *tmp1btagCSV;
                EWK_W_2jets_tagjet2_btagCSV = *tmp2btagCSV;
             } 
-          
+
          }//Loose tag jet selection
 
       }
@@ -4526,6 +4727,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_EWK_W_2jets_W_eta->Fill();
       branch_EWK_W_2jets_W_phi->Fill();
       branch_EWK_W_2jets_W_e->Fill();
+      branch_EWK_W_2jets_W_mT->Fill();
 
       branch_EWK_W_2jets_W_tagjet1_deltaphi->Fill();
       branch_EWK_W_2jets_W_tagjet1_deltaeta->Fill();
@@ -4535,6 +4737,10 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_EWK_W_2jets_W_tagjet2_deltaR->Fill();
 
       branch_EWK_W_2jets_W_tagjet_Zeppenfield->Fill();
+
+      branch_EWK_W_2jets_centraljetnum_20->Fill();
+      branch_EWK_W_2jets_centraljetnum_25->Fill();
+      branch_EWK_W_2jets_centraljetnum_30->Fill();
 
       branch_EWK_W_2jets_findcentraljet->Fill();
 
@@ -4558,6 +4764,26 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       branch_EWK_W_2jets_tagjet1_btagCSV->Fill();
       branch_EWK_W_2jets_tagjet2_btagCSV->Fill();
+
+      branch_EWK_W_2jets_genW_pt->Fill();
+      branch_EWK_W_2jets_genW_eta->Fill();
+      branch_EWK_W_2jets_genW_phi->Fill();
+      branch_EWK_W_2jets_genW_e->Fill();
+
+      branch_EWK_W_2jets_genTagquark1_pt->Fill();
+      branch_EWK_W_2jets_genTagquark1_eta->Fill();
+      branch_EWK_W_2jets_genTagquark1_phi->Fill();
+      branch_EWK_W_2jets_genTagquark1_e->Fill();
+      branch_EWK_W_2jets_genTagquark1_id->Fill();
+
+      branch_EWK_W_2jets_genTagquark2_pt->Fill();
+      branch_EWK_W_2jets_genTagquark2_eta->Fill();
+      branch_EWK_W_2jets_genTagquark2_phi->Fill();
+      branch_EWK_W_2jets_genTagquark2_e->Fill();
+      branch_EWK_W_2jets_genTagquark2_id->Fill();
+
+      branch_W_gen_numPartons->Fill();
+      branch_W_nParton_weight->Fill();
       //End for EWK W+2jets Analysis
 
       //ttH Analysis

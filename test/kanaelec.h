@@ -23,70 +23,70 @@ public :
    // Declaration of leaf types
    Int_t           numPFCorJets;
    Int_t           numPFCorJetBTags;
-   Float_t         JetPFCor_Et[6];
-   Float_t         JetPFCor_Pt[6];
-   Float_t         JetPFCor_Eta[6];
-   Float_t         JetPFCor_Phi[6];
-   Float_t         JetPFCor_Theta[6];
-   Float_t         JetPFCor_Px[6];
-   Float_t         JetPFCor_Py[6];
-   Float_t         JetPFCor_Pz[6];
-   Float_t         JetPFCor_E[6];
-   Float_t         JetPFCor_Y[6];
-   Float_t         JetPFCor_Mass[6];
-   Float_t         JetPFCor_etaetaMoment[6];
-   Float_t         JetPFCor_phiphiMoment[6];
-   Float_t         JetPFCor_etaphiMoment[6];
-   Float_t         JetPFCor_maxDistance[6];
-   Int_t           JetPFCor_nConstituents[6];
-   Float_t         JetPFCor_Area[6];
-   Float_t         VplusPFCorJet_Mass[6];
-   Float_t         JetPFCor_dphiBoson[6];
-   Float_t         JetPFCor_detaBoson[6];
-   Float_t         JetPFCor_dRBoson[6];
-   Float_t         JetPFCor_dphiMET[6];
-   Float_t         JetPFCor_bDiscriminator[6];
-   Float_t         JetPFCor_bDiscriminatorSSVHE[6];
-   Float_t         JetPFCor_bDiscriminatorTCHE[6];
-   Float_t         JetPFCor_bDiscriminatorCSV[6];
-   Float_t         JetPFCor_bDiscriminatorJP[6];
-   Float_t         JetPFCor_bDiscriminatorSSVHP[6];
-   Float_t         JetPFCor_bDiscriminatorTCHP[6];
-   Float_t         JetPFCor_secVertexMass[6];
-   Float_t         JetPFCor_ChargedHadronEnergy[6];
-   Float_t         JetPFCor_ChargedHadronEnergyFrac[6];
-   Float_t         JetPFCor_NeutralHadronEnergy[6];
-   Float_t         JetPFCor_NeutralHadronEnergyFrac[6];
-   Float_t         JetPFCor_ChargedEmEnergy[6];
-   Float_t         JetPFCor_ChargedEmEnergyFrac[6];
-   Float_t         JetPFCor_ChargedMuEnergy[6];
-   Float_t         JetPFCor_ChargedMuEnergyFrac[6];
-   Float_t         JetPFCor_NeutralEmEnergy[6];
-   Float_t         JetPFCor_NeutralEmEnergyFrac[6];
-   Int_t           JetPFCor_ChargedMultiplicity[6];
-   Int_t           JetPFCor_NeutralMultiplicity[6];
-   Int_t           JetPFCor_MuonMultiplicity[6];
-   Float_t         JetPFCor_PhotonEnergy[6];
-   Float_t         JetPFCor_PhotonEnergyFraction[6];
-   Float_t         JetPFCor_ElectronEnergy[6];
-   Float_t         JetPFCor_ElectronEnergyFraction[6];
-   Float_t         JetPFCor_MuonEnergy[6];
-   Float_t         JetPFCor_MuonEnergyFraction[6];
-   Float_t         JetPFCor_HFHadronEnergy[6];
-   Float_t         JetPFCor_HFHadronEnergyFraction[6];
-   Float_t         JetPFCor_HFEMEnergy[6];
-   Float_t         JetPFCor_HFEMEnergyFraction[6];
-   Int_t           JetPFCor_ChargedHadronMultiplicity[6];
-   Int_t           JetPFCor_NeutralHadronMultiplicity[6];
-   Int_t           JetPFCor_PhotonMultiplicity[6];
-   Int_t           JetPFCor_ElectronMultiplicity[6];
-   Int_t           JetPFCor_HFHadronMultiplicity[6];
-   Int_t           JetPFCor_HFEMMultiplicity[6];
-   Float_t         JetPFCor_SumPtCands[6];
-   Float_t         JetPFCor_SumPt2Cands[6];
-   Float_t         JetPFCor_rmsCands[6];
-   Float_t         JetPFCor_PtD[6];
-   Float_t         JetPFCor_QGLikelihood[6];
+   Float_t         JetPFCor_Et[8];
+   Float_t         JetPFCor_Pt[8];
+   Float_t         JetPFCor_Eta[8];
+   Float_t         JetPFCor_Phi[8];
+   Float_t         JetPFCor_Theta[8];
+   Float_t         JetPFCor_Px[8];
+   Float_t         JetPFCor_Py[8];
+   Float_t         JetPFCor_Pz[8];
+   Float_t         JetPFCor_E[8];
+   Float_t         JetPFCor_Y[8];
+   Float_t         JetPFCor_Mass[8];
+   Float_t         JetPFCor_etaetaMoment[8];
+   Float_t         JetPFCor_phiphiMoment[8];
+   Float_t         JetPFCor_etaphiMoment[8];
+   Float_t         JetPFCor_maxDistance[8];
+   Int_t           JetPFCor_nConstituents[8];
+   Float_t         JetPFCor_Area[8];
+   Float_t         VplusPFCorJet_Mass[8];
+   Float_t         JetPFCor_dphiBoson[8];
+   Float_t         JetPFCor_detaBoson[8];
+   Float_t         JetPFCor_dRBoson[8];
+   Float_t         JetPFCor_dphiMET[8];
+   Float_t         JetPFCor_bDiscriminator[8];
+   Float_t         JetPFCor_bDiscriminatorSSVHE[8];
+   Float_t         JetPFCor_bDiscriminatorTCHE[8];
+   Float_t         JetPFCor_bDiscriminatorCSV[8];
+   Float_t         JetPFCor_bDiscriminatorJP[8];
+   Float_t         JetPFCor_bDiscriminatorSSVHP[8];
+   Float_t         JetPFCor_bDiscriminatorTCHP[8];
+   Float_t         JetPFCor_secVertexMass[8];
+   Float_t         JetPFCor_ChargedHadronEnergy[8];
+   Float_t         JetPFCor_ChargedHadronEnergyFrac[8];
+   Float_t         JetPFCor_NeutralHadronEnergy[8];
+   Float_t         JetPFCor_NeutralHadronEnergyFrac[8];
+   Float_t         JetPFCor_ChargedEmEnergy[8];
+   Float_t         JetPFCor_ChargedEmEnergyFrac[8];
+   Float_t         JetPFCor_ChargedMuEnergy[8];
+   Float_t         JetPFCor_ChargedMuEnergyFrac[8];
+   Float_t         JetPFCor_NeutralEmEnergy[8];
+   Float_t         JetPFCor_NeutralEmEnergyFrac[8];
+   Int_t           JetPFCor_ChargedMultiplicity[8];
+   Int_t           JetPFCor_NeutralMultiplicity[8];
+   Int_t           JetPFCor_MuonMultiplicity[8];
+   Float_t         JetPFCor_PhotonEnergy[8];
+   Float_t         JetPFCor_PhotonEnergyFraction[8];
+   Float_t         JetPFCor_ElectronEnergy[8];
+   Float_t         JetPFCor_ElectronEnergyFraction[8];
+   Float_t         JetPFCor_MuonEnergy[8];
+   Float_t         JetPFCor_MuonEnergyFraction[8];
+   Float_t         JetPFCor_HFHadronEnergy[8];
+   Float_t         JetPFCor_HFHadronEnergyFraction[8];
+   Float_t         JetPFCor_HFEMEnergy[8];
+   Float_t         JetPFCor_HFEMEnergyFraction[8];
+   Int_t           JetPFCor_ChargedHadronMultiplicity[8];
+   Int_t           JetPFCor_NeutralHadronMultiplicity[8];
+   Int_t           JetPFCor_PhotonMultiplicity[8];
+   Int_t           JetPFCor_ElectronMultiplicity[8];
+   Int_t           JetPFCor_HFHadronMultiplicity[8];
+   Int_t           JetPFCor_HFEMMultiplicity[8];
+   Float_t         JetPFCor_SumPtCands[8];
+   Float_t         JetPFCor_SumPt2Cands[8];
+   Float_t         JetPFCor_rmsCands[8];
+   Float_t         JetPFCor_PtD[8];
+   Float_t         JetPFCor_QGLikelihood[8];
    Float_t         MassV2j_PFCor_MVAMET;
    Float_t         MassV2j_PFCor;
    Float_t         MassV3j_PFCor;
@@ -128,72 +128,75 @@ public :
    Float_t         cosThetaL2HiggsCM_PFCor;
    Float_t         cosThetaV1HiggsCM_PFCor;
    Float_t         cosThetaV2HiggsCM_PFCor;
+   Bool_t          JetPFCor_isPileUpJetLoose[8];
+   Bool_t          JetPFCor_isPileUpJetMedium[8];
+   Bool_t          JetPFCor_isPileUpJetTight[8];
    Int_t           numPFCorVBFTagJets;
    Int_t           numPFCorVBFTagJetBTags;
-   Float_t         JetPFCorVBFTag_Et[6];
-   Float_t         JetPFCorVBFTag_Pt[6];
-   Float_t         JetPFCorVBFTag_Eta[6];
-   Float_t         JetPFCorVBFTag_Phi[6];
-   Float_t         JetPFCorVBFTag_Theta[6];
-   Float_t         JetPFCorVBFTag_Px[6];
-   Float_t         JetPFCorVBFTag_Py[6];
-   Float_t         JetPFCorVBFTag_Pz[6];
-   Float_t         JetPFCorVBFTag_E[6];
-   Float_t         JetPFCorVBFTag_Y[6];
-   Float_t         JetPFCorVBFTag_Mass[6];
-   Float_t         JetPFCorVBFTag_etaetaMoment[6];
-   Float_t         JetPFCorVBFTag_phiphiMoment[6];
-   Float_t         JetPFCorVBFTag_etaphiMoment[6];
-   Float_t         JetPFCorVBFTag_maxDistance[6];
-   Int_t           JetPFCorVBFTag_nConstituents[6];
-   Float_t         JetPFCorVBFTag_Area[6];
-   Float_t         VplusPFCorVBFTagJet_Mass[6];
-   Float_t         JetPFCorVBFTag_dphiBoson[6];
-   Float_t         JetPFCorVBFTag_detaBoson[6];
-   Float_t         JetPFCorVBFTag_dRBoson[6];
-   Float_t         JetPFCorVBFTag_dphiMET[6];
-   Float_t         JetPFCorVBFTag_bDiscriminator[6];
-   Float_t         JetPFCorVBFTag_bDiscriminatorSSVHE[6];
-   Float_t         JetPFCorVBFTag_bDiscriminatorTCHE[6];
-   Float_t         JetPFCorVBFTag_bDiscriminatorCSV[6];
-   Float_t         JetPFCorVBFTag_bDiscriminatorJP[6];
-   Float_t         JetPFCorVBFTag_bDiscriminatorSSVHP[6];
-   Float_t         JetPFCorVBFTag_bDiscriminatorTCHP[6];
-   Float_t         JetPFCorVBFTag_secVertexMass[6];
-   Float_t         JetPFCorVBFTag_ChargedHadronEnergy[6];
-   Float_t         JetPFCorVBFTag_ChargedHadronEnergyFrac[6];
-   Float_t         JetPFCorVBFTag_NeutralHadronEnergy[6];
-   Float_t         JetPFCorVBFTag_NeutralHadronEnergyFrac[6];
-   Float_t         JetPFCorVBFTag_ChargedEmEnergy[6];
-   Float_t         JetPFCorVBFTag_ChargedEmEnergyFrac[6];
-   Float_t         JetPFCorVBFTag_ChargedMuEnergy[6];
-   Float_t         JetPFCorVBFTag_ChargedMuEnergyFrac[6];
-   Float_t         JetPFCorVBFTag_NeutralEmEnergy[6];
-   Float_t         JetPFCorVBFTag_NeutralEmEnergyFrac[6];
-   Int_t           JetPFCorVBFTag_ChargedMultiplicity[6];
-   Int_t           JetPFCorVBFTag_NeutralMultiplicity[6];
-   Int_t           JetPFCorVBFTag_MuonMultiplicity[6];
-   Float_t         JetPFCorVBFTag_PhotonEnergy[6];
-   Float_t         JetPFCorVBFTag_PhotonEnergyFraction[6];
-   Float_t         JetPFCorVBFTag_ElectronEnergy[6];
-   Float_t         JetPFCorVBFTag_ElectronEnergyFraction[6];
-   Float_t         JetPFCorVBFTag_MuonEnergy[6];
-   Float_t         JetPFCorVBFTag_MuonEnergyFraction[6];
-   Float_t         JetPFCorVBFTag_HFHadronEnergy[6];
-   Float_t         JetPFCorVBFTag_HFHadronEnergyFraction[6];
-   Float_t         JetPFCorVBFTag_HFEMEnergy[6];
-   Float_t         JetPFCorVBFTag_HFEMEnergyFraction[6];
-   Int_t           JetPFCorVBFTag_ChargedHadronMultiplicity[6];
-   Int_t           JetPFCorVBFTag_NeutralHadronMultiplicity[6];
-   Int_t           JetPFCorVBFTag_PhotonMultiplicity[6];
-   Int_t           JetPFCorVBFTag_ElectronMultiplicity[6];
-   Int_t           JetPFCorVBFTag_HFHadronMultiplicity[6];
-   Int_t           JetPFCorVBFTag_HFEMMultiplicity[6];
-   Float_t         JetPFCorVBFTag_SumPtCands[6];
-   Float_t         JetPFCorVBFTag_SumPt2Cands[6];
-   Float_t         JetPFCorVBFTag_rmsCands[6];
-   Float_t         JetPFCorVBFTag_PtD[6];
-   Float_t         JetPFCorVBFTag_QGLikelihood[6];
+   Float_t         JetPFCorVBFTag_Et[8];
+   Float_t         JetPFCorVBFTag_Pt[8];
+   Float_t         JetPFCorVBFTag_Eta[8];
+   Float_t         JetPFCorVBFTag_Phi[8];
+   Float_t         JetPFCorVBFTag_Theta[8];
+   Float_t         JetPFCorVBFTag_Px[8];
+   Float_t         JetPFCorVBFTag_Py[8];
+   Float_t         JetPFCorVBFTag_Pz[8];
+   Float_t         JetPFCorVBFTag_E[8];
+   Float_t         JetPFCorVBFTag_Y[8];
+   Float_t         JetPFCorVBFTag_Mass[8];
+   Float_t         JetPFCorVBFTag_etaetaMoment[8];
+   Float_t         JetPFCorVBFTag_phiphiMoment[8];
+   Float_t         JetPFCorVBFTag_etaphiMoment[8];
+   Float_t         JetPFCorVBFTag_maxDistance[8];
+   Int_t           JetPFCorVBFTag_nConstituents[8];
+   Float_t         JetPFCorVBFTag_Area[8];
+   Float_t         VplusPFCorVBFTagJet_Mass[8];
+   Float_t         JetPFCorVBFTag_dphiBoson[8];
+   Float_t         JetPFCorVBFTag_detaBoson[8];
+   Float_t         JetPFCorVBFTag_dRBoson[8];
+   Float_t         JetPFCorVBFTag_dphiMET[8];
+   Float_t         JetPFCorVBFTag_bDiscriminator[8];
+   Float_t         JetPFCorVBFTag_bDiscriminatorSSVHE[8];
+   Float_t         JetPFCorVBFTag_bDiscriminatorTCHE[8];
+   Float_t         JetPFCorVBFTag_bDiscriminatorCSV[8];
+   Float_t         JetPFCorVBFTag_bDiscriminatorJP[8];
+   Float_t         JetPFCorVBFTag_bDiscriminatorSSVHP[8];
+   Float_t         JetPFCorVBFTag_bDiscriminatorTCHP[8];
+   Float_t         JetPFCorVBFTag_secVertexMass[8];
+   Float_t         JetPFCorVBFTag_ChargedHadronEnergy[8];
+   Float_t         JetPFCorVBFTag_ChargedHadronEnergyFrac[8];
+   Float_t         JetPFCorVBFTag_NeutralHadronEnergy[8];
+   Float_t         JetPFCorVBFTag_NeutralHadronEnergyFrac[8];
+   Float_t         JetPFCorVBFTag_ChargedEmEnergy[8];
+   Float_t         JetPFCorVBFTag_ChargedEmEnergyFrac[8];
+   Float_t         JetPFCorVBFTag_ChargedMuEnergy[8];
+   Float_t         JetPFCorVBFTag_ChargedMuEnergyFrac[8];
+   Float_t         JetPFCorVBFTag_NeutralEmEnergy[8];
+   Float_t         JetPFCorVBFTag_NeutralEmEnergyFrac[8];
+   Int_t           JetPFCorVBFTag_ChargedMultiplicity[8];
+   Int_t           JetPFCorVBFTag_NeutralMultiplicity[8];
+   Int_t           JetPFCorVBFTag_MuonMultiplicity[8];
+   Float_t         JetPFCorVBFTag_PhotonEnergy[8];
+   Float_t         JetPFCorVBFTag_PhotonEnergyFraction[8];
+   Float_t         JetPFCorVBFTag_ElectronEnergy[8];
+   Float_t         JetPFCorVBFTag_ElectronEnergyFraction[8];
+   Float_t         JetPFCorVBFTag_MuonEnergy[8];
+   Float_t         JetPFCorVBFTag_MuonEnergyFraction[8];
+   Float_t         JetPFCorVBFTag_HFHadronEnergy[8];
+   Float_t         JetPFCorVBFTag_HFHadronEnergyFraction[8];
+   Float_t         JetPFCorVBFTag_HFEMEnergy[8];
+   Float_t         JetPFCorVBFTag_HFEMEnergyFraction[8];
+   Int_t           JetPFCorVBFTag_ChargedHadronMultiplicity[8];
+   Int_t           JetPFCorVBFTag_NeutralHadronMultiplicity[8];
+   Int_t           JetPFCorVBFTag_PhotonMultiplicity[8];
+   Int_t           JetPFCorVBFTag_ElectronMultiplicity[8];
+   Int_t           JetPFCorVBFTag_HFHadronMultiplicity[8];
+   Int_t           JetPFCorVBFTag_HFEMMultiplicity[8];
+   Float_t         JetPFCorVBFTag_SumPtCands[8];
+   Float_t         JetPFCorVBFTag_SumPt2Cands[8];
+   Float_t         JetPFCorVBFTag_rmsCands[8];
+   Float_t         JetPFCorVBFTag_PtD[8];
+   Float_t         JetPFCorVBFTag_QGLikelihood[8];
    Float_t         MassV2j_PFCorVBFTag_MVAMET;
    Float_t         MassV2j_PFCorVBFTag;
    Float_t         MassV3j_PFCorVBFTag;
@@ -235,6 +238,9 @@ public :
    Float_t         cosThetaL2HiggsCM_PFCorVBFTag;
    Float_t         cosThetaV1HiggsCM_PFCorVBFTag;
    Float_t         cosThetaV2HiggsCM_PFCorVBFTag;
+   Bool_t          JetPFCorVBFTag_isPileUpJetLoose[8];
+   Bool_t          JetPFCorVBFTag_isPileUpJetMedium[8];
+   Bool_t          JetPFCorVBFTag_isPileUpJetTight[8];
    Float_t         GroomedJet_AK5_pt_uncorr[6];
    Float_t         GroomedJet_AK5_mass_uncorr[6];
    Float_t         GroomedJet_AK5_mass_tr_uncorr[6];
@@ -609,36 +615,36 @@ public :
    Int_t           GenGroomedJet_CA8_nconstituents0pr;
    Int_t           numGenJets;
    Int_t           numGenJetBTags;
-   Float_t         JetGen_Et[6];
-   Float_t         JetGen_Pt[6];
-   Float_t         JetGen_Eta[6];
-   Float_t         JetGen_Phi[6];
-   Float_t         JetGen_Theta[6];
-   Float_t         JetGen_Px[6];
-   Float_t         JetGen_Py[6];
-   Float_t         JetGen_Pz[6];
-   Float_t         JetGen_E[6];
-   Float_t         JetGen_Y[6];
-   Float_t         JetGen_Mass[6];
-   Float_t         JetGen_etaetaMoment[6];
-   Float_t         JetGen_phiphiMoment[6];
-   Float_t         JetGen_etaphiMoment[6];
-   Float_t         JetGen_maxDistance[6];
-   Int_t           JetGen_nConstituents[6];
-   Float_t         JetGen_Area[6];
-   Float_t         VplusGenJet_Mass[6];
-   Float_t         JetGen_dphiBoson[6];
-   Float_t         JetGen_detaBoson[6];
-   Float_t         JetGen_dRBoson[6];
-   Float_t         JetGen_dphiMET[6];
-   Float_t         JetGen_bDiscriminator[6];
-   Float_t         JetGen_bDiscriminatorSSVHE[6];
-   Float_t         JetGen_bDiscriminatorTCHE[6];
-   Float_t         JetGen_bDiscriminatorCSV[6];
-   Float_t         JetGen_bDiscriminatorJP[6];
-   Float_t         JetGen_bDiscriminatorSSVHP[6];
-   Float_t         JetGen_bDiscriminatorTCHP[6];
-   Float_t         JetGen_secVertexMass[6];
+   Float_t         JetGen_Et[8];
+   Float_t         JetGen_Pt[8];
+   Float_t         JetGen_Eta[8];
+   Float_t         JetGen_Phi[8];
+   Float_t         JetGen_Theta[8];
+   Float_t         JetGen_Px[8];
+   Float_t         JetGen_Py[8];
+   Float_t         JetGen_Pz[8];
+   Float_t         JetGen_E[8];
+   Float_t         JetGen_Y[8];
+   Float_t         JetGen_Mass[8];
+   Float_t         JetGen_etaetaMoment[8];
+   Float_t         JetGen_phiphiMoment[8];
+   Float_t         JetGen_etaphiMoment[8];
+   Float_t         JetGen_maxDistance[8];
+   Int_t           JetGen_nConstituents[8];
+   Float_t         JetGen_Area[8];
+   Float_t         VplusGenJet_Mass[8];
+   Float_t         JetGen_dphiBoson[8];
+   Float_t         JetGen_detaBoson[8];
+   Float_t         JetGen_dRBoson[8];
+   Float_t         JetGen_dphiMET[8];
+   Float_t         JetGen_bDiscriminator[8];
+   Float_t         JetGen_bDiscriminatorSSVHE[8];
+   Float_t         JetGen_bDiscriminatorTCHE[8];
+   Float_t         JetGen_bDiscriminatorCSV[8];
+   Float_t         JetGen_bDiscriminatorJP[8];
+   Float_t         JetGen_bDiscriminatorSSVHP[8];
+   Float_t         JetGen_bDiscriminatorTCHP[8];
+   Float_t         JetGen_secVertexMass[8];
    Float_t         MassV2j_Gen_MVAMET;
    Float_t         MassV2j_Gen;
    Float_t         MassV3j_Gen;
@@ -682,6 +688,9 @@ public :
    Float_t         PFisocharged03[6];   //[NumPhotons]
    Float_t         PFisophoton03[6];   //[NumPhotons]
    Float_t         PFisoneutral03[6];   //[NumPhotons]
+   Float_t         trkSumPtHollowConeDR04_Photon11[6];   //[NumPhotons]
+   Float_t         ecalRecHitSumEtConeDR04_Photon11[6];   //[NumPhotons]
+   Float_t         hcalTowerSumEtConeDR04_Photon11[6];   //[NumPhotons]
    Float_t         Photon_HoverE[6];   //[NumPhotons]
    Float_t         Photon_HoverE2011[6];   //[NumPhotons]
    Float_t         Photon_SigmaIetaIeta[6];   //[NumPhotons]
@@ -737,6 +746,7 @@ public :
    Float_t         W_electron_pfiso_photonIso;
    Float_t         W_electron_pfiso_neutralHadronIso;
    Float_t         W_electron_pfIsoEA;
+   Float_t         W_Photon_pt_gen;
    Float_t         W_H_mass_gen;
    Float_t         W_H_px_gen;
    Float_t         W_H_py_gen;
@@ -824,6 +834,157 @@ public :
    Float_t         W_Met_vz;
    Float_t         W_Met_y;
    Int_t           W_Met_Id;
+   Float_t         W_tParton_px[2];
+   Float_t         W_tParton_py[2];
+   Float_t         W_tParton_pz[2];
+   Float_t         W_tParton_E[2];
+   Float_t         W_tParton_pt[2];
+   Float_t         W_tParton_et[2];
+   Float_t         W_tParton_eta[2];
+   Float_t         W_tParton_theta[2];
+   Float_t         W_tParton_phi[2];
+   Int_t           W_tParton_charge[2];
+   Float_t         W_tParton_vx[2];
+   Float_t         W_tParton_vy[2];
+   Float_t         W_tParton_vz[2];
+   Float_t         W_tParton_y[2];
+   Int_t           W_tParton_Id[2];
+   Float_t         W_tLepton_px;
+   Float_t         W_tLepton_py;
+   Float_t         W_tLepton_pz;
+   Float_t         W_tLepton_E;
+   Float_t         W_tLepton_pt;
+   Float_t         W_tLepton_et;
+   Float_t         W_tLepton_eta;
+   Float_t         W_tLepton_theta;
+   Float_t         W_tLepton_phi;
+   Int_t           W_tLepton_charge;
+   Float_t         W_tLepton_vx;
+   Float_t         W_tLepton_vy;
+   Float_t         W_tLepton_vz;
+   Float_t         W_tLepton_y;
+   Int_t           W_tLepton_Id;
+   Float_t         W_tMet_px;
+   Float_t         W_tMet_py;
+   Float_t         W_tMet_pz;
+   Float_t         W_tMet_E;
+   Float_t         W_tMet_pt;
+   Float_t         W_tMet_et;
+   Float_t         W_tMet_eta;
+   Float_t         W_tMet_theta;
+   Float_t         W_tMet_phi;
+   Int_t           W_tMet_charge;
+   Float_t         W_tMet_vx;
+   Float_t         W_tMet_vy;
+   Float_t         W_tMet_vz;
+   Float_t         W_tMet_y;
+   Int_t           W_tMet_Id;
+   Float_t         W_tb_px;
+   Float_t         W_tb_py;
+   Float_t         W_tb_pz;
+   Float_t         W_tb_E;
+   Float_t         W_tb_pt;
+   Float_t         W_tb_et;
+   Float_t         W_tb_eta;
+   Float_t         W_tb_theta;
+   Float_t         W_tb_phi;
+   Int_t           W_tb_charge;
+   Float_t         W_tb_vx;
+   Float_t         W_tb_vy;
+   Float_t         W_tb_vz;
+   Float_t         W_tb_y;
+   Int_t           W_tb_Id;
+   Float_t         W_tbbar_px;
+   Float_t         W_tbbar_py;
+   Float_t         W_tbbar_pz;
+   Float_t         W_tbbar_E;
+   Float_t         W_tbbar_pt;
+   Float_t         W_tbbar_et;
+   Float_t         W_tbbar_eta;
+   Float_t         W_tbbar_theta;
+   Float_t         W_tbbar_phi;
+   Int_t           W_tbbar_charge;
+   Float_t         W_tbbar_vx;
+   Float_t         W_tbbar_vy;
+   Float_t         W_tbbar_vz;
+   Float_t         W_tbbar_y;
+   Int_t           W_tbbar_Id;
+   Float_t         W_Hb_px;
+   Float_t         W_Hb_py;
+   Float_t         W_Hb_pz;
+   Float_t         W_Hb_E;
+   Float_t         W_Hb_pt;
+   Float_t         W_Hb_et;
+   Float_t         W_Hb_eta;
+   Float_t         W_Hb_theta;
+   Float_t         W_Hb_phi;
+   Int_t           W_Hb_charge;
+   Float_t         W_Hb_vx;
+   Float_t         W_Hb_vy;
+   Float_t         W_Hb_vz;
+   Float_t         W_Hb_y;
+   Int_t           W_Hb_Id;
+   Float_t         W_Hbbar_px;
+   Float_t         W_Hbbar_py;
+   Float_t         W_Hbbar_pz;
+   Float_t         W_Hbbar_E;
+   Float_t         W_Hbbar_pt;
+   Float_t         W_Hbbar_et;
+   Float_t         W_Hbbar_eta;
+   Float_t         W_Hbbar_theta;
+   Float_t         W_Hbbar_phi;
+   Int_t           W_Hbbar_charge;
+   Float_t         W_Hbbar_vx;
+   Float_t         W_Hbbar_vy;
+   Float_t         W_Hbbar_vz;
+   Float_t         W_Hbbar_y;
+   Int_t           W_Hbbar_Id;
+   Float_t         W_TagQuark_px[2];
+   Float_t         W_TagQuark_py[2];
+   Float_t         W_TagQuark_pz[2];
+   Float_t         W_TagQuark_E[2];
+   Float_t         W_TagQuark_pt[2];
+   Float_t         W_TagQuark_et[2];
+   Float_t         W_TagQuark_eta[2];
+   Float_t         W_TagQuark_theta[2];
+   Float_t         W_TagQuark_phi[2];
+   Int_t           W_TagQuark_charge[2];
+   Float_t         W_TagQuark_vx[2];
+   Float_t         W_TagQuark_vy[2];
+   Float_t         W_TagQuark_vz[2];
+   Float_t         W_TagQuark_y[2];
+   Int_t           W_TagQuark_Id[2];
+   Float_t         W_EWKW_px;
+   Float_t         W_EWKW_py;
+   Float_t         W_EWKW_pz;
+   Float_t         W_EWKW_E;
+   Float_t         W_EWKW_pt;
+   Float_t         W_EWKW_et;
+   Float_t         W_EWKW_eta;
+   Float_t         W_EWKW_theta;
+   Float_t         W_EWKW_phi;
+   Int_t           W_EWKW_charge;
+   Float_t         W_EWKW_vx;
+   Float_t         W_EWKW_vy;
+   Float_t         W_EWKW_vz;
+   Float_t         W_EWKW_y;
+   Int_t           W_EWKW_Id;
+   Float_t         W_EWKTagQuark_px[2];
+   Float_t         W_EWKTagQuark_py[2];
+   Float_t         W_EWKTagQuark_pz[2];
+   Float_t         W_EWKTagQuark_E[2];
+   Float_t         W_EWKTagQuark_pt[2];
+   Float_t         W_EWKTagQuark_et[2];
+   Float_t         W_EWKTagQuark_eta[2];
+   Float_t         W_EWKTagQuark_theta[2];
+   Float_t         W_EWKTagQuark_phi[2];
+   Int_t           W_EWKTagQuark_charge[2];
+   Float_t         W_EWKTagQuark_vx[2];
+   Float_t         W_EWKTagQuark_vy[2];
+   Float_t         W_EWKTagQuark_vz[2];
+   Float_t         W_EWKTagQuark_y[2];
+   Int_t           W_EWKTagQuark_Id[2];
+   Int_t           W_nParton_Winclusive;
    Int_t           event_runNo;
    Int_t           event_evtNo;
    Int_t           event_lumi;
@@ -955,6 +1116,9 @@ public :
    TBranch        *b_cosThetaL2HiggsCM_PFCor;   //!
    TBranch        *b_cosThetaV1HiggsCM_PFCor;   //!
    TBranch        *b_cosThetaV2HiggsCM_PFCor;   //!
+   TBranch        *b_JetPFCor_isPileUpJetLoose;   //!
+   TBranch        *b_JetPFCor_isPileUpJetMedium;   //!
+   TBranch        *b_JetPFCor_isPileUpJetTight;   //!
    TBranch        *b_numPFCorVBFTagJets;   //!
    TBranch        *b_numPFCorVBFTagJetBTags;   //!
    TBranch        *b_JetPFCorVBFTag_Et;   //!
@@ -1062,6 +1226,9 @@ public :
    TBranch        *b_cosThetaL2HiggsCM_PFCorVBFTag;   //!
    TBranch        *b_cosThetaV1HiggsCM_PFCorVBFTag;   //!
    TBranch        *b_cosThetaV2HiggsCM_PFCorVBFTag;   //!
+   TBranch        *b_JetPFCorVBFTag_isPileUpJetLoose;   //!
+   TBranch        *b_JetPFCorVBFTag_isPileUpJetMedium;   //!
+   TBranch        *b_JetPFCorVBFTag_isPileUpJetTight;   //!
    TBranch        *b_GroomedJet_AK5_pt_uncorr;   //!
    TBranch        *b_GroomedJet_AK5_mass_uncorr;   //!
    TBranch        *b_GroomedJet_AK5_mass_tr_uncorr;   //!
@@ -1509,6 +1676,9 @@ public :
    TBranch        *b_PFisocharged03;   //!
    TBranch        *b_PFisophoton03;   //!
    TBranch        *b_PFisoneutral03;   //!
+   TBranch        *b_trkSumPtHollowConeDR04_Photon11;   //!
+   TBranch        *b_ecalRecHitSumEtConeDR04_Photon11;   //!
+   TBranch        *b_hcalTowerSumEtConeDR04_Photon11;   //!
    TBranch        *b_Photon_HoverE;   //!
    TBranch        *b_Photon_HoverE2011;   //!
    TBranch        *b_Photon_SigmaIetaIeta;   //!
@@ -1564,6 +1734,7 @@ public :
    TBranch        *b_W_electron_pfiso_photonIso;   //!
    TBranch        *b_W_electron_pfiso_neutralHadronIso;   //!
    TBranch        *b_W_electron_pfIsoEA;   //!
+   TBranch        *b_W_Photon_pt_gen;   //!
    TBranch        *b_W_H_mass_gen;   //!
    TBranch        *b_W_H_px_gen;   //!
    TBranch        *b_W_H_py_gen;   //!
@@ -1651,6 +1822,157 @@ public :
    TBranch        *b_W_Met_vz;   //!
    TBranch        *b_W_Met_y;   //!
    TBranch        *b_W_Met_Id;   //!
+   TBranch        *b_W_tParton_px;   //!
+   TBranch        *b_W_tParton_py;   //!
+   TBranch        *b_W_tParton_pz;   //!
+   TBranch        *b_W_tParton_E;   //!
+   TBranch        *b_W_tParton_pt;   //!
+   TBranch        *b_W_tParton_et;   //!
+   TBranch        *b_W_tParton_eta;   //!
+   TBranch        *b_W_tParton_theta;   //!
+   TBranch        *b_W_tParton_phi;   //!
+   TBranch        *b_W_tParton_charge;   //!
+   TBranch        *b_W_tParton_vx;   //!
+   TBranch        *b_W_tParton_vy;   //!
+   TBranch        *b_W_tParton_vz;   //!
+   TBranch        *b_W_tParton_y;   //!
+   TBranch        *b_W_tParton_Id;   //!
+   TBranch        *b_W_tLepton_px;   //!
+   TBranch        *b_W_tLepton_py;   //!
+   TBranch        *b_W_tLepton_pz;   //!
+   TBranch        *b_W_tLepton_E;   //!
+   TBranch        *b_W_tLepton_pt;   //!
+   TBranch        *b_W_tLepton_et;   //!
+   TBranch        *b_W_tLepton_eta;   //!
+   TBranch        *b_W_tLepton_theta;   //!
+   TBranch        *b_W_tLepton_phi;   //!
+   TBranch        *b_W_tLepton_charge;   //!
+   TBranch        *b_W_tLepton_vx;   //!
+   TBranch        *b_W_tLepton_vy;   //!
+   TBranch        *b_W_tLepton_vz;   //!
+   TBranch        *b_W_tLepton_y;   //!
+   TBranch        *b_W_tLepton_Id;   //!
+   TBranch        *b_W_tMet_px;   //!
+   TBranch        *b_W_tMet_py;   //!
+   TBranch        *b_W_tMet_pz;   //!
+   TBranch        *b_W_tMet_E;   //!
+   TBranch        *b_W_tMet_pt;   //!
+   TBranch        *b_W_tMet_et;   //!
+   TBranch        *b_W_tMet_eta;   //!
+   TBranch        *b_W_tMet_theta;   //!
+   TBranch        *b_W_tMet_phi;   //!
+   TBranch        *b_W_tMet_charge;   //!
+   TBranch        *b_W_tMet_vx;   //!
+   TBranch        *b_W_tMet_vy;   //!
+   TBranch        *b_W_tMet_vz;   //!
+   TBranch        *b_W_tMet_y;   //!
+   TBranch        *b_W_tMet_Id;   //!
+   TBranch        *b_W_tb_px;   //!
+   TBranch        *b_W_tb_py;   //!
+   TBranch        *b_W_tb_pz;   //!
+   TBranch        *b_W_tb_E;   //!
+   TBranch        *b_W_tb_pt;   //!
+   TBranch        *b_W_tb_et;   //!
+   TBranch        *b_W_tb_eta;   //!
+   TBranch        *b_W_tb_theta;   //!
+   TBranch        *b_W_tb_phi;   //!
+   TBranch        *b_W_tb_charge;   //!
+   TBranch        *b_W_tb_vx;   //!
+   TBranch        *b_W_tb_vy;   //!
+   TBranch        *b_W_tb_vz;   //!
+   TBranch        *b_W_tb_y;   //!
+   TBranch        *b_W_tb_Id;   //!
+   TBranch        *b_W_tbbar_px;   //!
+   TBranch        *b_W_tbbar_py;   //!
+   TBranch        *b_W_tbbar_pz;   //!
+   TBranch        *b_W_tbbar_E;   //!
+   TBranch        *b_W_tbbar_pt;   //!
+   TBranch        *b_W_tbbar_et;   //!
+   TBranch        *b_W_tbbar_eta;   //!
+   TBranch        *b_W_tbbar_theta;   //!
+   TBranch        *b_W_tbbar_phi;   //!
+   TBranch        *b_W_tbbar_charge;   //!
+   TBranch        *b_W_tbbar_vx;   //!
+   TBranch        *b_W_tbbar_vy;   //!
+   TBranch        *b_W_tbbar_vz;   //!
+   TBranch        *b_W_tbbar_y;   //!
+   TBranch        *b_W_tbbar_Id;   //!
+   TBranch        *b_W_Hb_px;   //!
+   TBranch        *b_W_Hb_py;   //!
+   TBranch        *b_W_Hb_pz;   //!
+   TBranch        *b_W_Hb_E;   //!
+   TBranch        *b_W_Hb_pt;   //!
+   TBranch        *b_W_Hb_et;   //!
+   TBranch        *b_W_Hb_eta;   //!
+   TBranch        *b_W_Hb_theta;   //!
+   TBranch        *b_W_Hb_phi;   //!
+   TBranch        *b_W_Hb_charge;   //!
+   TBranch        *b_W_Hb_vx;   //!
+   TBranch        *b_W_Hb_vy;   //!
+   TBranch        *b_W_Hb_vz;   //!
+   TBranch        *b_W_Hb_y;   //!
+   TBranch        *b_W_Hb_Id;   //!
+   TBranch        *b_W_Hbbar_px;   //!
+   TBranch        *b_W_Hbbar_py;   //!
+   TBranch        *b_W_Hbbar_pz;   //!
+   TBranch        *b_W_Hbbar_E;   //!
+   TBranch        *b_W_Hbbar_pt;   //!
+   TBranch        *b_W_Hbbar_et;   //!
+   TBranch        *b_W_Hbbar_eta;   //!
+   TBranch        *b_W_Hbbar_theta;   //!
+   TBranch        *b_W_Hbbar_phi;   //!
+   TBranch        *b_W_Hbbar_charge;   //!
+   TBranch        *b_W_Hbbar_vx;   //!
+   TBranch        *b_W_Hbbar_vy;   //!
+   TBranch        *b_W_Hbbar_vz;   //!
+   TBranch        *b_W_Hbbar_y;   //!
+   TBranch        *b_W_Hbbar_Id;   //!
+   TBranch        *b_W_TagQuark_px;   //!
+   TBranch        *b_W_TagQuark_py;   //!
+   TBranch        *b_W_TagQuark_pz;   //!
+   TBranch        *b_W_TagQuark_E;   //!
+   TBranch        *b_W_TagQuark_pt;   //!
+   TBranch        *b_W_TagQuark_et;   //!
+   TBranch        *b_W_TagQuark_eta;   //!
+   TBranch        *b_W_TagQuark_theta;   //!
+   TBranch        *b_W_TagQuark_phi;   //!
+   TBranch        *b_W_TagQuark_charge;   //!
+   TBranch        *b_W_TagQuark_vx;   //!
+   TBranch        *b_W_TagQuark_vy;   //!
+   TBranch        *b_W_TagQuark_vz;   //!
+   TBranch        *b_W_TagQuark_y;   //!
+   TBranch        *b_W_TagQuark_Id;   //!
+   TBranch        *b_W_EWKW_px;   //!
+   TBranch        *b_W_EWKW_py;   //!
+   TBranch        *b_W_EWKW_pz;   //!
+   TBranch        *b_W_EWKW_E;   //!
+   TBranch        *b_W_EWKW_pt;   //!
+   TBranch        *b_W_EWKW_et;   //!
+   TBranch        *b_W_EWKW_eta;   //!
+   TBranch        *b_W_EWKW_theta;   //!
+   TBranch        *b_W_EWKW_phi;   //!
+   TBranch        *b_W_EWKW_charge;   //!
+   TBranch        *b_W_EWKW_vx;   //!
+   TBranch        *b_W_EWKW_vy;   //!
+   TBranch        *b_W_EWKW_vz;   //!
+   TBranch        *b_W_EWKW_y;   //!
+   TBranch        *b_W_EWKW_Id;   //!
+   TBranch        *b_W_EWKTagQuark_px;   //!
+   TBranch        *b_W_EWKTagQuark_py;   //!
+   TBranch        *b_W_EWKTagQuark_pz;   //!
+   TBranch        *b_W_EWKTagQuark_E;   //!
+   TBranch        *b_W_EWKTagQuark_pt;   //!
+   TBranch        *b_W_EWKTagQuark_et;   //!
+   TBranch        *b_W_EWKTagQuark_eta;   //!
+   TBranch        *b_W_EWKTagQuark_theta;   //!
+   TBranch        *b_W_EWKTagQuark_phi;   //!
+   TBranch        *b_W_EWKTagQuark_charge;   //!
+   TBranch        *b_W_EWKTagQuark_vx;   //!
+   TBranch        *b_W_EWKTagQuark_vy;   //!
+   TBranch        *b_W_EWKTagQuark_vz;   //!
+   TBranch        *b_W_EWKTagQuark_y;   //!
+   TBranch        *b_W_EWKTagQuark_Id;   //!
+   TBranch        *b_W_nParton_Winclusive;   //!
    TBranch        *b_event_runNo;   //!
    TBranch        *b_event_evtNo;   //!
    TBranch        *b_event_lumi;   //!
@@ -1725,9 +2047,15 @@ kanaelec::kanaelec(TTree *tree)
 // if parameter tree is not specified (or zero), connect the file
 // used to generate this class and read the Tree.
    if (tree == 0) {
-      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/uscms_data/d3/weizou/MakeNtuple/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/el_STopS_Tbar_CMSSW532.root");
+      //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/uscms_data/d3/weizou/MakeNtuple/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/el_STopS_Tbar_CMSSW532.root");
+      //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/uscms_data/d3/weizou/MakeNtuple/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/el_HWWMH600_CMSSW532_private.root");
+      //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples/WenuJets_DataAllSingleElectronTrigger_GoldenJSON_18p65invfb.root");
+      //TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/el_VBFHWWMH170_CMSSW532_private.root");
+      TFile *f = (TFile*)gROOT->GetListOfFiles()->FindObject("/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v2_nojetnum/el_WJets_CMSSW532_pt1_v2.root");
       if (!f) {
-         f = new TFile("/uscms_data/d3/weizou/MakeNtuple/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/el_STopS_Tbar_CMSSW532.root");
+         //f = new TFile("/uscms_data/d3/weizou/MakeNtuple/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/el_STopS_Tbar_CMSSW532.root");
+         //f = new TFile("/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/el_VBFHWWMH170_CMSSW532_private.root");
+         f = new TFile("/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v2_nojetnum/el_WJets_CMSSW532_pt1_v2.root");
       }
       tree = (TTree*)gDirectory->Get("WJet");
 
@@ -1885,6 +2213,9 @@ void kanaelec::Init(TTree *tree)
    fChain->SetBranchAddress("cosThetaL2HiggsCM_PFCor", &cosThetaL2HiggsCM_PFCor, &b_cosThetaL2HiggsCM_PFCor);
    fChain->SetBranchAddress("cosThetaV1HiggsCM_PFCor", &cosThetaV1HiggsCM_PFCor, &b_cosThetaV1HiggsCM_PFCor);
    fChain->SetBranchAddress("cosThetaV2HiggsCM_PFCor", &cosThetaV2HiggsCM_PFCor, &b_cosThetaV2HiggsCM_PFCor);
+   fChain->SetBranchAddress("JetPFCor_isPileUpJetLoose", JetPFCor_isPileUpJetLoose, &b_JetPFCor_isPileUpJetLoose);
+   fChain->SetBranchAddress("JetPFCor_isPileUpJetMedium", JetPFCor_isPileUpJetMedium, &b_JetPFCor_isPileUpJetMedium);
+   fChain->SetBranchAddress("JetPFCor_isPileUpJetTight", JetPFCor_isPileUpJetTight, &b_JetPFCor_isPileUpJetTight);
    fChain->SetBranchAddress("numPFCorVBFTagJets", &numPFCorVBFTagJets, &b_numPFCorVBFTagJets);
    fChain->SetBranchAddress("numPFCorVBFTagJetBTags", &numPFCorVBFTagJetBTags, &b_numPFCorVBFTagJetBTags);
    fChain->SetBranchAddress("JetPFCorVBFTag_Et", JetPFCorVBFTag_Et, &b_JetPFCorVBFTag_Et);
@@ -1992,6 +2323,9 @@ void kanaelec::Init(TTree *tree)
    fChain->SetBranchAddress("cosThetaL2HiggsCM_PFCorVBFTag", &cosThetaL2HiggsCM_PFCorVBFTag, &b_cosThetaL2HiggsCM_PFCorVBFTag);
    fChain->SetBranchAddress("cosThetaV1HiggsCM_PFCorVBFTag", &cosThetaV1HiggsCM_PFCorVBFTag, &b_cosThetaV1HiggsCM_PFCorVBFTag);
    fChain->SetBranchAddress("cosThetaV2HiggsCM_PFCorVBFTag", &cosThetaV2HiggsCM_PFCorVBFTag, &b_cosThetaV2HiggsCM_PFCorVBFTag);
+   fChain->SetBranchAddress("JetPFCorVBFTag_isPileUpJetLoose", JetPFCorVBFTag_isPileUpJetLoose, &b_JetPFCorVBFTag_isPileUpJetLoose);
+   fChain->SetBranchAddress("JetPFCorVBFTag_isPileUpJetMedium", JetPFCorVBFTag_isPileUpJetMedium, &b_JetPFCorVBFTag_isPileUpJetMedium);
+   fChain->SetBranchAddress("JetPFCorVBFTag_isPileUpJetTight", JetPFCorVBFTag_isPileUpJetTight, &b_JetPFCorVBFTag_isPileUpJetTight);
    fChain->SetBranchAddress("GroomedJet_AK5_pt_uncorr", GroomedJet_AK5_pt_uncorr, &b_GroomedJet_AK5_pt_uncorr);
    fChain->SetBranchAddress("GroomedJet_AK5_mass_uncorr", GroomedJet_AK5_mass_uncorr, &b_GroomedJet_AK5_mass_uncorr);
    fChain->SetBranchAddress("GroomedJet_AK5_mass_tr_uncorr", GroomedJet_AK5_mass_tr_uncorr, &b_GroomedJet_AK5_mass_tr_uncorr);
@@ -2439,6 +2773,9 @@ void kanaelec::Init(TTree *tree)
    fChain->SetBranchAddress("PFisocharged03", PFisocharged03, &b_PFisocharged03);
    fChain->SetBranchAddress("PFisophoton03", PFisophoton03, &b_PFisophoton03);
    fChain->SetBranchAddress("PFisoneutral03", PFisoneutral03, &b_PFisoneutral03);
+   fChain->SetBranchAddress("trkSumPtHollowConeDR04_Photon11", trkSumPtHollowConeDR04_Photon11, &b_trkSumPtHollowConeDR04_Photon11);
+   fChain->SetBranchAddress("ecalRecHitSumEtConeDR04_Photon11", ecalRecHitSumEtConeDR04_Photon11, &b_ecalRecHitSumEtConeDR04_Photon11);
+   fChain->SetBranchAddress("hcalTowerSumEtConeDR04_Photon11", hcalTowerSumEtConeDR04_Photon11, &b_hcalTowerSumEtConeDR04_Photon11);
    fChain->SetBranchAddress("Photon_HoverE", Photon_HoverE, &b_Photon_HoverE);
    fChain->SetBranchAddress("Photon_HoverE2011", Photon_HoverE2011, &b_Photon_HoverE2011);
    fChain->SetBranchAddress("Photon_SigmaIetaIeta", Photon_SigmaIetaIeta, &b_Photon_SigmaIetaIeta);
@@ -2494,6 +2831,7 @@ void kanaelec::Init(TTree *tree)
    fChain->SetBranchAddress("W_electron_pfiso_photonIso", &W_electron_pfiso_photonIso, &b_W_electron_pfiso_photonIso);
    fChain->SetBranchAddress("W_electron_pfiso_neutralHadronIso", &W_electron_pfiso_neutralHadronIso, &b_W_electron_pfiso_neutralHadronIso);
    fChain->SetBranchAddress("W_electron_pfIsoEA", &W_electron_pfIsoEA, &b_W_electron_pfIsoEA);
+   fChain->SetBranchAddress("W_Photon_pt_gen", &W_Photon_pt_gen, &b_W_Photon_pt_gen);
    fChain->SetBranchAddress("W_H_mass_gen", &W_H_mass_gen, &b_W_H_mass_gen);
    fChain->SetBranchAddress("W_H_px_gen", &W_H_px_gen, &b_W_H_px_gen);
    fChain->SetBranchAddress("W_H_py_gen", &W_H_py_gen, &b_W_H_py_gen);
@@ -2581,6 +2919,157 @@ void kanaelec::Init(TTree *tree)
    fChain->SetBranchAddress("W_Met_vz", &W_Met_vz, &b_W_Met_vz);
    fChain->SetBranchAddress("W_Met_y", &W_Met_y, &b_W_Met_y);
    fChain->SetBranchAddress("W_Met_Id", &W_Met_Id, &b_W_Met_Id);
+   fChain->SetBranchAddress("W_tParton_px[2]", W_tParton_px, &b_W_tParton_px);
+   fChain->SetBranchAddress("W_tParton_py[2]", W_tParton_py, &b_W_tParton_py);
+   fChain->SetBranchAddress("W_tParton_pz[2]", W_tParton_pz, &b_W_tParton_pz);
+   fChain->SetBranchAddress("W_tParton_E[2]", W_tParton_E, &b_W_tParton_E);
+   fChain->SetBranchAddress("W_tParton_pt[2]", W_tParton_pt, &b_W_tParton_pt);
+   fChain->SetBranchAddress("W_tParton_et[2]", W_tParton_et, &b_W_tParton_et);
+   fChain->SetBranchAddress("W_tParton_eta[2]", W_tParton_eta, &b_W_tParton_eta);
+   fChain->SetBranchAddress("W_tParton_theta[2]", W_tParton_theta, &b_W_tParton_theta);
+   fChain->SetBranchAddress("W_tParton_phi[2]", W_tParton_phi, &b_W_tParton_phi);
+   fChain->SetBranchAddress("W_tParton_charge[2]", W_tParton_charge, &b_W_tParton_charge);
+   fChain->SetBranchAddress("W_tParton_vx[2]", W_tParton_vx, &b_W_tParton_vx);
+   fChain->SetBranchAddress("W_tParton_vy[2]", W_tParton_vy, &b_W_tParton_vy);
+   fChain->SetBranchAddress("W_tParton_vz[2]", W_tParton_vz, &b_W_tParton_vz);
+   fChain->SetBranchAddress("W_tParton_y[2]", W_tParton_y, &b_W_tParton_y);
+   fChain->SetBranchAddress("W_tParton_Id[2]", W_tParton_Id, &b_W_tParton_Id);
+   fChain->SetBranchAddress("W_tLepton_px", &W_tLepton_px, &b_W_tLepton_px);
+   fChain->SetBranchAddress("W_tLepton_py", &W_tLepton_py, &b_W_tLepton_py);
+   fChain->SetBranchAddress("W_tLepton_pz", &W_tLepton_pz, &b_W_tLepton_pz);
+   fChain->SetBranchAddress("W_tLepton_E", &W_tLepton_E, &b_W_tLepton_E);
+   fChain->SetBranchAddress("W_tLepton_pt", &W_tLepton_pt, &b_W_tLepton_pt);
+   fChain->SetBranchAddress("W_tLepton_et", &W_tLepton_et, &b_W_tLepton_et);
+   fChain->SetBranchAddress("W_tLepton_eta", &W_tLepton_eta, &b_W_tLepton_eta);
+   fChain->SetBranchAddress("W_tLepton_theta", &W_tLepton_theta, &b_W_tLepton_theta);
+   fChain->SetBranchAddress("W_tLepton_phi", &W_tLepton_phi, &b_W_tLepton_phi);
+   fChain->SetBranchAddress("W_tLepton_charge", &W_tLepton_charge, &b_W_tLepton_charge);
+   fChain->SetBranchAddress("W_tLepton_vx", &W_tLepton_vx, &b_W_tLepton_vx);
+   fChain->SetBranchAddress("W_tLepton_vy", &W_tLepton_vy, &b_W_tLepton_vy);
+   fChain->SetBranchAddress("W_tLepton_vz", &W_tLepton_vz, &b_W_tLepton_vz);
+   fChain->SetBranchAddress("W_tLepton_y", &W_tLepton_y, &b_W_tLepton_y);
+   fChain->SetBranchAddress("W_tLepton_Id", &W_tLepton_Id, &b_W_tLepton_Id);
+   fChain->SetBranchAddress("W_tMet_px", &W_tMet_px, &b_W_tMet_px);
+   fChain->SetBranchAddress("W_tMet_py", &W_tMet_py, &b_W_tMet_py);
+   fChain->SetBranchAddress("W_tMet_pz", &W_tMet_pz, &b_W_tMet_pz);
+   fChain->SetBranchAddress("W_tMet_E", &W_tMet_E, &b_W_tMet_E);
+   fChain->SetBranchAddress("W_tMet_pt", &W_tMet_pt, &b_W_tMet_pt);
+   fChain->SetBranchAddress("W_tMet_et", &W_tMet_et, &b_W_tMet_et);
+   fChain->SetBranchAddress("W_tMet_eta", &W_tMet_eta, &b_W_tMet_eta);
+   fChain->SetBranchAddress("W_tMet_theta", &W_tMet_theta, &b_W_tMet_theta);
+   fChain->SetBranchAddress("W_tMet_phi", &W_tMet_phi, &b_W_tMet_phi);
+   fChain->SetBranchAddress("W_tMet_charge", &W_tMet_charge, &b_W_tMet_charge);
+   fChain->SetBranchAddress("W_tMet_vx", &W_tMet_vx, &b_W_tMet_vx);
+   fChain->SetBranchAddress("W_tMet_vy", &W_tMet_vy, &b_W_tMet_vy);
+   fChain->SetBranchAddress("W_tMet_vz", &W_tMet_vz, &b_W_tMet_vz);
+   fChain->SetBranchAddress("W_tMet_y", &W_tMet_y, &b_W_tMet_y);
+   fChain->SetBranchAddress("W_tMet_Id", &W_tMet_Id, &b_W_tMet_Id);
+   fChain->SetBranchAddress("W_tb_px", &W_tb_px, &b_W_tb_px);
+   fChain->SetBranchAddress("W_tb_py", &W_tb_py, &b_W_tb_py);
+   fChain->SetBranchAddress("W_tb_pz", &W_tb_pz, &b_W_tb_pz);
+   fChain->SetBranchAddress("W_tb_E", &W_tb_E, &b_W_tb_E);
+   fChain->SetBranchAddress("W_tb_pt", &W_tb_pt, &b_W_tb_pt);
+   fChain->SetBranchAddress("W_tb_et", &W_tb_et, &b_W_tb_et);
+   fChain->SetBranchAddress("W_tb_eta", &W_tb_eta, &b_W_tb_eta);
+   fChain->SetBranchAddress("W_tb_theta", &W_tb_theta, &b_W_tb_theta);
+   fChain->SetBranchAddress("W_tb_phi", &W_tb_phi, &b_W_tb_phi);
+   fChain->SetBranchAddress("W_tb_charge", &W_tb_charge, &b_W_tb_charge);
+   fChain->SetBranchAddress("W_tb_vx", &W_tb_vx, &b_W_tb_vx);
+   fChain->SetBranchAddress("W_tb_vy", &W_tb_vy, &b_W_tb_vy);
+   fChain->SetBranchAddress("W_tb_vz", &W_tb_vz, &b_W_tb_vz);
+   fChain->SetBranchAddress("W_tb_y", &W_tb_y, &b_W_tb_y);
+   fChain->SetBranchAddress("W_tb_Id", &W_tb_Id, &b_W_tb_Id);
+   fChain->SetBranchAddress("W_tbbar_px", &W_tbbar_px, &b_W_tbbar_px);
+   fChain->SetBranchAddress("W_tbbar_py", &W_tbbar_py, &b_W_tbbar_py);
+   fChain->SetBranchAddress("W_tbbar_pz", &W_tbbar_pz, &b_W_tbbar_pz);
+   fChain->SetBranchAddress("W_tbbar_E", &W_tbbar_E, &b_W_tbbar_E);
+   fChain->SetBranchAddress("W_tbbar_pt", &W_tbbar_pt, &b_W_tbbar_pt);
+   fChain->SetBranchAddress("W_tbbar_et", &W_tbbar_et, &b_W_tbbar_et);
+   fChain->SetBranchAddress("W_tbbar_eta", &W_tbbar_eta, &b_W_tbbar_eta);
+   fChain->SetBranchAddress("W_tbbar_theta", &W_tbbar_theta, &b_W_tbbar_theta);
+   fChain->SetBranchAddress("W_tbbar_phi", &W_tbbar_phi, &b_W_tbbar_phi);
+   fChain->SetBranchAddress("W_tbbar_charge", &W_tbbar_charge, &b_W_tbbar_charge);
+   fChain->SetBranchAddress("W_tbbar_vx", &W_tbbar_vx, &b_W_tbbar_vx);
+   fChain->SetBranchAddress("W_tbbar_vy", &W_tbbar_vy, &b_W_tbbar_vy);
+   fChain->SetBranchAddress("W_tbbar_vz", &W_tbbar_vz, &b_W_tbbar_vz);
+   fChain->SetBranchAddress("W_tbbar_y", &W_tbbar_y, &b_W_tbbar_y);
+   fChain->SetBranchAddress("W_tbbar_Id", &W_tbbar_Id, &b_W_tbbar_Id);
+   fChain->SetBranchAddress("W_Hb_px", &W_Hb_px, &b_W_Hb_px);
+   fChain->SetBranchAddress("W_Hb_py", &W_Hb_py, &b_W_Hb_py);
+   fChain->SetBranchAddress("W_Hb_pz", &W_Hb_pz, &b_W_Hb_pz);
+   fChain->SetBranchAddress("W_Hb_E", &W_Hb_E, &b_W_Hb_E);
+   fChain->SetBranchAddress("W_Hb_pt", &W_Hb_pt, &b_W_Hb_pt);
+   fChain->SetBranchAddress("W_Hb_et", &W_Hb_et, &b_W_Hb_et);
+   fChain->SetBranchAddress("W_Hb_eta", &W_Hb_eta, &b_W_Hb_eta);
+   fChain->SetBranchAddress("W_Hb_theta", &W_Hb_theta, &b_W_Hb_theta);
+   fChain->SetBranchAddress("W_Hb_phi", &W_Hb_phi, &b_W_Hb_phi);
+   fChain->SetBranchAddress("W_Hb_charge", &W_Hb_charge, &b_W_Hb_charge);
+   fChain->SetBranchAddress("W_Hb_vx", &W_Hb_vx, &b_W_Hb_vx);
+   fChain->SetBranchAddress("W_Hb_vy", &W_Hb_vy, &b_W_Hb_vy);
+   fChain->SetBranchAddress("W_Hb_vz", &W_Hb_vz, &b_W_Hb_vz);
+   fChain->SetBranchAddress("W_Hb_y", &W_Hb_y, &b_W_Hb_y);
+   fChain->SetBranchAddress("W_Hb_Id", &W_Hb_Id, &b_W_Hb_Id);
+   fChain->SetBranchAddress("W_Hbbar_px", &W_Hbbar_px, &b_W_Hbbar_px);
+   fChain->SetBranchAddress("W_Hbbar_py", &W_Hbbar_py, &b_W_Hbbar_py);
+   fChain->SetBranchAddress("W_Hbbar_pz", &W_Hbbar_pz, &b_W_Hbbar_pz);
+   fChain->SetBranchAddress("W_Hbbar_E", &W_Hbbar_E, &b_W_Hbbar_E);
+   fChain->SetBranchAddress("W_Hbbar_pt", &W_Hbbar_pt, &b_W_Hbbar_pt);
+   fChain->SetBranchAddress("W_Hbbar_et", &W_Hbbar_et, &b_W_Hbbar_et);
+   fChain->SetBranchAddress("W_Hbbar_eta", &W_Hbbar_eta, &b_W_Hbbar_eta);
+   fChain->SetBranchAddress("W_Hbbar_theta", &W_Hbbar_theta, &b_W_Hbbar_theta);
+   fChain->SetBranchAddress("W_Hbbar_phi", &W_Hbbar_phi, &b_W_Hbbar_phi);
+   fChain->SetBranchAddress("W_Hbbar_charge", &W_Hbbar_charge, &b_W_Hbbar_charge);
+   fChain->SetBranchAddress("W_Hbbar_vx", &W_Hbbar_vx, &b_W_Hbbar_vx);
+   fChain->SetBranchAddress("W_Hbbar_vy", &W_Hbbar_vy, &b_W_Hbbar_vy);
+   fChain->SetBranchAddress("W_Hbbar_vz", &W_Hbbar_vz, &b_W_Hbbar_vz);
+   fChain->SetBranchAddress("W_Hbbar_y", &W_Hbbar_y, &b_W_Hbbar_y);
+   fChain->SetBranchAddress("W_Hbbar_Id", &W_Hbbar_Id, &b_W_Hbbar_Id);
+   fChain->SetBranchAddress("W_TagQuark_px[2]", W_TagQuark_px, &b_W_TagQuark_px);
+   fChain->SetBranchAddress("W_TagQuark_py[2]", W_TagQuark_py, &b_W_TagQuark_py);
+   fChain->SetBranchAddress("W_TagQuark_pz[2]", W_TagQuark_pz, &b_W_TagQuark_pz);
+   fChain->SetBranchAddress("W_TagQuark_E[2]", W_TagQuark_E, &b_W_TagQuark_E);
+   fChain->SetBranchAddress("W_TagQuark_pt[2]", W_TagQuark_pt, &b_W_TagQuark_pt);
+   fChain->SetBranchAddress("W_TagQuark_et[2]", W_TagQuark_et, &b_W_TagQuark_et);
+   fChain->SetBranchAddress("W_TagQuark_eta[2]", W_TagQuark_eta, &b_W_TagQuark_eta);
+   fChain->SetBranchAddress("W_TagQuark_theta[2]", W_TagQuark_theta, &b_W_TagQuark_theta);
+   fChain->SetBranchAddress("W_TagQuark_phi[2]", W_TagQuark_phi, &b_W_TagQuark_phi);
+   fChain->SetBranchAddress("W_TagQuark_charge[2]", W_TagQuark_charge, &b_W_TagQuark_charge);
+   fChain->SetBranchAddress("W_TagQuark_vx[2]", W_TagQuark_vx, &b_W_TagQuark_vx);
+   fChain->SetBranchAddress("W_TagQuark_vy[2]", W_TagQuark_vy, &b_W_TagQuark_vy);
+   fChain->SetBranchAddress("W_TagQuark_vz[2]", W_TagQuark_vz, &b_W_TagQuark_vz);
+   fChain->SetBranchAddress("W_TagQuark_y[2]", W_TagQuark_y, &b_W_TagQuark_y);
+   fChain->SetBranchAddress("W_TagQuark_Id[2]", W_TagQuark_Id, &b_W_TagQuark_Id);
+   fChain->SetBranchAddress("W_EWKW_px", &W_EWKW_px, &b_W_EWKW_px);
+   fChain->SetBranchAddress("W_EWKW_py", &W_EWKW_py, &b_W_EWKW_py);
+   fChain->SetBranchAddress("W_EWKW_pz", &W_EWKW_pz, &b_W_EWKW_pz);
+   fChain->SetBranchAddress("W_EWKW_E", &W_EWKW_E, &b_W_EWKW_E);
+   fChain->SetBranchAddress("W_EWKW_pt", &W_EWKW_pt, &b_W_EWKW_pt);
+   fChain->SetBranchAddress("W_EWKW_et", &W_EWKW_et, &b_W_EWKW_et);
+   fChain->SetBranchAddress("W_EWKW_eta", &W_EWKW_eta, &b_W_EWKW_eta);
+   fChain->SetBranchAddress("W_EWKW_theta", &W_EWKW_theta, &b_W_EWKW_theta);
+   fChain->SetBranchAddress("W_EWKW_phi", &W_EWKW_phi, &b_W_EWKW_phi);
+   fChain->SetBranchAddress("W_EWKW_charge", &W_EWKW_charge, &b_W_EWKW_charge);
+   fChain->SetBranchAddress("W_EWKW_vx", &W_EWKW_vx, &b_W_EWKW_vx);
+   fChain->SetBranchAddress("W_EWKW_vy", &W_EWKW_vy, &b_W_EWKW_vy);
+   fChain->SetBranchAddress("W_EWKW_vz", &W_EWKW_vz, &b_W_EWKW_vz);
+   fChain->SetBranchAddress("W_EWKW_y", &W_EWKW_y, &b_W_EWKW_y);
+   fChain->SetBranchAddress("W_EWKW_Id", &W_EWKW_Id, &b_W_EWKW_Id);
+   fChain->SetBranchAddress("W_EWKTagQuark_px[2]", W_EWKTagQuark_px, &b_W_EWKTagQuark_px);
+   fChain->SetBranchAddress("W_EWKTagQuark_py[2]", W_EWKTagQuark_py, &b_W_EWKTagQuark_py);
+   fChain->SetBranchAddress("W_EWKTagQuark_pz[2]", W_EWKTagQuark_pz, &b_W_EWKTagQuark_pz);
+   fChain->SetBranchAddress("W_EWKTagQuark_E[2]", W_EWKTagQuark_E, &b_W_EWKTagQuark_E);
+   fChain->SetBranchAddress("W_EWKTagQuark_pt[2]", W_EWKTagQuark_pt, &b_W_EWKTagQuark_pt);
+   fChain->SetBranchAddress("W_EWKTagQuark_et[2]", W_EWKTagQuark_et, &b_W_EWKTagQuark_et);
+   fChain->SetBranchAddress("W_EWKTagQuark_eta[2]", W_EWKTagQuark_eta, &b_W_EWKTagQuark_eta);
+   fChain->SetBranchAddress("W_EWKTagQuark_theta[2]", W_EWKTagQuark_theta, &b_W_EWKTagQuark_theta);
+   fChain->SetBranchAddress("W_EWKTagQuark_phi[2]", W_EWKTagQuark_phi, &b_W_EWKTagQuark_phi);
+   fChain->SetBranchAddress("W_EWKTagQuark_charge[2]", W_EWKTagQuark_charge, &b_W_EWKTagQuark_charge);
+   fChain->SetBranchAddress("W_EWKTagQuark_vx[2]", W_EWKTagQuark_vx, &b_W_EWKTagQuark_vx);
+   fChain->SetBranchAddress("W_EWKTagQuark_vy[2]", W_EWKTagQuark_vy, &b_W_EWKTagQuark_vy);
+   fChain->SetBranchAddress("W_EWKTagQuark_vz[2]", W_EWKTagQuark_vz, &b_W_EWKTagQuark_vz);
+   fChain->SetBranchAddress("W_EWKTagQuark_y[2]", W_EWKTagQuark_y, &b_W_EWKTagQuark_y);
+   fChain->SetBranchAddress("W_EWKTagQuark_Id[2]", W_EWKTagQuark_Id, &b_W_EWKTagQuark_Id);
+   fChain->SetBranchAddress("W_nParton_Winclusive", &W_nParton_Winclusive, &b_W_nParton_Winclusive);
    fChain->SetBranchAddress("event_runNo", &event_runNo, &b_event_runNo);
    fChain->SetBranchAddress("event_evtNo", &event_evtNo, &b_event_evtNo);
    fChain->SetBranchAddress("event_lumi", &event_lumi, &b_event_lumi);
