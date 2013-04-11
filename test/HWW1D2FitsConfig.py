@@ -222,7 +222,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 
     pars.var = ['Mass2j_PFCor', 'fit_mlvjj']
     pars.varRanges = {'Mass2j_PFCor': (12, 50., 146., []),
-                      'fit_mlvjj': (modePars[mH][4], modePars[mH][2], 
+                      'fit_mlvjj': (modePars[mH][4]*5, modePars[mH][2], 
                                     modePars[mH][3], [])
                       }
     pars.varTitles = {'Mass2j_PFCor': 'm_{jj}',

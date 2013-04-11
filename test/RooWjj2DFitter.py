@@ -321,30 +321,11 @@ class Wjj2DFitter:
         elif (models[0] == -2):
             thePdf = self.makeMorphingPdf(component)
         elif (models[0] == -3):
+            pass
         else:
             thePdf = self.makeComponentAnalyticPdf(component, models)
         return thePdf
 
-    def makeConvolvedPdf(self, component, files, models):
-        if self.ws.pdf(component):
-            return self.ws.pdf(component)
-
-        baseModel = blah
-        basePdf = self.makeComponentPdf(self, component + '_base',
-                                        files, baseModel)
-        convModel = blah2
-        convPdf = self.makeComponentPdf(self, component + '_conv',
-                                        files, convModel)
-        var = self.pars.var[0]
-        try:
-            vName = self.pars.varNames[0]
-        except AttributeError:
-            vName = var
-        self.ws.factory('RooFFTConvPdf::%s(%s,%s,%s)' % \
-                        (component, vName, basePdf.GetName(),
-                         convPdf.GetName()))
-        return self.ws.pdf(component)
-        
     #create a simple 2D histogram pdf
     def makeComponentHistPdf(self, component, files):
         if self.ws.pdf(component):

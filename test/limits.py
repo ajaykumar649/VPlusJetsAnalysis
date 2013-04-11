@@ -42,17 +42,21 @@ def plcLimit(obs_, poi_, model, ws, data, CL = 0.95, verbose = False):
 
     upperLimit = Double(999.)
     lowerLimit = Double(0.)
+    Limits = {}
 
-    ok = interval.FindLimits(poi.first(), lowerLimit, upperLimit)
+    paramIter = poi.createIterator()
+    param = paramIter.Next()
+    while param:
+        ok = interval.FindLimits(param, lowerLimit, upperLimit)
+        Limits[param.GetName()] = {'ok' : ok, 'upper' : float(upperLimit),
+                                   'lower' : float(lowerLimit)}
+        param = paramIter.Next()
 
     if verbose:
-        print '%.0f%% CL upper limit' % (interval.ConfidenceLevel() * 100), ok,
-        print ': %.4f' % (upperLimit)
-        print '%.0f%% CL lower limit' % (interval.ConfidenceLevel() * 100), ok,
-        print ': %.4f' % (lowerLimit)
+        print '%.0f%% CL limits' % (interval.ConfidenceLevel() * 100)
+        print Limits
 
-    return {'ok' : ok, 'upper' : upperLimit, 'lower' : lowerLimit,
-            'interval': interval}
+    return {'limits': Limits, 'interval': interval}
 
 def expectedPlcLimit(obs_, poi_, model, ws, ntoys = 30, CL = 0.95):
     # obs : observable variable or RooArgSet of observables
@@ -91,12 +95,12 @@ def expectedPlcLimit(obs_, poi_, model, ws, ntoys = 30, CL = 0.95):
 
         limits.append(plcLimit(obs_, poi_, model, ws, toyData, CL))
 
-        if limits[-1]['ok']:
+        if limits[-1]['limits'][poi_.GetName()]['ok']:
             nOK += 1
-            sumUpper += limits[-1]['upper']
-            sumUpper2 += limits[-1]['upper']**2
-            sumLower += limits[-1]['lower']
-            sumLower2 += limits[-1]['lower']**2
+            sumUpper += limits[-1]['limits'][poi_.GetName()]['upper']
+            sumUpper2 += limits[-1]['limits'][poi_.GetName()]['upper']**2
+            sumLower += limits[-1]['limits'][poi_.GetName()]['lower']
+            sumLower2 += limits[-1]['limits'][poi_.GetName()]['lower']**2
 
         toyData.IsA().Destructor(toyData)
 
