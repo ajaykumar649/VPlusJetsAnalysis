@@ -27,6 +27,18 @@
 
 using namespace std;
 
+const char *par1 = "lz_";
+const char *par1latex = "#lambda";
+
+//const char *par2 = "dkg";
+//const char *par2latex = "#Delta#kappa_{#gamma}";
+
+const char *par2 = "dg1_";
+const char *par2latex = "#Delta G1";
+
+const float intlumifbinv = 19.2;
+const int   beamcometev  = 8;
+
 //======================================================================
 
 void getFileNames(const string& fileglob,
@@ -92,13 +104,13 @@ void fillGraphsFromFiles( const vector<TString>& fnames,
 
   for( size_t i=0; i<fnames.size(); i++) {
     
-    double lzval  = extractParValue("lz",fnames[i]);
-    double dkgval = extractParValue("dkg",fnames[i]);
+    double par1val = extractParValue(par1,fnames[i]);
+    double par2val = extractParValue(par2,fnames[i]);
 
-    //cout << lzval << "\t" << dkgval << endl;
+    //cout << par1val << "\t" << par2val << endl;
 
-    if (lzval == -9e99 ||
-	dkgval == -9e99)
+    if (par1val == -9e99 ||
+	par2val == -9e99)
       continue;
     
     TFile *f = new TFile(fnames[i]);
@@ -114,7 +126,7 @@ void fillGraphsFromFiles( const vector<TString>& fnames,
     for (int j=0; j<6; j++) {
       lTree->GetEntry(j);
       double rval = lTree->GetLeaf("limit")->GetValue();
-      m_graphs[keys[j]]->SetPoint(i,lzval,dkgval,rval);
+      m_graphs[keys[j]]->SetPoint(i,par1val,par2val,rval);
     }
         
     f->Close();
@@ -191,9 +203,18 @@ void make_cls_plot(const string& fileglob)
   // for limit in limits:
   //   limits[limit][0].Print()
 
-  TCanvas *canv2 = new TCanvas("two","two",500,500);
-  canv2->cd();
+  TCanvas *canv2 = new TCanvas("two","two",800,600);
 
+#if 0
+  // for a first look
+  canv2->Divide(3,2);
+  canv2->cd(1);  m_graphs["+2s"]->Draw("TRI"); gPad->SetLogz(1);
+  canv2->cd(2);  m_graphs["+1s"]->Draw("TRI"); gPad->SetLogz(1);
+  canv2->cd(3);  m_graphs["mean"]->Draw("TRI"); gPad->SetLogz(1);
+  canv2->cd(4);  m_graphs["-1s"]->Draw("TRI"); gPad->SetLogz(1);
+  canv2->cd(5);  m_graphs["-2s"]->Draw("TRI"); gPad->SetLogz(1);
+  canv2->cd(6);  m_graphs["obs"]->Draw("TRI"); gPad->SetLogz(1);
+#else
   m_graphs["+2s"]->Draw("TRI");
 
   map<string,TList *> m_contours;
@@ -220,13 +241,14 @@ void make_cls_plot(const string& fileglob)
 
   TGraph *curv = (TGraph*)(contLevel->First());
 
-  curv->GetYaxis()->SetRangeUser(-1.25*curv->GetYaxis()->GetXmax(),
-				 +2.0*curv->GetYaxis()->GetXmax());
+  //curv->GetYaxis()->SetRangeUser(-1.25*curv->GetYaxis()->GetXmax(),
+				 //+2.0*curv->GetYaxis()->GetXmax());
+  curv->GetYaxis()->SetRangeUser(-0.1,0.15);
 
   curv->SetTitle();
-  curv->GetXaxis()->SetTitle("#lambda");
+  curv->GetXaxis()->SetTitle(par1latex);
   curv->GetXaxis()->SetTitleFont(42);
-  curv->GetYaxis()->SetTitle("#Delta#kappa_{#gamma}");
+  curv->GetYaxis()->SetTitle(par2latex);
   curv->GetYaxis()->SetTitleFont(42);
   curv->GetYaxis()->SetTitleOffset(1.20);
 
@@ -235,8 +257,11 @@ void make_cls_plot(const string& fileglob)
     curv->SetLineColor(kYellow);
     curv->SetFillColor(kYellow);
     curv->GetXaxis()->SetLimits(-0.1,0.1);
-    curv->Draw("ACF");
-    if (!i) legend->AddEntry(curv,"#pm 2#sigma","F");
+    if (!i) {
+      curv->Draw("ACF");
+      legend->AddEntry(curv,"#pm 2#sigma","F");
+    } else 
+      curv->Draw("SAME CF");
     curv=(TGraph *)(contLevel->After(curv));
   }
 
@@ -311,8 +336,8 @@ void make_cls_plot(const string& fileglob)
   TPaveText *text = new TPaveText(0.516,0.720,0.915,0.951,"NDC");
   text->SetFillStyle(0);
   text->SetBorderSize(0);
-  text->AddText("95% CL Limit on #lambda and #Delta#kappa_{#gamma}");
-  text->AddText(0,0.35,"#intL dt= 5.0 fb^{-1}, #sqrt{s} = 7 TeV");
+  text->AddText(Form("95%% CL Limit on %s and %s",par1latex,par2latex));
+  text->AddText(0,0.35,Form("#intL dt= %.1f fb^{-1}, #sqrt{s} = %d TeV",intlumifbinv,beamcometev));
   text->Draw();
 
   // text2 = TPaveText(0.155,0.199,0.974,0.244,"NDC");
@@ -335,7 +360,8 @@ void make_cls_plot(const string& fileglob)
   finalPlot->Update();
   finalPlot->Modified();
   finalPlot->Update();
-  finalPlot->Print("lz_dkg_2dlimit.pdf");
-  finalPlot->Print("lz_dkg_2dlimit.eps");
-  finalPlot->Print("lz_dkg_2dlimit.png");
+  finalPlot->Print(Form("%s%s2dlimit.pdf",par1,par2));
+  finalPlot->Print(Form("%s%s2dlimit.eps",par1,par2));
+  finalPlot->Print(Form("%s%s2dlimit.png",par1,par2));
+#endif
 }

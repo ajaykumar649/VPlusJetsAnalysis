@@ -75,7 +75,8 @@ limits = {'-2s' : (TGraph2D(),0),
           'mean': (TGraph2D(),2),
           '+1s' : (TGraph2D(),3),
           '+2s' : (TGraph2D(),4),
-          'obs' : (TGraph2D(),5)}
+          'obs' : (TGraph2D(),5)
+          }
 
 n = 0
 
@@ -132,7 +133,8 @@ limconts = {'-2s' : 0,
             'mean': 0,
             '+1s' : 0,
             '+2s' : 0,
-            'obs' : 0}
+            'obs' : 0
+            }
 
 #process TGraph2Ds into contours at r == 1
 for it in limits:
@@ -153,7 +155,7 @@ finalPlot.cd()
 
 limconts['+2s'].SetLineColor(ROOT.kYellow)
 limconts['+2s'].SetFillColor(ROOT.kYellow)
-limconts['+2s'].GetXaxis().SetLimits(-0.1,0.1)
+limconts['+2s'].GetXaxis().SetLimits(-0.05,0.05)
 limconts['+2s'].Draw("ACF")
 
 limconts['+1s'].SetLineColor(ROOT.kGreen)
@@ -175,7 +177,7 @@ limconts['mean'].Draw("SAME C")
 
 limconts['obs'].SetLineColor(ROOT.kBlack)
 limconts['obs'].SetLineWidth(2)
-limconts['obs'].Draw("SAME C")
+#limconts['obs'].Draw("SAME C")
 
 limconts['+2s'].GetYaxis().SetRangeUser(-1.25*limconts['+2s'].GetYaxis().GetXmax(),
                                         +2.0*limconts['+2s'].GetYaxis().GetXmax())
@@ -203,11 +205,11 @@ SMpoint.Draw("SAME Po")
 legend = TLegend(0.212,0.686,0.554,0.917,"","NDC")
 legend.SetFillStyle(0)
 legend.SetBorderSize(0)
-#legend.SetHeader("CMS Preliminary")
-legend.SetHeader("CMS")
+legend.SetHeader("CMS Preliminary")
+#legend.SetHeader("CMS")
 legend.SetTextFont(42)
 
-legend.AddEntry(limconts['obs'],"Observed","L")
+#legend.AddEntry(limconts['obs'],"Observed","L")
 legend.AddEntry(limconts['mean'],"Expected","L")
 legend.AddEntry(limconts['+1s'],"#pm 1#sigma","F")
 legend.AddEntry(limconts['+2s'],"#pm 2#sigma","F")
@@ -218,7 +220,7 @@ text = TPaveText(0.516,0.720,0.915,0.951,"NDC")
 text.SetFillStyle(0)
 text.SetBorderSize(0)
 text.AddText("95% CL Limit on "+"#bf{%s} and #bf{%s}"%(par1Latex,par2Latex))
-text.AddText(0,0.35,"#intL dt= 5.0 fb^{-1}, #sqrt{s} = 7 TeV")
+text.AddText(0,0.35,"#intL dt= 19.2 fb^{-1}, #sqrt{s} = 8 TeV")
 text.Draw()
 
 # text2 = TPaveText(0.155,0.199,0.974,0.244,"NDC")
@@ -249,9 +251,10 @@ def make1DLimit(limits2d, par, parlatex, parmin, parmax, samples, boundScale, is
     limitplot = TCanvas("%slimit"%par,"%s limit"%par,500,500)
 
     limits1d = {'2s' :  [TGraphAsymmErrors(),0],
-              '1s' :  [TGraphAsymmErrors(),1],
-              'mean': [TGraphAsymmErrors(),2],
-              'obs' : [TGraphAsymmErrors(),3]}
+                '1s' :  [TGraphAsymmErrors(),1],
+                'mean': [TGraphAsymmErrors(),2],
+                'obs' : [TGraphAsymmErrors(),3]
+                }
 
     parSize = parmax - parmin
 
@@ -331,8 +334,8 @@ def make1DLimit(limits2d, par, parlatex, parmin, parmax, samples, boundScale, is
     limits1d['mean'][0].SetLineWidth(2)
     limits1d['mean'][0].Draw("SAME C")
     
-    limits1d['obs'][0].SetLineWidth(2)
-    limits1d['obs'][0].Draw("SAME C")
+    #limits1d['obs'][0].SetLineWidth(2)
+    #limits1d['obs'][0].Draw("SAME C")
     
     #titles
     limits1d['2s'][0].GetYaxis().SetTitle("95% CL limit on #sigma/#sigma_{aTGC}")
@@ -340,21 +343,20 @@ def make1DLimit(limits2d, par, parlatex, parmin, parmax, samples, boundScale, is
     limits1d['2s'][0].GetXaxis().SetTitle(parlatex)
     limits1d['2s'][0].GetXaxis().SetTitleFont(42)
     
-    limits1d['2s'][0].GetYaxis().SetRangeUser(limits1d['2s'][0].GetYaxis().GetXmin()*0.75,
-                                              bound)
+    limits1d['2s'][0].GetYaxis().SetRangeUser(limits1d['2s'][0].GetYaxis().GetXmin()*0.75,5) #,bound)
     limits1d['2s'][0].GetXaxis().SetRangeUser(parmin*0.985,parmax*0.96)
     
     legend.SetX1NDC(0.43)
     legend.SetY1NDC(0.43)
     legend.SetX2NDC(0.75)
-    legend.SetY2NDC(0.72)
+    legend.SetY2NDC(0.65)
     legend.Draw()
     
     text1d = TPaveText(0.359,0.24,0.758,0.44,"NDC")
     text1d.SetFillStyle(0)
     text1d.SetBorderSize(0)
     text1d.AddText("95% CLs Limit on "+"#bf{%s}"%(parlatex))
-    text1d.AddText(0,0.35,"#intL dt= 5.0 fb^{-1}, #sqrt{s} = 7 TeV")
+    text1d.AddText(0,0.35,"#intL dt= 19.2 fb^{-1}, #sqrt{s} = 8 TeV")
     text1d.Draw()
     
     text3.SetX1NDC(0.357)
@@ -363,11 +365,11 @@ def make1DLimit(limits2d, par, parlatex, parmin, parmax, samples, boundScale, is
     text3.SetY2NDC(0.305)
     text3.Draw()
     
-    textlim = TPaveText(0.357,0.197,0.754,0.246,"NDC")
-    textlim.SetFillStyle(0)
-    textlim.SetBorderSize(0)
-    textlim.AddText("%.3f < %s  < %.3f"%(lowerLimit,parlatex,upperLimit))
-    textlim.Draw()
+    obslimtext = TPaveText(0.357,0.197,0.754,0.246,"NDC")
+    obslimtext.SetFillStyle(0)
+    obslimtext.SetBorderSize(0)
+    obslimtext.AddText("%.3f < %s  < %.3f"%(lowerLimit,parlatex,upperLimit))
+    #obslimtext.Draw()
     
     #lowLimitLine = TLine(lowerLimit,limits1d['2s'][0].GetYaxis().GetXmin()*0.75,
     #                     lowerLimit,1)

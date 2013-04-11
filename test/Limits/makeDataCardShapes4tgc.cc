@@ -363,9 +363,11 @@ makeDataCardFiles(bool doshape) // int argc, char*argv[])
   // that are shape inputs into the limit setting data card
   //
   for (float lambdaz=LAMBDAZ_MIN; lambdaz<=LAMBDAZ_MAX; lambdaz+= LAMBDAZ_INC) {
+    //float deltaKappaGamma=0;
     for (float deltaKappaGamma=dKG_MIN; deltaKappaGamma<=dKG_MAX; deltaKappaGamma += dKG_INC) {
 
-      TString cfgtag = Form(signalfmtstr,lambdaz+LAMBDAZ_INC/100.,deltaKappaGamma+dKG_INC/100.);
+       //+INC/100 to avoid truncation
+      TString cfgtag = Form(signalfmtstr_lzvsdkg,lambdaz+LAMBDAZ_INC/100.,deltaKappaGamma+dKG_INC/100.);
       TString signame = "signal_"+cfgtag;
 
       CardData_t card = makeNewCard(datahists[0],"data","",0,NUMCHAN,doshape);
@@ -401,12 +403,61 @@ makeDataCardFiles(bool doshape) // int argc, char*argv[])
 
       //if (calcEstimatedLimit(card))
       {
-	cfgtag = Form("lz%.3f_dkg%.2f",lambdaz+LAMBDAZ_INC/100.,deltaKappaGamma+dKG_INC/100.);
+	//+INC/100 to avoid truncation
+	cfgtag = Form("lz_%.3f_dkg_%.2f",lambdaz+LAMBDAZ_INC/100.,deltaKappaGamma+dKG_INC/100.);
 	fmtDataCardFile(0,card,cfgtag);
       }
     nextone:
       ;
     } // dKG loop
+
+    for (float deltaG1=dg1_MIN; deltaG1<=dg1_MAX; deltaG1 += dg1_INC) {
+
+       //+INC/100 to avoid truncation
+      TString cfgtag = Form(signalfmtstr_lzvsdg1,lambdaz+LAMBDAZ_INC/100.,deltaG1+dg1_INC/100.);
+      TString signame = "signal_"+cfgtag;
+
+      CardData_t card = makeNewCard(datahists[0],"data","",0,NUMCHAN,doshape);
+
+      for (int ichan=0; ichan<NUMCHAN; ichan++) {
+	TH1 *sighist = (TH1 *)fps[ichan]->Get(signame);
+
+	TString channame(channames[ichan]);
+
+	if (!sighist) {
+	  cerr<<"Couldn't get signal histogram "<<signame<<" from file for channel "<<channame<<endl;
+	  //exit(-1);
+	  goto nextone2;
+	}
+
+	if (doshape) {
+	  // assumes the channel filenames are in the same order as the channels!!
+	  card.shapespecs.push_back(ShapeFiles_t("signal",channame,fnames[ichan],signame));
+	  card.shapespecs.push_back(ShapeFiles_t("data_obs",channame,fnames[ichan],"data_obs"));
+	  card.shapespecs.push_back(ShapeFiles_t("background",channame,fnames[ichan],
+						 "background","background_$SYSTEMATIC"));
+	}
+
+	if (ichan)
+	  addToCard(card,datahists[ichan],"data","",ichan,NUMCHAN,doshape);
+
+	addToCard(card,backhists[ichan],"background","",ichan,NUMCHAN,doshape);
+	addToCard(card,shapehists[ichan],"background",
+		  Form("%s_backshape",channame.Data()),ichan,NUMCHAN,doshape);
+	addToCard(card,sighist,"signal","",ichan,NUMCHAN,doshape);
+
+      } // channel loop
+
+      //if (calcEstimatedLimit(card))
+      {
+	//+INC/100 to avoid truncation
+	cfgtag = Form("lz_%.3f_dg1_%.2f",lambdaz+LAMBDAZ_INC/100.,deltaG1+dg1_INC/100.);
+	fmtDataCardFile(0,card,cfgtag);
+      }
+    nextone2:
+      ;
+    } // dg1 loop
+
   } // lambdaz loop
 
 }                                                             // makeDataCardFiles

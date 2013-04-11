@@ -1,21 +1,22 @@
 #!/bin/sh
 
-COMBINE_ARGS="-v0 -M Asymptotic --minosAlgo stepping"
-
 for datacard in $*
 do
 #  DIR=`dirname $datacard`
   DIR=.
+  COMBINE_ARGS="-v0 -M Asymptotic --minosAlgo stepping"
+
   file=`basename $datacard .txt`
   suffix=${file##datacard_}
-  lz=`echo $suffix | egrep -o "lz[0-9\.\-]+" | sed 's#lz##g'`
-  dkg=`echo $suffix | egrep -o "dkg[0-9\.\-]+" | sed 's#dkg##g'`
-  echo "combine $COMBINE_ARGS -n _atgc_$suffix $datacard > ${DIR}/limit_${suffix}.log 2>&1"
+  lz=`echo $suffix | egrep -o "lz_[0-9\.\-]+" | sed 's#lz_##g'`
 
-  if [ `echo "scale=4; $lz >= 0.36 || $lz <= -0.36" | bc ; exit` ]
+  COMBINE_ARGS="$COMBINE_ARGS -n _atgc_$suffix"
+
+  if [ `echo "scale=4; $lz >= 0.1 || $lz <= -0.1" | bc ; exit` ]
   then
-      combine $COMBINE_ARGS --rMax=0.5 -n _atgc_$suffix $datacard > ${DIR}/limit_${suffix}.log 2>&1
-  else
-      combine $COMBINE_ARGS -n _atgc_$suffix $datacard > ${DIR}/limit_${suffix}.log 2>&1
+      COMBINE_ARGS="$COMBINE_ARGS --rMax=0.5"
   fi
+
+  echo "combine $COMBINE_ARGS $datacard 2>&1 | tee ${DIR}/limit_${suffix}.log >/dev/null"
+  combine $COMBINE_ARGS $datacard 2>&1 | tee ${DIR}/limit_${suffix}.log >/dev/null
 done

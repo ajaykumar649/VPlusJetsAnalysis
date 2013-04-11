@@ -1,12 +1,12 @@
 #!/bin/sh
 
-cd /uscms/home/pdudero/Limits/
-export SCRAM_ARCH=slc5_amd64_gcc462
+#SRCDIR=/uscms/home/pdudero/work/CMSSW_5_3_3_patch3/src/ElectroWeakAnalysis/VPlusJets/test/Limits/
+SRCDIR=/uscms/home/pdudero/work/CMSSW_6_1_1/src/Limits/
+cd $SRCDIR
+#export SCRAM_ARCH=slc5_amd64_gcc462
+export SCRAM_ARCH=slc5_amd64_gcc472
 eval `scram runtime -sh`
 cd -
 
-#cp -p $* .
-cp -p /uscms/home/pdudero/Limits/new*tag.root .
-cp -p /uscms/home/pdudero/Limits/combine_asymp_atgc.sh .
-
 ./combine_asymp_atgc.sh $*
+
