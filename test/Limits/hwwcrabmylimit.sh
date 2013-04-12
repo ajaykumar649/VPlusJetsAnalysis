@@ -17,9 +17,9 @@ then
       suffix=${file##datacard_}
       mass=`ls $datacard | egrep -o "M=[0-9]+" | egrep -o "[0-9]+"`
       echo "text2workspace.py -m $mass $datacard -b -o wkspace_${1}_M=${mass}.root"
-      text2workspace.py -m $mass $datacard -b -o wkspace_${1}_M=${mass}.root
+#     text2workspace.py -m $mass $datacard -b -o wkspace_${1}_M=${mass}.root
 
-      sed "s#model.root#wkspace_${1}_M=${mass}.root#g" combine_crab.sh >combine_crab_${1}_M=${mass}.sh
-      sed "s#model.root#wkspace_${1}_M=${mass}.root#g" combine_crab.cfg | sed "s#combine_crab#combine_crab_${1}_M=${mass}#g" >combine_crab_${1}_M=${mass}.cfg
+      sed "s#model.root#wkspace_${1}_M=${mass}.root#g;s#log.txt#limit_${1}_M=${mass}.log#g" combine_crab.sh >combine_crab_${1}_M=${mass}.sh
+      sed "s#model.root#wkspace_${1}_M=${mass}.root#g;s#log.txt#limit_${1}_M=${mass}.log#g;s#combine_crab#combine_crab_${1}_M=${mass}#g" combine_crab.cfg >combine_crab_${1}_M=${mass}.cfg
     done
 fi
