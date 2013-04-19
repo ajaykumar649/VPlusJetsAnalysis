@@ -330,7 +330,7 @@ class Wjj2DFitterUtils:
             ws.factory("RooPowerLaw::%s(%s, power_%s)" % \
                            (pdfName, var, idString)
                        )
-        elif model== 2:
+        elif model==2:
             # power law * exponential pdf
             ws.factory("power_%s[5., -30., 30.]" % idString)
             ws.factory("c_%s[-0.015, -10, 10]" % idString)
@@ -572,8 +572,8 @@ class Wjj2DFitterUtils:
                        (pdfName, idString, pdfGaus.GetName(), pdfErf.GetName()))
         elif model == 27:
             # gaussian model with optional mean passed as auxModel
-            mean = ws.factory('mean_%s[0.,1000.]' % idString)
-            sigma = ws.factory('sigma_%s[0.,500.]' % idString)
+            mean = ws.factory('mean_%s[-1000.,1000.]' % idString)
+            sigma = ws.factory('sigma_%s[0.,5000.]' % idString)
             if auxModel:
                 mean.setVal(auxModel)
                 mean.setError(auxModel*0.15)
@@ -652,6 +652,98 @@ class Wjj2DFitterUtils:
             factoryString = factoryString[:-1] + ')'
             print factoryString
             ws.factory(factoryString)
+        elif model== 108:
+            # expA+expB
+            cA = ws.factory("cA_%s[-0.05,-1.0,0.0]" % idString)
+            cA.setConstant(False)
+            cB = ws.factory("cB_%s[-0.05,-5.0,0.0]" % idString)
+            cB.setConstant(False) 
+            fracExpB = ws.factory("fracExpB_%s[0.01,0.0,1.0]" % idString)
+            fracExpB.setConstant(False)
+            ws.factory("EXPR::%s('TMath::Exp(@0*@1)+@3*TMath::Exp(@0*@2)', %s, cA_%s, cB_%s, fracExpB_%s)" % \
+                       (pdfName, var, idString, idString, idString)
+                       )       
+        elif model == 110:
+            #power law * exp * polyD2
+            pdfPowExp = self.analyticPdf(ws, var, 2, '%s_powexp' % pdfName, idString)
+            pdfMod = self.analyticPdf(ws, var, 23, '%s_polyMod' % pdfName, idString,2)
+            ws.factory("PROD::%s(%s,%s)" % (pdfName, pdfPowExp.GetName(),
+                                            pdfMod.GetName()))   
+
+        elif model == 130:
+            # 2 gaussian + PolyD3
+            pdfCore = self.analyticPdf(ws, var, 27, '%s_core' % pdfName,
+                                       '%s_core' % idString, 84.)
+            sigma = ws.factory('prod::sigma_%s_wide(sigma_%s_core, wider_%s[4.559, 1., 10.])' % \
+                               (idString,idString,idString))
+            ws.var('wider_%s' % idString).setConstant(True)
+            pdfWide = ws.factory('RooGaussian::%s_wide(%s,mean_%s_core,%s)' % \
+                                 (pdfName, var, idString, sigma.GetName()))
+            #            pdfTail = self.analyticPdf(ws, var, 8, '%s_tail' % pdfName, idString)
+
+            pdfTail = self.analyticPdf(ws, var, 23, '%s_tail' % pdfName, idString,3)
+            fcore = ws.factory('f_%s_core[0.3, 0., 1.]' % idString)
+            fwide = ws.factory('prod::f_%s_wide(%s,0.7787)' % \
+                               (idString, fcore.GetName()))
+            ws.factory("SUM::%s(%s*%s," % \
+                       (pdfName, fcore.GetName(), pdfCore.GetName()) + \
+                       '%s*%s,' % \
+                       (fwide.GetName(), pdfWide.GetName()) +\
+                       "%s)" % (pdfTail.GetName())
+                       )
+        elif model== 208:
+            # Erf*(expA+expB)
+            pdfErf = self.analyticPdf(ws, var, 25, '%s_turnon' % pdfName,
+                                      idString)
+            pdfExpSum = self.analyticPdf(ws, var, 108, '%s_expSum' % pdfName, idString)
+            ws.factory("PROD::%s(%s,%s)" % (pdfName, pdfErf.GetName(), pdfExpSum.GetName()))
+        elif model == 230:
+            # 2 gaussian + erf*(expA+f_B*expB)
+            pdfCore = self.analyticPdf(ws, var, 27, '%s_core' % pdfName,
+                                       '%s_core' % idString, 84.)
+            sigma = ws.factory('prod::sigma_%s_wide(sigma_%s_core, wider_%s[4.559, 1., 10.])' % \
+                               (idString,idString,idString))
+            ws.var('wider_%s' % idString).setConstant(True)
+            pdfWide = ws.factory('RooGaussian::%s_wide(%s,mean_%s_core,%s)' % \
+                                 (pdfName, var, idString, sigma.GetName()))
+            pdfTail = self.analyticPdf(ws, var, 208, '%s_tail' % pdfName,
+                                       idString)
+            fcore = ws.factory('f_%s_core[0.3, 0., 1.]' % idString)
+            fwide = ws.factory('prod::f_%s_wide(%s,0.7787)' % \
+                               (idString, fcore.GetName()))
+            ws.factory("SUM::%s(%s*%s," % \
+                       (pdfName, fcore.GetName(), pdfCore.GetName()) + \
+                       '%s*%s,' % \
+                       (fwide.GetName(), pdfWide.GetName()) +\
+                       "%s)" % (pdfTail.GetName())
+                       )
+        elif model== 308:
+            # (Erf*exp)*PolyD2
+            pdfErfExp = self.analyticPdf(ws, var, 8, '%s_erfexp' % pdfName,
+                                      idString)
+            pdfMod = self.analyticPdf(ws, var, 23, '%s_polyMod' % pdfName, idString,2)
+            ws.factory("PROD::%s(%s,%s)" % (pdfName, pdfErfExp.GetName(), pdfMod.GetName()))
+        elif model == 330:
+            # 2 gaussian + PowerLaw*Exp
+            pdfCore = self.analyticPdf(ws, var, 27, '%s_core' % pdfName,
+                                       '%s_core' % idString, 84.)
+            sigma = ws.factory('prod::sigma_%s_wide(sigma_%s_core, wider_%s[4.559, 1., 10.])' % \
+                               (idString,idString,idString))
+            ws.var('wider_%s' % idString).setConstant(True)
+            pdfWide = ws.factory('RooGaussian::%s_wide(%s,mean_%s_core,%s)' % \
+                                 (pdfName, var, idString, sigma.GetName()))
+            #            pdfTail = self.analyticPdf(ws, var, 8, '%s_tail' % pdfName, idString)
+
+            pdfTail = self.analyticPdf(ws, var, 2, '%s_tail' % pdfName, idString)
+            fcore = ws.factory('f_%s_core[0.3, 0., 1.]' % idString)
+            fwide = ws.factory('prod::f_%s_wide(%s,0.7787)' % \
+                               (idString, fcore.GetName()))
+            ws.factory("SUM::%s(%s*%s," % \
+                       (pdfName, fcore.GetName(), pdfCore.GetName()) + \
+                       '%s*%s,' % \
+                       (fwide.GetName(), pdfWide.GetName()) +\
+                       "%s)" % (pdfTail.GetName())
+                       )
         else:
             # this is what will be returned if there isn't a model implemented
             # for a given model code.

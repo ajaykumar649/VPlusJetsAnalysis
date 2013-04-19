@@ -23,6 +23,8 @@ parser.add_option('--sideband', dest='sb', type='int',
                   default=0, help='use sideband model instead')
 parser.add_option('--signal', dest='sig', action='store_true',
                   default=False, help='use signal model instead')
+parser.add_option('--alternateModel', dest='altModel', action='store_true',
+                  default=False, help='use the alternate model instead')
 parser.add_option('-i', '--interference', dest='interference', default=0, 
                   type='int', help='ggH interference to use.  '+\
                       '(0): none [default]  (1): nominal'+\
@@ -68,12 +70,13 @@ else:
 
 files = getattr(pars, '%sFiles' % opts.component)
 models = getattr(pars, '%sModels' % opts.component)
+convModels  = getattr(pars, '%sConvModels' % opts.component)
+if opts.altModel:
+    print 'will fit the alternate model'
+    models = getattr(pars, '%sModelsAlt' % opts.component)
+    convModels  = getattr(pars, '%sConvModelsAlt' % opts.component)
 if opts.sb:
-    # print getattr(pars, '%sAuxModels' % opts.component)
-    # models = [ getattr(pars, '%sAuxModels' % opts.component)[0][0] ]
     pars.cuts = pars.SidebandCuts
-# if opts.sig:
-#     models = [ getattr(pars, '%sAuxModels' % opts.component)[0][1] ]
 compName = opts.component
 morphingPdf = False
 if models[0] == -2:
@@ -190,11 +193,12 @@ if opts.interference in [1,2,3]:
     else:
         print 'failed to fined pdf',pdfName
 else:
-    sigPdf = fitter.makeComponentPdf(compName, files, models)
+    sigPdf = fitter.makeComponentPdf(compName, files, models, opts.altModel, convModels)
     if opts.sb and fitter.ws.pdf('%s_%s_side' % (compName,pars.var[0])):
         sigPdf = fitter.ws.pdf('%s_%s_side' % (compName,pars.var[0]))
     elif opts.sig and fitter.ws.pdf('%s_%s_sig' % (compName,pars.var[0])):
         sigPdf = fitter.ws.pdf('%s_%s_sig' % (compName,pars.var[0]))
+
 
 extraTag = ''
 if opts.interference == 2:
@@ -317,12 +321,28 @@ for (i,m) in enumerate(models):
     cans.append(c2)
     
 
-    c1.Print('%s.png' % opts.bn)
-    c1.Print('%s.pdf' % opts.bn)
+    c1.Print('%s_compFit.png' % opts.bn)
+#    c1.Print('%s_compFit.pdf' % opts.bn)
 
 mode = 'muon'
 if opts.isElectron:
     mode = 'electron'
+
+## lgnd = TLegend(0.65, 0.72, 0.92, 0.89, '', 'NDC')
+## lgnd.AddEntry('fitCurve', '%s fit pdf' % opts.component, 'l')
+## lgnd.AddEntry('theData','%s MC' % opts.component,'p')
+## lgnd.Draw('same')
+
+## if pars.btagSelection:
+##     if pars.boostedSelection:
+##         c1.SaveAs("DibosonBoostedBtaglnuJ_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
+##     else:
+##         c1.SaveAs("DibosonBtaglnujj_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
+## else:
+##     if pars.boostedSelection:
+##         c1.SaveAs("DibosonBoostedlnuJ_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
+##     else:
+##         c1.SaveAs("Dibosonlnujj_%s_%s_%ijets.png" % (opts.component, mode, opts.Nj))
 
 ndf = 0
 # print chi2s

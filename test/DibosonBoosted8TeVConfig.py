@@ -4,15 +4,14 @@ from ROOT import kRed, kAzure, kGreen, kBlue, kCyan, kViolet, kGray
 def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
               btagged = False):
     pars = Wjj2DFitterPars()
-
     # pars.MCDirectory = '/uscms_data/d2/andersj/Wjj/2012/data/Moriond2013/ReducedTrees/'
-    pars.MCDirectory = '/uscms_data/d1/lnujj/RDTrees_BoostedW_2013_1_29/'
+    #pars.MCDirectory = '/uscms_data/d1/lnujj/RDTrees_BoostedW_2013_1_29/'
+    pars.MCDirectory = 'root://cmseos:1094//eos/uscms/store/user/lnujj/BoostedDibosonFitPostMoriond2013/'
     pars.isElectron = isElectron
     pars.btagSelection = btagged
     pars.boostedSelection = True
     pars.useTopSideband = False
     pars.useTopMC = True
-    
     pars.initialParametersFile = initFile
 
     pars.backgrounds = ['diboson', 'top', 'WpJ']
@@ -65,7 +64,13 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
     # you need a files entry and a models entry for each of the fit 
     # compoents in backgrounds and signals
     # the files should a list with entries like (filename, Ngen, xsec)
-
+    
+#################### Global Convolution Models ########################
+    #pars.GlobalConvModels=[27]
+    pars.GlobalConvModels=[-1]
+    pars.GlobalConvModelsAlt=pars.GlobalConvModels
+    
+#####################  diboson: #######################################
     pars.dibosonFiles = [
         (pars.MCDirectory + 'RD_%s_WW_CMSSW532.root' % (flavorString),
          9450414, 57.1097),
@@ -75,9 +80,12 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
     pars.dibosonFracOfData = -1
     #pars.dibosonModels = [5]
     pars.dibosonModels = [22]
+    pars.dibosonModelsAlt = pars.dibosonModels
+    pars.dibosonConvModels = pars.GlobalConvModels
+    pars.dibosonConvModelsAlt = pars.dibosonConvModels
+    
 
-
-
+#####################  WpJ: ###########################################
     pars.WpJFiles = [
         (pars.MCDirectory + 'RD_%s_WJets_madgraph_CMSSW532.root' % (flavorString),
          8955318, 1.3*228.9),
@@ -86,12 +94,19 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
         pars.WpJFracOfData = 0.332
     else:
         if isElectron:
-            pars.WpJFracOfData = 0.725
+            pars.WpJFracOfData = 0.733
         else:
             pars.WpJFracOfData = 0.737
 
     pars.WpJModels = [8]
+    #    pars.WpJModelsAlt = [8]
+    #    pars.WpJModelsAlt = [308] ##Alt2 Model
+    pars.WpJModelsAlt = [10] ##Alt3 Model
+    pars.WpJAuxModelsAlt = [5]
+    pars.WpJConvModels = pars.GlobalConvModels
+    pars.WpJConvModelsAlt = pars.WpJConvModels
 
+#####################  top: #######################################  
     ttkfactor = 0.95
     pars.topFiles = [
         (pars.MCDirectory + 'RD_%s_STopTW_Tbar_CMSSW532.root' % (flavorString),
@@ -118,12 +133,21 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
 ##             pars.topModels = [13]
     else:
         if isElectron:
-            pars.topFracOfData = 0.209
+            pars.topFracOfData = 0.201
         else:
             pars.topFracOfData = 0.199
 
 
     pars.topModels = [30]
+    #    pars.topModelsAlt = pars.topModels
+    pars.topModelsAlt = [330]
+    #pars.topModelsAlt = [24]
+    #pars.topAuxModelsAlt = [2]
+    pars.topConvModels = pars.GlobalConvModels
+    pars.topConvModelsAlt = pars.topConvModels
+
+################################################################### 
+
 
 
     pars.dibosonPlotting = {'color' : kAzure+8, 'title' : 'WW+WZ'}

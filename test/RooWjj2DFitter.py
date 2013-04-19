@@ -125,18 +125,23 @@ class Wjj2DFitter:
         # self.ws.Print()
     
     # put together a fitting model and return the pdf
-    def makeFitter(self):
+    def makeFitter(self, useAlternateModels = False):
         if self.ws.pdf('total'):
             return self.ws.pdf('total')
 
         compPdfs = []
+
         for component in self.pars.backgrounds:
             # print 'getting compModels'
             compModels = getattr(self.pars, '%sModels' % component)
+            convModels = getattr(self.pars, '%sConvModels' % component)
+            if useAlternateModels:
+                print 'loading Alternate Models'
+                compModels = getattr(self.pars, '%sModelsAlt' % component)
+                convModels = getattr(self.pars, '%sConvModelsAlt' % component)
             # print 'compModels = %s' % compModels
             compFiles = getattr(self.pars, '%sFiles' % component)
-            compPdf = self.makeComponentPdf(component, compFiles, 
-                                            compModels)
+            compPdf = self.makeComponentPdf(component, compFiles, compModels, useAlternateModels, convModels)
                 
             norm = self.ws.factory('prod::f_%s_norm' % component + \
                                        '(n_%s[0.,1e6],' % component + \
@@ -164,8 +169,8 @@ class Wjj2DFitter:
         for component in self.pars.signals:
             compFile = getattr(self.pars, '%sFiles' % component)
             compModels = getattr(self.pars, '%sModels' % component)
-            compPdf = self.makeComponentPdf(component, compFiles,
-                                            compModels)
+            convModels = getattr(self.pars, '%sConvModels' % component)
+            compPdf = self.makeComponentPdf(component, compFiles, compModels, useAlternateModels, convModels)
             norm = self.ws.factory(
                 "prod::f_%s_norm(n_%s[0., 1e6],r_signal)" % \
                     (component, component)
@@ -312,18 +317,21 @@ class Wjj2DFitter:
         return fr
 
     # determine the fitting model for each component and return them
-    def makeComponentPdf(self, component, files, models):
+    def makeComponentPdf(self, component, files, models, useAlternateModels, convModels):
         print 'making ComponentPdf %s' % component
         # print 'models = %s' % models
         # print 'files = %s' % files
-        if (models[0] == -1):
+        if not (convModels[0] == -1):
+            thePdf = self.makeConvolvedPdf(component, files, models, useAlternateModels, convModels)
+        elif (models[0] == -1):
             thePdf = self.makeComponentHistPdf(component, files)
         elif (models[0] == -2):
-            thePdf = self.makeMorphingPdf(component)
+            thePdf = self.makeMorphingPdf(component, useAlternateModels, convModels)
         elif (models[0] == -3):
             pass
         else:
-            thePdf = self.makeComponentAnalyticPdf(component, models)
+            thePdf = self.makeComponentAnalyticPdf(component, models, useAlternateModels)
+
         return thePdf
 
     #create a simple 2D histogram pdf
@@ -362,9 +370,34 @@ class Wjj2DFitter:
 
         return self.utils.Hist2Pdf(compHist, component, 
                                    self.ws, self.pars.order)
+    #create a pdf which is a convolution of any two pdf
+    def makeConvolvedPdf(self, component, files, models, useAlternateModels, convModels):
+        if self.ws.pdf(component):
+            return self.ws.pdf(component)
+
+        #If a morphing model is selected, then convolve each individual component first and then morph
+        if (models[0] == -2):
+            return self.makeMorphingPdf(component, useAlternateModels, convModels)
+
+        basePdf = self.makeComponentPdf('%s_base' % component, files, models, useAlternateModels, [-1])
+        convComponent = 'Global' ##Overwrite to use the same convolution model for all Pdfs
+        convModel = getattr(self.pars, '%sConvModels' % convComponent)
+        if useAlternateModels:
+            convModel = getattr(self.pars, '%sConvModelsAlt' % convComponent)
+        convPdf = self.makeComponentPdf('%s_conv' % convComponent, files, convModel, useAlternateModels, [-1])
+        var = self.pars.var[0]
+        try:
+            vName = self.pars.varNames[var]
+        except AttributeError:
+            vName = var
+        self.ws.factory('RooFFTConvPdf::%s(%s,%s,%s)' % \
+                        (component, vName, basePdf.GetName(),
+                         convPdf.GetName()))
+        return self.ws.pdf(component)
+
 
     # create a pdf using the "template morphing" technique
-    def makeMorphingPdf(self, component):
+    def makeMorphingPdf(self, component, useAlternateModels, convModels):
         if self.ws.pdf(component):
             return self.ws.pdf(component)
         
@@ -378,16 +411,22 @@ class Wjj2DFitter:
         modelsSU = getattr(self.pars, '%s_SUModels' % component)
         filesSD = getattr(self.pars, '%s_SDFiles' % component)
         modelsSD = getattr(self.pars, '%s_SDModels' % component)
+        if useAlternateModels:
+            modelsNom = getattr(self.pars, '%s_NomModelsAlt' % component)
+            modelsMU = getattr(self.pars, '%s_MUModelsAlt' % component)
+            modelsMD = getattr(self.pars, '%s_MDModelsAlt' % component)
+            modelsSU = getattr(self.pars, '%s_SUModelsAlt' % component)
+            modelsSD = getattr(self.pars, '%s_SDModelsAlt' % component)
 
         # Adds five (sub)components for the component with suffixes Nom, MU, MD, SU, SD
-        NomPdf = self.makeComponentPdf('%s_Nom' % component, filesNom, modelsNom)
+        NomPdf = self.makeComponentPdf('%s_Nom' % component, filesNom, modelsNom, False, convModels)
         if hasattr(self, '%s_NomExpected' % component):
             setattr(self, '%sExpected' % component,
                     getattr(self, '%s_NomExpected' % component))
-        MUPdf = self.makeComponentPdf('%s_MU' % component, filesMU, modelsMU)
-        MDPdf = self.makeComponentPdf('%s_MD' % component, filesMD, modelsMD)
-        SUPdf = self.makeComponentPdf('%s_SU' % component, filesSU, modelsSU)
-        SDPdf = self.makeComponentPdf('%s_SD' % component, filesSD, modelsSD)
+        MUPdf = self.makeComponentPdf('%s_MU' % component, filesMU, modelsMU, False, convModels)
+        MDPdf = self.makeComponentPdf('%s_MD' % component, filesMD, modelsMD, False, convModels)
+        SUPdf = self.makeComponentPdf('%s_SU' % component, filesSU, modelsSU, False, convModels)
+        SDPdf = self.makeComponentPdf('%s_SD' % component, filesSD, modelsSD, False, convModels)
 
         fMU_comp = self.ws.factory("fMU_%s[0., -1., 1.]" % component)
         fSU_comp = self.ws.factory("fSU_%s[0., -1., 1.]" % component)
@@ -410,7 +449,7 @@ class Wjj2DFitter:
         return self.ws.pdf(component)
 
     # create a pdf using an analytic function.
-    def makeComponentAnalyticPdf(self, component, models):
+    def makeComponentAnalyticPdf(self, component, models, useAlternateModels):
         if self.ws.pdf(component):
             return self.ws.pdf(component)
 
@@ -422,10 +461,14 @@ class Wjj2DFitter:
             except AttributeError:
                 vName = var
 
-            if hasattr(self.pars, '%sAuxModels' % component):
-                auxModel = getattr(self.pars, '%sAuxModels' % component)[idx]
+            auxModel = None
+            if useAlternateModels:
+                if hasattr(self.pars, '%sAuxModelsAlt' % component):
+                    auxModel = getattr(self.pars, '%sAuxModelsAlt' % component)[idx]
             else:
-                auxModel = None
+                if hasattr(self.pars, '%sAuxModels' % component):
+                    auxModel = getattr(self.pars, '%sAuxModels' % component)[idx]
+
             pdfList.append(self.utils.analyticPdf(self.ws, vName, model, 
                                                   '%s_%s'%(component,vName), 
                                                   '%s_%s'%(component,vName),
@@ -602,6 +645,25 @@ class Wjj2DFitter:
             theYield = self.ws.var('n_%s' % component)
             setattr(self, '%sExpected' % component, theYield.getVal())
 
+    def initFromExplicitVals(self,opts):
+        #,init_diboson= -1.0,init_WpJ=-1.0,init_top=-1.0,init_ZpJ=-1.0,init_QCD=-1.0
+        components = ['diboson', 'top', 'WpJ', 'ZpJ', 'QCD']
+        for component in components:
+            #double init
+            init = getattr(opts, 'ext%s' % component)
+            #init = -2.0
+            #setattr(self,init, 'init_%s' % component)
+            #init = init_%s % component
+            #print "init=", init
+            #init = self.ws.var('init_%s' % component)
+            #init.setVal(100.0)
+            #init.setVal('init_%s' % component)
+            #init = theYield.getVal()
+            if (init>0.):
+                print 'setting initial value for ',component,' to ',init
+                setattr(self, '%sInitial' % component, init)
+
+
     def resetYields(self):
         if self.ws.data('data_obs'):
             Ndata = self.ws.data('data_obs').sumEntries()
@@ -612,22 +674,28 @@ class Wjj2DFitter:
         for component in components:
             theYield = self.ws.var('n_%s' % component)
             theNorm = self.ws.var('%s_nrm' % component)
-            fracofdata = -1.
-            if hasattr(self.pars, '%sFracOfData' % component):
-                fracofdata = getattr(self.pars, '%sFracOfData' % component)
-            if (fracofdata >= 0.):
-                print 'explicitly setting ', component,' yield to be', fracofdata,' of data'
-                theYield.setVal(fracofdata*Ndata)
-            elif hasattr(self, '%sExpected' % component):
-                theYield.setVal(getattr(self, '%sExpected' % component))
+            if hasattr(self, '%sInitial' % component):
+                print 'explicitly setting initial value for ',component
+                theYield.setVal(getattr(self, '%sInitial' % component))
+                theNorm.setVal(1.0)
+                theNorm.setConstant()
             else:
-                print 'no expected value for',component
-                theYield.setVal(Ndata/len(components))
+                fracofdata = -1.
+                if hasattr(self.pars, '%sFracOfData' % component):
+                    fracofdata = getattr(self.pars, '%sFracOfData' % component)
+                if (fracofdata >= 0.):
+                    print 'explicitly setting ', component,' yield to be', fracofdata,' of data'
+                    theYield.setVal(fracofdata*Ndata)
+                elif hasattr(self, '%sExpected' % component):
+                    theYield.setVal(getattr(self, '%sExpected' % component))
+                else:
+                    print 'no expected value for',component
+                    theYield.setVal(Ndata/len(components))
             if theNorm and not theNorm.isConstant():
                 theNorm.setVal(1.0)
             if component in self.pars.yieldConstraints:
                 theYield.setError(theYield.getVal() * \
-                                      self.pars.yieldConstraints[component])
+                                  self.pars.yieldConstraints[component])
                 if theNorm:
                     theNorm.setError(self.pars.yieldConstraints[component])
             else:

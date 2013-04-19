@@ -17,9 +17,27 @@ parser.add_option('--electrons', dest='isElectron', action='store_true',
                   default=False, help='do electrons instead of muons')
 parser.add_option('--nosig', dest='includeSignal', action='store_false',
                   default=True, help='include signal shape in fit')
+parser.add_option('--fitparfn', dest='fitparfn', default='', type='string', help='the file name to be used to store fit output parameters')
+parser.add_option('--useAlternateModelsToFit', dest='useAlternateModelsToFit', action='store_true', default=False, help='use alternate models to fit the data')
 parser.add_option('--toy', dest='toy', action='store_true',
                   help='use pseudo-data instead of data file')
 parser.add_option('--toyOut', dest='toyOut', help='filename for toy output')
+parser.add_option('--runMCGenToySim', dest='runMCGenToySim', action='store_true', default=False, help='generate toys using MC and fit the combined distribution')
+parser.add_option('--runPdfGenToySim', dest='runPdfGenToySim', action='store_true', default=False, help='generate toys using pdfs and fit the combined distribution')
+parser.add_option('--useAlternateModelsToGen', dest='useAlternateModelsToGen', action='store_true', default=False, help='use alternate models when generating toy pdfs (and fit with the standard ones)')
+parser.add_option('--genParamFile', dest='genParamFile', default='NONE', type='string', help='the parameters files to be used for generation')
+parser.add_option('--extdiboson', dest='extdiboson', default=-1, type='int',
+                  help='Set the number of diboson events to generate for toy validation')
+parser.add_option('--extendedGen', dest='extendedGen', action='store_true',
+                  default=False, help='use the extended option when generating')
+parser.add_option('--extWpJ', dest='extWpJ', default=-1, type='int',
+                  help='Set the number of WpJ events to generate for toy validation')
+parser.add_option('--exttop', dest='exttop', default=-1, type='int',
+                  help='Set the number of top events to generate for toy validation')
+parser.add_option('--extZpJ', dest='extZpJ', default=-1, type='int',
+                  help='Set the number of ZpJ events to generate for toy validation')
+parser.add_option('--extQCD', dest='extQCD', default=-1, type='int',
+                  help='Set the number of QCD events to generate for toy validation')
 parser.add_option('--seed', dest='seed', type='int', help='random seed')
 parser.add_option('--ws', dest='ws', 
                   help='filename that contains workspace to be used cloned ' +\
@@ -39,7 +57,7 @@ import pyroot_logon
 config = __import__(opts.modeConfig)
 import RooWjj2DFitter
 
-from ROOT import TCanvas, RooFit, RooLinkedListIter, TMath, RooRandom, TFile, \
+from ROOT import TCanvas, RooFit, RooDataSet, RooLinkedListIter, TMath, RooRandom, TFile, \
     RooDataHist, RooMsgService, TStopwatch, RooStats
 import pulls
 
@@ -61,16 +79,103 @@ fitter = RooWjj2DFitter.Wjj2DFitter(pars)
 if opts.ws:
     fitter.loadWorkspaceFromFile(opts.ws, getFloatPars = False)
     
-totalPdf = fitter.makeFitter()
+totalPdf = fitter.makeFitter(opts.useAlternateModelsToFit)
 
 fitter.readParametersFromFile()
 fitter.expectedFromPars()
 
 startpars = totalPdf.getParameters(fitter.ws.set('obsSet'))
+print 'startpars:'
+startpars.Print('v')
 fitter.ws.defineSet("params", startpars)
 fitter.ws.saveSnapshot("initPars", startpars)
 
-if opts.toy:
+if opts.runPdfGenToySim:
+    parFiles = args
+    if opts.genParamFile=='NONE':
+        print "Toy generation parameters taken ", args
+    else:
+        print "Toy generation parameters taken from ", opts.genParamFile
+        parFiles = opts.genParamFile
+    #print "performing Toy Generation from param files: ", parFiles
+    genPars = config.theConfig(Nj = opts.Nj, mH = opts.mH, isElectron = opts.isElectron, initFile = parFiles, includeSignal = opts.includeSignal)
+    genFitter = RooWjj2DFitter.Wjj2DFitter(genPars)
+
+    
+    genPdf = genFitter.makeFitter(opts.useAlternateModelsToGen)
+    genFitter.readParametersFromFile(parFiles)
+    genFitter.initFromExplicitVals(opts)
+    genFitter.expectedFromPars()
+    genFitter.resetYields()
+    
+    genstartpars = genPdf.getParameters(fitter.ws.set('obsSet'))
+    genFitter.ws.defineSet("params", genstartpars)
+    genFitter.ws.saveSnapshot("genInitPars", genstartpars)
+    print "genPars:"
+    genFitter.ws.set('params').Print('v')
+
+    if opts.extendedGen:
+        data = genPdf.generate(genFitter.ws.set('obsSet'), RooFit.Name('data_obs'),RooFit.Extended())
+    else:
+        data = genPdf.generate(genFitter.ws.set('obsSet'), RooFit.Name('data_obs'))
+    
+    if fitter.pars.binData:
+        data = RooDataHist('data_obs', 'data_obs', genFitter.ws.set('obsSet'), data)
+        data.Print('v')
+    getattr(fitter.ws, 'import')(data)
+    
+    print 'Generated Data Events: %.0f' % (data.sumEntries())
+    
+elif opts.runMCGenToySim:
+    print "performing Toy Generation from MC:"
+    print "Generating ", opts.extdiboson, " diboson events"
+    dibosonfiles = getattr(pars, 'dibosonFiles')
+    dibosontoymodels = [-1]
+    dibosonPdf = fitter.makeComponentPdf('dibosontoy',dibosonfiles,dibosontoymodels)
+    dibosontoymc = dibosonPdf.generate(fitter.ws.set('obsSet'),opts.extdiboson,RooFit.Name('data_obs'))
+    dibosontoymc.Print()
+    gentoymc=dibosontoymc
+    print "Generating ", opts.extWpJ, " WpJ events"
+    WpJfiles = getattr(pars, 'WpJFiles')
+    WpJtoymodels = [-1]
+    WpJPdf = fitter.makeComponentPdf('WpJtoy',WpJfiles,WpJtoymodels)
+    WpJtoymc = RooDataSet()
+    WpJtoymc = WpJPdf.generate(fitter.ws.set('obsSet'),opts.extWpJ,RooFit.Name('data_obs'))
+    WpJtoymc.Print()
+    gentoymc.append(WpJtoymc)
+    print "Generating ", opts.extZpJ, " ZpJ events"
+    ZpJfiles = getattr(pars, 'ZpJFiles')
+    ZpJtoymodels = [-1]
+    ZpJPdf = fitter.makeComponentPdf('ZpJtoy',ZpJfiles,ZpJtoymodels)
+    ZpJtoymc = RooDataSet()
+    ZpJtoymc = ZpJPdf.generate(fitter.ws.set('obsSet'),opts.extZpJ,RooFit.Name('data_obs'))
+    ZpJtoymc.Print()
+    gentoymc.append(ZpJtoymc)
+    print "Generating ", opts.exttop, " top events"
+    topfiles = getattr(pars, 'topFiles')
+    toptoymodels = [-1]
+    topPdf = fitter.makeComponentPdf('toptoy',topfiles,toptoymodels)
+    toptoymc = RooDataSet()
+    toptoymc = topPdf.generate(fitter.ws.set('obsSet'),opts.exttop,RooFit.Name('data_obs'))
+    toptoymc.Print()
+    gentoymc.append(toptoymc)
+    if opts.extQCD>0. :
+        print "Generating ", opts.extQCD, " QCD events"
+        QCDfiles = getattr(pars, 'QCDFiles')
+        QCDtoymodels = [-1]
+        QCDPdf = fitter.makeComponentPdf('QCDtoy',QCDfiles,QCDtoymodels)
+        QCDtoymc = RooDataSet()
+        QCDtoymc = QCDPdf.generate(fitter.ws.set('obsSet'),opts.extQCD,RooFit.Name('data_obs'))
+        QCDtoymc.Print()
+        gentoymc.append(QCDtoymc)
+    data = gentoymc
+    if fitter.pars.binData:
+        data = RooDataHist('data_obs', 'data_obs', fitter.ws.set('obsSet'),
+                           data)
+        data.Print('v')
+    getattr(fitter.ws, 'import')(data)
+    
+elif opts.toy:
     #generate toy dataset
     print 'Generated parameters'
     fitter.ws.set('params').Print('v')
@@ -95,7 +200,14 @@ print 'Time elapsed: %.1f sec' % timer.RealTime()
 print 'CPU time used: %.1f sec' % timer.CpuTime()
 print 'starting fitting routine'
 timer.Continue()
-#fitter.ws.var('top_nrm').setConstant()
+
+if pars.useTopSideband:
+    fitter.ws.var('WpJ_nrm').setConstant()
+
+## fitter.ws.var('top_nrm').setConstant()
+## fitter.ws.var('ZpJ_nrm').setConstant()
+
+
 fitter.ws.var('r_signal').setVal(1.0)
 fitter.ws.var('r_signal').setError(0.04)
 
@@ -122,22 +234,21 @@ plot1.Draw()
 c1.Update()
 
 #Make the Data-NonDiboson subtracted plot
-#print 'plot1 : '
-#plot1.Print()
 xvar.setRange('plotRange', xvar.getMin(), xvar.getMax())
-dibosonSubtractedFrame = xvar.frame()
-dibosonSubtractedFrame.SetName("%s_subtracted" % vName)
-dibosonResidual = plot1.residHist('theData', pars.backgrounds[1], False, True)#The first background is the diboson
-dibosonResidual.SetTitle('subtracted data')
-dibosonSubtractedFrame.addPlotable(dibosonResidual, 'p', False, True)
-fitter.ws.pdf('diboson').plotOn(dibosonSubtractedFrame)
-dibosonSubtractedFrame.getCurve().SetTitle(pars.dibosonPlotting['title'])
-dibosonSubtractedLegend = RooWjj2DFitter.Wjj2DFitter.legend4Plot(dibosonSubtractedFrame)
-c2 = TCanvas('c2', xvar.GetTitle() + ' Subtracted')
-dibosonSubtractedFrame.GetYaxis().SetTitle(plot1.GetYaxis().GetTitle())
-dibosonSubtractedFrame.addObject(dibosonSubtractedLegend)
-dibosonSubtractedFrame.Draw()
-c2.Update()
+if not pars.useTopSideband:
+    dibosonSubtractedFrame = xvar.frame()
+    dibosonSubtractedFrame.SetName("%s_subtracted" % vName)
+    dibosonResidual = plot1.residHist('theData', pars.backgrounds[1], False, True)#The first background is the diboson
+    dibosonResidual.SetTitle('subtracted data')
+    dibosonSubtractedFrame.addPlotable(dibosonResidual, 'p', False, True)
+    fitter.ws.pdf('diboson').plotOn(dibosonSubtractedFrame)
+    dibosonSubtractedFrame.getCurve().SetTitle(pars.dibosonPlotting['title'])
+    dibosonSubtractedLegend = RooWjj2DFitter.Wjj2DFitter.legend4Plot(dibosonSubtractedFrame)
+    c2 = TCanvas('c2', xvar.GetTitle() + ' Subtracted')
+    dibosonSubtractedFrame.GetYaxis().SetTitle(plot1.GetYaxis().GetTitle())
+    dibosonSubtractedFrame.addObject(dibosonSubtractedLegend)
+    dibosonSubtractedFrame.Draw()
+    c2.Update()
 
 ndf = 0
 
@@ -195,13 +306,19 @@ if opts.toyOut:
     outFile.write('\n')
     outFile.close()
 
+##write the output parameters to one file
+if hasattr(opts, "fitparfn"):
+    outparams = totalPdf.getParameters(data)
+    finalPars = outparams.snapshot()
+    finalPars.writeToFile(opts.fitparfn)
+
 
 if opts.nullFit:
     print 'doing fit under null hypothesis'
 
     fitter_null = RooWjj2DFitter.Wjj2DFitter(pars)
     fitter_null.loadHistogramsFromWorkspace(fitter.ws)
-    totalPdf_null = fitter_null.makeFitter()
+    totalPdf_null = fitter_null.makeFitter(opts.useAlternateModelsToFit)
     fitter_null.readParametersFromFile()
     fitter_null.expectedFromPars()
     fitter_null.resetYields()
@@ -231,7 +348,8 @@ fr.Write()
 if opts.nullFit:
     fr_null.Write()
 plot1.Write()
-dibosonSubtractedFrame.Write()
+if not pars.useTopSideband:
+    dibosonSubtractedFrame.Write()
 pull1.Write()
 fitter.ws.SetName("w")
 fitter.ws.Write()
@@ -239,7 +357,8 @@ fitter.ws.Write()
 output.Close()
 
 c1.SaveAs("Diboson%slnujj_%s_Stacked.png" % (tag, mode))
-c2.SaveAs("Diboson%slnujj_%s_Subtracted.png" % (tag, mode))
+if not pars.useTopSideband:
+    c2.SaveAs("Diboson%slnujj_%s_Subtracted.png" % (tag, mode))
 cp1.SaveAs("Diboson%slnujj_%s_Pull.png" % (tag, mode))
 
 fitter.ws.var('n_diboson').Print()
