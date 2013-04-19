@@ -37,17 +37,12 @@
 
 /////////////////////////////////////////
 ///// Specify Location of Merged Ntuples:
-const TString inDataDir= "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples/";
-const TString inDataDir2 = "/eos/uscms/store/user/jfaulkn3/MergedNTuples/MC/";
-const TString inDataDir3 = "/eos/uscms/store/user/jfaulkn3/MergedNTuples/Data2012/";
-const TString inDataDir4 = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/MergedNtuples/";
-const TString inQCDDir   = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples/";
+const TString inDataDir4 = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/MergedNtuples2012tgh/";
+const TString inQCDDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/MergedNtuples2012tgh/";
 
 //////////////////////////////////////////////
 ///// Specify Location of Store Reduced Trees:
-//const TString outDataDir   = "/eos/uscms/store/user/jfaulkn3/ReducedTrees/";
-//const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
-const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest12/";
+const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest12v2/";
 
 /////////////////////////////////////////////////////////
 ///// Specify Location of Efficiency Tables:
@@ -79,7 +74,7 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
 
    ///////////////////////////////
    ///// Specify Event Categories:
-   string step_names[n_step] = {
+   std::string step_names[n_step] = {
       "all",
       "no scraping",
       "HBHE noise filter",
@@ -159,7 +154,7 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
          myChain->Add( inDataDir4 + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb_Photon.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20120003,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_19p3invfb");
       } else {
-         InitCounters( inDataDir3 + "QCDmu.root", h_events, h_events_weighted);
+         InitCounters( inDataDir4 + "QCDmu.root", h_events, h_events_weighted);
          myChain->Add(                    inQCDDir +     "QCDmu.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20120003,runflag, outDataDir + "RDQCD_WmunuJets_DataAll_GoldenJSON_19p3invfb", isQCD);
       }
@@ -412,6 +407,44 @@ void kanamuon_photon::myana(double myflag, bool isQCD, int runflag)
          myChain->Add( inDataDir4 + "mu_LT0_p8m5MG_CMSSW532.root");
          Init(myChain);Loop( h_events, h_events_weighted, 20121065,runflag, outDataDir + "RD_mu_LT0_p8m11MG_CMSSW532");
       }
+
+      if (myflag == 20121070 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_K0W_m2m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_K0W_m2m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121070,runflag, outDataDir + "RD_mu_K0W_m2m5MG_CMSSW532");
+      }
+      if (myflag == 20121071 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_K0W_m1m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_K0W_m1m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121071,runflag, outDataDir + "RD_mu_K0W_m1m5MG_CMSSW532");
+      }
+      if (myflag == 20121072 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_K0W_m05m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_K0W_m05m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121072,runflag, outDataDir + "RD_mu_K0W_m05m5MG_CMSSW532");
+      }
+      if (myflag == 20121073 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_K0W_p05m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_K0W_p05m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121073,runflag, outDataDir + "RD_mu_K0W_p05m5MG_CMSSW532");
+      }
+      if (myflag == 20121074 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_K0W_p1m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_K0W_p1m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121074,runflag, outDataDir + "RD_mu_K0W_p1m5MG_CMSSW532");
+      }
+      if (myflag == 20121075 || myflag == -200){
+         InitCounters( inDataDir4 + "mu_K0W_p2m5MG_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add( inDataDir4 + "mu_K0W_p2m5MG_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20121075,runflag, outDataDir + "RD_mu_K0W_p2m5MG_CMSSW532");
+      }
+
    }
 
 }// End Function "myana"
@@ -445,17 +478,21 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
    ////////////////////////////////////////////////////////////////
    // Indices: Generated Good Event, # Jets in Event, Good isolated Photon, Good isolated Jet, Photon isolation, Dijet mass, jet four-momentum vectors:
-   Int_t   ggdevt   =0,   evtNJ     =0, iPhoton12 = -1, iPhoton11 = -1;
+   Int_t   ggdevt   =0,   evtNJ     =0, iPhoton12 = -1, iPhoton12plj = -1, iPhoton11 = -1;
    Int_t i11Jet1=-1, i11Jet2=-1, i11Jet3=-1, i11Jet4=-1;
    Int_t i12Jet1=-1, i12Jet2=-1, i12Jet3=-1, i12Jet4=-1;
-   Float_t         Photon_dRlep[10]={99.};   //[NumPhotons]
+   Int_t i12Jet1plj=-1, i12Jet2plj=-1, i12Jet3plj=-1, i12Jet4plj=-1;
+   Int_t           Photon_Id2012plj[20]={0};   //[NumPhotons]
+   Float_t         Photon_dRlep[20]={99.};   //[NumPhotons]
    Float_t         JetPFCor_dRpho11[6] = {99.};   
    Float_t         JetPFCor_dRpho12[6] = {99.};   
-   Float_t         c2jMass12,c2jMass11;
+   Float_t         JetPFCor_dRpho12plj[6] = {99.};   
+   Float_t         c2jMass12,c2jMass12plj,c2jMass11;
    Float_t         MVAwt=1.;
    TLorentzVector p4j1,p4j2,c2j;
 
    TBranch *branch_iPhoton12= newtree->Branch("iPhoton12",    &iPhoton12,     "iPhoton12/I");
+   TBranch *branch_iPhoton12plj= newtree->Branch("iPhoton12plj",    &iPhoton12plj,     "iPhoton12plj/I");
    TBranch *branch_iPhoton11= newtree->Branch("iPhoton11",    &iPhoton11,     "iPhoton11/I");
    TBranch *branch_i11Jet1= newtree->Branch("i11Jet1",    &i11Jet1,     "i11Jet1/I");
    TBranch *branch_i11Jet2= newtree->Branch("i11Jet2",    &i11Jet2,     "i11Jet2/I");
@@ -465,12 +502,19 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    TBranch *branch_i12Jet2= newtree->Branch("i12Jet2",    &i12Jet2,     "i12Jet2/I");
    TBranch *branch_i12Jet3= newtree->Branch("i12Jet3",    &i12Jet3,     "i12Jet3/I");
    TBranch *branch_i12Jet4= newtree->Branch("i12Jet4",    &i12Jet4,     "i12Jet4/I");
+   TBranch *branch_i12Jet1plj= newtree->Branch("i12Jet1plj",    &i12Jet1plj,     "i12Jet1plj/I");
+   TBranch *branch_i12Jet2plj= newtree->Branch("i12Jet2plj",    &i12Jet2plj,     "i12Jet2plj/I");
+   TBranch *branch_i12Jet3plj= newtree->Branch("i12Jet3plj",    &i12Jet3plj,     "i12Jet3plj/I");
+   TBranch *branch_i12Jet4plj= newtree->Branch("i12Jet4plj",    &i12Jet4plj,     "i12Jet4plj/I");
    TBranch *branch_MVAwt= newtree->Branch("MVAwt",    &MVAwt,     "MVAwt/F");
    TBranch *branch_c2jMass11= newtree->Branch("c2jMass11",    &c2jMass11,     "c2jMass11/F");
    TBranch *branch_c2jMass12= newtree->Branch("c2jMass12",    &c2jMass12,     "c2jMass12/F");
+   TBranch *branch_c2jMass12plj= newtree->Branch("c2jMass12plj",    &c2jMass12plj,     "c2jMass12plj/F");
    TBranch *branch_Photon_dRlep= newtree->Branch("Photon_dRlep",    &Photon_dRlep,     "Photon_dRlep[NumPhotons]/F");
+   TBranch *branch_Photon_Id2012plj= newtree->Branch("Photon_Id2012plj",    &Photon_Id2012plj,     "Photon_Id2012plj[NumPhotons]/I");
    TBranch *branch_JetPFCor_dRpho11 = newtree->Branch("JetPFCor_dRpho11",    &JetPFCor_dRpho11,     "JetPFCor_dRpho11[6]/F");
    TBranch *branch_JetPFCor_dRpho12 = newtree->Branch("JetPFCor_dRpho12",    &JetPFCor_dRpho12,     "JetPFCor_dRpho12[6]/F");
+   TBranch *branch_JetPFCor_dRpho12plj = newtree->Branch("JetPFCor_dRpho12plj",    &JetPFCor_dRpho12plj,     "JetPFCor_dRpho12plj[6]/F");
    TBranch *branch_ggdevt= newtree->Branch("ggdevt",    &ggdevt,     "ggdevt/I");
    TBranch *branch_evtNJ = newtree->Branch("evtNJ",     &evtNJ,      "evtNJ/I");
 
@@ -610,6 +654,8 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    TFile *dataFile_      = new TFile( "Data190456-208686_PileupHistogram.root" );
    TH1F* PU_intended = new TH1F(  *(static_cast<TH1F*>(dataFile_->Get( "pileup" )->Clone() )) );
    TH1F* PU_generated = new TH1F("PU_generated","Generated pileup distribution (i.e., MC)",60,0.,60);
+
+/*
    Double_t Summer2012[60] = {
       //Pile Up For S10
       2.560E-06,
@@ -673,6 +719,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       1.570E-05,
       5.005E-06
    };   
+*/
    if (wda>20120999) fChain->Draw("event_mcPU_nvtx[1]>>PU_generated","","goff");
 //   for (int i=1;i<=60;i++)  {
 //      PU_generated->SetBinContent(i,Summer2012[i-1]);
@@ -694,6 +741,39 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
    for (Long64_t jentry=0; jentry<nentries;jentry++) {
       nb = newtree->GetEntry(jentry);   nbytes += nb;
+
+//    Do the photon like jet ID2012 
+      for(int ipho=NumPhotons-1; ipho>=0;ipho--){
+         Photon_Id2012plj[ipho]=-1;
+         double cutchargedIso = 4.0;
+         double cutneutralIso = 4.5 +0.04*Photon_Et[ipho];
+         double cutphoIso = 4.5 + 0.005*Photon_Et[ipho];
+         double maxchargedIso = TMath::Min(5*cutchargedIso,0.2*Photon_Et[ipho]);
+         double maxeutralIso = TMath::Min(5*cutneutralIso,0.2*Photon_Et[ipho]);
+         double maxphoIso = TMath::Min(5*cutphoIso,0.2*Photon_Et[ipho]);
+         double maxhoe = 0.05;
+         bool looseid = false;
+//    Step 1 loose 2012ID
+         if( (TMath::Abs(Photon_Eta[ipho])<1.4442 ) )
+		{
+		 looseid = ( PFisocharged03[ipho] < maxchargedIso ) && ( PFisoneutral03[ipho] < maxeutralIso ) &&( PFisophoton03[ipho] < maxphoIso ) && ( Photon_HoverE[ipho] < maxhoe ) && Photon_passElecVeto[ipho];
+                }
+         if( TMath::Abs(Photon_Eta[ipho])>1.566 && TMath::Abs(Photon_Eta[ipho])<2.5 )
+		{
+		 looseid = ( PFisocharged03[ipho] < maxchargedIso ) && ( PFisoneutral03[ipho] < maxeutralIso ) && ( Photon_HoverE[ipho] < maxhoe ) && Photon_passElecVeto[ipho];
+                }
+//    Step 2 iso side band
+         bool flipiso = false;
+	 if( (TMath::Abs(Photon_Eta[ipho])<1.4442) )
+		{
+		  flipiso = ( PFisocharged03[ipho] > cutchargedIso ) || ( PFisoneutral03[ipho] > cutneutralIso ) || ( PFisophoton03[ipho] > cutphoIso ) || ( Photon_SigmaIetaIeta[ipho] > 0.012 );
+		}
+	 if( TMath::Abs(Photon_Eta[ipho])>1.566 && TMath::Abs(Photon_Eta[ipho])<2.5 )
+		{
+		  flipiso = ( PFisocharged03[ipho] > cutchargedIso ) || ( PFisoneutral03[ipho] > cutneutralIso ) || ( Photon_SigmaIetaIeta[ipho] > 0.012 );
+		}
+	 if( looseid && flipiso ) Photon_Id2012plj[ipho] = 1;
+      }
 
       ////////////////////////////////
       // Save variable initialization:
@@ -725,24 +805,26 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
       ///////////////
       // Photon loop:
-      iPhoton12=-1;iPhoton11=-1;
+      iPhoton12=-1;iPhoton12plj=-1;iPhoton11=-1;
       for(int ipho=NumPhotons-1; ipho>=0;ipho--){
          Photon_dRlep[ipho]=dRCalc(Photon_Eta[ipho],Photon_Phi[ipho],W_muon_eta,W_muon_phi);
          if(Photon_Id2012[ipho]>0&&Photon_dRlep[ipho]>0.5)iPhoton12=ipho;
+         if(Photon_Id2012plj[ipho]>0&&Photon_dRlep[ipho]>0.5)iPhoton12plj=ipho;
          if(Photon_Id2011[ipho]>0&&Photon_dRlep[ipho]>0.5)iPhoton11=ipho;
       }
 
       ////////////
       // Jet Loop:
-      c2jMass11=-1.;c2jMass12=-1.;
+      c2jMass11=-1.;c2jMass12=-1.;c2jMass12plj=-1.;
       double jess=-1,dijetpt=-1;
-      i11Jet1=-1;i11Jet2=-1;i12Jet1=-1;i12Jet2=-1;i11Jet3=-1;i12Jet3=-1;i11Jet4=-1;i12Jet4=-1;
+      i11Jet1=-1;i12Jet1=-1;i11Jet2=-1;i12Jet2=-1;i11Jet3=-1;i12Jet3=-1;i11Jet4=-1;i12Jet4=-1;
+      i12Jet1plj=-1;i12Jet2plj=-1;i12Jet3plj=-1;i12Jet4plj=-1;
 
       /////////////////////////////////////////////////////////////////////////////////////
       // Only Focus on the Following Jet Efforts if there is either a good 2011/2012 photon:
-      if(iPhoton11>=0 || iPhoton12>=0){
+      if(iPhoton11>=0 || iPhoton12>=0 || iPhoton12plj>=0){
 
-      if (wda == 20120003) MVAwt = (1/(1+(1/(0.0779333 + 293.183/TMath::Power(Photon_Et[(iPhoton12>-1)? iPhoton12 : 0],1.84509)))));
+         if (wda == 20120003) MVAwt = (0.00781717 + 28.1270/TMath::Power(Photon_Et[(iPhoton12plj>-1)? iPhoton12plj : 0],1.83354));
 
          //////////////////////////////////
          // Calculate Jet-Photon Isolation:
@@ -752,6 +834,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
             // Only Calculate Isolation for events with good 2011/2012 photon:
             if(iPhoton11>-1) JetPFCor_dRpho11[ij]=dRCalc(Photon_Eta[iPhoton11],Photon_Phi[iPhoton11],JetPFCor_Eta[ij],JetPFCor_Phi[ij]);
             if(iPhoton12>-1) JetPFCor_dRpho12[ij]=dRCalc(Photon_Eta[iPhoton12],Photon_Phi[iPhoton12],JetPFCor_Eta[ij],JetPFCor_Phi[ij]);
+            if(iPhoton12plj>-1) JetPFCor_dRpho12plj[ij]=dRCalc(Photon_Eta[iPhoton12plj],Photon_Phi[iPhoton12plj],JetPFCor_Eta[ij],JetPFCor_Phi[ij]);
 
          }
 
@@ -764,6 +847,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
             // (First Jet sets precedence for further jets):
             if(iPhoton11>-1&&JetPFCor_Pt[ij]>30&&JetPFCor_dRpho11[ij]>0.5) i11Jet1=ij;
             if(iPhoton12>-1&&JetPFCor_Pt[ij]>30&&JetPFCor_dRpho12[ij]>0.5) i12Jet1=ij;
+            if(iPhoton12plj>-1&&JetPFCor_Pt[ij]>30&&JetPFCor_dRpho12plj[ij]>0.5) i12Jet1plj=ij;
 
          }
 
@@ -774,8 +858,9 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
             ////////////////////////////////////////////////////////////////////
             // Require good 2011/2012 First Jet, Jet pT > 30 GeV, Isolation > 0.5
             // (Second Jet sets precedence for further jets):
-            if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho11[ij]>0.5&&i11Jet1>-1&&ij>i11Jet1) i11Jet2=ij;
-            if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12[ij]>0.5&&i12Jet1>-1&&ij>i12Jet1) i12Jet2=ij;
+            if(iPhoton11>-1&&JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho11[ij]>0.5&&i11Jet1>-1&&ij>i11Jet1) i11Jet2=ij;
+            if(iPhoton12>-1&&JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12[ij]>0.5&&i12Jet1>-1&&ij>i12Jet1) i12Jet2=ij;
+            if(iPhoton12plj>-1&&JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12plj[ij]>0.5&&i12Jet1plj>-1&&ij>i12Jet1plj) i12Jet2plj=ij;
 
          }
 
@@ -786,8 +871,9 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
             ////////////////////////////////////////////////////////////////////
             // Require good 2011/2012 Second Jet, Jet pT > 30 GeV, Isolation > 0.5
             // (Third Jet sets precedence for further jets):
-            if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho11[ij]>0.5&&i11Jet2>-1&&ij>i11Jet2) i11Jet3=ij;
-            if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12[ij]>0.5&&i12Jet2>-1&&ij>i12Jet2) i12Jet3=ij;
+            if(iPhoton11>-1&&JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho11[ij]>0.5&&i11Jet2>-1&&ij>i11Jet2) i11Jet3=ij;
+            if(iPhoton12>-1&&JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12[ij]>0.5&&i12Jet2>-1&&ij>i12Jet2) i12Jet3=ij;
+            if(iPhoton12plj>-1&&JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12plj[ij]>0.5&&i12Jet2plj>-1&&ij>i12Jet2plj) i12Jet3plj=ij;
 
          }
 
@@ -797,8 +883,9 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
             //////////////////////////////////////////////////////////////////////
             // Require good 2011/2012 Third Jet, Jet pT > 30 GeV, Isolation > 0.5:
-            if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho11[ij]>0.5&&i11Jet3>-1&&ij>i11Jet3) i11Jet4=ij;
-            if(JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12[ij]>0.5&&i12Jet3>-1&&ij>i12Jet3) i12Jet4=ij;
+            if(iPhoton11>-1&&JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho11[ij]>0.5&&i11Jet3>-1&&ij>i11Jet3) i11Jet4=ij;
+            if(iPhoton12>-1&&JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12[ij]>0.5&&i12Jet3>-1&&ij>i12Jet3) i12Jet4=ij;
+            if(iPhoton12plj>-1&&JetPFCor_Pt[ij]>30.&&JetPFCor_dRpho12plj[ij]>0.5&&i12Jet3plj>-1&&ij>i12Jet3plj) i12Jet4plj=ij;
 
          }
 
@@ -824,6 +911,19 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
             p4j2.SetPxPyPzE( JetPFCor_Px[i12Jet2], JetPFCor_Py[i12Jet2], JetPFCor_Pz[i12Jet2], JetPFCor_E[i12Jet2] );
             c2j =  p4j1 + p4j2;
             c2jMass12 =  c2j.M();
+         }
+
+         if( i12Jet2plj>-1 ) {
+
+            jess    = 1.00; // control the jet energy scale
+            dijetpt = sqrt(JetPFCor_Pt[i12Jet1plj]*JetPFCor_Pt[i12Jet1plj]+
+               JetPFCor_Pt[i12Jet2plj]*JetPFCor_Pt[i12Jet2plj]+
+               2*JetPFCor_Pt[i12Jet1plj]*JetPFCor_Pt[i12Jet2plj]*cos(JetPFCor_Phi[i12Jet1plj]-JetPFCor_Phi[i12Jet2plj]));
+
+            p4j1.SetPxPyPzE( JetPFCor_Px[i12Jet1plj], JetPFCor_Py[i12Jet1plj], JetPFCor_Pz[i12Jet1plj], JetPFCor_E[i12Jet1plj] );
+            p4j2.SetPxPyPzE( JetPFCor_Px[i12Jet2plj], JetPFCor_Py[i12Jet2plj], JetPFCor_Pz[i12Jet2plj], JetPFCor_E[i12Jet2plj] );
+            c2j =  p4j1 + p4j2;
+            c2jMass12plj =  c2j.M();
          }
 
       }
@@ -949,6 +1049,17 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          }
       }
 
+      if( i12Jet2plj>0){
+
+         if (JetPFCor_Pt[i12Jet1plj]>Jpt 
+          && JetPFCor_Pt[i12Jet2plj]>Jpt 
+          && W_mt>30. //Move to MVA MET Later
+          && W_muon_pt>25.
+          && fabs(W_muon_dz000)<0.02
+          && fabs(W_muon_dzPV)<0.5
+          && fabs(W_muon_eta)<2.1 //Fix the Muon Eta Range to 2.1
+            ) {isgengdevt = 1;}
+      }
       //////////////////////////////////////////////////////////
       // Event Selection Requirement for Standard vs QCD events:
       if ( !isQCD ) {
@@ -1027,15 +1138,23 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       // 2 and 3 jet event for Hww:
       if (isgengdevt) { ggdevt = 4;// Do the kinematic fit for all event!!!
 
-         if ( JetPFCor_Pt[i12Jet2] > Jpt && JetPFCor_Pt[i12Jet3] < Jpt ) {ggdevt = 2;}
-         if ( JetPFCor_Pt[i12Jet3] > Jpt && JetPFCor_Pt[i12Jet4] < Jpt ) {ggdevt = 3;}
+         if ( iPhoton12>-1&& JetPFCor_Pt[i12Jet2] > Jpt && JetPFCor_Pt[i12Jet3] < Jpt ) {ggdevt = 2;}
+         if ( iPhoton12>-1&& JetPFCor_Pt[i12Jet3] > Jpt && JetPFCor_Pt[i12Jet4] < Jpt ) {ggdevt = 3;}
+
+         if ( iPhoton12plj>-1&& JetPFCor_Pt[i12Jet2plj] > Jpt && JetPFCor_Pt[i12Jet3plj] < Jpt ) {ggdevt = 2;}
+         if ( iPhoton12plj>-1&& JetPFCor_Pt[i12Jet3plj] > Jpt && JetPFCor_Pt[i12Jet4plj] < Jpt ) {ggdevt = 3;}
 
          int Aj = i12Jet1, Bj = i12Jet2;
+         if ( iPhoton12plj>-1 ){Aj = i12Jet1plj, Bj = i12Jet2plj;}
+
          TLorentzVector ajp, bjp, ap; 
 
          ajp.SetPtEtaPhiE(jess * JetPFCor_Pt[Aj], JetPFCor_Eta[Aj], JetPFCor_Phi[Aj], jess * JetPFCor_E[Aj]  );
          bjp.SetPtEtaPhiE(jess * JetPFCor_Pt[Bj], JetPFCor_Eta[Bj], JetPFCor_Phi[Bj], jess * JetPFCor_E[Bj]  );
-         ap.SetPtEtaPhiE(Photon_Et[iPhoton12], Photon_Eta[iPhoton12], Photon_Phi[iPhoton12], Photon_E[iPhoton12]  );
+         if ( iPhoton12>-1 )
+           ap.SetPtEtaPhiE(Photon_Et[iPhoton12], Photon_Eta[iPhoton12], Photon_Phi[iPhoton12], Photon_E[iPhoton12]  );
+         if ( iPhoton12plj>-1 )
+           ap.SetPtEtaPhiE(Photon_Et[iPhoton12plj], Photon_Eta[iPhoton12plj], Photon_Phi[iPhoton12plj], Photon_E[iPhoton12plj]  );
 
          ////////////////////
          // Do kinematic fit:
@@ -1095,6 +1214,11 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
            dRjj*=dRjj;
            dRjj+=(JetPFCor_Eta[i12Jet1]-JetPFCor_Eta[i12Jet2])*(JetPFCor_Eta[i12Jet1]-JetPFCor_Eta[i12Jet2]);
          }
+         if(i12Jet1plj>-1&&i12Jet2plj>-1){
+           dRjj=fabs(fabs(fabs(JetPFCor_Phi[i12Jet1plj]-JetPFCor_Phi[i12Jet2plj])-TMath::Pi())-TMath::Pi());
+           dRjj*=dRjj;
+           dRjj+=(JetPFCor_Eta[i12Jet1plj]-JetPFCor_Eta[i12Jet2plj])*(JetPFCor_Eta[i12Jet1plj]-JetPFCor_Eta[i12Jet2plj]);
+         }
 
          ///////////////////////////////
          // Fill the trained MVA output:
@@ -1103,12 +1227,23 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          mvaInputValPho.push_back( sqrt(dRjj) );
          if(i12Jet1>-1){
            mvaInputValPho.push_back( JetPFCor_Pt[i12Jet1] );
+         }else if(i12Jet1plj>-1){ 
+           mvaInputValPho.push_back( JetPFCor_Pt[i12Jet1plj] );
          }else{ mvaInputValPho.push_back(0.);}
+
          if(i12Jet2>-1){
            mvaInputValPho.push_back( JetPFCor_Pt[i12Jet2] );
+         }else if(i12Jet2plj>-1){
+           mvaInputValPho.push_back( JetPFCor_Pt[i12Jet2plj] );
          }else{ mvaInputValPho.push_back(0.);}
+
          mvaInputValPho.push_back(ptlvjja);
-         mvaInputValPho.push_back(c2jMass12);
+         if(iPhoton12>-1){
+           mvaInputValPho.push_back(c2jMass12);
+         }else if(iPhoton12plj>-1){
+           mvaInputValPho.push_back(c2jMass12plj);
+         }else{ mvaInputValPho.push_back(0.);}
+
          mva2jWWAmu = (float) mvaReader2jWWAmu.GetMvaValue( mvaInputValPho );
          mvaInputValPho.push_back(masslvjja);
          mva2jWWAmuM = (float) mvaReader2jWWAmuM.GetMvaValue( mvaInputValPho );
@@ -1117,32 +1252,56 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 //       MVAs : A1 3m5m KOG trained for cut and M or Pt based limits
 //        A2 3m5m KOG trained for MVAout based limits
          std::vector<double> mvaInputValPhoA12;
-         if(i12Jet1>-1&&i12Jet2>-1){
+         if((i12Jet1>-1&&i12Jet2>-1)||(i12Jet1plj>-1&&i12Jet2plj>-1)){
            mvaInputValPhoA12.push_back(dRjj);
          }else{ mvaInputValPhoA12.push_back(0.);}
+
          if(i12Jet1>-1){
            mvaInputValPhoA12.push_back( JetPFCor_Pt[i12Jet1]);
+         }else if(i12Jet1plj>-1){
+           mvaInputValPhoA12.push_back( JetPFCor_Pt[i12Jet1plj]);
          }else{ mvaInputValPhoA12.push_back(0.);}
+
          if(i12Jet2>-1){
            mvaInputValPhoA12.push_back( JetPFCor_Pt[i12Jet2]);
+         }else if(i12Jet2plj>-1){
+           mvaInputValPhoA12.push_back( JetPFCor_Pt[i12Jet2plj]);
          }else{ mvaInputValPhoA12.push_back(0.);}
-         mvaInputValPhoA12.push_back( c2jMass12);
+
+         if(iPhoton12>-1){
+           mvaInputValPhoA12.push_back(c2jMass12);
+         }else if(iPhoton12plj>-1){
+           mvaInputValPhoA12.push_back(c2jMass12plj);
+         }else{ mvaInputValPhoA12.push_back(0.);}
+
          mvaInputValPhoA12.push_back( W_muon_pt);
          if(i12Jet1>-1&&i12Jet2>-1){
            mvaInputValPhoA12.push_back( fabs(JetPFCor_Phi[i12Jet1]-JetPFCor_Phi[i12Jet2]));
+         }else if(i12Jet1plj>-1&&i12Jet2plj>-1){
+           mvaInputValPhoA12.push_back( fabs(JetPFCor_Phi[i12Jet1plj]-JetPFCor_Phi[i12Jet2plj]));
          }else{ mvaInputValPhoA12.push_back(0.);}
+
          if(iPhoton12>-1){
            mvaInputValPhoA12.push_back( fabs(event_met_pfmetPhi-Photon_Phi[iPhoton12]));
+         }else if(iPhoton12plj>-1){
+           mvaInputValPhoA12.push_back( fabs(event_met_pfmetPhi-Photon_Phi[iPhoton12plj]));
          }else{ mvaInputValPhoA12.push_back(0.);}
+
          if(iPhoton12>-1){
            mvaInputValPhoA12.push_back( fabs(W_muon_phi-Photon_Phi[iPhoton12]));
+         }else if(iPhoton12plj>-1){
+           mvaInputValPhoA12.push_back( fabs(W_muon_phi-Photon_Phi[iPhoton12plj]));
          }else{ mvaInputValPhoA12.push_back(0.);}
+
          mvaInputValPhoA12.push_back( event_met_pfmet);
          mvaInputValPhoA12.push_back( event_met_pfsumet);
          mva2jWWAmuA1 = (float) mvaReader2jWWAmuA1.GetMvaValue( mvaInputValPhoA12 );
          mvaInputValPhoA12.push_back( masslvjja);
-         if(i12Jet1>-1&&iPhoton12>-1){
-           mvaInputValPhoA12.push_back( Photon_Et[iPhoton12]/JetPFCor_Pt[i12Jet1]);
+
+         if(iPhoton12>-1){
+           mvaInputValPhoA12.push_back( Photon_Et[iPhoton12]);
+         }else if(iPhoton12plj>-1){
+           mvaInputValPhoA12.push_back( Photon_Et[iPhoton12plj]);
          }else{ mvaInputValPhoA12.push_back(0.);}
          mva2jWWAmuA2 = (float) mvaReader2jWWAmuA2.GetMvaValue( mvaInputValPhoA12 );
       }
@@ -1153,6 +1312,7 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       branch_evtNJ ->Fill();
 
       branch_iPhoton12->Fill();
+      branch_iPhoton12plj->Fill();
       branch_iPhoton11->Fill();
       branch_i11Jet1->Fill();
       branch_i11Jet2->Fill();
@@ -1162,13 +1322,20 @@ void kanamuon_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       branch_i12Jet2->Fill();
       branch_i12Jet3->Fill();
       branch_i12Jet4->Fill();
+      branch_i12Jet1plj->Fill();
+      branch_i12Jet2plj->Fill();
+      branch_i12Jet3plj->Fill();
+      branch_i12Jet4plj->Fill();
       branch_MVAwt->Fill();
       branch_c2jMass11->Fill();
       branch_c2jMass12->Fill();
+      branch_c2jMass12plj->Fill();
 
+      branch_Photon_Id2012plj->Fill();
       branch_Photon_dRlep->Fill();
       branch_JetPFCor_dRpho11->Fill();
       branch_JetPFCor_dRpho12->Fill();
+      branch_JetPFCor_dRpho12plj->Fill();
 
       branch_mu_px->Fill();
       branch_mu_py->Fill();
