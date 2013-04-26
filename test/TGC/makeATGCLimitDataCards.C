@@ -208,7 +208,9 @@ void makeATGCLimitDataCards(int channel=0) {
     
     // ---- Make smooth diboson shape ----------
     TH1D* th1wwclone = th1ww->Clone("th1wwclone");
-    gaus2 = new TF1("gaus2","gaus",300., 1000000000.);
+    float tmin = 200.0;
+    if(channel>1) tmin = 300.0;
+    gaus2 = new TF1("gaus2","gaus", tmin, 1000000000.);
     th1wwclone->Fit(gaus2,"I0","");
     
     // ---- Empty histograms for display/plotting ---- 
@@ -219,7 +221,7 @@ void makeATGCLimitDataCards(int channel=0) {
     SumAllBackgrounds();
 
     // ---- Get signal histogram ----------
-    signalForDisplay = GetSignalHistogram(0.05, 0.0, 0.0, "signalForDisplay", th1wwclone);
+    signalForDisplay = GetSignalHistogram(0.03, 0.0, 0.0, "signalForDisplay", th1wwclone);
 
 
     // ---- Compose the stack ----------
@@ -287,7 +289,7 @@ void makeATGCLimitDataCards(int channel=0) {
     gStyle->SetPadBottomMargin(0.3);
     // gStyle->SetErrorX(0.5);
 
-    TCanvas* c1 = new TCanvas("dijetPt", "dijetPt", 10,10, 500, 500);
+    TCanvas* c1 = new TCanvas("dijetPt", "", 10,10, 500, 500);
     TPad *d1, *d2;
     c1->Divide(1,2,0,0);
     d1 = (TPad*)c1->GetPad(1);
@@ -407,10 +409,10 @@ void makeATGCLimitDataCards(int channel=0) {
 
 
       char mysighistname[100];
-      for (float m=-0.1; m<0.1005; m += 0.005) {
-	for (float n=0.3; n>-0.302; n -= 0.02) {
+      for (float m=-0.05; m<0.051; m += 0.001) {
+	for (float n=0.1; n>-0.11; n -= 0.01) {
 	  sprintf(mysighistname, 
-		  "signal_lambdaZ_%0.3f_deltaKappaGamma_%0.3f", 
+		  "signal_lambdaZ_%0.4f_deltaKappaGamma_%0.3f", 
 		  m+0.00001, n+0.00001);
 	  TH1D* stackhist = GetSignalHistogram(m, n, 0.0, 
 					       mysighistname, th1wwclone);
@@ -422,10 +424,10 @@ void makeATGCLimitDataCards(int channel=0) {
  
 
 
-      for (float m=-0.1; m<0.1005; m += 0.005) {
-	for (float n=0.6; n>-0.605; n -= 0.05) {
+      for (float m=-0.05; m<0.051; m += 0.001) {
+	for (float n=0.1; n>-0.11; n -= 0.01) {
 	  sprintf(mysighistname, 
-		  "signal_lambdaZ_%0.3f_deltaG1_%0.3f", 
+		  "signal_lambdaZ_%0.4f_deltaG1_%0.3f", 
 		  m+0.00001, n+0.00001);
 	  TH1D* stackhist = GetSignalHistogram(m, 0.0, n, 
 					       mysighistname, th1wwclone);
@@ -763,7 +765,7 @@ TLegend* GetLegend(int channel)
   Leg->AddEntry(th1zjets,  "Z+Jets",  "f");
   Leg->AddEntry(th1tot,  "MC error",  "f");
   Leg->AddEntry(systUp,  "Shape error",  "f");
-  Leg->AddEntry(signalForDisplay,  "#lambda_{Z}=0.05",  "l");
+  Leg->AddEntry(signalForDisplay,  "#lambda_{Z}=0.03",  "l");
   Leg->SetFillColor(0);
 
   return Leg;
@@ -896,7 +898,7 @@ TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1,
 
 
   TF1* sigratio = new TF1("sigratio",
-			  "[0]+[1]*x +[2]*x*x + [3]*x*x*x +[4]*x*x*x*x +[5]*x*x*x*x*x +[6]*x*x*x*x*x*x", 
+			  "[0]+[1]*x +[2]*x*x + [3]*x*x*x +[4]*x*x*x*x +[5]*x*x*x*x*x +[6]*x*x*x*x*x*x-1.0", 
 			  50., 1500.);
 
   sigratio->SetParameter(0, p0_prof->Interpolate(var1, var2));
@@ -912,7 +914,6 @@ TH1D* GetSignalHistogram(float lambdaZ, float dkappaGamma, float deltaG1,
   newsighist->Multiply(sigratio);
 
   // ----- need to subtract the diboson contribution 
-  newsighist->Add(smww, -1.);
   newsighist->SetLineWidth(2);
   newsighist->SetLineColor(1);
   newsighist->SetFillColor(0);
