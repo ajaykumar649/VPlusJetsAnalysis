@@ -1,6 +1,0 @@
-f_diboson_GroomedJet_CA8_mass_pr_core =  0.71908 +/- 0.081067 C L(0 - 1) 
-mean_diboson_GroomedJet_CA8_mass_pr_core =  85.046 +/- 0.63405 C L(0 - 1000) 
-mean_diboson_GroomedJet_CA8_mass_pr_tail =  79.677 +/- 5.8557 C L(0 - 1000) 
-sigma_diboson_GroomedJet_CA8_mass_pr_core =  9.4088 +/- 0.76127 C L(0 - 500) 
-sigma_diboson_GroomedJet_CA8_mass_pr_tail =  29.999 +/- 8.3825 C L(0 - 500) 
-n_diboson = 62.3 +/- 7.9 C

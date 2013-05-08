@@ -46,8 +46,8 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
         if pars.btagSelection:
             startRange = 2
             for i in range(0, startRange):
-                # pars.cuts += '&&(JetPFCor_bDiscriminatorCSV[%i]>0.244)' % i
-                pars.cuts += '&&(JetPFCor_bDiscriminatorCSV[%i]>0.679)' % i
+                pars.cuts += '&&(JetPFCor_bDiscriminatorCSV[%i]>0.244)' % i
+                #pars.cuts += '&&(JetPFCor_bDiscriminatorCSV[%i]>0.679)' % i
         for i in range(startRange, 6):
             pars.cuts += '&&((abs(JetPFCor_Eta[%i])>2.4)||' % i + \
                          '(JetPFCor_Pt[%i]<30.)||' % i + \
@@ -60,7 +60,8 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
     # veto vbf
     pars.cuts += '&&(vbf_event==0)'
 
-    #pars.backgrounds = ['diboson', 'top', 'WpJ', 'ZpJ']
+##     pars.backgrounds = ['diboson', 'top', 'WpJ', 'ZpJ']
+##     pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.05, 'ZpJ' : 0.05 }
     pars.backgrounds = ['diboson', 'top', 'WpJ']
     pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.05}
     pars.constrainShapes = ['WpJ']
@@ -70,10 +71,14 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
         pars.yieldConstraints = {}
 
     if pars.btagSelection:
-        # pars.backgrounds = ['diboson', 'WHbb', 'top', 'WpJ', 'ZpJ']
-        pars.backgrounds = ['diboson', 'top', 'WpJ', 'ZpJ']
-        pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.1, 'ZpJ' : 0.1 }
-        pars.constrainShapes = ['top', 'WpJ', 'diboson']
+##         pars.backgrounds = ['diboson', 'top', 'WpJ']
+##         pars.yieldConstraints = {'top' : 0.07, 'WpJ' : 0.05}
+##         pars.constrainShapes = ['WpJ']
+        ### or include the Higgs (its normalization is set constant via runDiboson8TevFit.py):
+        pars.backgrounds = ['diboson', 'WHbb', 'top', 'WpJ']
+        pars.yieldConstraints = {'WHbb' : 0.000001, 'top' : 0.07, 'WpJ' : 0.05}
+        pars.constrainShapes = ['WpJ']
+        
 
     # you need a files entry and a models entry for each of the fit 
     # compoents in backgrounds and signals
@@ -130,9 +135,20 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
 
     if pars.btagSelection:
         pars.WpJModels = [14]
-        pars.WpJFracOfData = -1
+        pars.WpJModelsAlt = [10]
+        #pars.WpJAuxModelsAlt = [3]
+        if isElectron:
+            #pars.WpJFracOfData = 0.2098 #medium
+            pars.WpJFracOfData = 0.5101 #loose
+            #pars.WpJFracOfData = 0.4831 #loose with QCD
+        else:
+            #pars.WpJFracOfData = 0.1935 #medium
+            pars.WpJFracOfData = 0.4825 #loose
+        #pars.WpJFracOfData = -1
     else:
         pars.WpJModels = [10]
+        pars.WpJModelsAlt = [24]
+        pars.WpJAuxModelsAlt = [3]
         #pars.WpJModels = [-2]
         #pars.WpJFracOfData = 0.78 
         pars.WpJFracOfData = -1
@@ -156,13 +172,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
 ##     pars.WpJ_SUModels = [10]
 ##     pars.WpJ_SDModels = [10]
     
-    
-    pars.WpJModelsAlt = [24]
-    pars.WpJAuxModelsAlt = [3]
-##     if isElectron:
-##         pars.WpJModelsAlt = [23]
-##         pars.WpJAuxModelsAlt = [4]
-    
+
     pars.WpJ_NomModelsAlt = pars.WpJ_NomModels
     pars.WpJ_NomAuxModelsAlt = pars.WpJ_NomAuxModels
     pars.WpJ_MUModelsAlt = pars.WpJ_MUModels
@@ -214,32 +224,42 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
         ]
 
     if pars.btagSelection:
-        pars.topFracOfData = -1
-        pars.topModels = [17] #btag selection
+        if isElectron:
+            #pars.topFracOfData = 0.7722 #medium
+            pars.topFracOfData = 0.4722 #loose
+            #pars.topFracOfData = 0.4472 #loose with QCD
+        else:
+            #pars.topFracOfData = 0.7914 #medium
+            pars.topFracOfData = 0.4994 #loose
+        #pars.topFracOfData = -1
+        pars.topModels = [23]
+        pars.topAuxModels = [3]
     else:
         pars.topFracOfData = -1
         #pars.topFracOfData = 0.046
         pars.topModels = [13] #anti-btag selection
-
+        pars.topAuxModels = [3]
+        
     #pars.topModels = [-1]
     pars.topModelsAlt = pars.topModels
+    pars.topAuxModelsAlt = pars.topAuxModels
     pars.topConvModels = pars.GlobalConvModels
     pars.topConvModelsAlt = pars.topConvModels
 
     if pars.useTopSideband:
         pars.topModels = [-1]
 
-#####################  HWH: #######################################
-    pars.HWHFiles = [
+#####################  WHbb: #######################################
+    pars.WHbbFiles = [
         (pars.MCDirectory + 'RD_%s_WH_WToLNu_HToBB_M-125_CMSSW532.root' % (flavorString), 999998, 0.6966*0.577*(0.1075+0.1057+0.1125)),
         ]
 
-    pars.HWHFracOfData = -1
-    pars.HWHModels = [5]
+    pars.WHbbFracOfData = -1
+    pars.WHbbModels = [5]
 
-    pars.HWHModelsAlt = pars.HWHModels
-    pars.HWHConvModels = pars.GlobalConvModels
-    pars.HWHConvModelsAlt = pars.HWHConvModels
+    pars.WHbbModelsAlt = pars.WHbbModels
+    pars.WHbbConvModels = pars.GlobalConvModels
+    pars.WHbbConvModelsAlt = pars.WHbbConvModels
 
 ###################################################################
     
@@ -248,7 +268,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True,
     pars.ZpJPlotting = { 'color' : kYellow, 'title' : 'Z+jets'}
     pars.topPlotting = {'color' : kGreen+2, 'title' : 'top'}
     pars.QCDPlotting = {'color' : kGray, 'title' : 'multijet'}
-    pars.HWHPlotting = {'color' : kBlue, 'title' : 'WHbb'}
+    pars.WHbbPlotting = {'color' : kBlue, 'title' : 'WHbb'}
 
     pars.var = ['Mass2j_PFCor']
     pars.varRanges = {'Mass2j_PFCor': (14, 48., 160., []),
@@ -298,25 +318,27 @@ def customizeElectrons(pars):
     
     pars.DataFile = pars.MCDirectory + 'RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root'
 
-    pars.QCDFiles = [
-        (pars.SecondaryDirectory + 'RDQCD_WenuJets_Isog0p3NoElMVA_19p2invfb.root',
-         1,1), #The events come from the data sideband
-        ]
-    
-    if pars.btagSelection:
-        pars.QCDModels = [0]
-        pars.yieldConstraints['QCD'] = 0.5
-    else:
+    if ((not pars.useTopSideband) and (not pars.btagSelection)):
+        pars.QCDFiles = [(pars.SecondaryDirectory + 'RDQCD_WenuJets_Isog0p3NoElMVA_19p2invfb.root',
+                          1,1), #The events come from the data sideband
+                         ]
         pars.backgrounds.append('QCD')
-
+        
+##         if pars.btagSelection:
+##             pars.QCDFracOfData = 0.054
+##             pars.QCDModels = [0]
+##             pars.yieldConstraints['QCD'] = 0.5
         pars.QCDFracOfData = 0.07
         pars.QCDModels = [17]
         #pars.QCDModels = [-1]
         pars.yieldConstraints['QCD'] = 0.5
-    pars.QCDModelsAlt = pars.QCDModels
-    pars.QCDConvModels = pars.GlobalConvModels
-    pars.QCDConvModelsAlt = pars.QCDConvModels
-    
+
+            
+        pars.QCDModelsAlt = pars.QCDModels
+        pars.QCDConvModels = pars.GlobalConvModels
+        pars.QCDConvModelsAlt = pars.QCDConvModels
+
+
     pars.doEffCorrections = True
     pars.effToDo = ['lepton']
     pars.leptonEffFiles = {

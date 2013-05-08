@@ -1,0 +1,6 @@
+f_WHbb_Mass2j_PFCor_core = 0.74626 +/- 0.026269 C L(0.483565 - 1.00895)
+mean_WHbb_Mass2j_PFCor_core = 118.94 +/- 0.26998 C L(116.242 - 121.642)
+mean_WHbb_Mass2j_PFCor_tail = 102.10 +/- 2.1731 C L(80.3664 - 123.828)
+sigma_WHbb_Mass2j_PFCor_core = 13.176 +/- 0.31798 C L(9.99608 - 16.3557)
+sigma_WHbb_Mass2j_PFCor_tail = 29.237 +/- 1.1116 C L(18.1209 - 40.3528)
+n_WHbb = 22.7 +/- 4.8 C

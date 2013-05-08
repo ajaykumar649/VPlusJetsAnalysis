@@ -647,7 +647,7 @@ class Wjj2DFitter:
 
     def initFromExplicitVals(self,opts):
         #,init_diboson= -1.0,init_WpJ=-1.0,init_top=-1.0,init_ZpJ=-1.0,init_QCD=-1.0
-        components = ['diboson', 'top', 'WpJ', 'ZpJ', 'QCD']
+        components = ['diboson', 'top', 'WpJ', 'ZpJ', 'QCD', 'WHbb']
         for component in components:
             #double init
             init = getattr(opts, 'ext%s' % component)

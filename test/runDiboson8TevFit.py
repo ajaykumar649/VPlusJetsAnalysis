@@ -32,6 +32,8 @@ parser.add_option('--extendedGen', dest='extendedGen', action='store_true',
                   default=False, help='use the extended option when generating')
 parser.add_option('--extWpJ', dest='extWpJ', default=-1, type='int',
                   help='Set the number of WpJ events to generate for toy validation')
+parser.add_option('--extWHbb', dest='extWHbb', default=-1, type='int',
+                  help='Set the number of WHbb events to generate for toy validation')
 parser.add_option('--exttop', dest='exttop', default=-1, type='int',
                   help='Set the number of top events to generate for toy validation')
 parser.add_option('--extZpJ', dest='extZpJ', default=-1, type='int',
@@ -98,7 +100,7 @@ if opts.runPdfGenToySim:
         print "Toy generation parameters taken from ", opts.genParamFile
         parFiles = opts.genParamFile
     #print "performing Toy Generation from param files: ", parFiles
-    genPars = config.theConfig(Nj = opts.Nj, mH = opts.mH, isElectron = opts.isElectron, initFile = parFiles, includeSignal = opts.includeSignal)
+    genPars = config.theConfig(Nj = opts.Nj, mH = opts.mH, isElectron = opts.isElectron, initFile = parFiles, includeSignal = opts.includeSignal, btagged = opts.btag)
     genFitter = RooWjj2DFitter.Wjj2DFitter(genPars)
 
     
@@ -204,15 +206,15 @@ timer.Continue()
 if pars.useTopSideband:
     fitter.ws.var('WpJ_nrm').setConstant()
 
-## fitter.ws.var('top_nrm').setConstant()
+##fitter.ws.var('top_nrm').setConstant()
 ## fitter.ws.var('ZpJ_nrm').setConstant()
 
 
 fitter.ws.var('r_signal').setVal(1.0)
 fitter.ws.var('r_signal').setError(0.04)
 
-if fitter.ws.var('WHbb_nrm'):
-    fitter.ws.var('WHbb_nrm').setConstant(True)
+## if fitter.ws.var('WHbb_nrm'):
+##     fitter.ws.var('WHbb_nrm').setConstant(True)
     
 fr = None
 fr = fitter.fit()
@@ -327,9 +329,8 @@ if opts.nullFit:
 
     fitter_null.ws.var('diboson_nrm').setVal(0.)
     fitter_null.ws.var('diboson_nrm').setConstant()
-    if fitter_null.ws.var('WHbb_nrm'):
-        fitter_null.ws.var('WHbb_nrm').setConstant(True)
-
+##     if fitter_null.ws.var('WHbb_nrm'):
+##         fitter_null.ws.var('WHbb_nrm').setConstant(True)
     fr_null = fitter_null.fit()
     fr_null.SetName('fitResult_null')
     fr_null.Print('v')
@@ -357,12 +358,13 @@ fitter.ws.Write()
 output.Close()
 
 c1.SaveAs("Diboson%slnujj_%s_Stacked.png" % (tag, mode))
-if not pars.useTopSideband:
-    c2.SaveAs("Diboson%slnujj_%s_Subtracted.png" % (tag, mode))
 cp1.SaveAs("Diboson%slnujj_%s_Pull.png" % (tag, mode))
 
-fitter.ws.var('n_diboson').Print()
-fitter.ws.var('diboson_nrm').Print()
+if not pars.useTopSideband:
+    c2.SaveAs("Diboson%slnujj_%s_Subtracted.png" % (tag, mode))
+
+    fitter.ws.var('n_diboson').Print()
+    fitter.ws.var('diboson_nrm').Print()
 
 print 'Time elapsed: %.1f sec' % timer.RealTime()
 print 'CPU time used: %.1f sec' % timer.CpuTime()

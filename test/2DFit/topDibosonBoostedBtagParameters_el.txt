@@ -1,6 +1,0 @@
-f_top_GroomedJet_CA8_mass_pr_core =  0.091570 +/- 0.042604 C L(0 - 1) 
-mean_top_GroomedJet_CA8_mass_pr_core =  82.930 +/- 2.0381 C L(0 - 1000) 
-mean_top_GroomedJet_CA8_mass_pr_tail =  83.591 +/- 1.2367 C L(0 - 1000) 
-sigma_top_GroomedJet_CA8_mass_pr_core =  6.6271 +/- 2.5439 C L(0 - 500) 
-sigma_top_GroomedJet_CA8_mass_pr_tail =  30.299 +/- 1.9558 C L(0 - 500) 
-n_top = 787.6 +/- 28.1 C
