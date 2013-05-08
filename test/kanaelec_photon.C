@@ -45,7 +45,7 @@ const TString inQCDDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2
 ///// Specify Location of Store Reduced Trees:
 //const TString outDataDir   = "/eos/uscms/store/user/jfaulkn3/ReducedTrees/";
 //const TString outDataDir   = "/uscms_data/d3/jfaulkn3/ReducedTrees/";
-const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest12v2/";
+const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/Moriond2013/RDtest12v3/";
 
 /////////////////////////////////////////////////////////
 ///// Specify Location of Efficiency Tables:
@@ -451,6 +451,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    Float_t         JetPFCor_dRpho12plj[6] = {99.};
    Float_t         c2jMass12,c2jMass12plj,c2jMass11;
    Float_t         MVAwt=1.;
+   Int_t           MVAcut=0;
    TLorentzVector p4j1,p4j2,c2j;
 
    TBranch *branch_iPhoton12= newtree->Branch("iPhoton12",    &iPhoton12,     "iPhoton12/I");
@@ -469,6 +470,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    TBranch *branch_i12Jet3plj= newtree->Branch("i12Jet3plj",    &i12Jet3plj,     "i12Jet3plj/I");
    TBranch *branch_i12Jet4plj= newtree->Branch("i12Jet4plj",    &i12Jet4plj,     "i12Jet4plj/I");
    TBranch *branch_MVAwt= newtree->Branch("MVAwt",    &MVAwt,     "MVAwt/F");
+   TBranch *branch_MVAcut= newtree->Branch("MVAcut",    &MVAcut,     "MVAcut/I");
    TBranch *branch_c2jMass11= newtree->Branch("c2jMass11",    &c2jMass11,     "c2jMass11/F");
    TBranch *branch_c2jMass12= newtree->Branch("c2jMass12",    &c2jMass12,     "c2jMass12/F");
    TBranch *branch_c2jMass12plj= newtree->Branch("c2jMass12plj",    &c2jMass12plj,     "c2jMass12plj/F");
@@ -801,7 +803,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       // Only Focus on the Following Jet Efforts if there is either a good 2011/2012 photon:
       if(iPhoton11>=0 || iPhoton12>=0 || iPhoton12plj>=0){
 
-         if (wda == 20120001 && !isQCD) MVAwt = (0.00781717 + 28.1270/TMath::Power(Photon_Et[(iPhoton12plj>-1)? iPhoton12plj : 0],1.83354));
+         if (wda == 20120001 && !isQCD) MVAwt = (0.0736716 + 356.155/TMath::Power(Photon_Et[(iPhoton12>-1)? iPhoton12 : 0],2.09436));
 
          //////////////////////////////////
          // Calculate Jet-Photon Isolation:
@@ -916,65 +918,66 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          eleWMtEff.GetEfficiency(W_mt, W_electron_eta);
 
 
-         //////////////////////////////////////////////////////////
-         // Add Photon ID efficiency scale factor (2012 Medium ID):
+        //////////////////////////////////////////////////////////
+         // Add Photon ID efficiency scale factor (2012 Tight ID HtoZA AN-13-038):
          if(Photon_Et[iPhoton12]<20.){
 
             if(fabs(Photon_Eta[iPhoton12])<1.4442){
-               effwt = 0.9853*effwt;
+               effwt = 0.9776*effwt;
             }else{
-               effwt = 1.0068*effwt;
+               effwt = 1.0143*effwt;
             }
 
          }else if(Photon_Et[iPhoton12]>20. && Photon_Et[iPhoton12]<30.){
 
             if(fabs(Photon_Eta[iPhoton12])<0.8){
-               effwt = 0.9856*effwt;
+               effwt = 0.9776*effwt;
             }else if(fabs(Photon_Eta[iPhoton12])>0.8 && fabs(Photon_Eta[iPhoton12])<1.4442){
-               effwt = 0.9977*effwt;
+               effwt = 0.9795*effwt;
             }else if(fabs(Photon_Eta[iPhoton12])>1.4442 && fabs(Photon_Eta[iPhoton12])<2.0){
-               effwt = 1.0035*effwt;
+               effwt = 0.9804*effwt;
             }else{
-               effwt = 1.0259*effwt;
+               effwt = 1.0167*effwt;
             }
 
          }else if(Photon_Et[iPhoton12]>30. && Photon_Et[iPhoton12]<40.){
 
             if(fabs(Photon_Eta[iPhoton12])<0.8){
-               effwt = 0.9824*effwt;
+               effwt = 0.9711*effwt;
             }else if(fabs(Photon_Eta[iPhoton12])>0.8 && fabs(Photon_Eta[iPhoton12])<1.4442){
-               effwt = 0.9950*effwt;
+               effwt = 0.9823*effwt;
             }else if(fabs(Photon_Eta[iPhoton12])>1.4442 && fabs(Photon_Eta[iPhoton12])<2.0){
-               effwt = 1.0020*effwt;
+               effwt = 0.9964*effwt;
             }else{
-               effwt = 1.0198*effwt;
+               effwt = 1.0138*effwt;
             }
 
          }else if(Photon_Et[iPhoton12]>40. && Photon_Et[iPhoton12]<50.){
 
             if(fabs(Photon_Eta[iPhoton12])<0.8){
-               effwt = 0.9848*effwt;
+               effwt = 0.9778*effwt;
             }else if(fabs(Photon_Eta[iPhoton12])>0.8 && fabs(Photon_Eta[iPhoton12])<1.4442){
-               effwt = 0.9901*effwt;
+               effwt = 0.9805*effwt;
             }else if(fabs(Photon_Eta[iPhoton12])>1.4442 && fabs(Photon_Eta[iPhoton12])<2.0){
-               effwt = 1.0023*effwt;
+               effwt = 0.9947*effwt;
             }else{
-               effwt = 1.0188*effwt;
+               effwt = 1.0129*effwt;
             }
 
          }else{
 
             if(fabs(Photon_Eta[iPhoton12])<0.8){
-               effwt = 0.9800*effwt;
+               effwt = 0.9718*effwt;
             }else if(fabs(Photon_Eta[iPhoton12])>0.8 && fabs(Photon_Eta[iPhoton12])<1.4442){
-               effwt = 0.9895*effwt;
+               effwt = 0.9768*effwt;
             }else if(fabs(Photon_Eta[iPhoton12])>1.4442 && fabs(Photon_Eta[iPhoton12])<2.0){
-               effwt = 1.0007*effwt;
+               effwt = 0.9990*effwt;
             }else{
-               effwt = 1.0113*effwt;
+               effwt = 1.0098*effwt;
             }
 
          }
+
 
 
       ////////////////////////
@@ -1286,6 +1289,9 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          mva2jWWAelA2 = (float) mvaReader2jWWAelA2.GetMvaValue( mvaInputValPhoA12 );
 
       }
+      MVAcut=0;
+
+      if (!isQCD && iPhoton12>-1 && i12Jet1>-1 && i12Jet2>-1 && abs(W_electron_eta)<2.5 && W_electron_pt>30 && event_met_pfmet>35. && W_mt>30 && abs(Photon_Eta[iPhoton12])<1.44421 && Photon_Et[iPhoton12]>30.&& Photon_dRlep[iPhoton12] > 0.5 && JetPFCor_dRpho12[i12Jet1]>0.5 && JetPFCor_dRpho12[i12Jet2]>0.5 && abs(JetPFCor_dphiMET[i12Jet1])>0.4 && abs(JetPFCor_dphiMET[i12Jet2])>0.4 && JetPFCor_bDiscriminatorCSV[i12Jet1]<0.679 && JetPFCor_bDiscriminatorCSV[i12Jet2]<0.679 && abs(JetPFCor_Eta[i12Jet1]-JetPFCor_Eta[i12Jet2])<1.4 &&  abs(91.1876-massla)>10. ) MVAcut = 1;
 
       /////////////////
       // Fill Branches:
@@ -1308,6 +1314,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
       branch_i12Jet3plj->Fill();
       branch_i12Jet4plj->Fill();
       branch_MVAwt->Fill();
+      branch_MVAcut->Fill();
       branch_c2jMass11->Fill();
       branch_c2jMass12->Fill();
       branch_c2jMass12plj->Fill();
