@@ -22,14 +22,13 @@ Some important constants are set at the top of the file.
 
 using namespace std;
 
-#include "dcutils.C"
-
+#include "card.h"
 #include "atgcinputs.h"
 
 
 //================================================================================
-
-bool calcEstimatedLimit(const CardData_t& card)
+#if 0
+bool calcEstimatedLimit(const Card& card)
 {
   double totback = 0.0, totsig=0.0;
 
@@ -58,267 +57,75 @@ bool calcEstimatedLimit(const CardData_t& card)
 
   return (true);
 }                                                            // calcEstimatedLimit
+#endif
 
 //================================================================================
 
-CardData_t 
-makeNewCard(TH1           *inhist,
-	    const TString& procname,
-	    const TString& systname,
-	    const int      ichan,
-	    const int      nchan,
-	    bool           doshape
-	    )
+Card *
+makeDataCardContent(TFile *fp,
+		    const TString& channame,
+		    const TString& signame)
 {
-  CardData_t card;
+  Card *card;
 
-  card.nbackproc = 0;
-  card.nsigproc  = 0;
+  TH1 *datahist;
+  TH1 *backhist;
+  TH1 *shapehist;
 
-  //cout << "\tmake new card ";
-
-  // cannot start a new card with a systematic histo
-  assert(!systname.Length());
-
-  const pair<double,double> zeropair(0.0,0.0);
-
-  char elormu = channames[ichan][0];
-  TString trigsyst   = "CMS_trigger_"+TString(elormu);
+  char elormu = channame[ELORMUCHAR];
   TString leptsyst   = "CMS_eff_"+TString(elormu);
+  TString trigsyst   = "CMS_trigger_"+TString(elormu);
   TString sigXSsyst  = "sigUncXS";
 
-  card.systematics[trigsyst]       = "lnN"; // common across same-flavor channels
-  card.systematics[leptsyst]       = "lnN"; // common across same-flavor channels
-  card.systematics["lumi"]         = "lnN"; // common across channels
-  card.systematics[sigXSsyst]      = "lnN";
+  datahist = (TH1 *)fp->Get(dataobjname);
+  if (!datahist) {
+    cerr << "Couldn't get data histogram from file for channel " << channame << endl;
+    exit(-1);
+  }
 
-  ProcData_t pd;
+  backhist = (TH1 *)fp->Get(bkgdobjname);
+  if (!backhist) {
+    cerr << "Couldn't get background histogram from file for channel " << channame << endl;
+    exit(-1);
+  }
 
-  pair<TString,double> channel;
+  TString shapesystname = Form("%s_backshape",channame.Data());
 
-  pd.name        = procname;
-  channel.first  = channames[ichan];
+  shapehist = (TH1 *)fp->Get("background_"+shapesystname+"Up");
+  if (!shapehist) {
+    cerr << "Couldn't get background shapeUp histogram from file for channel " << channame << endl;
+    exit(-1);
+  }
 
-  if (doshape)
-    channel.second = inhist->Integral(); // the yield for this channel
-  else
-    channel.second = inhist->Integral(inhist->FindFixBin(dijetptmingev),
-				      inhist->GetNbinsX()+1);
+  TH1 *sighist = (TH1 *)fp->Get(signame);
 
-  pd.channels.insert(channel);
+  if (!sighist) {
+    cerr<<"Couldn't get signal histogram "<<signame<<" from file for channel "<<channame<<endl;
+    //exit(-1);
+    return NULL;
+  }
 
-  if( procname.Contains("data") ) {
-    card.data = pd; // done.
-  } else {
+  card = new Card(-1,dataobjname,channame,"",false);
+  card->addProcessChannel(sighist->Integral(),"signal",channame,"",true);
+  card->addProcessChannel(backhist->Integral(),bkgdobjname,channame,shapesystname,false);
 
-    if( procname.Contains("ignal") ) {                              // signal
-
-      card.nsigproc++;
-
-      pd.procindex = 1-card.nsigproc; /* process index for signal processes required to be distinct,
-					 as well as 0 or negative */
-
-      // insert signal lumi and xsec systematics now
-
-      pair<double,double> lumipair(0.0, 1+siglumiunc);
-
-      pd.systrates["lumi"].resize(nchan,lumipair);
-      pd.systrates[trigsyst].resize(nchan,zeropair);
-      pd.systrates[trigsyst][ichan].second = 1+sigtrigeffunc;
-      pd.systrates[leptsyst].resize(nchan,zeropair);
-      pd.systrates[leptsyst][ichan].second = 1+siglepteffunc;
-      pd.systrates[sigXSsyst].resize(nchan,zeropair);
-      pd.systrates[sigXSsyst][ichan].second = 1+signal_xs_unc;
-
-    } else {                                                        //background
-      card.nbackproc++;
-      pd.procindex = card.nbackproc;
-    }
-
-    card.processes.push_back(pd);
-    card.pname2index[procname]= 0;
-
-  } // else not data
+  // (non-shape) Systematics:
+  card->addSystematic(leptsyst,"signal",channame,1+siglepteffunc);
+  card->addSystematic(trigsyst,"signal",channame,1+sigtrigeffunc);
+  card->addSystematic("lumi_8TeV","signal",channame,1+siglumiunc);
+  card->addSystematic("sigXSsyst","signal",channame,1+signal_xs_unc);
 
   return card;
-}                                                                   // makeNewCard
-
-//================================================================================
-
-void
-addToCard(CardData_t&    card,
-	  TH1           *inhist,   // input histogram
-	  const TString& procname, // process name 
-	  const TString& systname, // name of (shape) systematic applied
-	  const int      ichan,    // channel index
-	  const int      nchan,    // number of channels in card
-	  bool           doshape=true
-	  )
-{
-  //cout << "\tadd to card ";
-
-  // With each input histogram one must:
-  // 1. If a new process, update the process info in the card: "card.processes", "card.pname2index",
-  // 2. Update new channel information "card.processes[procindex].channels" (channel name/rate pairs)
-  // 3. Update the systematics information as necessary:
-  //    if systname.length, add shape systematic information to
-  //    card.systematics (if new systematic), card.processes[procindex].systrates[systname][ichan]
-  // 
-  pair<TString,double> channel;
-
-  const pair<double,double> zeropair(0.0,0.0);
-
-  TString channame(channames[ichan]);
-
-  channel.first  = channame;
-
-  if (doshape)
-    channel.second = inhist->Integral(); // the yield for this channel
-  else
-    channel.second = inhist->Integral(inhist->FindFixBin(dijetptmingev),
-				      inhist->GetNbinsX()+1);
-
-  char elormu = channame[0];
-  TString trigsyst   = "CMS_trigger_"+TString(elormu);
-  TString leptsyst   = "CMS_eff_"+TString(elormu);
-  TString sigXSsyst  = "sigUncXS";
-
-  card.systematics[trigsyst]     = "lnN"; // common across same-flavor channels
-  card.systematics[leptsyst]     = "lnN"; // common across same-flavor channels
-  card.systematics[sigXSsyst]    = "lnN";
-
-  if( procname.Contains("data") )         // data observation
-
-    if (!card.data.name.Length()) {             // first channel of data encountered
-      ProcData_t pd;
-      pd.name = procname;
-      pd.channels.insert(channel);
-      card.data = pd;
-    }else{                                      // another channel for data, possibly
-      assert(!card.data.name.CompareTo(procname)); // must be the same
-      card.data.channels.insert(channel);
-    }
-
-  else if( procname.Contains("ignal") ) { // signal expectation
-
-    assert(!systname.Length());     // shape based systematics for signal not implemented yet
-
-    pair<double,double> lumipair(0.0, 1+siglumiunc);
-
-    map<TString,int>::iterator pit;
-    pit = card.pname2index.find(procname);
-    if (pit == card.pname2index.end()) {    // new signal process, first channel encountered
-      card.nsigproc++;
-
-      ProcData_t pd;
-      pd.name      = procname;
-      pd.procindex = 1-card.nsigproc; /* process index for signal processes required to be distinct,
-					 as well as 0 or negative */
-
-      pd.channels.insert(channel);
-
-      pd.systrates["lumi"].resize(nchan,lumipair);
-      pd.systrates[trigsyst].resize(nchan,zeropair);
-      pd.systrates[trigsyst][ichan].second = 1.0+sigtrigeffunc;
-      pd.systrates[leptsyst].resize(nchan,zeropair);
-      pd.systrates[leptsyst][ichan].second = 1+siglepteffunc;
-      pd.systrates[sigXSsyst].resize(nchan,zeropair);
-      pd.systrates[sigXSsyst][ichan].second = 1+signal_xs_unc;
-
-      // put new signal in front, have to adjust the mapped indices for all the rest.
-      // This maintains the proper ordering of processes in the datacard (for LandS)
-      //
-      for (pit = card.pname2index.begin(); pit != card.pname2index.end(); pit++)
-	pit->second++;
-
-      card.processes.push_front(pd);
-
-      card.pname2index[pd.name] = 0;
-
-    } else {                                // another channel for signal, presumably
-      ProcData_t& pd = card.processes[pit->second];
-      assert(pd.name.Length());             // process should exist here
-      assert(!pd.name.CompareTo(procname)); // must be the same
-      pd.channels.insert(channel);
-
-      // has this signal systematic been initialized for this process?
-      map<TString,vector<pair<double,double> > >::const_iterator rit = pd.systrates.find(trigsyst);
-      if (rit == pd.systrates.end()) { //  no
-	pd.systrates[trigsyst].resize(nchan,zeropair);
-      }
-      pd.systrates[trigsyst][ichan].second   = 1.0 + sigtrigeffunc;
-
-      // has this signal systematic been initialized for this process?
-      rit = pd.systrates.find(leptsyst);
-      if (rit == pd.systrates.end()) { //  no
-	pd.systrates[leptsyst].resize(nchan,zeropair);
-      }
-      pd.systrates[leptsyst][ichan].second   = 1.0 + siglepteffunc;
-
-      // has this signal systematic been initialized for this process?
-      rit = pd.systrates.find(sigXSsyst);
-      if (rit == pd.systrates.end()) { //  no
-	pd.systrates[sigXSsyst].resize(nchan,zeropair);
-      }
-      pd.systrates[sigXSsyst][ichan].second   = 1.0 + signal_xs_unc;
-    }
-
-  } else {                               // background process
-
-    map<TString,int>::iterator pit;
-    pit = card.pname2index.find(procname);
-    if (pit == card.pname2index.end()) {    // first channel of this background process encountered
-
-      assert(!systname.Length()); // cannot encounter systematic histo before nominal histo
-
-      card.nbackproc++;
-
-      ProcData_t pd;
-      pd.name = procname;
-      pd.procindex = card.nbackproc;
-      pd.channels.insert(channel);
-
-      card.pname2index[pd.name] = (int)card.processes.size();
-      card.processes.push_back(pd);
-
-    } else {                                /* either another channel, or a shape
-					       systematic for an existing channel */
-      ProcData_t& pd = card.processes[pit->second];
-
-      if (systname.Length()) {
-	if (doshape) {
-	  // a shape-based limit, all channels get a factor of 0.0
-	  card.systematics[systname] = "shape";
-	  pd.systrates[systname].resize(nchan,zeropair);
-	  pd.systrates[systname][ichan].second = 1.0; // except the current channel
-	} else {
-	  // convert shape histo to a normal systematic
-	  std::map<TString,double>::const_iterator itchan;
-	  itchan = pd.channels.find(channame);
-	  assert(itchan != pd.channels.end());
-	  double nomrate = itchan->second;
-	  card.systematics[systname] = "lnN";
-	  pd.systrates[systname].resize(nchan,zeropair);
-	  pd.systrates[systname][ichan].second = 1+((channel.second-nomrate)/nomrate);
-	}
-      }
-      else {
-	assert(pd.name.Length());             // process should exist here
-	assert(!pd.name.CompareTo(procname)); // and be named the same
-	pd.channels.insert(channel);
-      }
-    }
-  }
-}                                                                     // addToCard
+}                                                           // makeDataCardContent
 
 //================================================================================
 
 void
 makeDataCardFiles(bool doshape) // int argc, char*argv[])
 {
-  TFile *fps[NUMCHAN];
+  TFile *fp;
 
-  TString fnames[NUMCHAN];
+  TString fname;
 
 #if 0
   if (argc != NUMCHAN+1) {
@@ -328,143 +135,131 @@ makeDataCardFiles(bool doshape) // int argc, char*argv[])
 #endif
 
   for (int ichan=0; ichan<NUMCHAN; ichan++) {
-    fnames[ichan] = TString(dir)+"/"+TString(inputfiles[ichan]); // TString(argv[ichan+1]);
-    fps[ichan] = new TFile(fnames[ichan]);
-    if (fps[ichan]->IsZombie()) {
-      cerr << "Couldn't open file " << fnames[ichan] << endl;
-      exit(-1);
-    }
-  }
+    fname = TString(dir)+"/"+TString(inputfiles[ichan]); // TString(argv[ichan+1]);
+    fp = new TFile(fname);
 
-  TH1 *datahists[NUMCHAN];
-  TH1 *backhists[NUMCHAN];
-  TH1 *shapehists[NUMCHAN];
+    TString channame(channames[ichan]);
 
-  for (int ichan=0; ichan<NUMCHAN; ichan++) {
-    datahists[ichan] = (TH1 *)fps[ichan]->Get("data_obs");
-    if (!datahists[ichan]) {
-      cerr << "Couldn't get data histogram from file for channel " << ichan << endl;
-      exit(-1);
-    }
-    backhists[ichan] = (TH1 *)fps[ichan]->Get("background");
-    if (!backhists[ichan]) {
-      cerr << "Couldn't get background histogram from file for channel " << ichan << endl;
+    if (fp->IsZombie()) {
+      cerr << "Couldn't open file " << fname << endl;
       exit(-1);
     }
 
-    shapehists[ichan] = (TH1 *)fps[ichan]->Get(Form("background_%s_backshapeUp",channames[ichan]));
-    if (!shapehists[ichan]) {
-      cerr << "Couldn't get background shapeUp histogram from file for channel " << ichan << endl;
-      exit(-1);
-    }
-  }
+    cout << "Reading root input file " << fname << endl;
 
-  // loop through objects in the input root file and find histograms
-  // that are shape inputs into the limit setting data card
-  //
-  for (float lambdaz=LAMBDAZ_MIN; lambdaz<=LAMBDAZ_MAX; lambdaz+= LAMBDAZ_INC) {
-    //float deltaKappaGamma=0;
-    for (float deltaKappaGamma=dKG_MIN; deltaKappaGamma<=dKG_MAX; deltaKappaGamma += dKG_INC) {
+    // loop through objects in the input root file and find histograms
+    // that are shape inputs into the limit setting data card
+    //
+    for (float lambdaz=LAMBDAZ_MIN;
+	 lambdaz<=LAMBDAZ_MAX+LAMBDAZ_INC/1000;
+	 lambdaz+= LAMBDAZ_INC) {
 
-       //+INC/100 to avoid truncation
-      TString cfgtag = Form(signalfmtstr_lzvsdkg,lambdaz+LAMBDAZ_INC/100.,deltaKappaGamma+dKG_INC/100.);
-      TString signame = "signal_"+cfgtag;
+      //float deltaKappaGamma=0;
+      for (float deltaKappaGamma=dKG_MIN;
+	   deltaKappaGamma<=dKG_MAX+dKG_INC/1000;
+	   deltaKappaGamma += dKG_INC) {
 
-      CardData_t card = makeNewCard(datahists[0],"data","",0,NUMCHAN,doshape);
+	//+INC/1000 to avoid truncation
+	TString cfgtag = Form(signalfmtstr_lzvsdkg,
+			      lambdaz+LAMBDAZ_INC/1000.,
+			      deltaKappaGamma+dKG_INC/1000.);
+	TString signame = "signal_"+cfgtag;
 
-      for (int ichan=0; ichan<NUMCHAN; ichan++) {
-	TH1 *sighist = (TH1 *)fps[ichan]->Get(signame);
+	Card *card = makeDataCardContent(fp,channame,signame);
 
-	TString channame(channames[ichan]);
-
-	if (!sighist) {
-	  cerr<<"Couldn't get signal histogram "<<signame<<" from file for channel "<<channame<<endl;
-	  //exit(-1);
-	  goto nextone;
-	}
-
-	if (doshape) {
+	//if (calcEstimatedLimit(card))
+	if (card)
+	{
 	  // assumes the channel filenames are in the same order as the channels!!
-	  card.shapespecs.push_back(ShapeFiles_t("signal",channame,fnames[ichan],signame));
-	  card.shapespecs.push_back(ShapeFiles_t("data_obs",channame,fnames[ichan],"data_obs"));
-	  card.shapespecs.push_back(ShapeFiles_t("background",channame,fnames[ichan],
-						 "background","background_$SYSTEMATIC"));
+	  card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
+	  card->addShapeFiles(ShapeFiles_t("signal",channame,fname,signame));
+	  card->addShapeFiles(ShapeFiles_t("background",channame,fname,
+					   "background","background_$SYSTEMATIC"));
+
+	  //+INC/1000 to avoid truncation
+	  cfgtag = Form("lz_%.3f_dkg_%.2f_%s",
+			lambdaz+LAMBDAZ_INC/1000.,
+			deltaKappaGamma+dKG_INC/1000.,
+			channame.Data());
+	  TString dcardname("./datacard_"+cfgtag+".txt");
+	  card->Print(dcardname);
 	}
+      } // dKG loop
 
-	if (ichan)
-	  addToCard(card,datahists[ichan],"data","",ichan,NUMCHAN,doshape);
+      for (float deltaG1=dg1_MIN;
+	   deltaG1<=dg1_MAX+dg1_INC/1000;
+	   deltaG1 += dg1_INC) {
 
-	addToCard(card,backhists[ichan],"background","",ichan,NUMCHAN,doshape);
-	addToCard(card,shapehists[ichan],"background",
-		  Form("%s_backshape",channame.Data()),ichan,NUMCHAN,doshape);
-	addToCard(card,sighist,"signal","",ichan,NUMCHAN,doshape);
+	//+INC/1000 to avoid truncation
+	TString cfgtag = Form(signalfmtstr_lzvsdg1,
+			      lambdaz+LAMBDAZ_INC/1000.,
+			      deltaG1+dg1_INC/1000.);
+	TString signame = "signal_"+cfgtag;
+	
+	Card *card = makeDataCardContent(fp,channame,signame);
 
-      } // channel loop
+	//if (calcEstimatedLimit(card))
+	if (card)
+	{
+	  // assumes the channel filenames are in the same order as the channels!!
+	  card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
+	  card->addShapeFiles(ShapeFiles_t("signal",channame,fname,signame));
+	  card->addShapeFiles(ShapeFiles_t("background",channame,fname,
+					   "background","background_$SYSTEMATIC"));
+	  //+INC/1000 to avoid truncation
+	  cfgtag = Form("lz_%.3f_dg1_%.2f_%s",
+			lambdaz+LAMBDAZ_INC/1000.,
+			deltaG1+dg1_INC/1000.,
+			channame.Data());
+	  TString dcardname("./datacard_"+cfgtag+".txt");
+	  card->Print(dcardname);
+	}
+      } // dg1 loop
+    } // lambdaz loop
 
-      //if (calcEstimatedLimit(card))
-      {
-	//+INC/100 to avoid truncation
-	cfgtag = Form("lz_%.3f_dkg_%.2f",lambdaz+LAMBDAZ_INC/100.,deltaKappaGamma+dKG_INC/100.);
-	fmtDataCardFile(0,card,cfgtag);
-      }
-    nextone:
-      ;
+
+    for (float deltaKappaGamma=dKG_MIN;
+	 deltaKappaGamma<=dKG_MAX+dKG_INC/1000;
+	 deltaKappaGamma += dKG_INC)
+    { 
+      for (float deltaG1=dg1_MIN;
+	   deltaG1<=dg1_MAX+dg1_INC/1000;
+	   deltaG1 += dg1_INC) { 
+	//+INC/1000 to avoid truncation
+	TString cfgtag = Form(signalfmtstr_dkgvsdg1,
+			      deltaKappaGamma+dKG_INC/1000.,
+			      deltaG1+dg1_INC/1000.
+			      );
+	TString signame = "signal_"+cfgtag;
+
+	Card *card = makeDataCardContent(fp,channame,signame);
+
+	//if (calcEstimatedLimit(card))
+	if (card)
+	{
+	  // assumes the channel filenames are in the same order as the channels!!
+	  card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
+	  card->addShapeFiles(ShapeFiles_t("signal",channame,fname,signame));
+	  card->addShapeFiles(ShapeFiles_t("background",channame,fname,
+					   "background","background_$SYSTEMATIC"));
+
+	  //+INC/1000 to avoid truncation
+	  cfgtag = Form("dkg_%.2f_dg1_%.2f_%s",
+			deltaKappaGamma+dKG_INC/1000.,
+			deltaG1+dg1_INC/1000.,
+			channame.Data());
+	  TString dcardname("./datacard_"+cfgtag+".txt");
+	  card->Print(dcardname);
+	}
+      } // dg1 loop
     } // dKG loop
-
-    for (float deltaG1=dg1_MIN; deltaG1<=dg1_MAX; deltaG1 += dg1_INC) {
-
-       //+INC/100 to avoid truncation
-      TString cfgtag = Form(signalfmtstr_lzvsdg1,lambdaz+LAMBDAZ_INC/100.,deltaG1+dg1_INC/100.);
-      TString signame = "signal_"+cfgtag;
-
-      CardData_t card = makeNewCard(datahists[0],"data","",0,NUMCHAN,doshape);
-
-      for (int ichan=0; ichan<NUMCHAN; ichan++) {
-	TH1 *sighist = (TH1 *)fps[ichan]->Get(signame);
-
-	TString channame(channames[ichan]);
-
-	if (!sighist) {
-	  cerr<<"Couldn't get signal histogram "<<signame<<" from file for channel "<<channame<<endl;
-	  //exit(-1);
-	  goto nextone2;
-	}
-
-	if (doshape) {
-	  // assumes the channel filenames are in the same order as the channels!!
-	  card.shapespecs.push_back(ShapeFiles_t("signal",channame,fnames[ichan],signame));
-	  card.shapespecs.push_back(ShapeFiles_t("data_obs",channame,fnames[ichan],"data_obs"));
-	  card.shapespecs.push_back(ShapeFiles_t("background",channame,fnames[ichan],
-						 "background","background_$SYSTEMATIC"));
-	}
-
-	if (ichan)
-	  addToCard(card,datahists[ichan],"data","",ichan,NUMCHAN,doshape);
-
-	addToCard(card,backhists[ichan],"background","",ichan,NUMCHAN,doshape);
-	addToCard(card,shapehists[ichan],"background",
-		  Form("%s_backshape",channame.Data()),ichan,NUMCHAN,doshape);
-	addToCard(card,sighist,"signal","",ichan,NUMCHAN,doshape);
-
-      } // channel loop
-
-      //if (calcEstimatedLimit(card))
-      {
-	//+INC/100 to avoid truncation
-	cfgtag = Form("lz_%.3f_dg1_%.2f",lambdaz+LAMBDAZ_INC/100.,deltaG1+dg1_INC/100.);
-	fmtDataCardFile(0,card,cfgtag);
-      }
-    nextone2:
-      ;
-    } // dg1 loop
-
-  } // lambdaz loop
+  } // channel loop
 
 }                                                             // makeDataCardFiles
 
-#ifdef MAIN
 //================================================================================
 
+#ifdef MAIN
 #define DEBUG 1
 
 int main(int argc, char* argv[]) {

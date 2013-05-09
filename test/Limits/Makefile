@@ -2,11 +2,11 @@ CXXFLAGS := `root-config --cflags` -O2 -g -Wall -DMAIN -I${ROOFITSYS}/include
 
 LDFLAGS := `root-config --libs` -L${ROOFITSYS}/lib -L${CMSSW_BASE}/lib/${SCRAM_ARCH} -lRooFitCore -lHiggsAnalysisCombinedLimit
 
-%.o: %.cc
-	${CXX} -c $*.cc -o $@ ${CXXFLAGS} 
-
-%.o: %.C
-	${CXX} -c $*.C -o $@ ${CXXFLAGS} 
+#%.o: %.cc
+#	${CXX} -c $*.cc -o $@ ${CXXFLAGS} 
+#
+#%.o: %.C
+#	${CXX} -c $*.C -o $@ ${CXXFLAGS} 
 
 all : exe
 
@@ -26,7 +26,7 @@ makeDataCardFromTable.exe: makeDataCardFromTable.o
 makeDataCardFromRooWorkspace.exe: makeDataCardFromRooWorkspace.o card.o hwwutils.o
 	${CXX} -g -o $@ $^  ${LDFLAGS}
 
-makeDataCardShapes4tgc.exe: makeDataCardShapes4tgc.o
+makeDataCardShapes4tgc.exe: makeDataCardShapes4tgc.o card.o
 	${CXX} -g -o $@ $^  ${LDFLAGS}
 
 makeDataCardShapes4wwgamaqgc.exe: makeDataCardShapes4wwgamaqgc.o card.o
@@ -38,8 +38,8 @@ makeDataCardFromTable.o: makeDataCardFromTable.cc dcutils.C hwwinputs.h hwwutils
 
 makeDataCardFromRooWorkspace.o: makeDataCardFromRooWorkspace.cc card.h hwwinputs.h hwwutils.h
 
-makeDataCardShapes4tgc.o: makeDataCardShapes4tgc.cc dcutils.C atgcinputs.h
+makeDataCardShapes4tgc.o: makeDataCardShapes4tgc.cc card.h atgcinputs.h
 
-makeDataCardShapes4twwgamaqgc.o: makeDataCardShapes4twwgamaqgc.cc wwgamaqgcinputs.h card.h
+makeDataCardShapes4wwgamaqgc.o: makeDataCardShapes4wwgamaqgc.cc wwgamaqgcinputs.h card.h
 
 card.o: card.cc card.h
