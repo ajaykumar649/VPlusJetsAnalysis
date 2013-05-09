@@ -8,6 +8,7 @@
 const int masspts[NUMMASSPTS] = { 150 };
 
 #define NUMCHAN 2
+#define ELORMUCHAR 0
 
 const char *channames[NUMCHAN] = {
   "elboosted",
@@ -28,17 +29,17 @@ const double signal_xs_unc  = 0.034;
 // for cut-and-count limits:
 const double dijetptmingev  = 350.;
 
-const float LAMBDAZ_MIN = -0.05;
-const float LAMBDAZ_MAX =  0.05;
+const float LAMBDAZ_MIN = -0.03;
+const float LAMBDAZ_MAX =  0.03;
 const float LAMBDAZ_INC = 0.001; //  101 pts
 
 const float dKG_MIN =  -0.10;
 const float dKG_MAX =   0.10;
 const float dKG_INC =   0.01;    // x21 pts
 
-const float dg1_MIN =  -0.20;
-const float dg1_MAX =   0.20;
-const float dg1_INC =   0.02;    // x21 pts
+const float dg1_MIN =  -0.10;
+const float dg1_MAX =   0.10;
+const float dg1_INC =   0.01;    // x21 pts
 
 // FILE/HISTO STRUCTURE: assumed same name objects contained in different files for the different inputs
 
@@ -54,10 +55,11 @@ const char *inputfiles[NUMCHAN] = {
   //"mu_dijet.root",
 };
 
-const char *signalfmtstr_lzvsdkg = "lambdaZ_%.3f_deltaKappaGamma_%.3f";
-const char *signalfmtstr_lzvsdg1 = "lambdaZ_%.3f_deltaG1_%.3f";
+const char *signalfmtstr_lzvsdkg  = "lambdaZ_%.3f_deltaKappaGamma_%.3f";
+const char *signalfmtstr_lzvsdg1  = "lambdaZ_%.3f_deltaG1_%.3f";
+const char *signalfmtstr_dkgvsdg1 = "deltaKappaGamma_%.3f_deltaG1_%.3f";
 
-const char *dataobjname = "data";
+const char *dataobjname = "data_obs";
 const char *bkgdobjname = "background";
 
 #endif // _ATGCINPUTS_H
