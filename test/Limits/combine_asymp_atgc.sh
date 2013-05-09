@@ -12,9 +12,11 @@ do
 
   COMBINE_ARGS="$COMBINE_ARGS -n _atgc_$suffix"
 
-  if [ `echo "scale=4; $lz >= 0.1 || $lz <= -0.1" | bc ; exit` ]
+  if [[ `echo "scale=4; $lz >= 0.01 || $lz <= -0.01" | bc` -ne 0 ]]
   then
-      COMBINE_ARGS="$COMBINE_ARGS --rMax=0.5"
+      echo "lz = " $lz
+#      COMBINE_ARGS="$COMBINE_ARGS --rMax=0.5"
+      COMBINE_ARGS="$COMBINE_ARGS --rMax=10"
   fi
 
   echo "combine $COMBINE_ARGS $datacard 2>&1 | tee ${DIR}/limit_${suffix}.log >/dev/null"
