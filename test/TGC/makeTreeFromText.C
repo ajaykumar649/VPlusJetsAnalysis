@@ -1,11 +1,14 @@
 
 void makeTreeFromText() {
 
-   makeTreeFromText("params-ww-kappa-lambda-cteq6l1.list", 
+   makeTreeFromText("params-ww-kappa-lambda-cteq6l1-001-fitted-short-1TeV.list", 
    "root_kappa-lambda.root", "dkappa", "lambda");
 
-   makeTreeFromText("params-ww-lambda-g1z-cteq6l1.list", 
+   makeTreeFromText("params-ww-lambda-g1z-cteq6l1-001-fitted-short-1TeV.list", 
    "root_lambda-g1.root", "lambda", "dg1");
+
+   makeTreeFromText("params-ww-kappa-g1z-cteq6l1-001-fitted-short-1TeV.list",
+   "root_kappa-g1.root", "dkappa", "dg1");
 }
 
 void makeTreeFromText(char* inputFile, char* outputFile, char* first, char* second) {
