@@ -73,16 +73,21 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
   const double intLUMI = 19300.;
 // hack for WWA 
   const double WWASM_scale   = (0.01362+0.01409)*intLUMI/(198777+199183); // V
-// RD_mu_WWA6m5m5MG_CMSSW532.root
 //  const double AQGC_scale   = 0.047*1.5* intLUMI/194029 ; // m5m5 KOG
   const double AQGC_scale   =  0.0302425 * intLUMI/196004; // m3m5 KOG
+  const double AQGC_scale_KCG     = 0.030337 * intLUMI/94299;
+  const double AQGC_scale_LT0     = 0.0290669 * intLUMI/154634;
+  const double AQGC_scale_KOW     =  0.03938 * intLUMI/86722;
+
   const double H500_scale   = 1.439*0.080*1.5*2.* intLUMI/198470 ; // V
 
 //  const double WJets_scale   = 36257.2* intLUMI/18353019; // V
 //  const double WJets_scale   = 461.6* intLUMI/4802339; // V
 
-  const double WJets_scale   =  0.891*9.37246* intLUMI/1049473; // V
-  const double WJetsPT100_scale   =  0.891*0.423028445 *intLUMI/369309; // V
+//  const double WJets_scale   =  0.891*9.37246* intLUMI/1049473; // V
+//  const double WJetsPT100_scale   =  0.891*0.423028445 *intLUMI/369309; // V
+  const double WJets_scale   =  1.171*9.37246* intLUMI/1049473; // V
+  const double WJetsPT100_scale   =  1.171*0.423028445 *intLUMI/369309; // V
   const double W4Jets_scale  = 172.6 * intLUMI/5000700;
   const double WWA_scale     = 0.01362   * intLUMI/198777; // V
   const double WWA2_scale     = 0.01409   * intLUMI/199183; // V
@@ -117,6 +122,17 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
 //    { "dPhi(W_muon_phi,Photon_Phi[iPhoton12])",   -3.2, 3.2, 20, 3,   " #Delta#phi(#gamma,l) ",  "event_lep_pho_dphi1",      -3.2, 3.2, 20, 0, 0, 0 },
 //    { "dPhi(JetPFCor_Phi[i12Jet1],JetPFCor_Phi[i12Jet2])",  -3.2, 3.2, 20, 3,   " #Delta#phi(J1,J2) ",  "event_j1_j2_dphi1",     -3.2, 3.2, 20, 0, 0, 0 },
 //    { "dPhi(event_met_pfmetPhi,Photon_Phi[iPhoton12])",  -3.2, 3.2, 20, 3,   " #Delta#phi(#gamma,pf MET)",  "event_pfmet_pho_dphi1",     -3.2, 3.2, 20, 0, 0, 0 },
+    { "masslvjja",  150, 6250, 61, 3, "M_{l#nujj#gamma}", "mlvjja4", 150, 6250, 61, 0, 0, 1},
+    { "masslvjja",  150, 2250, 21, 3, "M_{l#nujj#gamma}", "mlvjja3", 150, 2250, 21, 0, 0, 1},
+    { "c2jMass12",     70, 100, 15, 3,   "m_{jj} (GeV)",            "mjj",       65,  105, 20, 0, 1, 1},
+    { "c2jMass12",     10, 160, 10, 3,   "m_{jj} (GeV)",            "mjj1",       10,  160, 10, 0, 1, 1},
+    { "mva2jWWAmuM",     -0.55, 0.95, 15, 3, "BDT out, mu",  "mva2jWWAmuM",      -0.6, 1.0, 16, 0, 1, 1 },
+    { "mva2jWWAmuM",     -0.5, 0.9, 14, 3, "BDT out, mu",  "mva2jWWAmuM1",      -0.6, 1.0, 16, 0, 1, 1 },
+    { "mva2jWWAmuM",     -0.5, 0.9, 70, 3, "BDT out, mu",  "mva2jWWAmuM2",      -0.6, 1.0, 80, 0, 1, 1 },
+    { "Photon_Et[iPhoton12]",         30, 1030, 25, 3,  "Photon p_{T} (GeV)",     "Photon_et_aQGC",       30, 1030, 25, 0, 0, 1 },
+    { "Photon_Et[iPhoton12]",         30, 270, 12, 3,  "Photon p_{T} (GeV)",     "Photon_pt",       30,  270, 12, 0, 0, 1 },
+    { "Photon_Eta[iPhoton12]",      -2.7, 2.7, 18, 1,  "Photon #eta",            "Photon_eta",    -2.4,  2.4, 16, 0, 0, 0 },
+    { "Photon_Phi[iPhoton12]",      -3.2,  3.2, 16, 1,  "Photon #phi",            "Photon_phi",   -3.2,  3.2, 16, 0, 0, 0 },
     { "c2jMass12",     10, 280, 18, 3,   "m_{jj} (GeV)",            "mjj2",       10, 280, 18, 0, 1, 1},
     { "c2jMass12",     10, 160, 10, 3,   "m_{jj} (GeV)",            "mjj1",       10,  160, 10, 0, 1, 1},
     { "c2jMass12",     70, 100, 30, 3,   "m_{jj} (GeV)",            "mjj",       65,  105, 40, 0, 1, 1},
@@ -127,9 +143,6 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
     { "W_mt",             20, 240, 22, 3,   "W Transverse Mass (GeV)", "W_mt",      20,  240, 22, 0, 1, 0 },
     { "W_mt",             20, 130, 11, 3,   "W Transverse Mass (GeV)", "W_mt1",      10,  140, 13, 0, 1, 0 },
     { "W_muon_phi",  -3.14, 3.14, 13, 3,   "Muon #phi",  "W_muon_phi",     -3.14, 3.14, 13, 0, 0, 0 },
-    { "Photon_Et[iPhoton12]",         30, 270, 12, 3,  "Photon p_{T} (GeV)",     "Photon_et1",       30,  270, 12, 0, 0, 1 },
-    { "Photon_Eta[iPhoton12]",      -2.7, 2.7, 18, 1,  "Photon #eta",            "Photon_eta",    -2.4,  2.4, 16, 0, 0, 0 },
-    { "Photon_Phi[iPhoton12]",      -3.2,  3.2, 16, 1,  "Photon #phi",            "Photon_phi",   -3.2,  3.2, 16, 0, 0, 0 },
     { "W_muon_pt",         15, 155, 14, 3,  "Muon p_{T} (GeV)",     "W_muon_pt",       25,  155, 13, 0, 0, 0 },
     { "event_met_pfmet",  25, 155, 13, 3,   "pf MET (GeV)",  "event_met_pfmet",     15, 155, 14, 0, 0, 0 },
     { "JetPFCor_Pt[i12Jet1]",   30,   190, 8, 3, "Leading Jet  p_{T}", "jetld_pt",      20,  200, 9, 0, 0, 0},
@@ -293,12 +306,15 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
 //  Old S. numbers * constant
 //  TCut fkPhoton_cut(TString(the_cutPlj)+TString("*2.7*(0.00781717 + 28.1270/(Photon_Et[(iPhoton12plj>-1)? iPhoton12plj : 0]^1.83354))"));
 //  New S. numbers for our loose ID + rev. Iso
-  TCut fkPhoton_cut(TString(the_cutPlj)+TString("*(0.0306633 + 486.952/(Photon_Et[(iPhoton12plj>-1)? iPhoton12plj : 0]^2.22650))"));
+//  Shilpi's
+//  TCut fkPhoton_cut(TString(the_cutPlj)+TString("*(0.0306633 + 486.952/(Photon_Et[(iPhoton12plj>-1)? iPhoton12plj : 0]^2.22650))"));
+//  James's
+  TCut fkPhoton_cut(TString(the_cutPlj)+TString("*(0.01373795 + 308.9628/(Photon_Et[(iPhoton12plj>-1)? iPhoton12plj : 0]^2.29711))"));
+
 
   TCut WA23Jcut(TString(the_cut)+TString("*((W_Photon_pt_gen>115)? 0. : 1.) "));
   TCut WA23JPT100cut(TString(the_cut)+TString("*((W_Photon_pt_gen>115)? 1. : 0.) "));
 
-//  TCut the_cutKfac(TString(the_cut)+TString("*((W_Photon_pt_gen>250.)? 1.18: 1.49784+W_Photon_pt_gen*0.00139233-W_Photon_pt_gen**2*4.60879e-05+W_Photon_pt_gen**3*2.21543e-07-W_Photon_pt_gen**4*3.19112e-10) "));
   TCut the_cutKfac(TString(the_cut)+TString("*(2.1) "));
 
   if (dovbf)
@@ -313,13 +329,16 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
 
  // Data
 
-  TFile *fin2,*WWASM_file,*H500_file,*AQGC_file,*wwShape_file,*wwaShape_file,*wwa2Shape_file,*wzaShape_file,*zzShape_file,*wjetsShape_file,*wjetsPT100Shape_file,*w4jetShape_file,*ttbar_file,*qcd_file1,*zjets_file,*stops_file,*stopt_file,*stoptW_file;
+  TFile *fin2,*WWASM_file,*H500_file,*AQGC_file,*AQGC_file_KCG,*AQGC_file_LT0,*AQGC_file_KOW,*wwShape_file,*wwaShape_file,*wwa2Shape_file,*wzaShape_file,*zzShape_file,*wjetsShape_file,*wjetsPT100Shape_file,*w4jetShape_file,*ttbar_file,*qcd_file1,*zjets_file,*stops_file,*stopt_file,*stoptW_file;
 
 
   if (domu) {
     fin2            = new TFile("InData/RD_WmunuJets_DataAll_GoldenJSON_19p3invfb.root", "read");
     WWASM_file       = new TFile("InData/RD_mu_WWA_merged_CMSSW532.root", "READ");
     AQGC_file       = new TFile("InData/RD_mu_KOG_m3m5MG_CMSSW532.root", "READ");
+    AQGC_file_KCG       = new TFile("InData/RD_mu_KCG_m5m5MG_CMSSW532.root", "READ");
+    AQGC_file_LT0       = new TFile("InData/RD_mu_LT0_m3m11MG_CMSSW532.root", "READ");
+    AQGC_file_KOW       = new TFile("InData/RD_mu_K0W_m2m5MG_CMSSW532.root", "READ");
     wwShape_file    = new TFile("InData/RD_mu_WW_CMSSW532.root", "READ");
     wwaShape_file    = new TFile("InData/RD_mu_qq_wpwma_wp_qq_wm_lvl.root", "READ");
     wwa2Shape_file    = new TFile("InData/RD_mu_qq_wpwma_wp_lvl_wm_qq.root", "READ");
@@ -360,6 +379,9 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
   TTree* treeWWASM  = (TTree*)       WWASM_file->Get("WJet");
 //  TTree* treeh500  = (TTree*)       H500_file->Get("WJet");
   TTree* treeAQGC  = (TTree*)       AQGC_file->Get("WJet");
+  TTree* treeAQGC_KCG  = (TTree*)       AQGC_file_KCG->Get("WJet");
+  TTree* treeAQGC_LT0  = (TTree*)       AQGC_file_LT0->Get("WJet");
+  TTree* treeAQGC_KOW  = (TTree*)       AQGC_file_KOW->Get("WJet");
   TTree* treewwa    = (TTree*)    wwaShape_file->Get("WJet");
   TTree* treewwa2    = (TTree*)    wwa2Shape_file->Get("WJet");
   TTree* treeww    = (TTree*)    wwShape_file->Get("WJet");
@@ -417,15 +439,35 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
 */
     TH1* th1AQGC = new TH1D("th1AQGC", "th1AQGC", pv.NBINS, pv.MINRange, pv.MAXRange);
     th1AQGC->Sumw2();
+    TH1* th1AQGC_KCG = new TH1D("th1AQGC_KCG", "th1AQGC_KCG", pv.NBINS, pv.MINRange, pv.MAXRange);
+    th1AQGC_KCG->Sumw2();
+    TH1* th1AQGC_LT0 = new TH1D("th1AQGC_LT0", "th1AQGC_LT0", pv.NBINS, pv.MINRange, pv.MAXRange);
+    th1AQGC_LT0->Sumw2();
+    TH1* th1AQGC_KOW = new TH1D("th1AQGC_KOW", "th1AQGC_KOW", pv.NBINS, pv.MINRange, pv.MAXRange);
+    th1AQGC_KOW->Sumw2();
     treeAQGC->Draw(TString(pv.plotvar)+TString(">>th1AQGC"), the_cutKfac, "goff");
     th1AQGC->AddBinContent(pv.NBINS,th1AQGC->GetBinContent(pv.NBINS+1));th1AQGC->SetBinContent(pv.NBINS+1,0.);
     th1AQGC->Scale(AQGC_scale);
+
+    treeAQGC_KCG->Draw(TString(pv.plotvar)+TString(">>th1AQGC_KCG"), the_cutKfac, "goff");
+    th1AQGC_KCG->AddBinContent(pv.NBINS,th1AQGC_KCG->GetBinContent(pv.NBINS+1));th1AQGC_KCG->SetBinContent(pv.NBINS+1,0.);
+    th1AQGC_KCG->Scale(AQGC_scale_KCG);
+
+    treeAQGC_LT0->Draw(TString(pv.plotvar)+TString(">>th1AQGC_LT0"), the_cutKfac, "goff");
+    th1AQGC_LT0->AddBinContent(pv.NBINS,th1AQGC_LT0->GetBinContent(pv.NBINS+1));th1AQGC_LT0->SetBinContent(pv.NBINS+1,0.);
+    th1AQGC_LT0->Scale(AQGC_scale_LT0);
+
+    treeAQGC_KOW->Draw(TString(pv.plotvar)+TString(">>th1AQGC_KOW"), the_cutKfac, "goff");
+    th1AQGC_KOW->AddBinContent(pv.NBINS,th1AQGC_KOW->GetBinContent(pv.NBINS+1));th1AQGC_KOW->SetBinContent(pv.NBINS+1,0.);
+    th1AQGC_KOW->Scale(AQGC_scale_KOW);
+
 
     TH1* th1WWASM = new TH1D("th1WWASM", "th1WWASM", pv.NBINS, pv.MINRange, pv.MAXRange);
     th1WWASM->Sumw2();
     treeWWASM->Draw(TString(pv.plotvar)+TString(">>th1WWASM"), the_cutKfac, "goff");
     th1WWASM->AddBinContent(pv.NBINS,th1WWASM->GetBinContent(pv.NBINS+1));th1WWASM->SetBinContent(pv.NBINS+1,0.);
     th1WWASM->Scale(WWASM_scale);
+    th1WWASM->SetMarkerStyle(0);
 
     // Get WW/WZ/ZZ
 
@@ -450,6 +492,7 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
     th1wza->AddBinContent(pv.NBINS,th1wza->GetBinContent(pv.NBINS+1));th1wza->SetBinContent(pv.NBINS+1,0.);
     treezz->Draw(TString(pv.plotvar)+TString(">>th1zz"), the_cut, "goff");
     th1zz->AddBinContent(pv.NBINS,th1zz->GetBinContent(pv.NBINS+1));th1zz->SetBinContent(pv.NBINS+1,0.);
+
 
 
     // Get WJets
@@ -546,22 +589,27 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
        treeqcd->Draw(TString(pv.plotvar)+TString(">>th1qcd"), fkPhoton_cut, "goff");
     }
     th1qcd->AddBinContent(pv.NBINS,th1qcd->GetBinContent(pv.NBINS+1));th1qcd->SetBinContent(pv.NBINS+1,0.);
+
+
     float fperr = 0.;
 //  photon fake rate uncert
     for(int hi=1;hi<=pv.NBINS;hi++) {
         fperr = (th1qcd->GetBinError(hi))*(th1qcd->GetBinError(hi));
-        fperr + = 0.0225*(th1qcd->GetBinContent(hi))*(th1qcd->GetBinContent(hi));
+        fperr + = 0.04*(th1qcd->GetBinContent(hi))*(th1qcd->GetBinContent(hi));
         th1qcd->SetBinError(hi,sqrt(fperr));
         th1AQGC->SetBinError(hi,0.0001);
+        th1AQGC_KCG->SetBinError(hi,0.0001);
+        th1AQGC_LT0->SetBinError(hi,0.0001);
+        th1AQGC_KOW->SetBinError(hi,0.0001);
         th1WWASM->SetBinError(hi,0.0001);
     }
 //  Norm uncert.
     for(int hi=1;hi<=pv.NBINS;hi++) {
         fperr = (th1wjets->GetBinError(hi))*(th1wjets->GetBinError(hi));
-        fperr + = 0.122*0.122*(th1wjets->GetBinContent(hi))*(th1wjets->GetBinContent(hi));
+        fperr + = 0.078*0.078*(th1wjets->GetBinContent(hi))*(th1wjets->GetBinContent(hi));
         th1wjets->SetBinError(hi,sqrt(fperr));
         fperr = (th1wjetsPT100->GetBinError(hi))*(th1wjetsPT100->GetBinError(hi));
-        fperr + = 0.122*0.122*(th1wjetsPT100->GetBinContent(hi))*(th1wjetsPT100->GetBinContent(hi));
+        fperr + = 0.078*0.078*(th1wjetsPT100->GetBinContent(hi))*(th1wjetsPT100->GetBinContent(hi));
         th1wjetsPT100->SetBinError(hi,sqrt(fperr));
     }
 
@@ -672,8 +720,8 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
     th1wjets->SetLineWidth(0);
     th1wwa->Scale(WWA_scale);
     th1wwa2->Scale(WWA2_scale);
-    th1wwa->SetFillColor(7);
-    th1wwa->SetLineColor(7);
+    th1wwa->SetFillColor(kBlue+1);
+    th1wwa->SetLineColor(kBlue+1);
     th1wwa->SetLineWidth(0);
     th1ww->Scale(WW_scale);
     th1ww->SetFillColor(kAzure+8);
@@ -686,9 +734,22 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
     th1zz->SetFillColor(kGreen+2);
     th1zz->SetLineWidth(0);
 
+    th1AQGC->Add(th1wwa,-1);
+    th1AQGC_KCG->Add(th1wwa,-1);
+    th1AQGC_LT0->Add(th1wwa,-1);
+    th1AQGC_KOW->Add(th1wza,-1);
+    th1AQGC->Scale(1.185/2.1);
+    th1AQGC_KCG->Scale(1.185/2.1);
+    th1AQGC_LT0->Scale(1.185/2.1);
+    th1AQGC_KOW->Scale(1.185/2.1);
+    th1AQGC->Add(th1wwa,1);
+    th1AQGC_KCG->Add(th1wwa,1);
+    th1AQGC_LT0->Add(th1wwa,1);
+    th1AQGC_KOW->Add(th1wza,1);
+
     // th1qcd->Scale(QCD_scale);
   
-    th1qcd->SetFillColor(kBlue+1);
+    th1qcd->SetFillColor(30);
     th1qcd->SetLineColor(kBlue+1);
     th1qcd->SetLineWidth(0);
     th1zjets->Scale(ZAJets_scale);
@@ -810,12 +871,38 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
     th1tot->Add(th1zjets,1);
     th1tot->Add(th1qcd,1);
     TH1D *th1totAC = (TH1D*)th1tot->Clone();
+    TH1D *th1totAC_KCG = (TH1D*)th1tot->Clone();
+    TH1D *th1totAC_LT0 = (TH1D*)th1tot->Clone();
+    TH1D *th1totAC_KOW = (TH1D*)th1tot->Clone();
     th1tot->Add(th1wwa,1);
     th1totAC->Add(th1AQGC,1);
+    th1totAC_KCG->Add(th1AQGC_KCG,1);
+    th1totAC_LT0->Add(th1AQGC_LT0,1);
+    th1totAC_KOW->Add(th1AQGC_KOW,1);
+
+    th1totAC_KCG->SetLineStyle(2);
+    th1totAC_LT0->SetLineStyle(3);
+    th1totAC_KOW->SetLineStyle(4);
+
     th1totAC->SetMarkerStyle(0);
     th1totAC->SetFillStyle(0);
     th1totAC->SetLineColor(1);
     th1totAC->SetLineWidth(3);
+
+    th1totAC_KCG->SetMarkerStyle(0);
+    th1totAC_KCG->SetFillStyle(0);
+    th1totAC_KCG->SetLineColor(1);
+    th1totAC_KCG->SetLineWidth(3);
+
+    th1totAC_LT0->SetMarkerStyle(0);
+    th1totAC_LT0->SetFillStyle(0);
+    th1totAC_LT0->SetLineColor(1);
+    th1totAC_LT0->SetLineWidth(3);
+
+    th1totAC_KOW->SetMarkerStyle(0);
+    th1totAC_KOW->SetFillStyle(0);
+    th1totAC_KOW->SetLineColor(1);
+    th1totAC_KOW->SetLineWidth(3);
 
     th1AQGC->SetMarkerStyle(0);
     th1AQGC->SetFillStyle(0);
@@ -825,7 +912,7 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
 
     TH1D* th1totClone = ( TH1D*) th1tot->Clone("th1totClone");
     th1totClone->SetMarkerStyle(0);
-    th1totClone->SetFillStyle(3003);
+    th1totClone->SetFillStyle(3444);
     th1totClone->SetFillColor(11);
     th1totClone->SetLineColor(0);
     double binErr(0.0);
@@ -860,10 +947,12 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
 
     float  legX0=0.65, legX1=0.99, legY0=0.64, legY1=0.88;
     float  leg1X0=0.15, leg1X1=0.60, leg1Y0=0.64, leg1Y1=0.88;
+    float  leg2X0=0.65, leg2X1=0.99, leg2Y0=0.46, leg2Y1=0.63;
     // float  legX0=0.35, legX1=0.85, legY0=0.4, legY1=0.88;
     // float  legX0=0.18, legX1=0.52, legY0=0.4, legY1=0.88;
     TLegend * Leg = new TLegend( legX0, legY0, legX1, legY1);
     TLegend * Leg1 = new TLegend( leg1X0, leg1Y0, leg1X1, leg1Y1);
+    TLegend * Leg2 = new TLegend( leg2X0, leg2Y0, leg2X1, leg2Y1);
     Leg->SetFillColor(0);
     Leg->SetFillStyle(0);
     Leg->SetTextSize(0.04);
@@ -880,10 +969,20 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
     Leg1->AddEntry(th1tot,  "MC Uncertainty",  "f");
     Leg1->AddEntry(th1wjets,  "W#gamma+jets",  "f");
 //    Leg1->AddEntry(th1totAC,  "BG + a_{0}^{W} / #Lambda^{2} = -3x10^{-5}",  "l");
+//     if(pv.plotvar=="mva2jWWAmuA1")Leg1->AddEntry(th1AQGC,  "a_{0}^{W} / #Lambda^{2} = -30 TeV^{-2} x 10",  "l");
 //    Leg1->AddEntry(th1AQGC,  "a_{0}^{W} / #Lambda^{2} = -30 TeV^{-2} x 10",  "l");
-//    Leg1->AddEntry(th1WWASM,  "WW#gamma x 30",  "l");
+//    if(pv.plotvar=="mva2jWWAmuM") Leg1->AddEntry(th1WWASM,  "WW#gamma x 30",  "l");
+//     Leg1->AddEntry(th1WWASM,  "WW#gamma x 30",  "l");
     Leg1->SetFillColor(0);
 
+    Leg2->SetFillColor(0);
+    Leg2->SetFillStyle(0);
+    Leg2->SetTextSize(0.04);
+//    if(pv.plotvar=="Photon_Et[iPhoton12]")  Leg1->AddEntry(th1totAC,  "SM + a_{0}^{W} / #Lambda^{2} = -3x10^{-5}",  "l");
+//    if(pv.plotvar=="Photon_Et[iPhoton12]")  Leg1->AddEntry(th1totAC_KCG,  "SM + a_{C}^{W} / #Lambda^{2} = -5x10^{-5}",  "l");
+//    if(pv.plotvar=="Photon_Et[iPhoton12]")  Leg1->AddEntry(th1totAC_LT0,  "SM + L_{T0} / #Lambda^{4} = -3x10^{-11}",  "l");
+//    if(pv.plotvar=="Photon_Et[iPhoton12]")  Leg1->AddEntry(th1totAC_KOW,  "SM + k_{0}^{W} / #Lambda^{2} = -2x10^{-5}",  "l");
+    
 //    if (pv.hplot ==1&&!strstr(pv.plotvar,"mva2j190mu")) Leg->AddEntry(th1H500,  "H (500) x 200",  "L");
 //    if (pv.hplot ==1&&!strstr(pv.plotvar,"mva2j190mu")&&!strstr(pv.plotvar,"mva2j500mu")) Leg->AddEntry(th1AQGC,  "H (300) x 200",  "L");
 //    if (pv.hplot ==1&&!strstr(pv.plotvar,"mva2j500mu")) Leg->AddEntry(th1WWASM,  "H (190) x 100",  "L");
@@ -907,11 +1006,11 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
 
     TH1* th1totempty = new TH1D("th1totempty", "th1totempty", pv.ANBINS, pv.AMINRange, pv.AMAXRange);
     th1data->SetMarkerStyle(20);
-    th1data->SetMarkerSize(1.25);
+    th1data->SetMarkerSize(1.45);
     th1data->SetLineWidth(2);
     th1data->SetLineColor(1);
 
-    th1tot->SetFillStyle(3001);
+    th1tot->SetFillStyle(3444);
     th1tot->SetFillColor(1);
     th1tot->SetLineColor(1);
     th1tot->SetMarkerStyle(0);
@@ -929,16 +1028,16 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
     th1totempty->GetYaxis()->SetLabelSize(0.04);
     // th1totClone->Draw("e3");   
 
-    th1tot->SetMinimum(0.01);
+    th1tot->SetMinimum(0.001);
     int maxbin = th1data->GetMaximumBin();
     float maxval = th1data->GetBinContent(maxbin);
     if(th1totAC->GetMaximum()>maxval) maxval = th1totAC->GetMaximum();
     std::cout << "maxval " <<maxval <<std::endl;
 //    th1totempty->SetMaximum(2.5*maxval);
     th1totempty->SetMaximum(1.69*maxval);
-    th1totempty->SetMinimum(0.01);
+    th1totempty->SetMinimum(0.001);
     if(pv.slog==1) th1totempty->SetMaximum(1.69*maxval);
-    th1data->SetMinimum(0.01);
+    th1data->SetMinimum(0.001);
 
     // Draw it all
 
@@ -947,14 +1046,19 @@ void mkMuControlPlotsPhoton2012(bool domu=true,bool domva=false,
     th1data->Draw("esame");
     hs->Draw("samehist");
     th1tot->Draw("e2same");
-//    th1totAC->Draw("hsame");
-//    th1AQGC->Draw("hsame");
-//    th1WWASM->Draw("hsame");
+//    if(pv.plotvar=="Photon_Et[iPhoton12]") th1totAC->Draw("hsame");
+//    if(pv.plotvar=="Photon_Et[iPhoton12]") th1totAC_KCG->Draw("hsame");
+//    if(pv.plotvar=="Photon_Et[iPhoton12]") th1totAC_LT0->Draw("hsame");
+//    if(pv.plotvar=="Photon_Et[iPhoton12]") th1totAC_KOW->Draw("hsame");
+//    if(pv.plotvar=="mva2jWWAmuA1") th1AQGC->Draw("hsame");
+//    if(pv.plotvar=="mva2jWWAmuM") th1WWASM->Draw("hsame");
+//     th1WWASM->Draw("hsame");
 
     th1data->Draw("esame");
     cmspre(intLUMI/1000.0);    
     if (pv.drawleg ==1)  Leg->Draw();  
     if (pv.drawleg ==1)  Leg1->Draw();  
+    if( pv.drawleg ==1 && pv.plotvar=="Photon_Et[iPhoton12]")  Leg1->Draw();
     // th1data->Draw("Axissame");
     gPad->RedrawAxis();
     d2->cd();

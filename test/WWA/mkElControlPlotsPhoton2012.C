@@ -71,8 +71,8 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
   const double AQGC_scale   = 0.0302425 * intLUMI/196004 ; // m3m5
 
   const double WWASM_scale   = (0.01362+0.01409)*intLUMI/(198777+199183); // V
-  const double WAJets_scale   = 0.855* 9.37246 * intLUMI/1049473; // V
-  const double WAJetsPT100_scale   =  0.855* 0.423028445 *intLUMI/369309; // V
+  const double WAJets_scale   =  1.146*9.37246 * intLUMI/1049473; // V
+  const double WAJetsPT100_scale   =   1.146*0.423028445 *intLUMI/369309; // V
   const double WWA_scale     = 0.01362 * intLUMI/198777; // V
   const double WWA2_scale    = 0.01409 * intLUMI/199183; // V
   const double WZA_scale     = 0.00578008 * intLUMI/497450; // V
@@ -94,10 +94,17 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
   const plotVar_t plotvars[] = {
 
   //    plotvar	MINRange  MAXRange  NBINS  slog xlabel outfile AMINRange  AMAXRange ANBINS mva_in hplot drawleg
+    { "c2jMass12",     70, 100, 15, 3,   "m_{jj} (GeV)",            "mjj",       65,  105, 20, 0, 1, 1},
+    { "c2jMass12",     10, 160, 10, 3,   "m_{jj} (GeV)",            "mjj1",       10, 160, 10, 0, 1, 1},
+    { "mva2jWWAelM",     -0.55, 0.95, 15, 3, "BDT out, el",  "mva2jWWAelM",      -0.65, 1.05, 17, 0, 1, 1 },
+    { "mva2jWWAelM",     -0.5, 0.9, 14, 3, "BDT out, el",  "mva2jWWAelM1",      -0.6, 1.0, 16, 0, 1, 1 },
+    { "mva2jWWAelM",     -0.55, 0.95, 75, 3, "BDT out, el",  "mva2jWWAelM2",      -0.65, 1.05, 85, 0, 1, 1 },
     { "c2jMass12",     10, 280, 18, 3,   "m_{jj} (GeV)",            "mjj2",       10, 280, 18, 0, 1, 1},
     { "c2jMass12",     10, 160, 10, 3,   "m_{jj} (GeV)",            "mjj1",       10, 160, 10, 0, 1, 1},
     { "c2jMass12",     70, 100, 30, 3,   "m_{jj} (GeV)",            "mjj",       65,  105, 40, 0, 1, 1},
-    { "mva2jWWAelM",     -0.5, 0.9, 14, 3, "BDT out, el",  "mva2jWWAelM",      -0.6, 1.0, 16, 0, 1, 1 },
+    { "Photon_Et[iPhoton12]",         10, 260, 25, 3,  "Photon p_{T} (GeV)",     "Photon_et",       20,  260, 24, 0, 0, 0 },
+    { "Photon_Et[iPhoton12]",         30, 270, 12, 3,  "Photon p_{T} (GeV)",     "Photon_pt",       30,  270, 12, 0, 0, 1 },
+    { "Photon_Et[iPhoton12]",         30, 310, 7, 3,  "Photon p_{T} (GeV)",     "Photon_et2",       30,  310, 6, 0, 0, 0 },
     { "mva2jWWAelA1",     -0.3, 0.7, 20, 3, "BDT out, electrons",  "mva2jWWAelA11",      -0.3, 0.7, 20, 0, 1, 1 },
     { "mva2jWWAelA1",     -0.3, 0.7, 10, 3, "mva2jWWAelA1",  "mva2jWWAelA10",      -0.3, 0.7, 10, 0, 1, 1 },
     { "mva2jWWAelA1",     -0.3, 0.7, 40, 3, "mva2jWWAelA1",  "mva2jWWAelA12",      -0.3, 0.7, 40, 0, 1, 1 },
@@ -111,9 +118,6 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
     { "masslvjja",  150, 1550, 28, 3, "M_{l#nujj#gamma}", "mlvjja", 150, 1550, 28, 0, 0, 1},
     { "masslvjja",  150, 1250, 11, 3, "M_{l#nujj#gamma}", "mlvjja1", 150, 1250, 11, 0, 0, 1},
     { "masslvjja",  150, 1350, 6, 3, "M_{l#nujj#gamma}", "mlvjja2", 150, 1350, 6, 0, 0, 1},
-    { "Photon_Et[iPhoton12]",         10, 260, 25, 3,  "Photon p_{T} (GeV)",     "Photon_et",       20,  260, 24, 0, 0, 0 },
-    { "Photon_Et[iPhoton12]",         30, 270, 12, 3,  "Photon p_{T} (GeV)",     "Photon_et1",       30,  270, 12, 0, 0, 1 },
-    { "Photon_Et[iPhoton12]",         30, 310, 7, 3,  "Photon p_{T} (GeV)",     "Photon_et2",       30,  310, 6, 0, 0, 0 },
 //    { "mva2jWWAelA",     -0.4, 0.9, 13, 3, "mva2jWWAelA",  "mva2jWWAelA00",      -0.5, 1.0, 15, 0, 1, 1 },
 //    { "mva2jWWAelA",     -0.4, 0.9, 26, 3, "mva2jWWAelA",  "mva2jWWAelA01",      -0.5, 1.0, 30, 0, 1, 1 },
 //    { "mva2jWWAelA",     -0.4, 0.9, 52, 3, "mva2jWWAelA",  "mva2jWWAelA02",      -0.5, 1.0, 60, 0, 1, 1 },
@@ -121,7 +125,7 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
 //    { "mva2jWWAelA2",     -0.4, 0.9, 26, 3, "mva2jWWAelA2",  "mva2jWWAelA21",      -0.5, 1.0, 30, 0, 1, 1 },
 //    { "mva2jWWAelA2",     -0.4, 0.9, 52, 3, "mva2jWWAelA2",  "mva2jWWAelA22",      -0.5, 1.0, 60, 0, 1, 1 },
 //    { "mva2jWWAel",     -0.5, 0.9, 14, 3, "mva2jWWAel",  "mva2jWWAel",      -0.6, 1.0, 16, 0, 1, 1 },
-    { "event_nPV",      -0.5, 50.5, 51, 1,  "Num PV",            "event_nPV",    -0.5,  50.5, 51, 0, 0, 0 },
+//    { "event_nPV",      -0.5, 50.5, 51, 1,  "Num PV",            "event_nPV",    -0.5,  50.5, 51, 0, 0, 0 },
     { "Photon_Eta[iPhoton12]",      -2.7, 2.7, 18, 1,  "Photon #eta",            "Photon_eta",    -2.4,  2.4, 16, 0, 0, 0 },
     { "Photon_Phi[iPhoton12]",      -3.2,  3.2, 16, 1,  "Photon #phi",            "Photon_phi",   -3.2,  3.2, 16, 0, 0, 0 },
     { "Photon_dRlep[iPhoton12]",-0.4, 5.0, 27, 1, "#Delta R_{l,#gamma}",    "deltaRla", -0.8, 5.4, 31, 0, 0, 0},
@@ -270,14 +274,15 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
 //  Old S. numbers * constant
 //  TCut fkPhoton_cut(TString(the_cutPlj)+TString("*2.7*(0.00781717 + 28.1270/(Photon_Et[(iPhoton12plj>-1)? iPhoton12plj : 0]^1.83354))"));
 //  New S. numbers for our loose ID + rev. Iso
-  TCut fkPhoton_cut(TString(the_cutPlj)+TString("*(0.0306633 + 486.952/(Photon_Et[(iPhoton12plj>-1)? iPhoton12plj : 0]^2.22650))"));
+//  TCut fkPhoton_cut(TString(the_cutPlj)+TString("*(0.0306633 + 486.952/(Photon_Et[(iPhoton12plj>-1)? iPhoton12plj : 0]^2.22650))"));
+//  James's
+  TCut fkPhoton_cut(TString(the_cutPlj)+TString("*(0.01373795 + 308.9628/(Photon_Et[(iPhoton12plj>-1)? iPhoton12plj : 0]^2.29711))"));
 
   TCut WA23Jcut(TString(the_cut)+TString("*((W_Photon_pt_gen>115)? 0. : 1.) "));
   TCut WA23JPT100cut(TString(the_cut)+TString("*((W_Photon_pt_gen>115)? 1. : 0.) "));
 
   TCut the_cutQCD(TString(the_cut)+TString("*(W_electron_pfIsoEA>0.3)"));
 
-//  TCut the_cutKfac(TString(the_cut)+TString("*((W_Photon_pt_gen>250.)? 1.18: 1.49784+W_Photon_pt_gen*0.00139233-W_Photon_pt_gen**2*4.60879e-05+W_Photon_pt_gen**3*2.21543e-07-W_Photon_pt_gen**4*3.19112e-10) "));
   TCut the_cutKfac(TString(the_cut)+TString("*(2.1) "));
 
   if (dovbf)
@@ -435,7 +440,7 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
     float fperr = 0.;
     for(int hi=1;hi<=pv.NBINS;hi++) {
         fperr = (th1fkdata->GetBinError(hi))*(th1fkdata->GetBinError(hi));
-        fperr + = 0.0225*(th1fkdata->GetBinContent(hi))*(th1fkdata->GetBinContent(hi));
+        fperr + = 0.04*(th1fkdata->GetBinContent(hi))*(th1fkdata->GetBinContent(hi));
 	th1fkdata->SetBinError(hi,sqrt(fperr));
     }
 
@@ -501,11 +506,11 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
 
     for(int hi=1;hi<=pv.NBINS;hi++) {
         fperr = (th1wajets->GetBinError(hi))*(th1wajets->GetBinError(hi));
-        fperr + = 0.188*0.188*(th1wajets->GetBinContent(hi))*(th1wajets->GetBinContent(hi));
+        fperr + = 0.120*0.120*(th1wajets->GetBinContent(hi))*(th1wajets->GetBinContent(hi));
         th1wajets->SetBinError(hi,sqrt(fperr));
 
         fperr = (th1wajetsPT100->GetBinError(hi))*(th1wajetsPT100->GetBinError(hi));
-        fperr + = 0.188*0.188*(th1wajetsPT100->GetBinContent(hi))*(th1wajetsPT100->GetBinContent(hi));
+        fperr + = 0.120*0.120*(th1wajetsPT100->GetBinContent(hi))*(th1wajetsPT100->GetBinContent(hi));
         th1wajetsPT100->SetBinError(hi,sqrt(fperr));
         th1WWASM->SetBinError(hi,0.0001);
         th1AQGC->SetBinError(hi,0.0001);
@@ -609,7 +614,7 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
 
     THStack* hs = new THStack("hs","MC contribution");
 
-    th1fkdata->SetFillColor(kBlue+1);
+    th1fkdata->SetFillColor(30);
     th1fkdata->SetLineColor(kBlue+1);
     th1fkdata->SetLineWidth(0);
 
@@ -646,8 +651,8 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
     th1wwa->Scale(WWA_scale);
     th1wwa2->Scale(WWA2_scale);
     th1wwa->Add(th1wwa2,1.);
-    th1wwa->SetFillColor(7);
-    th1wwa->SetLineColor(7);
+    th1wwa->SetFillColor(kBlue+1);
+    th1wwa->SetLineColor(kBlue+1);
     th1wwa->SetLineWidth(0);
     th1wza->Scale(WZA_scale);
     th1wza->SetFillColor(11);
@@ -656,8 +661,8 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
     th1zz->SetFillColor(kGreen+2);
     th1zz->SetLineWidth(0);
   
-    th1qcd->SetFillColor(1);
-    th1qcd->SetLineColor(1);
+    th1qcd->SetFillColor(45);
+    th1qcd->SetLineColor(45);
     th1qcd->SetLineWidth(0);
     th1zajets->Scale(ZAJets_scale);
     th1zajets->SetFillColor(kYellow);
@@ -729,6 +734,8 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
     th1zz->Scale    (th1data->Integral()/den); std::cout << "zz "   << th1zz->Integral()    << std::endl;
     th1zajets->Scale (th1data->Integral()/den); std::cout << "za "    << th1zajets->Integral() << std::endl;
 */
+    cout<<"(th1data->Integral()/den) = "<< (th1data->Integral()/den) <<endl;
+
     double den2 =
       th1Top->Integral()+
       th1stops->Integral()+
@@ -777,6 +784,7 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
 
     th1WWASM->SetLineColor(1);
     th1WWASM->SetLineWidth(3);
+    th1WWASM->SetMarkerStyle(0);
     th1WWASM->Scale(30);
 
     TH1D* th1totClone = ( TH1D*) th1tot->Clone("th1totClone");
@@ -839,7 +847,8 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
     Leg->AddEntry(th1wwa,  "WV#gamma ",  "f");
 //    Leg1->AddEntry(th1totAC,  "BG+a_{0}^{W} / #Lambda^{2} = -3x10^{-5}",  "l");
 //    Leg1->AddEntry(th1AQGC,  "a_{0}^{W} / #Lambda^{2} = -30 TeV^{-2} x 10",  "l");
-//    Leg1->AddEntry(th1WWASM,  "WW#gamma x 30",  "l");
+//    if(pv.plotvar== "mva2jWWAelA1") Leg1->AddEntry(th1AQGC,  "a_{0}^{W} / #Lambda^{2} = -30 TeV^{-2} x 10",  "l");
+//    if(pv.plotvar=="mva2jWWAelM") Leg1->AddEntry(th1WWASM,  "WW#gamma x 30",  "l");
 
 //    Leg->AddEntry(th1zz,  "ZZ",  "f");
 
@@ -855,11 +864,11 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
 
     TH1* th1totempty = new TH1D("th1totempty", "th1totempty", pv.ANBINS, pv.AMINRange, pv.AMAXRange);
     th1data->SetMarkerStyle(20);
-    th1data->SetMarkerSize(1.25);
+    th1data->SetMarkerSize(1.45);
     th1data->SetLineWidth(2);
     th1data->SetLineColor(1);
 
-    th1tot->SetFillStyle(3001);
+    th1tot->SetFillStyle(3444);
     th1tot->SetFillColor(1);
     th1tot->SetLineColor(1);
     th1tot->SetMarkerStyle(0);
@@ -896,8 +905,8 @@ void mkElControlPlotsPhoton2012(bool domu=false,bool domva=false,
     hs->Draw("samehist");
     th1tot->Draw("e2same");
 //    th1totAC->Draw("hsame");
-//    th1AQGC->Draw("hsame");
-//    th1WWASM->Draw("hsame");
+//    if(pv.plotvar=="mva2jWWAelA1")  th1AQGC->Draw("hsame");
+//    if(pv.plotvar=="mva2jWWAelM") th1WWASM->Draw("hsame");
 
     th1data->Draw("esame");
     cmspre(intLUMI/1000.0);
