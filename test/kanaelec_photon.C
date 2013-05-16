@@ -595,11 +595,11 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
    for (int i=0; i<6; ++i) inputVarsMVApho.push_back( inputVarsPho[i] );
    ReadMVA2jWWAel mvaReader2jWWAel( inputVarsMVApho );
 
-   const char* inputVarsPhoM[] = { "W_pt", "sqrt((JetPFCor_Eta[i11Jet1]-JetPFCor_Eta[i11Jet2])**2+(abs(abs(abs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])-TMath::Pi())-TMath::Pi()))**2)","JetPFCor_Pt[i11Jet1]", "JetPFCor_Pt[i11Jet2]", "ptlvjja" , "c2jMass11", "masslvjja"};
+   const char* inputVarsPhoM[] = { "W_pt", "sqrt((JetPFCor_Eta[i12Jet1]-JetPFCor_Eta[i12Jet2])**2+(abs(abs(abs(JetPFCor_Phi[i12Jet1]-JetPFCor_Phi[i12Jet2])-TMath::Pi())-TMath::Pi()))**2)","JetPFCor_Pt[i12Jet1]", "JetPFCor_Pt[i12Jet2]", "ptlvjja" , "c2jMass12", "masslvjja"};
    std::vector<std::string> inputVarsMVAphoM;
    for (int i=0; i<7; ++i) inputVarsMVAphoM.push_back( inputVarsPhoM[i] );
    ReadMVA2jWWAelM mvaReader2jWWAelM( inputVarsMVAphoM );
-   ReadMVA2jWWAelA mvaReader2jWWAelA( inputVarsMVAphoM );
+//   ReadMVA2jWWAelA mvaReader2jWWAelA( inputVarsMVAphoM );
 
    const char* inputVarsPhoA1[] = {  "sqrt((JetPFCor_Eta[i11Jet1]-JetPFCor_Eta[i11Jet2])**2+(abs(abs(abs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])-TMath::Pi())-TMath::Pi()))**2)", "JetPFCor_Pt[i11Jet1]", "JetPFCor_Pt[i11Jet2]", "c2jMass11", "W_electron_pt", "abs(JetPFCor_Phi[i11Jet1]-JetPFCor_Phi[i11Jet2])", "abs(event_met_pfmetPhi-Photon_Phi[iPhoton11])", "abs(W_electron_phi-Photon_Phi[iPhoton11])", "event_met_pfmet", "event_met_pfsumet"};
    std::vector<std::string> inputVarsMVAphoA1;
@@ -749,7 +749,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
                 {
                   flipiso = ( PFisocharged03[ipho] > cutchargedIso ) || ( PFisoneutral03[ipho] > cutneutralIso ) || ( Photon_SigmaIetaIeta[ipho] > 0.012 );
                 }
-         if( looseid && flipiso ) Photon_Id2012plj[ipho] = 1;
+         if( looseid && flipiso && Photon_Id2012[ipho]<1 ) Photon_Id2012plj[ipho] = 1;
       }
 
       ////////////////////////////////
@@ -1128,7 +1128,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          if ( iPhoton12plj>-1&& JetPFCor_Pt[i12Jet3plj] > Jpt && JetPFCor_Pt[i12Jet4plj] < Jpt ) {ggdevt = 3;}
 
          int Aj = i12Jet1, Bj = i12Jet2;
-         if ( iPhoton12plj>-1 ){Aj = i12Jet1plj, Bj = i12Jet2plj;}
+         if ( iPhoton12plj>-1 && i12Jet2plj>-1 ){Aj = i12Jet1plj, Bj = i12Jet2plj;}
 
          TLorentzVector ajp, bjp, ap;
 
@@ -1230,7 +1230,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
          mva2jWWAel = (float) mvaReader2jWWAel.GetMvaValue( mvaInputValPho );
          mvaInputValPho.push_back(masslvjja);
          mva2jWWAelM = (float) mvaReader2jWWAelM.GetMvaValue( mvaInputValPho );
-         mva2jWWAelA = (float) mvaReader2jWWAelA.GetMvaValue( mvaInputValPho );
+//         mva2jWWAelA = (float) mvaReader2jWWAelA.GetMvaValue( mvaInputValPho );
 
          std::vector<double> mvaInputValPhoA12;
          if((i12Jet1>-1&&i12Jet2>-1)||(i12Jet1plj>-1&&i12Jet2plj>-1)){
@@ -1381,7 +1381,7 @@ void kanaelec_photon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int
 
       branch_2jWWAel->Fill();
       branch_2jWWAelM->Fill();
-      branch_2jWWAelA->Fill();
+//      branch_2jWWAelA->Fill();
       branch_2jWWAelA1->Fill();
       branch_2jWWAelA2->Fill();
 
