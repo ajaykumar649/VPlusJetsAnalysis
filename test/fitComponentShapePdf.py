@@ -70,7 +70,11 @@ else:
 
 files = getattr(pars, '%sFiles' % opts.component)
 models = getattr(pars, '%sModels' % opts.component)
-convModels  = getattr(pars, '%sConvModels' % opts.component)
+if hasattr(pars, '%sConvModels' % opts.component):
+    convModels  = getattr(pars, '%sConvModels' % opts.component)
+else:
+    convModels = None
+
 if opts.altModel:
     print 'will fit the alternate model'
     models = getattr(pars, '%sModelsAlt' % opts.component)

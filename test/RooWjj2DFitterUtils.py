@@ -102,68 +102,122 @@ class Wjj2DFitterUtils:
         else:
             theCuts = self.fullCuts()
 
-        # create an entry list which apply the cuts to the tree
         if gDirectory.Get('cuts_evtList'):
             gDirectory.Delete('cuts_evtList')
-        theTree.Draw('>>cuts_evtList', theCuts, 'entrylist')
-        theList = gDirectory.Get('cuts_evtList')
+        theList = None
 
         # create fomulae for the variables of interest
         rowVs = []
         for (i,v) in enumerate(self.pars.var):
             rowVs.append(TTreeFormula('v%i' % i, v, theTree))
 
+        extraDraw = ''
+        varsRemaining = 4-len(self.pars.var)
+        ExtraDrawCP = False
+        ExtraDrawInterf = False
+        if CPweight:
+            if hasattr(theTree, 'complexpolewtggH%i' % self.pars.mHiggs):
+                extraDraw += ':(complexpolewtggH%i/avecomplexpolewtggH%i)' % \
+                             (self.pars.mHiggs, self.pars.mHiggs)
+                varsRemaining -= 1
+                ExtraDrawCP = True
+        if interference == 1:
+            extraDraw += ':interferencewtggH%i' % self.pars.mHiggs
+            varsRemaining -= 1
+            ExtraDrawInterf = True
+        elif interference == 2:
+            extraDraw += ':interferencewt_upggH%i' % self.pars.mHiggs
+            varsRemaining -= 1
+            ExtraDrawInterf = True
+        elif interference == 3:
+            extraDraw += ':interferencewt_downggH%i' % self.pars.mHiggs
+            varsRemaining -= 1
+            ExtraDrawInterf = True
+                            
+        if varsRemaining >= 0:
+            if len(theCuts) > 0:
+                theCuts = 'puwt*effwt*' + theCuts
+            # print ':'.join(self.pars.var) + extraDraw
+            # print 'weighted cuts:',theCuts
+            Nsel = theTree.Draw(':'.join(self.pars.var) + extraDraw,
+                                theCuts, 'goff')
+        else:
+            # create an entry list which apply the cuts to the tree
+            Nsel = theTree.Draw('>>cuts_evtList', theCuts, 'entrylist')
+            theList = gDirectory.Get('cuts_evtList')
+
+
         # loop over the selected events calculate their weight and yield
         # the two variable values and the weight for each selected event.
-        print "selected events:",theList.GetN()
-        while theTree.GetEntry(theList.Next()):
-            if self.pars.isElectron:
-                lep_pt = theTree.W_electron_pt
-                lep_eta = theTree.W_electron_eta
-            else:
-                lep_pt = theTree.W_muon_pt
-                lep_eta = theTree.W_muon_eta
-            # jet_pt = []
-            # jet_eta = []
-            # for (idx, pt) in enumerate(theTree.JetPFCor_Pt):
-            #     if pt > 0:
-            #         jet_pt.append(pt)
-            #         jet_eta.append(theTree.JetPFCor_Eta[idx])
+        print "selected events:",Nsel
 
-            # effWgt = self.effWeight(lepton_pt = lep_pt, lepton_eta = lep_eta, 
-            #                         #jet_pt = jet_pt, jet_eta,
-            #                         mt_pt = theTree.W_mt, mt_eta = lep_eta,
-            #                         met_pt = theTree.event_met_pfmet, 
-            #                         met_eta = 0.)
-            if (hasattr(self.pars, 'btagVeto')) and (self.pars.btagVeto) and \
-                    self.btagVeto(theTree):
-                continue
+        if theList:
+            while theTree.GetEntry(theList.Next()):
+                # if self.pars.isElectron:
+                #     lep_pt = theTree.W_electron_pt
+                #     lep_eta = theTree.W_electron_eta
+                # else:
+                #     lep_pt = theTree.W_muon_pt
+                #     lep_eta = theTree.W_muon_eta
+                # jet_pt = []
+                # jet_eta = []
+                # for (idx, pt) in enumerate(theTree.JetPFCor_Pt):
+                #     if pt > 0:
+                #         jet_pt.append(pt)
+                #         jet_eta.append(theTree.JetPFCor_Eta[idx])
 
-            effWgt = theTree.puwt*theTree.effwt
-            if CPweight:
-                if hasattr(theTree, 'complexpolewtggH%i' % self.pars.mHiggs):
-                    cpw = getattr(theTree, 
-                                  'complexpolewtggH%i' % self.pars.mHiggs)
-                    cpw /= getattr(theTree, 
-                                   'avecomplexpolewtggH%i' % self.pars.mHiggs)
+                # effWgt = self.effWeight(lepton_pt = lep_pt, lepton_eta = lep_eta, 
+                #                         #jet_pt = jet_pt, jet_eta,
+                #                         mt_pt = theTree.W_mt, mt_eta = lep_eta,
+                #                         met_pt = theTree.event_met_pfmet, 
+                #                         met_eta = 0.)
+                # if (hasattr(self.pars, 'btagVeto')) and (self.pars.btagVeto) and \
+                #         self.btagVeto(theTree):
+                #     continue
+
+                effWgt = theTree.puwt*theTree.effwt
+                if CPweight:
+                    if hasattr(theTree, 'complexpolewtggH%i' % self.pars.mHiggs):
+                        cpw = getattr(theTree, 
+                                      'complexpolewtggH%i' % self.pars.mHiggs)
+                        cpw /= getattr(theTree, 
+                                       'avecomplexpolewtggH%i' % self.pars.mHiggs)
+                    else:
+                        cpw = HiggsCPWeight(self.pars.mHiggs, theTree.W_H_mass_gen)
                 else:
-                    cpw = HiggsCPWeight(self.pars.mHiggs, theTree.W_H_mass_gen)
-            else:
+                    cpw = 1.
+                if interference == 1:
+                    iwt = getattr(theTree, 
+                                  'interferencewtggH%i' % self.pars.mHiggs)
+                elif interference == 2:
+                    iwt = getattr(theTree, 
+                                  'interferencewt_upggH%i' % self.pars.mHiggs)
+                elif interference == 3:
+                    iwt = getattr(theTree,
+                                  'interferencewt_downggH%i' % self.pars.mHiggs)
+                else:
+                    iwt = 1.
+                row = [ v.EvalInstance() for v in rowVs ]
+                yield (row, effWgt, cpw, iwt)
+        else:
+            for rowi in range(0, theTree.GetSelectedRows()):
+                effWgt = theTree.GetW()[rowi]
+                row = []
+                for vi in range(0, len(self.pars.var)):
+                    row.append(getattr(theTree, 'GetV%i' % (vi+1))()[rowi])
                 cpw = 1.
-            if interference == 1:
-                iwt = getattr(theTree, 
-                              'interferencewtggH%i' % self.pars.mHiggs)
-            elif interference == 2:
-                iwt = getattr(theTree, 
-                              'interferencewt_upggH%i' % self.pars.mHiggs)
-            elif interference == 3:
-                iwt = getattr(theTree,
-                              'interferencewt_downggH%i' % self.pars.mHiggs)
-            else:
+                vi = len(self.pars.var)
+                if ExtraDrawCP:
+                    cpw = getattr(theTree, 'GetV%i' % (vi+1))()[rowi]
+                    vi += 1
                 iwt = 1.
-            row = [ v.EvalInstance() for v in rowVs ]
-            yield (row, effWgt, cpw, iwt)
+                if ExtraDrawInterf:
+                    iwt = getattr(theTree, 'GetV%i' % (vi+1))()[rowi]
+                    vi += 1
+                yield (row, effWgt, cpw, iwt)
+                
 
+        treeFile.Close()
         return
         
 

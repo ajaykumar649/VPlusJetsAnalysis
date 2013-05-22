@@ -1,4 +1,4 @@
-from ROOT import RooStats, Double, RooArgSet, RooFit
+from ROOT import RooStats, Double, RooArgSet, RooFit, RooDataHist
 
 # profiled likelihood limit
 def plcLimit(obs_, poi_, model, ws, data, CL = 0.95, verbose = False):
@@ -56,9 +56,11 @@ def plcLimit(obs_, poi_, model, ws, data, CL = 0.95, verbose = False):
         print '%.0f%% CL limits' % (interval.ConfidenceLevel() * 100)
         print Limits
 
-    return {'limits': Limits, 'interval': interval}
+    Limits['interval'] = interval
+    return Limits
 
-def expectedPlcLimit(obs_, poi_, model, ws, ntoys = 30, CL = 0.95):
+def expectedPlcLimit(obs_, poi_, model, ws, ntoys = 30, CL = 0.95,
+                     binData = False):
     # obs : observable variable or RooArgSet of observables
     # poi : parameter of interest or RooArgSet of parameters
     # model : RooAbsPdf of model to consider including any constraints
@@ -91,16 +93,21 @@ def expectedPlcLimit(obs_, poi_, model, ws, ntoys = 30, CL = 0.95):
         mPars.assignValueOnly(genPars)
 
         toyData = model.generate(obs, RooFit.Extended())
+        if binData:
+            toyData = RooDataHist('data_obs_%i' % i, 'data_obs_%i' % i,
+                                  obs, toyData)
         toyData.SetName('data_obs_%i' % i)
+        toyData.Print()
 
         limits.append(plcLimit(obs_, poi_, model, ws, toyData, CL))
 
-        if limits[-1]['limits'][poi_.GetName()]['ok']:
+        # print limits[-1]
+        if limits[-1][poi_.GetName()]['ok']:
             nOK += 1
-            sumUpper += limits[-1]['limits'][poi_.GetName()]['upper']
-            sumUpper2 += limits[-1]['limits'][poi_.GetName()]['upper']**2
-            sumLower += limits[-1]['limits'][poi_.GetName()]['lower']
-            sumLower2 += limits[-1]['limits'][poi_.GetName()]['lower']**2
+            sumUpper += limits[-1][poi_.GetName()]['upper']
+            sumUpper2 += limits[-1][poi_.GetName()]['upper']**2
+            sumLower += limits[-1][poi_.GetName()]['lower']
+            sumLower2 += limits[-1][poi_.GetName()]['lower']**2
 
         toyData.IsA().Destructor(toyData)
 

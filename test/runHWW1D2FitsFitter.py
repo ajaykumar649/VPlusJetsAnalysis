@@ -339,11 +339,13 @@ bkgHisto.SetName("HWW%snujj_bkg" % mode)
 bkgHisto_up = fitter_mWW.utils.newEmptyHist(
     'HWW%snujj_bkg_%sbkgshapeUp' % (mode, mode), 1)
 bkgHisto_up = pulls.curveToHist(upper, bkgHisto_up)
+bkgHisto_up.Scale(full_pdf.expectedEvents(fitter_mWW.ws.set('obsSet'))/bkgHisto_up.Integral())
 bkgHisto_up.SetLineColor(kOrange+2)
 bkgHisto_up.SetLineStyle(kDashed)
 bkgHisto_dwn = fitter_mWW.utils.newEmptyHist(
     'HWW%snujj_bkg_%sbkgshapeDown' % (mode, mode), 1)
 bkgHisto_dwn = pulls.curveToHist(lower, bkgHisto_dwn)
+bkgHisto_dwn.Scale(full_pdf.expectedEvents(fitter_mWW.ws.set('obsSet'))/bkgHisto_dwn.Integral())
 bkgHisto_dwn.SetLineColor(kOrange+4)
 bkgHisto_dwn.SetLineStyle(kDashed)
 c_bkg = TCanvas('c_bkg', 'histograms')
@@ -398,7 +400,8 @@ if opts.doLimit:
                     limits.expectedPlcLimit(fitter_mWW.ws.var(pars_mWW.var[0]),
                                             fitter_mWW.ws.var('r_signal'),
                                             full_pdf, fitter_mWW.ws,
-                                            ntoys = 30)
+                                            ntoys = 30,
+                                            binData = pars_mWW.binData)
 
     upperHist = TH1F('upperHist', 'upper limit hist',
                      60,
@@ -408,12 +411,13 @@ if opts.doLimit:
     sumUpper = 0.
     sumUpper2 = 0.
     for toy in toys:
-        if (toy['ok']) and \
-           (toy['upper'] < (fitter_mWW.ws.var('r_signal').getMax()-0.02)):
-            upperHist.Fill(toy['upper'])
+        #print toy
+        if (toy['r_signal']['ok']) and \
+           (toy['r_signal']['upper'] < (fitter_mWW.ws.var('r_signal').getMax()-0.02)):
+            upperHist.Fill(toy['r_signal']['upper'])
             nUpperGood += 1
-            sumUpper += toy['upper']
-            sumUpper2 += toy['upper']**2
+            sumUpper += toy['r_signal']['upper']
+            sumUpper2 += toy['r_signal']['upper']**2
             
             
         
@@ -434,13 +438,24 @@ if opts.obsLimit:
                             full_pdf, fitter_mWW.ws,
                             fitter_mWW.ws.data('data_obs'))
     
-    print '%.0f%% CL upper limit' % (95.), limit['ok'],
-    print ': %.4f' % (limit['upper'])
-    print '%.0f%% CL lower limit' % (95.), limit['ok'],
-    print ': %.4f' % (limit['lower'])
+    print '%.0f%% CL upper limit' % (95.), limit['r_signal']['ok'],
+    print ': %.4f' % (limit['r_signal']['upper'])
+    print '%.0f%% CL lower limit' % (95.), limit['r_signal']['ok'],
+    print ': %.4f' % (limit['r_signal']['lower'])
 
 #freeze all parameters in place
 #params_mWW.setAttribAll('Constant', True)
+
+allVars = fitter_mWW.ws.allVars()
+allVars.remove(fitter_mWW.ws.set('obsSet'))
+varIter = allVars.createIterator()
+theVar = varIter.Next()
+while theVar:   
+    if opts.isElectron:
+        theVar.SetName('%s_el' % theVar.GetName())
+    else:
+        theVar.SetName('%s_mu' % theVar.GetName())
+    theVar = varIter.Next()
 
 extraTag = ''
 if opts.includeSignal:

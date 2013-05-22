@@ -134,14 +134,18 @@ class Wjj2DFitter:
         for component in self.pars.backgrounds:
             # print 'getting compModels'
             compModels = getattr(self.pars, '%sModels' % component)
-            convModels = getattr(self.pars, '%sConvModels' % component)
+            if hasattr(self.pars, '%sConvModels' % component):
+                convModels = getattr(self.pars, '%sConvModels' % component)
+            else:
+                convModels = None
             if useAlternateModels:
                 print 'loading Alternate Models'
                 compModels = getattr(self.pars, '%sModelsAlt' % component)
                 convModels = getattr(self.pars, '%sConvModelsAlt' % component)
             # print 'compModels = %s' % compModels
             compFiles = getattr(self.pars, '%sFiles' % component)
-            compPdf = self.makeComponentPdf(component, compFiles, compModels, useAlternateModels, convModels)
+            compPdf = self.makeComponentPdf(component, compFiles, compModels,
+                                            useAlternateModels, convModels)
                 
             norm = self.ws.factory('prod::f_%s_norm' % component + \
                                        '(n_%s[0.,1e6],' % component + \
@@ -169,8 +173,12 @@ class Wjj2DFitter:
         for component in self.pars.signals:
             compFile = getattr(self.pars, '%sFiles' % component)
             compModels = getattr(self.pars, '%sModels' % component)
-            convModels = getattr(self.pars, '%sConvModels' % component)
-            compPdf = self.makeComponentPdf(component, compFiles, compModels, useAlternateModels, convModels)
+            if hasattr(self.pars, '%sConvModels' % component):
+                convModels = getattr(self.pars, '%sConvModels' % component)
+            else:
+                convModels = None
+            compPdf = self.makeComponentPdf(component, compFiles, compModels,
+                                            useAlternateModels, convModels)
             norm = self.ws.factory(
                 "prod::f_%s_norm(n_%s[0., 1e6],r_signal)" % \
                     (component, component)
@@ -317,11 +325,12 @@ class Wjj2DFitter:
         return fr
 
     # determine the fitting model for each component and return them
-    def makeComponentPdf(self, component, files, models, useAlternateModels, convModels):
+    def makeComponentPdf(self, component, files, models, useAlternateModels,
+                         convModels):
         print 'making ComponentPdf %s' % component
         # print 'models = %s' % models
         # print 'files = %s' % files
-        if not (convModels[0] == -1):
+        if convModels and not (convModels[0] == -1):
             thePdf = self.makeConvolvedPdf(component, files, models, useAlternateModels, convModels)
         elif (models[0] == -1):
             thePdf = self.makeComponentHistPdf(component, files)
@@ -507,7 +516,14 @@ class Wjj2DFitter:
             pdfName = 'total'
 
         xvar = self.ws.var(var)
-        xvar.setRange('plotRange', xvar.getMin(), xvar.getMax())
+        nbins = xvar.getBins()
+        if hasattr(self.pars, 'plotRanges'):
+            xvar.setRange('plotRange', self.pars.plotRanges[var][1],
+                          self.pars.plotRanges[var][2])
+            xvar.setBins(self.pars.plotRanges[var][0], 'plotBins')
+        else:
+            xvar.setRange('plotRange', xvar.getMin(), xvar.getMax())
+            xvar.setBins(nbins, 'plotBins')
 
         sframe = xvar.frame()
         sframe.SetName("%s_stacked" % var)
@@ -531,7 +547,8 @@ class Wjj2DFitter:
         if self.pars.includeSignal:
             theComponents += self.pars.signals
         theComponents += self.pars.backgrounds
-        data.plotOn(sframe, RooFit.Invisible())
+        data.plotOn(sframe, RooFit.Invisible(),
+                    RooFit.Binning('plotBins'))
         # dataHist = RooAbsData.createHistogram(data,'dataHist_%s' % var, xvar,
         #                                       RooFit.Binning('%sBinning' % var))
         # #dataHist.Scale(1., 'width')
@@ -577,7 +594,8 @@ class Wjj2DFitter:
                     sframe.setInvisible(component, 
                                         plotCharacteristics['visible'])
 
-        data.plotOn(sframe, RooFit.Name('theData'))
+        data.plotOn(sframe, RooFit.Name('theData'),
+                    RooFit.Binning('plotBins'))
         sframe.getHist('theData').SetTitle('data')
         # theData = RooHist(dataHist, 1., 1, RooAbsData.SumW2, 1.0, True)
         # theData.SetName('theData')
@@ -622,6 +640,8 @@ class Wjj2DFitter:
         # dataHist.IsA().Destructor(dataHist)
         if not Silent:
             print
+
+        xvar.setBins(nbins)
 
         return sframe
 

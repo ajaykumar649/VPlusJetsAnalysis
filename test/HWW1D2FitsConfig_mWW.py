@@ -82,6 +82,7 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
 
     pars.var = ['fit_mlvjj', 'Mass2j_PFCor']
     pars.varRanges = pars_mjj.varRanges
+    pars.plotRanges = pars_mjj.plotRanges
     pars.varTitles = pars_mjj.varTitles
     pars.exclude = pars_mjj.exclude
     pars.doExclude = False
