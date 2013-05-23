@@ -131,8 +131,8 @@ if __name__ == "__main__":
     from ROOT import TFile, TCanvas, gROOT, RooPlot, gPad, TLine, SetOwnership
     import plotMjjFit
 
-    plots = {'%s_Stacked' % (opts.prefix): [],
-             '%s_Subtracted' % (opts.prefix): []}
+    plots = {'%s_stacked' % (opts.prefix): [],
+             '%s_subtracted' % (opts.prefix): []}
     #print plots
     cans = []
 
@@ -161,7 +161,7 @@ if __name__ == "__main__":
 
         outPlot.Write()
 
-        if (plot == '%s_Subtracted' % (opts.prefix)):
+        if (plot == '%s_subtracted' % (opts.prefix)):
             outPlot.SetMaximum(outPlot.GetMaximum()*1.3)
             outPlot.SetMinimum(outPlot.GetMinimum()*1.1)
             if outPlot.findObject('ErrBand'):
