@@ -18,13 +18,13 @@ const float LZ_MIN = -0.03;
 const float LZ_MAX =  0.03;
 const float LZ_INC = 0.001; //  101 pts
 
-const float dKG_MIN =  -0.10;
-const float dKG_MAX =   0.10;
-const float dKG_INC =   0.01;    // x21 pts
+const float dKG_MIN =  -0.15;
+const float dKG_MAX =   0.15;
+const float dKG_INC =   0.01;    // x31 pts
 
 const float dg1_MIN =  -0.10;
 const float dg1_MAX =   0.10;
-const float dg1_INC =   0.01;    // x21 pts
+const float dg1_INC =   0.002;    // x101 pts
 
 const double intLUMI = 1.;
 
@@ -1092,7 +1092,7 @@ void makeATGCLimitDataCards(int channel) {
 
 void makeATGCLimitDataCards(void)
 {
-  makeATGCLimitDataCards(2);
+  //makeATGCLimitDataCards(2);
   makeATGCLimitDataCards(3);
 }
 
