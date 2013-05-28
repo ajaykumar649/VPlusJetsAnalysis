@@ -5,7 +5,7 @@ void SaveTGCCoefficients3D(){
    ////// ---- first process lambda:dkappa combination --------
    TFile fin("root_kappa-lambda.root");
    TTree* tr = (TTree*) fin.Get("tree"); 
-   TProfile2D* p0_lambda_dkg = new TProfile2D("p0_lambda_dkg","", 61, -0.0305, 0.0305, 21, -0.105, 0.105);
+   TProfile2D* p0_lambda_dkg = new TProfile2D("p0_lambda_dkg","", 61, -0.0305, 0.0305, 31, -0.155, 0.155);
    SetTitles(p0_lambda_dkg, "lambda", "dkg", "p0");
    TProfile2D* p1_lambda_dkg = (TProfile2D*) p0_lambda_dkg->Clone("p1_lambda_dkg");
    TProfile2D* p2_lambda_dkg = (TProfile2D*) p0_lambda_dkg->Clone("p2_lambda_dkg");
@@ -27,20 +27,20 @@ void SaveTGCCoefficients3D(){
 //    TProfile2D p6_lambda_dkg("p6_lambda_dkg","", 55, -0.55, 0.55, 55, -0.55, 0.55, 100, -4.0e-15, 13.0e-15);
 //    SetTitles(p6_lambda_dkg, "lambda", "dkg", "p6");
 
-   tr->Draw("p0:lambda:dkappa>>p0_lambda_dkg","","goff");
-   tr->Draw("p1:lambda:dkappa>>p1_lambda_dkg","","goff");
-   tr->Draw("p2:lambda:dkappa>>p2_lambda_dkg","","goff");
-   tr->Draw("p3:lambda:dkappa>>p3_lambda_dkg","","goff");
-   tr->Draw("p4:lambda:dkappa>>p4_lambda_dkg","","goff");
-   tr->Draw("p5:lambda:dkappa>>p5_lambda_dkg","","goff");
-   tr->Draw("p6:lambda:dkappa>>p6_lambda_dkg","","goff");
+   tr->Draw("p0:dkappa:lambda>>p0_lambda_dkg","","goff");
+   tr->Draw("p1:dkappa:lambda>>p1_lambda_dkg","","goff");
+   tr->Draw("p2:dkappa:lambda>>p2_lambda_dkg","","goff");
+   tr->Draw("p3:dkappa:lambda>>p3_lambda_dkg","","goff");
+   tr->Draw("p4:dkappa:lambda>>p4_lambda_dkg","","goff");
+   tr->Draw("p5:dkappa:lambda>>p5_lambda_dkg","","goff");
+   tr->Draw("p6:dkappa:lambda>>p6_lambda_dkg","","goff");
 
 
 
    ////// ---- second process lambda:dg1 combination --------
    TFile fin2("root_lambda-g1.root");
    TTree* tr2 = (TTree*) fin2.Get("tree"); 
-   TProfile2D* p0_lambda_dg1 = new TProfile2D("p0_lambda_dg1","", 61, -0.0305, 0.0305, 21, -0.105, 0.105);
+   TProfile2D* p0_lambda_dg1 = new TProfile2D("p0_lambda_dg1","", 61, -0.0305, 0.0305, 101, -0.101, 0.101);
    SetTitles(p0_lambda_dg1, "lambda", "dg1", "p0");
    TProfile2D* p1_lambda_dg1 = (TProfile2D*) p0_lambda_dg1->Clone("p1_lambda_dg1");
    TProfile2D* p2_lambda_dg1 = (TProfile2D*) p0_lambda_dg1->Clone("p2_lambda_dg1");
@@ -74,7 +74,7 @@ void SaveTGCCoefficients3D(){
    ////// ---- third process dkg:dg1 combination --------
    TFile fin3("root_kappa-g1.root");
    TTree* tr3 = (TTree*) fin3.Get("tree"); 
-   TProfile2D* p0_dkg_dg1 = new TProfile2D("p0_dkg_dg1","", 21, -0.105, 0.105, 21, -0.105, 0.105);
+   TProfile2D* p0_dkg_dg1 = new TProfile2D("p0_dkg_dg1","", 31, -0.155, 0.155, 101, -0.101, 0.101);
    SetTitles(p0_dkg_dg1, "dkg", "dg1", "p0");
    TProfile2D* p1_dkg_dg1 = (TProfile2D*) p0_dkg_dg1->Clone("p1_dkg_dg1");
    TProfile2D* p2_dkg_dg1 = (TProfile2D*) p0_dkg_dg1->Clone("p2_dkg_dg1");
