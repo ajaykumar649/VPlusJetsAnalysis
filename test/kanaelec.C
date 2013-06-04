@@ -136,14 +136,19 @@
 //const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
 //const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
 const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v2_nojetnum/";
+const TString inQCDDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v2_nojetnum/";
+
 //const TString inDataDir  = "/uscms_data/d2/andersj/Wjj/2012/data/Moriond2013/trees/";
 //const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/jdamgov/HCPlnjj/MergedNtuples/";
 //const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/weizountuple/";
-const TString inQCDDir   = "/eos/uscms/store/user/lnujj/HCP2012METfix/MergedNtuples/";
+//const TString inQCDDir   = "/eos/uscms/store/user/lnujj/HCP2012METfix/MergedNtuples/";
 //const TString outDataDir = "/uscms_data/d3/weizou/MakeNtuple/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/";
 //const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/ttHsample/";
 //const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/BoostedWSample_v2/";
-const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/EWKW2jetsSample_2013_3_23/";
+//const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/EWKW2jetsSample_2013_3_23/";
+const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/ajay/VBF_Higgs_28May_v1/";
+
+
 //const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/ttHsample_New_v14/";
 const std::string fDir   = "EffTable2012/";
 const std::string fInterferenceDir   = "InterferenceTable2012/";
@@ -1688,6 +1693,14 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    Float_t vbf_bj_e =-999,   vbf_bj_pt =-999,   vbf_bj_eta=-999,  vbf_bj_phi =-999, vbf_bj_m =-999;   
    Float_t vbf_jj_deta=-999; Float_t vbf_jj_dphi=-999;  Int_t   vbf_jj_type=0,   vbf_n_excj=0,   vbf_n_exfj=0,   vbf_n_gdjj=0;
 
+// VBF Higgs Variables defined , initialized
+
+   Float_t hvbf_jj_e =-999,   hvbf_jj_pt =-999,   hvbf_jj_eta=-999,  hvbf_jj_phi =-999, hvbf_jj_m =-999;
+   Float_t hvbf_aj_e =-999,   hvbf_aj_pt =-999,   hvbf_aj_eta=-999,  hvbf_aj_phi =-999, hvbf_aj_m =-999;
+   Float_t hvbf_bj_e =-999,   hvbf_bj_pt =-999,   hvbf_bj_eta=-999,  hvbf_bj_phi =-999, hvbf_bj_m =-999;
+   Float_t hvbf_jj_deta=-999; Float_t hvbf_jj_dphi=-999;  Int_t   hvbf_jj_type=0,   hvbf_n_excj=0,   hvbf_n_exfj=0,   hvbf_n_gdjj=0;
+
+
    TBranch *branch_vbf_jj_e    = newtree->Branch("vbf_jj_e",    &vbf_jj_e,     "vbf_jj_e/F");
    TBranch *branch_vbf_jj_pt   = newtree->Branch("vbf_jj_pt",   &vbf_jj_pt,    "vbf_jj_pt/F");
    TBranch *branch_vbf_jj_eta  = newtree->Branch("vbf_jj_eta",  &vbf_jj_eta,   "vbf_jj_eta/F");
@@ -1713,6 +1726,34 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_vbf_n_exfj  = newtree->Branch("vbf_n_exfj",  &vbf_n_exfj,   "vbf_n_exfj/I");
    TBranch *branch_vbf_n_gdjj  = newtree->Branch("vbf_n_gdjj",  &vbf_n_gdjj,   "vbf_n_gdjj/I");
 
+        // VBF Higgs tag jets branches added in tree...........
+
+   TBranch *branch_hvbf_jj_e    = newtree->Branch("hvbf_jj_e",    &hvbf_jj_e,     "hvbf_jj_e/F");
+   TBranch *branch_hvbf_jj_pt   = newtree->Branch("hvbf_jj_pt",   &hvbf_jj_pt,    "hvbf_jj_pt/F");
+   TBranch *branch_hvbf_jj_eta  = newtree->Branch("hvbf_jj_eta",  &hvbf_jj_eta,   "hvbf_jj_eta/F");
+   TBranch *branch_hvbf_jj_phi  = newtree->Branch("hvbf_jj_phi",  &hvbf_jj_phi,   "hvbf_jj_phi/F");
+   TBranch *branch_hvbf_jj_m    = newtree->Branch("hvbf_jj_m",    &hvbf_jj_m,     "hvbf_jj_m/F");
+
+   TBranch *branch_hvbf_aj_e    = newtree->Branch("hvbf_aj_e",    &hvbf_aj_e,     "hvbf_aj_e/F");
+   TBranch *branch_hvbf_aj_pt   = newtree->Branch("hvbf_aj_pt",   &hvbf_aj_pt,    "hvbf_aj_pt/F");
+   TBranch *branch_hvbf_aj_eta  = newtree->Branch("hvbf_aj_eta",  &hvbf_aj_eta,   "hvbf_aj_eta/F");
+   TBranch *branch_hvbf_aj_phi  = newtree->Branch("hvbf_aj_phi",  &hvbf_aj_phi,   "hvbf_aj_phi/F");
+   TBranch *branch_hvbf_aj_m    = newtree->Branch("hvbf_aj_m",    &hvbf_aj_m,     "hvbf_aj_m/F");
+
+   TBranch *branch_hvbf_bj_e    = newtree->Branch("hvbf_bj_e",    &hvbf_bj_e,     "hvbf_bj_e/F");
+   TBranch *branch_hvbf_bj_pt   = newtree->Branch("hvbf_bj_pt",   &hvbf_bj_pt,    "hvbf_bj_pt/F");
+   TBranch *branch_hvbf_bj_eta  = newtree->Branch("hvbf_bj_eta",  &hvbf_bj_eta,   "hvbf_bj_eta/F");
+   TBranch *branch_hvbf_bj_phi  = newtree->Branch("hvbf_bj_phi",  &hvbf_bj_phi,   "hvbf_bj_phi/F");
+   TBranch *branch_hvbf_bj_m    = newtree->Branch("hvbf_bj_m",    &hvbf_bj_m,     "hvbf_bj_m/F");
+
+   TBranch *branch_hvbf_jj_deta = newtree->Branch("hvbf_jj_deta", &hvbf_jj_deta,  "hvbf_jj_deta/F");
+   TBranch *branch_hvbf_jj_dphi = newtree->Branch("hvbf_jj_dphi", &hvbf_jj_dphi,  "hvbf_jj_dphi/F");
+
+        // VBF Higgs Analysis .....
+
+
+
+
    Int_t vbf_aj_bj_Wjj_jetnumber = 0; 
    TBranch *branch_vbf_aj_bj_Wjj_jetnumber = newtree->Branch("vbf_aj_bj_Wjj_jetnumber",&vbf_aj_bj_Wjj_jetnumber,"vbf_aj_bj_Wjj_jetnumber/I");
    Int_t vbf_waj_wbj_jetnumber = 0; 
@@ -1727,6 +1768,17 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    Float_t vbf_waj_e =-999,   vbf_waj_pt =-999,   vbf_waj_eta =-999,   vbf_waj_phi =-999,   vbf_waj_m =-999;   
    Float_t vbf_wbj_e =-999,   vbf_wbj_pt =-999,   vbf_wbj_eta =-999,   vbf_wbj_phi =-999,   vbf_wbj_m =-999;   
    Float_t vbf_lvjj_e=-999,   vbf_lvjj_pt=-999,   vbf_lvjj_eta=-999,   vbf_lvjj_phi=-999,   vbf_lvjj_m=-999,   vbf_lvjj_y=-999;   
+
+// VBF Higgs  
+   Float_t hvbf_wjj_e =-999,   hvbf_wjj_pt =-999,   hvbf_wjj_eta =-999,   hvbf_wjj_phi =-999,   hvbf_wjj_m =-999;
+   Float_t hvbf_waj_e =-999,   hvbf_waj_pt =-999,   hvbf_waj_eta =-999,   hvbf_waj_phi =-999,   hvbf_waj_m =-999;
+   Float_t hvbf_wbj_e =-999,   hvbf_wbj_pt =-999,   hvbf_wbj_eta =-999,   hvbf_wbj_phi =-999,   hvbf_wbj_m =-999;
+   Float_t hvbf_lvjj_e=-999,   hvbf_lvjj_pt=-999,   hvbf_lvjj_eta=-999,   hvbf_lvjj_phi=-999,   hvbf_lvjj_m=-999,   hvbf_lvjj_y=-999;
+   Float_t hvbf_wjj_deta=-999, hvbf_wjj_dphi=-999;
+   Float_t hvbf_lv_e=-999,   hvbf_lv_pt=-999,   hvbf_lv_eta=-999,   hvbf_lv_phi=-999,   hvbf_lv_m=-999,   hvbf_lv_mT=-999;
+   Float_t hvbf_l_e=-999,   hvbf_l_pt=-999,   hvbf_l_eta=-999,   hvbf_l_phi=-999;
+   Float_t hvbf_l_MET_deltaphi=-999, hvbf_lW_hW_deltaphi=-999, hvbf_event_met_pfmet=-999 ;
+
 
    TBranch *branch_vbf_wjj_e     = newtree->Branch("vbf_wjj_e",     &vbf_wjj_e,      "vbf_wjj_e/F");
    TBranch *branch_vbf_wjj_pt    = newtree->Branch("vbf_wjj_pt",    &vbf_wjj_pt,     "vbf_wjj_pt/F");
@@ -1746,15 +1798,68 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_vbf_wbj_phi   = newtree->Branch("vbf_wbj_phi",   &vbf_wbj_phi,    "vbf_wbj_phi/F");
    TBranch *branch_vbf_wbj_m     = newtree->Branch("vbf_wbj_m",     &vbf_wbj_m,      "vbf_wbj_m/F");
 
+   TBranch *branch_hvbf_wjj_deta     = newtree->Branch("hvbf_wjj_deta",     &hvbf_wjj_deta,      "hvbf_wjj_deta/F");
+   TBranch *branch_hvbf_wjj_dphi     = newtree->Branch("hvbf_wjj_dphi",     &hvbf_wjj_dphi,      "hvbf_wjj_dphi/F");
+
+
    TBranch *branch_vbf_lvjj_e    = newtree->Branch("vbf_lvjj_e",    &vbf_lvjj_e,     "vbf_lvjj_e/F");
    TBranch *branch_vbf_lvjj_pt   = newtree->Branch("vbf_lvjj_pt",   &vbf_lvjj_pt,    "vbf_lvjj_pt/F");
    TBranch *branch_vbf_lvjj_eta  = newtree->Branch("vbf_lvjj_eta",  &vbf_lvjj_eta,   "vbf_lvjj_eta/F");
    TBranch *branch_vbf_lvjj_phi  = newtree->Branch("vbf_lvjj_phi",  &vbf_lvjj_phi,   "vbf_lvjj_phi/F");
    TBranch *branch_vbf_lvjj_m    = newtree->Branch("vbf_lvjj_m",    &vbf_lvjj_m,     "vbf_lvjj_m/F");
    TBranch *branch_vbf_lvjj_y    = newtree->Branch("vbf_lvjj_y",    &vbf_lvjj_y,     "vbf_lvjj_y/F");
+// VBF Higgs  jets 
+   TBranch *branch_hvbf_wjj_e     = newtree->Branch("hvbf_wjj_e",     &hvbf_wjj_e,      "hvbf_wjj_e/F");
+   TBranch *branch_hvbf_wjj_pt    = newtree->Branch("hvbf_wjj_pt",    &hvbf_wjj_pt,     "hvbf_wjj_pt/F");
+   TBranch *branch_hvbf_wjj_eta   = newtree->Branch("hvbf_wjj_eta",   &hvbf_wjj_eta,    "hvbf_wjj_eta/F");
+   TBranch *branch_hvbf_wjj_phi   = newtree->Branch("hvbf_wjj_phi",   &hvbf_wjj_phi,    "hvbf_wjj_phi/F");
+   TBranch *branch_hvbf_wjj_m     = newtree->Branch("hvbf_wjj_m",     &hvbf_wjj_m,      "hvbf_wjj_m/F");
+
+   TBranch *branch_hvbf_waj_e     = newtree->Branch("hvbf_waj_e",     &hvbf_waj_e,      "hvbf_waj_e/F");
+   TBranch *branch_hvbf_waj_pt    = newtree->Branch("hvbf_waj_pt",    &hvbf_waj_pt,     "hvbf_waj_pt/F");
+   TBranch *branch_hvbf_waj_eta   = newtree->Branch("hvbf_waj_eta",   &hvbf_waj_eta,    "hvbf_waj_eta/F");
+   TBranch *branch_hvbf_waj_phi   = newtree->Branch("hvbf_waj_phi",   &hvbf_waj_phi,    "hvbf_waj_phi/F");
+   TBranch *branch_hvbf_waj_m     = newtree->Branch("hvbf_waj_m",     &hvbf_waj_m,      "hvbf_waj_m/F");
+
+   TBranch *branch_hvbf_wbj_e     = newtree->Branch("hvbf_wbj_e",     &hvbf_wbj_e,      "hvbf_wbj_e/F");
+   TBranch *branch_hvbf_wbj_pt    = newtree->Branch("hvbf_wbj_pt",    &hvbf_wbj_pt,     "hvbf_wbj_pt/F");
+   TBranch *branch_hvbf_wbj_eta   = newtree->Branch("hvbf_wbj_eta",   &hvbf_wbj_eta,    "hvbf_wbj_eta/F");
+   TBranch *branch_hvbf_wbj_phi   = newtree->Branch("hvbf_wbj_phi",   &hvbf_wbj_phi,    "hvbf_wbj_phi/F");
+   TBranch *branch_hvbf_wbj_m     = newtree->Branch("hvbf_wbj_m",     &hvbf_wbj_m,      "hvbf_wbj_m/F");
+
+   TBranch *branch_hvbf_lvjj_e    = newtree->Branch("hvbf_lvjj_e",    &hvbf_lvjj_e,     "hvbf_lvjj_e/F");
+   TBranch *branch_hvbf_lvjj_pt   = newtree->Branch("hvbf_lvjj_pt",   &hvbf_lvjj_pt,    "hvbf_lvjj_pt/F");
+   TBranch *branch_hvbf_lvjj_eta  = newtree->Branch("hvbf_lvjj_eta",  &hvbf_lvjj_eta,   "hvbf_lvjj_eta/F");
+   TBranch *branch_hvbf_lvjj_phi  = newtree->Branch("hvbf_lvjj_phi",  &hvbf_lvjj_phi,   "hvbf_lvjj_phi/F");
+   TBranch *branch_hvbf_lvjj_m    = newtree->Branch("hvbf_lvjj_m",    &hvbf_lvjj_m,     "hvbf_lvjj_m/F");
+   TBranch *branch_hvbf_lvjj_y    = newtree->Branch("hvbf_lvjj_y",    &hvbf_lvjj_y,     "hvbf_lvjj_y/F");
+
+   TBranch *branch_hvbf_lv_e    = newtree->Branch("hvbf_lv_e",    &hvbf_lv_e,     "hvbf_lv_e/F");
+   TBranch *branch_hvbf_lv_pt   = newtree->Branch("hvbf_lv_pt",   &hvbf_lv_pt,    "hvbf_lv_pt/F");
+   TBranch *branch_hvbf_lv_eta  = newtree->Branch("hvbf_lv_eta",  &hvbf_lv_eta,   "hvbf_lv_eta/F");
+   TBranch *branch_hvbf_lv_phi  = newtree->Branch("hvbf_lv_phi",  &hvbf_lv_phi,   "hvbf_lv_phi/F");
+   TBranch *branch_hvbf_lv_m    = newtree->Branch("hvbf_lv_m",    &hvbf_lv_m,     "hvbf_lv_m/F");
+   TBranch *branch_hvbf_lv_mT    = newtree->Branch("hvbf_lv_mT",    &hvbf_lv_mT,     "hvbf_lv_mT/F");
+
+   TBranch *branch_hvbf_l_e    = newtree->Branch("hvbf_l_e",    &hvbf_l_e,     "hvbf_l_e/F");
+   TBranch *branch_hvbf_l_pt   = newtree->Branch("hvbf_l_pt",   &hvbf_l_pt,    "hvbf_l_pt/F");
+   TBranch *branch_hvbf_l_eta  = newtree->Branch("hvbf_l_eta",  &hvbf_l_eta,   "hvbf_l_eta/F");
+   TBranch *branch_hvbf_l_phi  = newtree->Branch("hvbf_l_phi",  &hvbf_l_phi,   "hvbf_l_phi/F");
+   TBranch *branch_hvbf_event_met_pfmet  = newtree->Branch("hvbf_event_met_pfmet",  &hvbf_event_met_pfmet,   "hvbf_event_met_pfmet/F");
+
+
+   TBranch *branch_hvbf_l_MET_deltaphi  = newtree->Branch("hvbf_l_MET_deltaphi",  &hvbf_l_MET_deltaphi,   "hvbf_l_MET_deltaphi/F");
+   TBranch *branch_hvbf_lW_hW_deltaphi  = newtree->Branch("hvbf_lW_hW_deltaphi",  &hvbf_lW_hW_deltaphi,   "hvbf_lW_hW_deltaphi/F");
+
 
    Int_t vbf_event = 0, vbf_aj_id = -1, vbf_bj_id = -1, vbf_waj_id = -1, vbf_wbj_id = -1;
    Float_t vbf_wjj_ang_ha   = 999, vbf_wjj_ang_hb = 999, vbf_wjj_ang_hs = 999, vbf_wjj_ang_phi = 999, vbf_wjj_ang_phia = 999, vbf_wjj_ang_phib = 999;
+// VBF Higgs Analysis   
+
+   Int_t hvbf_event = 0, hvbf_aj_id = -1, hvbf_bj_id = -1, hvbf_waj_id = -1, hvbf_wbj_id = -1;
+
+ Float_t hvbf_wjj_ang_ha   = 999, hvbf_wjj_ang_hb = 999, hvbf_wjj_ang_hs = 999,hvbf_wjj_ang_phi = 999, hvbf_wjj_ang_phia = 999, hvbf_wjj_ang_phib = 999;
+
 
    TBranch *branch_vbf_event     = newtree->Branch("vbf_event",  &vbf_event,   "vbf_event/I");
    TBranch *branch_vbf_aj_id     = newtree->Branch("vbf_aj_id",  &vbf_aj_id,   "vbf_aj_id/I");
@@ -1762,12 +1867,30 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_vbf_waj_id    = newtree->Branch("vbf_waj_id", &vbf_waj_id,  "vbf_waj_id/I");
    TBranch *branch_vbf_wbj_id    = newtree->Branch("vbf_wbj_id", &vbf_wbj_id,  "vbf_wbj_id/I");
 
+// VBF Higgs Analysis   
+   TBranch *branch_hvbf_event     = newtree->Branch("hvbf_event",  &hvbf_event,   "hvbf_event/I");
+   TBranch *branch_hvbf_aj_id     = newtree->Branch("hvbf_aj_id",  &hvbf_aj_id,   "hvbf_aj_id/I");
+   TBranch *branch_hvbf_bj_id     = newtree->Branch("hvbf_bj_id",  &hvbf_bj_id,   "hvbf_bj_id/I");
+   TBranch *branch_hvbf_waj_id    = newtree->Branch("hvbf_waj_id", &hvbf_waj_id,  "hvbf_waj_id/I");
+   TBranch *branch_hvbf_wbj_id    = newtree->Branch("hvbf_wbj_id", &hvbf_wbj_id,  "hvbf_wbj_id/I");
+
+
    TBranch * branch_vbf_wjj_ang_ha   = newtree->Branch("vbf_wjj_ang_ha",   &vbf_wjj_ang_ha,    "vbf_wjj_ang_ha/F");
    TBranch * branch_vbf_wjj_ang_hb   = newtree->Branch("vbf_wjj_ang_hb",   &vbf_wjj_ang_hb,    "vbf_wjj_ang_hb/F");
    TBranch * branch_vbf_wjj_ang_hs   = newtree->Branch("vbf_wjj_ang_hs",   &vbf_wjj_ang_hs,    "vbf_wjj_ang_hs/F");
    TBranch * branch_vbf_wjj_ang_phi  = newtree->Branch("vbf_wjj_ang_phi",  &vbf_wjj_ang_phi,   "vbf_wjj_ang_phi/F");
    TBranch * branch_vbf_wjj_ang_phia = newtree->Branch("vbf_wjj_ang_phia", &vbf_wjj_ang_phia,  "vbf_wjj_ang_phia/F");
    TBranch * branch_vbf_wjj_ang_phib = newtree->Branch("vbf_wjj_ang_phib", &vbf_wjj_ang_phib,  "vbf_wjj_ang_phib/F");
+
+// VBF Higgs Analysis   
+
+   TBranch * branch_hvbf_wjj_ang_ha   = newtree->Branch("hvbf_wjj_ang_ha",   &hvbf_wjj_ang_ha,    "hvbf_wjj_ang_ha/F");
+   TBranch * branch_hvbf_wjj_ang_hb   = newtree->Branch("hvbf_wjj_ang_hb",   &hvbf_wjj_ang_hb,    "hvbf_wjj_ang_hb/F");
+   TBranch * branch_hvbf_wjj_ang_hs   = newtree->Branch("hvbf_wjj_ang_hs",   &hvbf_wjj_ang_hs,    "hvbf_wjj_ang_hs/F");
+   TBranch * branch_hvbf_wjj_ang_phi  = newtree->Branch("hvbf_wjj_ang_phi",  &hvbf_wjj_ang_phi,   "hvbf_wjj_ang_phi/F");
+   TBranch * branch_hvbf_wjj_ang_phia = newtree->Branch("hvbf_wjj_ang_phia", &hvbf_wjj_ang_phia,  "hvbf_wjj_ang_phia/F");
+   TBranch * branch_hvbf_wjj_ang_phib = newtree->Branch("hvbf_wjj_ang_phib", &hvbf_wjj_ang_phib,  "hvbf_wjj_ang_phib/F");
+
 
    //Variables for the VBF topology of the di-boson events
    Int_t vbf_diboson_event = 0;
@@ -2534,6 +2657,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       vbf_event = 0; vbf_aj_id = -1; vbf_bj_id = -1; vbf_waj_id = -1; vbf_wbj_id = -1;
       vbf_wjj_ang_ha   = 999; vbf_wjj_ang_hb = 999; vbf_wjj_ang_hs = 999; vbf_wjj_ang_phi = 999; vbf_wjj_ang_phia = 999; vbf_wjj_ang_phib = 999;
+        hvbf_event = 0;
 
       //VBF diboson event
       vbf_diboson_event = 0;
@@ -2776,6 +2900,12 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       }
 
       if(W_mt>30. && W_electron_et>30.){isgendevtnojetevt=1;}
+      bool goodlepton = 0;
+      if ( //W_mt>30. //Move to MVA MET Later
+            //&& W_mtMVA>30.
+            W_mt>30. && W_electron_et>25.
+         ) {goodlepton = 1;}
+
       // Event Selection Requirement for Standard vs QCD events
       if ( !isQCD ) {
          //keep electrons with event_met_pfmet>30.0 and passing MVA WP70 & EffArea PFiso.
@@ -2845,6 +2975,203 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       }
       //###########End Boosted W analysis Flag ###################################
+// VBF Higgs Analysis starts
+//      if(isgendevtnojetevt)//One good electron, no jet requirement
+//      
+        int numFwdJets = 0 ;
+        for (int i = 0 ; i < 8 ; ++i) if (JetPFCorVBFTag_Pt[i] > 20.) ++numFwdJets ;
+        int numGFwdJets = 0 ;
+        int jetsNum = numPFCorJets + numFwdJets ;
+        //if (jetsNum < 3) //continue ;
+        //{
+         vector<TLorentzVector*> jets;
+         for(unsigned int i = 0; i < numPFCorJets; ++i)
+         {
+            if(JetPFCor_Pt[i] > 20.0)
+            {
+               TLorentzVector *dummy = new TLorentzVector(0,0,0,0);
+               dummy->SetPtEtaPhiE(jess * JetPFCor_Pt[i], JetPFCor_Eta[i], JetPFCor_Phi[i], jess * JetPFCor_E[i]);
+               jets.push_back(dummy);
+            }
+         }
+
+         for(unsigned int j = 0; j < numFwdJets; ++j)
+         {
+            if(JetPFCorVBFTag_Pt[j] > 20.0)
+            {
+               TLorentzVector *dummy = new TLorentzVector(0,0,0,0);
+               dummy->SetPtEtaPhiE(jess * JetPFCorVBFTag_Pt[j], JetPFCorVBFTag_Eta[j], JetPFCorVBFTag_Phi[j], jess * JetPFCorVBFTag_E[j]);
+               jets.push_back(dummy);
+            }
+         }
+
+        sort (jets.rbegin (), jets.rend (), mysortPt);  //Sort the jet according to Jet Pt
+        for (int i=0;i<jets.size();i++)
+        {
+//      cout<<"  i   "<<i<<"    "<<jets.at(i)->Pt()<<endl;
+        }
+        //cout<<" jets size   "<<jets.size()<<"   jetsNum   "<<jetsNum<<endl;
+         TLorentzVector hvbf_ajp(0,0,0,0), hvbf_bjp(0,0,0,0);
+         TLorentzVector hwjj_ajp(0,0,0,0), hwjj_bjp(0,0,0,0);
+         float hbest_detatagjj = 0; // float best_mtagjj =0;
+         float hbest_mjj = 0; // float best_mjj =0;
+
+/*   float hvbf_jj_e =-999,   hvbf_jj_pt =-999,   hvbf_jj_eta=-999,  hvbf_jj_phi =-999, hvbf_jj_m=-999;   
+   float hvbf_aj_e =-999,   hvbf_aj_pt =-999,   hvbf_aj_eta=-999,  hvbf_aj_phi =-999;   
+   float hvbf_bj_e =-999,   hvbf_bj_pt =-999,   hvbf_bj_eta=-999,  hvbf_bj_phi =-999;   
+   float hvbf_jj_deta=-999; Float_t hvbf_jj_dphi=-999; 
+    int   hvbf_jj_type=0,   hvbf_n_excj=0,   hvbf_n_exfj=0,   hvbf_n_gdjj=0;
+
+   float hvbf_wjj_e =-999,   hvbf_wjj_pt =-999,   hvbf_wjj_eta=-999,  hvbf_wjj_phi =-999, hvbf_wjj_m=-999;   
+   float hvbf_waj_e =-999,   hvbf_waj_pt =-999,   hvbf_waj_eta=-999,  hvbf_waj_phi =-999;   
+   float hvbf_wbj_e =-999,   hvbf_wbj_pt =-999,   hvbf_wbj_eta=-999,  hvbf_wbj_phi =-999;   
+   float hvbf_wjj_deta=-999; Float_t hvbf_wjj_dphi=-999;
+   float hvbf_lvjj_e =-999,   hvbf_lvjj_pt =-999,   hvbf_lvjj_eta=-999,  hvbf_lvjj_phi =-999, hvbf_lvjj_m =-999, hvbf_lvj_m=-999;
+*/
+
+         float hjess = 1.0;
+         int   hn_excj =0, hn_exfj = 0, hn_gdjj = 0, hjj_type = 0, htag_i_id = -1, htag_j_id = -1, hwjj_a_id = -1, hwjj_b_id = -1;
+        //method1 A two tag jets from complete eta region
+         for ( size_t i=0; i < jets.size(); ++i)
+         {
+        if (fabs(jets.at(i)->Eta()) > 4.7) continue;
+            TLorentzVector hi_p;
+            hi_p.SetPtEtaPhiE (jets.at(i)->Pt(), jets.at(i)->Eta(), jets.at(i)->Phi(),jets.at(i)->E());
+            for (size_t j=i+1; j <jets.size(); ++j)
+            {
+        if (fabs(jets.at(j)->Eta()) > 4.7) continue;
+               TLorentzVector hj_p;
+            hj_p.SetPtEtaPhiE (jets.at(j)->Pt(), jets.at(j)->Eta(), jets.at(j)->Phi(),jets.at(j)->E());
+               if ( (jets.at(i)->Eta()*jets.at(j)->Eta())>0 )  continue;     // 1.  have to be one forward, one backward
+               if ( (fabs(jets.at(i)->Eta()-jets.at(j)->Eta())<3.5) || ((hi_p+hj_p).M() <500)) continue;// 2.Tag pair delta eta>3.5, Mjj>500
+                //cout<<"  "<<sqrt ((i_p+j_p).M2())<<endl;
+               // if find more than one combinations
+               //if ( (fas(i_Eta-j_Eta)>best_detatagjj) )      // 3   Select best combination with maximum deta Eta
+               if ( (hi_p+hj_p).M() > hbest_mjj )
+               {                          // 3   Select best combination with maximum Mjj because of the bad angular resolution in the HF
+                  //hbest_detatagjj = fabs(jets.at(i)->Eta()-jets.at(j)->Eta()); 
+                  hn_gdjj++;
+                  hbest_mjj = (hi_p+hj_p).M();
+                  htag_i_id = i;
+                  htag_j_id = j;
+                  hvbf_ajp = hi_p;
+                  hvbf_bjp = hj_p;
+               } //loop to find two tag jets with highest mjj
+           } // over over loop over Nmax-1 reco jets inside 
+        } //loop over Nmax reco jets 
+                if (htag_i_id !=-1 && htag_j_id != -1)
+                {
+                  hvbf_jj_e      = (hvbf_ajp+ hvbf_bjp).E();
+                  hvbf_jj_pt     = (hvbf_ajp+ hvbf_bjp).Pt();
+                  hvbf_jj_eta    = (hvbf_ajp+ hvbf_bjp).Eta();
+                  hvbf_jj_phi    = (hvbf_ajp+ hvbf_bjp).Phi();
+                  hvbf_jj_m      = (hvbf_ajp+ hvbf_bjp).M();
+                  hvbf_aj_e      = (hvbf_ajp).E();
+                  hvbf_aj_pt     = (hvbf_ajp).Pt();
+                  hvbf_aj_eta    = (hvbf_ajp).Eta();
+                  hvbf_aj_phi    = (hvbf_ajp).Phi();
+                  //vbf_aj_m      = (i_p).M();
+                  //hvbf_jj_m      = sqrt((hwjj_ajp+hwjj_bjp).M2());
+                  hvbf_bj_e      = (hvbf_bjp).E();
+                  hvbf_bj_pt     = (hvbf_bjp).Pt();
+                  hvbf_bj_eta    = (hvbf_bjp).Eta();
+                  hvbf_bj_phi    = (hvbf_bjp).Phi();
+                 // vbf_bj_m      = (j_p).M();
+                  hvbf_jj_deta   =hvbf_aj_eta-hvbf_bj_eta;
+                  hvbf_jj_dphi   = hvbf_aj_phi-hvbf_bj_phi;
+                  //cout<<"  "<<vbf_jj_dphi<<endl;
+        } //loop  
+        // method1 B
+
+        if (htag_i_id!=-1&& htag_j_id!=-1)
+        {
+        for ( int k=0; k < (int) jets.size(); ++k)
+        {
+        if (fabs(jets.at(k)->Eta()) > 4.7) continue;
+        if ( k!=htag_i_id && k!= htag_j_id && hwjj_ajp.Pt()!=0 && hwjj_bjp.Pt()==0 )
+        {
+        int Bj = k;
+           hwjj_bjp.SetPtEtaPhiE (jets.at(Bj)->Pt(), jets.at(Bj)->Eta(), jets.at(Bj)->Phi(),jets.at(Bj)->E());
+         hwjj_b_id=Bj;
+        }
+        if ( k!=htag_i_id&&k!=htag_j_id&&hwjj_ajp.Pt()==0 && hwjj_bjp.Pt()==0 )
+        {
+        int Aj = k;
+           hwjj_ajp.SetPtEtaPhiE (jets.at(Aj)->Pt(), jets.at(Aj)->Eta(), jets.at(Aj)->Phi(),jets.at(Aj)->E());
+         hwjj_a_id=Aj;
+        }
+        }// loop over reco jets upto Nmax                                                     
+        } // loop of insuring having allready two tagjets
+        //cout<<hwjj_a_id<<"     "<<hwjj_b_id<<endl;
+       if (hwjj_a_id!=-1 && hwjj_b_id!=-1)
+        {            //    two W jets
+                        hvbf_wjj_e      = (hwjj_ajp+hwjj_bjp).E();
+                        hvbf_wjj_pt     = (hwjj_ajp+hwjj_bjp).Pt();
+                        hvbf_wjj_eta    = (hwjj_ajp+hwjj_bjp).Eta();
+                        hvbf_wjj_phi    = (hwjj_ajp+hwjj_bjp).Phi();
+                        hvbf_wjj_m      = (hwjj_ajp+hwjj_bjp).M();
+                        hvbf_waj_e      = (hwjj_ajp).E();
+                        hvbf_waj_pt     = (hwjj_ajp).Pt();
+                        hvbf_waj_eta    = (hwjj_ajp).Eta();
+                        hvbf_waj_phi    = (hwjj_ajp).Phi();
+                        //vbf_waj_m      = (wjj_ajp).M();
+                        hvbf_wbj_e      = (hwjj_bjp).E();
+                        hvbf_wbj_pt     = (hwjj_bjp).Pt();
+                        hvbf_wbj_eta    = (hwjj_bjp).Eta();
+                        hvbf_wbj_phi    = (hwjj_bjp).Phi();
+                        hvbf_wjj_deta= hvbf_waj_eta-hvbf_wbj_eta;
+                        hvbf_wjj_dphi= hvbf_waj_phi-hvbf_wbj_phi;
+        }
+
+        TLorentzVector  lepton;
+        lepton=mup;
+        TLorentzVector nutrino;
+        //if (event_met_pfmet <25) continue;
+        nutrino=b_nvp;
+//cout<<nutrino.Eta()<<endl;
+                            hvbf_lvjj_e      = (lepton+nutrino+hwjj_ajp+hwjj_bjp).E();
+                            hvbf_lvjj_pt     = (lepton+nutrino+hwjj_ajp+hwjj_bjp).Pt();
+                            hvbf_lvjj_eta    = (lepton+nutrino+hwjj_ajp+hwjj_bjp).Eta();
+                            hvbf_lvjj_phi    = (lepton+nutrino+hwjj_ajp+hwjj_bjp).Phi();
+                            hvbf_lvjj_m      = (lepton+nutrino+hwjj_ajp+hwjj_bjp).M();
+                            hvbf_lv_m      = (lepton+nutrino).M();
+                            hvbf_lv_e      = (lepton+nutrino).E();
+                            hvbf_lv_pt      = (lepton+nutrino).Pt();
+                            hvbf_lv_eta      = (lepton+nutrino).Eta();
+                            hvbf_lv_phi      = (lepton+nutrino).Phi();
+                            hvbf_lv_mT      = W_mt;
+
+                            hvbf_l_pt = lepton.Pt();
+                            hvbf_l_eta = lepton.Eta();
+                            hvbf_l_phi = lepton.Phi();
+                            hvbf_l_e = lepton.E();
+                            hvbf_event_met_pfmet = event_met_pfmet;
+                            //hvbf_MET_e = b_nvp.Pt();
+                            //hvbf_MET_e = b_nvp.Eta();
+                            //hvbf_MET_e = b_nvp.Eta();
+
+                            hvbf_l_MET_deltaphi = getDeltaPhi(lepton.Phi(), b_nvp.Phi());
+                            hvbf_lW_hW_deltaphi = getDeltaPhi((lepton+nutrino).Phi(), hvbf_wjj_phi);
+
+        if (htag_i_id!=-1 && htag_j_id!=-1 && hwjj_a_id!=-1 && hwjj_b_id!=-1 && goodlepton==1 && hvbf_lv_mT >30. && hvbf_wjj_m >30.&& event_met_pfmet>25.)
+        {
+        hvbf_event=1;
+//        cout<<hvbf_lvjj_m<<endl;
+        }
+        //}
+            double a_costheta1, a_costheta2, a_phi, a_costhetastar, a_phistar1, a_phistar2;
+            if (W_electron_charge < 0){
+               calculateAngles(lepton, nutrino, hwjj_ajp, hwjj_bjp, a_costheta1, a_costheta2, a_phi, a_costhetastar, a_phistar1, a_phistar2);
+            }
+            else{
+               calculateAngles(nutrino, lepton, hwjj_ajp, hwjj_bjp, a_costheta1, a_costheta2, a_phi, a_costhetastar, a_phistar1, a_phistar2);
+            }
+            hvbf_wjj_ang_ha = a_costheta1; hvbf_wjj_ang_hb = fabs(a_costheta2); hvbf_wjj_ang_hs = a_costhetastar;  hvbf_wjj_ang_phi = a_phi; hvbf_wjj_ang_phia = a_phistar1; hvbf_wjj_ang_phib = a_phistar2;
+
+
+// VBF Higgs Analysis end
+
+
 
       // 2 and 3 jet event for Mjj
       if (isgengdevt
@@ -4537,6 +4864,88 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_vbf_wjj_ang_phi->Fill();
       branch_vbf_wjj_ang_phia->Fill();
       branch_vbf_wjj_ang_phib->Fill();
+
+// VBF Higgs Analysis
+      branch_hvbf_jj_e->Fill();
+      branch_hvbf_jj_pt->Fill();
+      branch_hvbf_jj_eta->Fill();
+      branch_hvbf_jj_phi->Fill();
+      branch_hvbf_jj_m->Fill();
+
+      branch_hvbf_aj_e->Fill();
+      branch_hvbf_aj_pt->Fill();
+      branch_hvbf_aj_eta->Fill();
+      branch_hvbf_aj_phi->Fill();
+      branch_hvbf_aj_m->Fill();
+
+      branch_hvbf_bj_e->Fill();
+      branch_hvbf_bj_pt->Fill();
+      branch_hvbf_bj_eta->Fill();
+      branch_hvbf_bj_phi->Fill();
+      branch_hvbf_bj_m->Fill();
+
+      branch_hvbf_jj_deta->Fill();
+      branch_hvbf_jj_dphi->Fill();
+
+      branch_hvbf_wjj_e->Fill();
+      branch_hvbf_wjj_pt->Fill();
+      branch_hvbf_wjj_eta->Fill();
+      branch_hvbf_wjj_phi->Fill();
+      branch_hvbf_wjj_m->Fill();
+
+      branch_hvbf_waj_e->Fill();
+      branch_hvbf_waj_pt->Fill();
+      branch_hvbf_waj_eta->Fill();
+      branch_hvbf_waj_phi->Fill();
+      branch_hvbf_waj_m->Fill();
+
+      branch_hvbf_wbj_e->Fill();
+      branch_hvbf_wbj_pt->Fill();
+      branch_hvbf_wbj_eta->Fill();
+      branch_hvbf_wbj_phi->Fill();
+      branch_hvbf_wbj_m->Fill();
+
+      branch_hvbf_wjj_deta->Fill();
+      branch_hvbf_wjj_dphi->Fill();
+
+      branch_hvbf_lvjj_e->Fill();
+      branch_hvbf_lvjj_pt->Fill();
+      branch_hvbf_lvjj_eta->Fill();
+      branch_hvbf_lvjj_phi->Fill();
+      branch_hvbf_lvjj_m->Fill();
+      branch_hvbf_lvjj_y->Fill();
+
+      branch_hvbf_lv_e->Fill();
+      branch_hvbf_lv_pt->Fill();
+      branch_hvbf_lv_eta->Fill();
+      branch_hvbf_lv_phi->Fill();
+      branch_hvbf_lv_m->Fill();
+      branch_hvbf_lv_mT->Fill();
+
+      branch_hvbf_l_e->Fill();
+      branch_hvbf_l_pt->Fill();
+      branch_hvbf_l_eta->Fill();
+      branch_hvbf_l_phi->Fill();
+      branch_hvbf_event_met_pfmet->Fill();
+
+
+      branch_hvbf_l_MET_deltaphi->Fill();
+      branch_hvbf_lW_hW_deltaphi->Fill();
+
+      branch_hvbf_event->Fill();
+      branch_hvbf_wjj_ang_ha->Fill();
+      branch_hvbf_wjj_ang_hb->Fill();
+      branch_hvbf_wjj_ang_hs->Fill();
+      branch_hvbf_wjj_ang_phi->Fill();
+      branch_hvbf_wjj_ang_phia->Fill();
+      branch_hvbf_wjj_ang_phib->Fill();
+      branch_hvbf_aj_id->Fill();
+      branch_hvbf_bj_id->Fill();
+      branch_hvbf_waj_id->Fill();
+      branch_hvbf_wbj_id->Fill();
+
+// VBF Higgs Analysis ends 
+
 
       //VBF di-boson Event
       branch_vbf_diboson_event->Fill();
