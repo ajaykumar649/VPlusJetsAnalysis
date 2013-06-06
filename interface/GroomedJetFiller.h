@@ -87,7 +87,7 @@ namespace ewk
     TLorentzVector getCorrectedJet(fastjet::PseudoJet& jet, double inArea);
     void computeCore( std::vector<fastjet::PseudoJet> constits, double Rval, float &m_core, float &pt_core );
     void computePlanarflow(std::vector<fastjet::PseudoJet> constits,double Rval,fastjet::PseudoJet jet,std::string mJetAlgo,float &planarflow);
-        float computeJetCharge( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float PTjet );        
+        float computeJetCharge( std::vector<fastjet::PseudoJet> constits, std::vector<float> pdgIds, float PTjet, float kappa );        
         float getPdgIdCharge( float fid );        
 
     TTree* tree_;
@@ -128,6 +128,16 @@ namespace ewk
     float tau2[NUM_JET_MAX];
     float tau3[NUM_JET_MAX];
     float tau4[NUM_JET_MAX];
+    float tau2tau1_exkT[NUM_JET_MAX];
+    float tau1_exkT[NUM_JET_MAX];
+    float tau2_exkT[NUM_JET_MAX];
+    float tau3_exkT[NUM_JET_MAX];
+    float tau4_exkT[NUM_JET_MAX];
+    float tau2tau1_pr[NUM_JET_MAX];
+    float tau1_pr[NUM_JET_MAX];
+    float tau2_pr[NUM_JET_MAX];
+    float tau3_pr[NUM_JET_MAX];
+    float tau4_pr[NUM_JET_MAX];
     float massdrop_pr_uncorr[NUM_JET_MAX];
     
     float jetpt_uncorr[NUM_JET_MAX];
@@ -174,7 +184,11 @@ namespace ewk
     float jetarea_pr[NUM_JET_MAX];        
     float massdrop_pr[NUM_JET_MAX];
     float jetconstituents[NUM_JET_MAX];   
-    float jetcharge[NUM_JET_MAX];           
+    float jetcharge[NUM_JET_MAX];
+    float jetcharge_k05[NUM_JET_MAX];
+    float jetcharge_k07[NUM_JET_MAX];
+    float jetcharge_k10[NUM_JET_MAX];        
+        
     float jetGeneralizedECF[NUM_JET_MAX];           
 
     float rcores[11][NUM_JET_MAX];
