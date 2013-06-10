@@ -144,6 +144,8 @@
 
 const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v2_nojetnum/";
 const TString inQCDDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v2_nojetnum/";
+//const TString inDataDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/ajay/ntuplesData/";
+//const TString inQCDDir  = "/uscmst1b_scratch/lpc1/3DayLifetime/ajay/ntuplesData/";
 
 //const TString inDataDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
 //const TString inQCDDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples_v1/";
@@ -165,7 +167,7 @@ const TString inQCDDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples
 //const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/EWKW2jetsSample_2013_3_23/";
 
 //const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/ajay/EWKW2jetsSample_2013_5_23/";
-const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/ajay/VBF_Higgs_28May_v1/";
+const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/ajay/VBF_Higgs_28May_v2/";
 
 //const TString outDataDir   = "/eos/uscms/store/user/lnujj/HCP2012/ReducedTrees/";
 //const std::string fDir   = "EffTableDir/";
@@ -233,9 +235,17 @@ void kanamuon::myana(double myflag, bool isQCD, int runflag)
          Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_19p3invfb_pt1");
          */
 
-         InitCounters( inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb.root", h_events, h_events_weighted);
-         myChain->Add(                    inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb.root");
-         Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_19p3invfb");
+//         InitCounters( inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb.root", h_events, h_events_weighted);
+//         myChain->Add(                    inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb.root");
+//         Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_19p3invfb");
+
+
+         InitCounters( inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_v1_fb.root", h_events, h_events_weighted);
+         myChain->Add(                    inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_v1_fb.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_v1_fb");
+
+
+
 
 /*         InitCounters( inDataDir + "mu_SingleMuon2012B_13j_pt2_v2.root", h_events, h_events_weighted);
          myChain->Add(                    inDataDir + "mu_SingleMuon2012B_13j_pt2_v2.root");
@@ -1690,7 +1700,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
 // VBF Higgs Variables defined , initialized
 
-   Float_t hvbf_jj_e =-999,   hvbf_jj_pt =-999,   hvbf_jj_eta=-999,  hvbf_jj_phi =-999, hvbf_jj_m =-999;
+   Float_t hvbf_jj_e =-999,   hvbf_jj_pt =-999,   hvbf_jj_eta=-999,  hvbf_jj_phi =-999, hvbf_jj_m =-999,  hvbf_jj_Rapidity =-999;
    Float_t hvbf_aj_e =-999,   hvbf_aj_pt =-999,   hvbf_aj_eta=-999,  hvbf_aj_phi =-999, hvbf_aj_m =-999;
    Float_t hvbf_bj_e =-999,   hvbf_bj_pt =-999,   hvbf_bj_eta=-999,  hvbf_bj_phi =-999, hvbf_bj_m =-999;
    Float_t hvbf_jj_deta=-999; Float_t hvbf_jj_dphi=-999;  Int_t   hvbf_jj_type=0,   hvbf_n_excj=0,   hvbf_n_exfj=0,   hvbf_n_gdjj=0;
@@ -1724,6 +1734,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_hvbf_jj_eta  = newtree->Branch("hvbf_jj_eta",  &hvbf_jj_eta,   "hvbf_jj_eta/F");
    TBranch *branch_hvbf_jj_phi  = newtree->Branch("hvbf_jj_phi",  &hvbf_jj_phi,   "hvbf_jj_phi/F");
    TBranch *branch_hvbf_jj_m    = newtree->Branch("hvbf_jj_m",    &hvbf_jj_m,     "hvbf_jj_m/F");
+   TBranch *branch_hvbf_jj_Rapidity    = newtree->Branch("hvbf_jj_Rapidity",    &hvbf_jj_Rapidity,     "hvbf_jj_Rapidity/F");
 
    TBranch *branch_hvbf_aj_e    = newtree->Branch("hvbf_aj_e",    &hvbf_aj_e,     "hvbf_aj_e/F");
    TBranch *branch_hvbf_aj_pt   = newtree->Branch("hvbf_aj_pt",   &hvbf_aj_pt,    "hvbf_aj_pt/F");
@@ -1763,14 +1774,14 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    Float_t vbf_wbj_e =-999,   vbf_wbj_pt =-999,   vbf_wbj_eta =-999,   vbf_wbj_phi =-999,   vbf_wbj_m =-999;   
    Float_t vbf_lvjj_e=-999,   vbf_lvjj_pt=-999,   vbf_lvjj_eta=-999,   vbf_lvjj_phi=-999,   vbf_lvjj_m=-999,   vbf_lvjj_y=-999;   
 // VBF Higgs  
-   Float_t hvbf_wjj_e =-999,   hvbf_wjj_pt =-999,   hvbf_wjj_eta =-999,   hvbf_wjj_phi =-999,   hvbf_wjj_m =-999;
+   Float_t hvbf_wjj_e =-999,   hvbf_wjj_pt =-999,   hvbf_wjj_eta =-999,   hvbf_wjj_phi =-999,   hvbf_wjj_m =-999, hvbf_wjj_Rapidity =-999;
    Float_t hvbf_waj_e =-999,   hvbf_waj_pt =-999,   hvbf_waj_eta =-999,   hvbf_waj_phi =-999,   hvbf_waj_m =-999;
    Float_t hvbf_wbj_e =-999,   hvbf_wbj_pt =-999,   hvbf_wbj_eta =-999,   hvbf_wbj_phi =-999,   hvbf_wbj_m =-999;
-   Float_t hvbf_lvjj_e=-999,   hvbf_lvjj_pt=-999,   hvbf_lvjj_eta=-999,   hvbf_lvjj_phi=-999,   hvbf_lvjj_m=-999,   hvbf_lvjj_y=-999;
+   Float_t hvbf_lvjj_e=-999,   hvbf_lvjj_pt=-999,   hvbf_lvjj_eta=-999,   hvbf_lvjj_phi=-999,   hvbf_lvjj_m=-999,hvbf_lvjj_Rapidity=-999,   hvbf_lvjj_y=-999;
    Float_t hvbf_wjj_deta=-999, hvbf_wjj_dphi=-999;
-   Float_t hvbf_lv_e=-999,   hvbf_lv_pt=-999,   hvbf_lv_eta=-999,   hvbf_lv_phi=-999,   hvbf_lv_m=-999,   hvbf_lv_mT=-999;
+   Float_t hvbf_lv_e=-999,   hvbf_lv_pt=-999,   hvbf_lv_eta=-999,   hvbf_lv_phi=-999,  hvbf_lv_Rapidity=-999,  hvbf_lv_m=-999,   hvbf_lv_mT=-999;
    Float_t hvbf_l_e=-999,   hvbf_l_pt=-999,   hvbf_l_eta=-999,   hvbf_l_phi=-999;
-   Float_t hvbf_l_MET_deltaphi=-999, hvbf_lW_hW_deltaphi=-999, hvbf_event_met_pfmet=-999 ;
+   Float_t hvbf_l_MET_deltaphi=-999, hvbf_lW_hW_deltaphi=-999, hvbf_event_met_pfmet=-999,hvbf_event_met_pfmetPhi =-999 ;
 
 
    TBranch *branch_vbf_wjj_e     = newtree->Branch("vbf_wjj_e",     &vbf_wjj_e,      "vbf_wjj_e/F");
@@ -1802,12 +1813,14 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_vbf_lvjj_m    = newtree->Branch("vbf_lvjj_m",    &vbf_lvjj_m,     "vbf_lvjj_m/F");
    TBranch *branch_vbf_lvjj_y    = newtree->Branch("vbf_lvjj_y",    &vbf_lvjj_y,     "vbf_lvjj_y/F");
 
-// VBF Higgs W jets 
+// VBF Higgs  jets 
    TBranch *branch_hvbf_wjj_e     = newtree->Branch("hvbf_wjj_e",     &hvbf_wjj_e,      "hvbf_wjj_e/F");
    TBranch *branch_hvbf_wjj_pt    = newtree->Branch("hvbf_wjj_pt",    &hvbf_wjj_pt,     "hvbf_wjj_pt/F");
    TBranch *branch_hvbf_wjj_eta   = newtree->Branch("hvbf_wjj_eta",   &hvbf_wjj_eta,    "hvbf_wjj_eta/F");
    TBranch *branch_hvbf_wjj_phi   = newtree->Branch("hvbf_wjj_phi",   &hvbf_wjj_phi,    "hvbf_wjj_phi/F");
    TBranch *branch_hvbf_wjj_m     = newtree->Branch("hvbf_wjj_m",     &hvbf_wjj_m,      "hvbf_wjj_m/F");
+   TBranch *branch_hvbf_wjj_Rapidity     = newtree->Branch("hvbf_wjj_Rapidity",     &hvbf_wjj_Rapidity,      "hvbf_wjj_Rapidity/F");
+
 
    TBranch *branch_hvbf_waj_e     = newtree->Branch("hvbf_waj_e",     &hvbf_waj_e,      "hvbf_waj_e/F");
    TBranch *branch_hvbf_waj_pt    = newtree->Branch("hvbf_waj_pt",    &hvbf_waj_pt,     "hvbf_waj_pt/F");
@@ -1826,12 +1839,16 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_hvbf_lvjj_eta  = newtree->Branch("hvbf_lvjj_eta",  &hvbf_lvjj_eta,   "hvbf_lvjj_eta/F");
    TBranch *branch_hvbf_lvjj_phi  = newtree->Branch("hvbf_lvjj_phi",  &hvbf_lvjj_phi,   "hvbf_lvjj_phi/F");
    TBranch *branch_hvbf_lvjj_m    = newtree->Branch("hvbf_lvjj_m",    &hvbf_lvjj_m,     "hvbf_lvjj_m/F");
+   TBranch *branch_hvbf_lvjj_Rapidity    = newtree->Branch("hvbf_lvjj_Rapidity",    &hvbf_lvjj_Rapidity,     "hvbf_lvjj_Rapidity/F");
+
    TBranch *branch_hvbf_lvjj_y    = newtree->Branch("hvbf_lvjj_y",    &hvbf_lvjj_y,     "hvbf_lvjj_y/F");
 
    TBranch *branch_hvbf_lv_e    = newtree->Branch("hvbf_lv_e",    &hvbf_lv_e,     "hvbf_lv_e/F");
    TBranch *branch_hvbf_lv_pt   = newtree->Branch("hvbf_lv_pt",   &hvbf_lv_pt,    "hvbf_lv_pt/F");
    TBranch *branch_hvbf_lv_eta  = newtree->Branch("hvbf_lv_eta",  &hvbf_lv_eta,   "hvbf_lv_eta/F");
    TBranch *branch_hvbf_lv_phi  = newtree->Branch("hvbf_lv_phi",  &hvbf_lv_phi,   "hvbf_lv_phi/F");
+   TBranch *branch_hvbf_lv_Rapidity  = newtree->Branch("hvbf_lv_Rapidity",  &hvbf_lv_Rapidity,   "hvbf_lv_Rapidity/F");
+
    TBranch *branch_hvbf_lv_m    = newtree->Branch("hvbf_lv_m",    &hvbf_lv_m,     "hvbf_lv_m/F");
    TBranch *branch_hvbf_lv_mT    = newtree->Branch("hvbf_lv_mT",    &hvbf_lv_mT,     "hvbf_lv_mT/F");
 
@@ -1840,6 +1857,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_hvbf_l_eta  = newtree->Branch("hvbf_l_eta",  &hvbf_l_eta,   "hvbf_l_eta/F");
    TBranch *branch_hvbf_l_phi  = newtree->Branch("hvbf_l_phi",  &hvbf_l_phi,   "hvbf_l_phi/F");
    TBranch *branch_hvbf_event_met_pfmet  = newtree->Branch("hvbf_event_met_pfmet",  &hvbf_event_met_pfmet,   "hvbf_event_met_pfmet/F");
+   TBranch *branch_hvbf_event_met_pfmetPhi  = newtree->Branch("hvbf_event_met_pfmetPhi",  &hvbf_event_met_pfmetPhi,   "hvbf_event_met_pfmetPhi/F");
 
 
    TBranch *branch_hvbf_l_MET_deltaphi  = newtree->Branch("hvbf_l_MET_deltaphi",  &hvbf_l_MET_deltaphi,   "hvbf_l_MET_deltaphi/F");
@@ -2869,7 +2887,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 		W_muon_pt>25.
             && fabs(W_muon_dz000)<0.02
             && fabs(W_muon_dzPV)<0.5
-            && fabs(W_muon_eta)<2.5 //Fix the Muon Eta Range to 2.5
+            && fabs(W_muon_eta)<2.1 //Fix the Muon Eta Range to 2.5
          ) {goodlepton = 1;}
 
 
@@ -3574,10 +3592,10 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             }
          }
         
-	sort (jets.rbegin (), jets.rend (), mysortPt);  //Sort the jet according to Jet Pt
+	sort (jets.begin (), jets.end (), mysortPt);  //Sort the jet according to Jet Pt
 	for (int i=0;i<jets.size();i++)
 	{
-//	cout<<"  i   "<<i<<"    "<<jets.at(i)->Pt()<<endl;
+	//cout<<"  i   "<<i<<"    "<<jets.at(i)->Pt()<<endl;
 	}
         //cout<<" jets size   "<<jets.size()<<"   jetsNum   "<<jetsNum<<endl;
 	 TLorentzVector hvbf_ajp(0,0,0,0), hvbf_bjp(0,0,0,0);
@@ -3635,6 +3653,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                   hvbf_jj_eta    = (hvbf_ajp+ hvbf_bjp).Eta();
                   hvbf_jj_phi    = (hvbf_ajp+ hvbf_bjp).Phi();
                   hvbf_jj_m      = (hvbf_ajp+ hvbf_bjp).M();
+                  hvbf_jj_Rapidity = (hvbf_ajp+ hvbf_bjp).Rapidity();
                   hvbf_aj_e      = (hvbf_ajp).E();
                   hvbf_aj_pt     = (hvbf_ajp).Pt();
                   hvbf_aj_eta    = (hvbf_ajp).Eta();
@@ -3679,6 +3698,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                         hvbf_wjj_eta    = (hwjj_ajp+hwjj_bjp).Eta();
                         hvbf_wjj_phi    = (hwjj_ajp+hwjj_bjp).Phi();
                         hvbf_wjj_m      = (hwjj_ajp+hwjj_bjp).M();
+                        hvbf_wjj_Rapidity = (hwjj_ajp+hwjj_bjp).Rapidity();
                         hvbf_waj_e      = (hwjj_ajp).E();
                         hvbf_waj_pt     = (hwjj_ajp).Pt();
                         hvbf_waj_eta    = (hwjj_ajp).Eta();
@@ -3689,7 +3709,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                         hvbf_wbj_eta    = (hwjj_bjp).Eta();
                         hvbf_wbj_phi    = (hwjj_bjp).Phi();
                         hvbf_wjj_deta= hvbf_waj_eta-hvbf_wbj_eta;
-                        hvbf_wjj_dphi= hvbf_waj_phi-hvbf_wbj_phi;
+                        hvbf_wjj_dphi= getDeltaPhi(hvbf_waj_phi,hvbf_wbj_phi);
 	}
 
 	TLorentzVector  lepton;
@@ -3704,29 +3724,32 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
         		    hvbf_lvjj_eta    = (lepton+nutrino+hwjj_ajp+hwjj_bjp).Eta();
 		            hvbf_lvjj_phi    = (lepton+nutrino+hwjj_ajp+hwjj_bjp).Phi();
 		            hvbf_lvjj_m      = (lepton+nutrino+hwjj_ajp+hwjj_bjp).M();
+                            hvbf_lvjj_Rapidity      = (lepton+nutrino+hwjj_ajp+hwjj_bjp).Rapidity();
+
                             hvbf_lv_m      = (lepton+nutrino).M();
                             hvbf_lv_e      = (lepton+nutrino).E();
                             hvbf_lv_pt      = (lepton+nutrino).Pt();
                             hvbf_lv_eta      = (lepton+nutrino).Eta();
                             hvbf_lv_phi      = (lepton+nutrino).Phi();
+                            hvbf_lv_Rapidity  = (lepton+nutrino).Rapidity();
                             hvbf_lv_mT      = W_mt;
 
 			    hvbf_l_pt = lepton.Pt();
 		            hvbf_l_eta = lepton.Eta();
 		            hvbf_l_phi = lepton.Phi();
 		            hvbf_l_e = lepton.E();
-                            hvbf_event_met_pfmet = event_met_pfmet;
-                            //hvbf_MET_e = b_nvp.Pt();
-                            //hvbf_MET_e = b_nvp.Eta();
-                            //hvbf_MET_e = b_nvp.Eta();
 
-		            hvbf_l_MET_deltaphi = getDeltaPhi(lepton.Phi(), b_nvp.Phi());
-		            hvbf_lW_hW_deltaphi = getDeltaPhi((lepton+nutrino).Phi(), hvbf_wjj_phi);
+                            hvbf_event_met_pfmet = event_met_pfmet;
+                            hvbf_event_met_pfmetPhi = event_met_pfmetPhi;
+
+		            hvbf_l_MET_deltaphi = getDeltaPhi(hvbf_l_phi, hvbf_event_met_pfmetPhi);
+		            hvbf_lW_hW_deltaphi = getDeltaPhi(hvbf_lv_phi, hvbf_wjj_phi);
 
         if (htag_i_id!=-1 && htag_j_id!=-1 && hwjj_a_id!=-1 && hwjj_b_id!=-1 && goodlepton==1 && hvbf_lv_mT >30. && hvbf_wjj_m >30.&& event_met_pfmet>25.)
 	{
 	hvbf_event=1;
-//        cout<<hvbf_lvjj_m<<endl;
+//        cout<<hvbf_l_MET_deltaphi<<endl;
+        //cout<<hvbf_lW_hW_deltaphi<<endl;
 	}
 	//}
             double a_costheta1, a_costheta2, a_phi, a_costhetastar, a_phistar1, a_phistar2;
@@ -4865,6 +4888,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_hvbf_jj_eta->Fill();
       branch_hvbf_jj_phi->Fill();
       branch_hvbf_jj_m->Fill();
+      branch_hvbf_jj_Rapidity->Fill();
 
       branch_hvbf_aj_e->Fill();
       branch_hvbf_aj_pt->Fill();
@@ -4886,6 +4910,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_hvbf_wjj_eta->Fill();
       branch_hvbf_wjj_phi->Fill();
       branch_hvbf_wjj_m->Fill();
+      branch_hvbf_wjj_Rapidity->Fill();
 
       branch_hvbf_waj_e->Fill();
       branch_hvbf_waj_pt->Fill();
@@ -4908,11 +4933,15 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_hvbf_lvjj_phi->Fill();
       branch_hvbf_lvjj_m->Fill();
       branch_hvbf_lvjj_y->Fill();
+      branch_hvbf_lvjj_Rapidity->Fill();
+
 
       branch_hvbf_lv_e->Fill();
       branch_hvbf_lv_pt->Fill();
       branch_hvbf_lv_eta->Fill();
       branch_hvbf_lv_phi->Fill();
+      branch_hvbf_lv_Rapidity->Fill();
+
       branch_hvbf_lv_m->Fill();
       branch_hvbf_lv_mT->Fill();
 
@@ -4921,6 +4950,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_hvbf_l_eta->Fill();
       branch_hvbf_l_phi->Fill();
       branch_hvbf_event_met_pfmet->Fill();
+      branch_hvbf_event_met_pfmetPhi->Fill();
 
 
       branch_hvbf_l_MET_deltaphi->Fill();
