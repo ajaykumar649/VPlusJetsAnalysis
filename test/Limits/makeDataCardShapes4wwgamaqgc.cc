@@ -37,45 +37,57 @@ makeDataCardContent(TFile *fp,
   Card *card;
 
   TH1 *datahist;
-  TH1 *backhist;
-  TH1 *shapehist;
+
+  std::map<TString,TH1 *> backhists;
 
   TString channame(channames[ichan]);
 
   char elormu = channame[ELORMUCHAR];
-  TString leptsyst   = "CMS_eff_"+TString(elormu);
+  TString trigsyst    = "CMS_trig_"+TString(elormu);
+  TString leptsyst    = "CMS_eff_"+TString(elormu);
+  TString Wgamjetsyst = "Wgamjet_"+TString(elormu);
 
   datahist = (TH1 *)fp->Get(dataobjname);
   if (!datahist) {
-    cerr << "Couldn't get data histogram from file for channel " << ichan << endl;
+    cerr << "Fatal: Couldn't get data histogram from file for channel " << ichan << endl;
     exit(-1);
   }
-
+  for (int i=0; i<NUMBAKPROC; i++) {
+    TH1 *backhist = (TH1 *)fp->Get(bakprochistonames[i][1]);
+    if (!backhist) {
+      cerr << "Warning: Couldn't get background histogram "<<bakprochistonames[i][1]<<" from file "<<fp->GetName() << endl;
+    } else
+      backhists[bakprochistonames[i][0]] = backhist;
+  }
+#if 0
   backhist = (TH1 *)fp->Get(bkgdobjname);
   if (!backhist) {
-    cerr << "Couldn't get background histogram from file for channel " << ichan << endl;
+    cerr << "Fatal: Couldn't get background histogram from file for channel " << ichan << endl;
     exit(-1);
   }
 
   TString shapesystname = Form("%s_backshape",channames[ichan]);
 
-  shapehist = (TH1 *)fp->Get("background_"+shapesystname+"Up");
+  TH1 *shapehist = (TH1 *)fp->Get("background_"+shapesystname+"Up");
   if (!shapehist) {
-    cerr << "Couldn't get background shapeUp histogram from file for channel " << ichan << endl;
+    cerr << "Fatal: Couldn't get background shapeUp histogram from file for channel " << ichan << endl;
     exit(-1);
   }
-
+#endif
   TH1 *sighist = (TH1 *)fp->Get(signame);
 
   if (!sighist) {
-    cerr<<"Couldn't get signal histogram "<<signame<<" from file for channel "<<channame<<endl;
+    cerr<<"Fatal: Couldn't get signal histogram "<<signame<<" from file for channel "<<channame<<endl;
     exit(-1);
   }
 
   if (doshape) {
     card = new Card(-1,dataobjname,channame,"",false);
     card->addProcessChannel(sighist->Integral(),"signal",channame,"",true);
-    card->addProcessChannel(backhist->Integral(),bkgdobjname,channame,shapesystname,false);
+
+    std::map<TString,TH1 *>::const_iterator it;
+    for (it=backhists.begin(); it!=backhists.end(); it++)
+      card->addProcessChannel(it->second->Integral(),it->first,channame,"",false);
   }
   else {
     // cut-and-count
@@ -89,43 +101,55 @@ makeDataCardContent(TFile *fp,
 
     card->addProcessChannel(sighist->Integral(lobin,hibin),"signal",channame,"",true);
 
-    double nombakrate =  backhist->Integral( lobin, hibin );
-
-    card->addProcessChannel(nombakrate, bkgdobjname,channame,"",false);
-
-    // convert shape histo to a normal systematic
-    double hibakrate  = shapehist->Integral(shapehist->FindFixBin(photonptmingev),shapehist->GetNbinsX()+1);
-    card->addSystematic("backshape", bkgdobjname,channame, 1+((hibakrate-nombakrate)/nombakrate));
+    std::map<TString,TH1 *>::const_iterator it;
+    for (it=backhists.begin(); it!=backhists.end(); it++) {
+      TH1 *backhist = it->second;
+      double nombakrate =  backhist->Integral( lobin, hibin );
+      card->addProcessChannel(nombakrate, it->first,channame,"",false);
+#if 0
+      // convert shape histo to a normal systematic
+      double hibakrate  = shapehist->Integral(shapehist->FindFixBin(photonptmingev),shapehist->GetNbinsX()+1);
+      //card->addSystematic("backshape", bkgdobjname,channame, 1+((hibakrate-nombakrate)/nombakrate));
+#endif
+    }
   }
 
   // (non-shape) Systematics:
-  card->addSystematic(leptsyst,"signal",channame,
-		      1+sqrt(lepteff_unc*lepteff_unc + trigeff_unc*trigeff_unc));
+  card->addSystematic(leptsyst,   "signal",channame,1+lepteff_unc);
+  card->addSystematic(trigsyst,   "signal",channame,1+trigeff_unc);
   card->addSystematic("MET",      "signal",channame,1+met_unc);
   card->addSystematic("lumi_8TeV","signal",channame,1+lumi_unc);
   card->addSystematic("PDF",      "signal",channame,1+pdf_unc);
   card->addSystematic("Scale",    "signal",channame,1+scale_unc);
   card->addSystematic("JER",      "signal",channame,1+jer_unc);
   card->addSystematic("JES",      "signal",channame,1+jes_unc);
+  card->addSystematic("PHES",     "signal",channame,1+phes_unc);
   card->addSystematic("antibtag", "signal",channame,1+antibtag_unc);
   card->addSystematic("pileup",   "signal",channame,1+pileup_unc);
 
   /* DISABLE if no MVA applied, or otherwise not relevant:
    */
-  card->addSystematic("mvaseleff_"+channame,"signal",channame,1+sigmvaseleffunc);
+//  card->addSystematic("mvaseleff_"+channame,"signal",channame,1+sigmvaseleffunc);
 
-#if 0 // now data-driven
-  card->addSystematic(leptsyst,bkgdobjname,channame,
-		      1+sqrt(lepteff_unc*lepteff_unc + trigeff_unc*trigeff_unc));
-  card->addSystematic("MET",      bkgdobjname,channame,1+met_unc);
-  card->addSystematic("lumi_8TeV",bkgdobjname,channame,1+lumi_unc);
-  card->addSystematic("PDF",      bkgdobjname,channame,1+pdf_unc);
-  card->addSystematic("Scale",    bkgdobjname,channame,1+scale_unc);
-  card->addSystematic("JER",      bkgdobjname,channame,1+jer_unc);
-  card->addSystematic("JES",      bkgdobjname,channame,1+jes_unc);
-  card->addSystematic("antibtag", bkgdobjname,channame,1+antibtag_unc);
-  card->addSystematic("pileup",   bkgdobjname,channame,1+pileup_unc);
-#endif
+  card->addSystematic("lumi_8TeV",zgamjet,channame,1+lumi_unc);
+  card->addSystematic("lumi_8TeV",ttbgam, channame,1+lumi_unc);
+  card->addSystematic("lumi_8TeV",sngltop,channame,1+lumi_unc);
+  card->addSystematic("lumi_8TeV",wwgamsm,channame,1+lumi_unc);
+  card->addSystematic("lumi_8TeV",wzgamsm,channame,1+lumi_unc);
+
+  card->addSystematic("PDF",      wwgamsm,channame,1+pdf_unc);
+  card->addSystematic("PDF",      wzgamsm,channame,1+pdf_unc);
+
+  card->addSystematic("Scale",    wwgamsm,channame,1+scale_unc);
+  card->addSystematic("Scale",    wzgamsm,channame,1+scale_unc);
+
+  card->addSystematic(Wgamjetsyst, wgamjet,channame,1+wgamjet_unc[ichan]);
+  card->addSystematic("FakePhUnc",fkphoton,channame,1+fkphoton_unc);
+  card->addSystematic("Zgamjunc",  zgamjet,channame,1+zgamjet_unc);
+  card->addSystematic("ttbgamunc",  ttbgam,channame,1+ttbgam_unc);
+
+  if (!ichan)
+    card->addSystematic("QCDunc_e",    qcd,channame,1+qcd_e_unc);
 
   return card;
 }                                                           // makeDataCardContent
@@ -150,7 +174,7 @@ void makeCards4SM(const char *parfiles[],
 
   if (!fp) return;
   if (fp->IsZombie()) {
-    cerr << "Couldn't open file " << fname << endl;
+    cerr << "Fatal: Couldn't open file " << fname << endl;
     exit(-1);
   }
 
@@ -161,8 +185,13 @@ void makeCards4SM(const char *parfiles[],
   if (doshape) {
     card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
     card->addShapeFiles(ShapeFiles_t("signal",channame,fname,SMsigfmtstr));
-    card->addShapeFiles(ShapeFiles_t("background",channame,fname,
-				       "background","$PROCESS_$SYSTEMATIC"));
+
+    for (int i=0; i<NUMBAKPROC; i++) {
+      TH1 *backhist = (TH1 *)fp->Get(bakprochistonames[i][1]);
+      if (backhist)
+	card->addShapeFiles(ShapeFiles_t(bakprochistonames[i][0],channame,fname,
+					 bakprochistonames[i][1]));
+    }
   }
 
   TString cfgtag = Form("wwgamaqgc_%s_SM",channame.Data());
@@ -172,7 +201,7 @@ void makeCards4SM(const char *parfiles[],
   card->Print(dcardname);
       
   delete card;
-}
+}                                                                  // makeCards4SM
 
 //================================================================================
 
@@ -187,23 +216,23 @@ void makeCards4param(const char *parname,
   TFile *fp = NULL;
   TString channame(channames[ichan]);
 
-  // loop through objects in the input root file and find histograms
-  // that are shape inputs into the limit setting data card
-  //
-  for (int i=0; i<npts; i++) {
-    if (strlen(parfiles[ichan])) {
-      fname = TString(dir)+"/"+TString(parfiles[ichan]); // TString(argv[ichan+1]);
-      fp = new TFile(fname);
-    }
+  if (strlen(parfiles[ichan])) {
+    fname = TString(dir)+"/"+TString(parfiles[ichan]);
+    fp = new TFile(fname);
 
-    if (!fp) continue;
     if (fp->IsZombie()) {
-      cerr << "Couldn't open file " << fname << endl;
+      cerr << "Fatal: Couldn't open file " << fname << endl;
       exit(-1);
     }
+  } else
+    return;
 
-    cout << "Reading root input file " << fname << endl;
+  cout << "Reading root input file " << fname << endl;
 
+  for (int i=0; i<npts; i++) {
+    // loop through objects in the input root file and find histograms
+    // that are shape inputs into the limit setting data card
+    //
     int parval = parpts[i];
     TString signame = Form(signalfmtstr,parname,(parval<0?"m":""),abs(parval));
     Card *card = makeDataCardContent(fp,ichan,signame,doshape);
@@ -211,8 +240,13 @@ void makeCards4param(const char *parname,
     if (doshape) {
       card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
       card->addShapeFiles(ShapeFiles_t("signal",channame,fname,signame));
-      card->addShapeFiles(ShapeFiles_t("background",channame,fname,
-				       "background","$PROCESS_$SYSTEMATIC"));
+
+      for (int i=0; i<NUMBAKPROC; i++) {
+	TH1 *backhist = (TH1 *)fp->Get(bakprochistonames[i][1]);
+	if (backhist)
+	  card->addShapeFiles(ShapeFiles_t(bakprochistonames[i][0],channame,fname,
+					   bakprochistonames[i][1]));
+      }
     }
 
     TString cfgtag = Form("wwgamaqgc_%s_%s:%d",channame.Data(),parname,parval);
@@ -224,9 +258,9 @@ void makeCards4param(const char *parname,
     delete card;
       
   } // parval loop
-}
+}                                                               // makeCards4param
 
-//======================================================================
+//================================================================================
 
 void
 makeDataCardFiles(bool doshape)
@@ -234,10 +268,11 @@ makeDataCardFiles(bool doshape)
   for (int ichan=0; ichan<NUMCHAN; ichan++) {
     
     makeCards4param("a0w",a0winputfiles,NUMA0WPTS,a0W_points,ichan,doshape);
-    makeCards4param("aCw",aCwinputfiles,NUMACWPTS,aCW_points,ichan,doshape);
-    makeCards4param("lt0",lt0inputfiles,NUMLT0PTS,lt0_points,ichan,doshape);
+//    makeCards4param("aCw",aCwinputfiles,NUMACWPTS,aCW_points,ichan,doshape);
+//    makeCards4param("lt0",lt0inputfiles,NUMLT0PTS,lt0_points,ichan,doshape);
+//    makeCards4param("K0W",K0Winputfiles,NUMK0WPTS,K0W_points,ichan,doshape);
 
-    makeCards4SM(SMinputfiles,ichan,doshape);
+//    makeCards4SM(SMinputfiles,ichan,doshape);
 
   } // channel loop
 }                                                             // makeDataCardFiles
