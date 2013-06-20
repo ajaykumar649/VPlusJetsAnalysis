@@ -89,6 +89,6 @@ def theConfig(Nj, mH, isElectron = False, initFile = [], includeSignal = True):
     pars.blind = pars_mjj.blind
 
     pars.binData = pars_mjj.binData
-    # pars.binData = True
+    pars.binData = True
 
     return pars

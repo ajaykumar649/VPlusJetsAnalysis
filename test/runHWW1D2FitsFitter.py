@@ -25,9 +25,9 @@ parser.add_option('--ws', dest='ws',
                       'for use')
 parser.add_option('--debug', dest='debug', action='store_true', default=False,
                   help='turn on extra debugging information')
-parser.add_option('--limit', dest='doLimit', action='store_true',
-                  default=False,
-                  help='calculate expected limits using profile likelihood')
+parser.add_option('--limit', dest='doLimit', type='int',
+                  default=0,
+                  help='calculate expected limits using profile likelihood, number of toys to use.')
 parser.add_option('--obsLimit', dest='obsLimit', action='store_true',
                   default=False,
                   help='calculate observed limit too')
@@ -205,6 +205,7 @@ if opts.isElectron:
 
 print 'Time elapsed: %.1f sec' % timer.RealTime()
 print 'CPU time used: %.1f sec' % timer.CpuTime()
+
 print 'starting sideband fit routine'
 timer.Continue()
 
@@ -325,6 +326,7 @@ while p:
 
 #compute limits
 import limits
+from array import array
 
 fitter_mWW.ws.var('r_signal').setRange(-3., 9.)
 full_pdf = fitter_mWW.ws.pdf('totalFit_const')
@@ -339,12 +341,14 @@ bkgHisto.SetName("HWW%snujj_bkg" % mode)
 bkgHisto_up = fitter_mWW.utils.newEmptyHist(
     'HWW%snujj_bkg_%sbkgshapeUp' % (mode, mode), 1)
 bkgHisto_up = pulls.curveToHist(upper, bkgHisto_up)
+bkgHisto_up.Print()
 bkgHisto_up.Scale(full_pdf.expectedEvents(fitter_mWW.ws.set('obsSet'))/bkgHisto_up.Integral())
 bkgHisto_up.SetLineColor(kOrange+2)
 bkgHisto_up.SetLineStyle(kDashed)
 bkgHisto_dwn = fitter_mWW.utils.newEmptyHist(
     'HWW%snujj_bkg_%sbkgshapeDown' % (mode, mode), 1)
 bkgHisto_dwn = pulls.curveToHist(lower, bkgHisto_dwn)
+bkgHisto_dwn.Print()
 bkgHisto_dwn.Scale(full_pdf.expectedEvents(fitter_mWW.ws.set('obsSet'))/bkgHisto_dwn.Integral())
 bkgHisto_dwn.SetLineColor(kOrange+4)
 bkgHisto_dwn.SetLineStyle(kDashed)
@@ -395,42 +399,44 @@ dataHisto.SetName('HWW%snujj_data_obs' % mode)
 dataHisto.Draw('same')
 c_bkg.Update()
 
+fitter_mWW.ws.saveSnapshot('nullFitSnapshot', fitter_mWW.ws.allVars())
+
+upperHist = None
 if opts.doLimit:
     (expectedLimit, toys) = \
                     limits.expectedPlcLimit(fitter_mWW.ws.var(pars_mWW.var[0]),
                                             fitter_mWW.ws.var('r_signal'),
                                             full_pdf, fitter_mWW.ws,
-                                            ntoys = 30,
+                                            ntoys = opts.doLimit,
                                             binData = pars_mWW.binData)
 
     upperHist = TH1F('upperHist', 'upper limit hist',
-                     60,
+                     50,
                      fitter_mWW.ws.var('r_signal').getMin(),
                      fitter_mWW.ws.var('r_signal').getMax())
-    nUpperGood = 0
-    sumUpper = 0.
-    sumUpper2 = 0.
     for toy in toys:
         #print toy
         if (toy['r_signal']['ok']) and \
            (toy['r_signal']['upper'] < (fitter_mWW.ws.var('r_signal').getMax()-0.02)):
             upperHist.Fill(toy['r_signal']['upper'])
-            nUpperGood += 1
-            sumUpper += toy['r_signal']['upper']
-            sumUpper2 += toy['r_signal']['upper']**2
             
-            
+    qs = array('d', [0.]*5)
+    probs = array('d', [0.022, 0.16, 0.5, 0.84, 0.978])
+    #upperHist.Print()
         
     print 'expected 95%% CL upper limit: %0.4f +/- %0.4f' % \
           (expectedLimit['upper'], expectedLimit['upperErr'])
-    print 'sensible expected 95%% CL upper limit: %.4f +/- %.4f' % \
-          (sumUpper/nUpperGood,
-           TMath.Sqrt(sumUpper2/(nUpperGood-1)-sumUpper**2/nUpperGood/(nUpperGood-1)))
     c_upper = TCanvas('c_upper', 'toy upper limits')
     upperHist.Draw()
     c_upper.Update()
+
+    nquants = upperHist.GetQuantiles(len(qs), qs, probs)
+    print 'sensible expected 95%% CL upper limit:',
+    print qs
     print 'expected 95%% CL lower limit: %0.4f +/- %0.4f' % \
           (expectedLimit['lower'], expectedLimit['lowerErr'])
+
+fitter_mWW.ws.loadSnapshot('nullFitSnapshot')
 
 if opts.obsLimit:
     limit = limits.plcLimit(fitter_mWW.ws.var(pars_mWW.var[0]),
@@ -484,6 +490,8 @@ fitter.ws.Write()
 # fitter_low.ws.Write()
 fitter_mWW.ws.Write()
 #likPlot.Write()
+if upperHist:
+    upperHist.Write()
 
 #fitter.ws.Print()
 output.Close()

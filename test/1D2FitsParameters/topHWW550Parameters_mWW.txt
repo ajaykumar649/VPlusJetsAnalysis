@@ -1,3 +1,3 @@
-power2_top_fit_mlvjj =  3.8914 +/- 0.42943 C L(-20 - 20) 
-power_top_fit_mlvjj = -7.47831 +/- 1.4031 C L(-30 - 30) 
-n_top = 2324.6 +/- 48.2 C
+power2_top_fit_mlvjj = 4.6895 +/- 0.55362 C L(-0.84672 - 10.2257)
+power_top_fit_mlvjj = -10.7122 +/- 1.8197 C L(-28.909 - 7.48448)
+n_top = 1333.9 +/- 36.5 C
