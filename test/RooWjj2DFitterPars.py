@@ -25,13 +25,15 @@ class Wjj2DFitterPars:
                                     115.,125.,135.,150.]),
                   'fit_mlvjj': (20, 200., 400., [])
                   }
+    exclude = {}
+    blind = False
     # varNames = {'GroomedJet_CA8_mass_pr[0]': 'GroomedJet_CA8_mass_pr' }
   
     # lumi
     integratedLumi = 3500.
 
     # efficiency corrections
-    doEffCorrections = True
+    doEffCorrections = False
     effToDo = ['lepton']
     leptonEffFiles = {
         'id': ["EffTable2012/scaleFactor-2012A-PromptReco-v1-PFMM-RecoToIso.txt"],
