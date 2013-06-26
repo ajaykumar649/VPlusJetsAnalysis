@@ -6,8 +6,8 @@
 #define ELORMUCHAR 0
 
 const char *channames[NUMCHAN] = {
-  "eldijet",
-  "mudijet",
+  "el",
+  "mu",
 };
 
 const float intlumipbinv_el = 19166;
@@ -35,7 +35,6 @@ const double sigmvaseleffunc = 0.10;
 
 // Background-specific uncertainties:
 //
-const double fkphoton_unc = 0.20;
 const double wgamjet_unc[NUMCHAN] = {
   0.12, 0.08
 };
@@ -46,50 +45,91 @@ const double qcd_e_unc  = 0.50;
 //const double signal_xs_unc  = 0.034;
 
 // for cut-and-count limits:
-const double photonptmingev  = 245.;
+const double photonptmingev  = 30.;
+
+//#define FORMFACTOR_LIMITS
+#undef FORMFACTOR_LIMITS
+
+//======================================================================
+#ifdef FORMFACTOR_LIMITS
+//======================================================================
+
+//Form Factor Test
+#define NUMA0WPTS 26
+const int a0W_points[NUMA0WPTS] = {-177,-174,-171,-168,-165,-162,-159,-156,-153,-150,-140,-100,-80,
+				   80,100,140,150,153,156,159,162,165,168,171,174,177};
+#if 0
+#define NUMA0WPTS 6
+const int a0W_points[NUMA0WPTS] = { -140,-100,-80,80,100,140 };
 
 #define NUMA0WPTS 26
+const int a0W_points[NUMA0WPTS] = {-140000,-130000,-120000,-110000,-100000,-90000,-80000,-70000,-60000,-50000,-140,-100,-80,
+				   80,100,140,50000,60000,70000,80000,90000,100000,110000,120000,130000,140000};
 
-const int a0W_points[NUMA0WPTS] = { -50,-38,-36,-34,-32,-30,-28,-26,-24,-22,-20,-18,-16,
-				    16,18,20,22,24,26,28,30,32,34,36,38,50 }; // times 1e-4
+#define NUMA0WPTS 26
+const int a0W_points[NUMA0WPTS] = {-140000,-130000,-120000,-110000,-100000,-90000,-80000,-70000,-60000,-50000,-140,-100,-80,
+				   80,100,140,10000,60000,70000,80000,90000,100000,110000,120000,130000,140000};
+#endif
 
-#define NUMACWPTS 6
+//======================================================================
+#else
+//======================================================================
 
-const int aCW_points[NUMACWPTS] = { -8,-5,-3,3,5,8 }; // times 1e-5
+#define NUMA0WPTS 26
+const int a0W_points[NUMA0WPTS] = { -50,-38,-36,-34,-32,-30,-28,-26,-24,-22,-20,-18,-16,     // times 1e-6
+				    16,18,20,22,24,26,28,30,32,34,36,38,50 };
 
-#define NUMLT0PTS 6
+#define NUMACWPTS 28
+const int aCW_points[NUMACWPTS] = { -80,-50,-48,-46,-44,-42,-40,-38,-36,-34,-32,-30,-28,-26, // times 1e-6
+				    26,28,30,32,34,36,38,40,42,44,46,48,50,80 };
 
-const int lt0_points[NUMLT0PTS] = { -8,-5,-3,3,5,8 }; // times 1e-11
+#define NUMLT0PTS 26
+const int lt0_points[NUMLT0PTS] = { -80,-50,-38,-36,-34,-32,-30,-28,-26,-24,-22,-20,-18,     // times 1e-12
+				    18,20,22,24,26,28,30,32,34,36,38,50,80 };
+
+#define NUMK0WPTS 20
+const int K0W_points[NUMACWPTS] = { -20,-17,-16,-15,-14,-13,-12,-11,-10,-5,                  // times 1e-6
+				    5,10,11,12,13,14,15,16,17,20 };
+
+//======================================================================
+#endif
+//======================================================================
+
 
 // FILE/HISTO STRUCTURE: assumed same name objects contained in different files for the different inputs
 
 const char *dir =
+//  "/uscms_data/d3/jfaulkn3/Limitsetter/CMSSW_6_1_1/src/ElectroWeakAnalysis/VPlusJets/test/Utilities/aQGC/";
+  //"/uscms_data/d3/jfaulkn3/Limitsetter/CMSSW_6_1_1/src/ElectroWeakAnalysis/VPlusJets/test/Utilities/aQGC/Test/Mlvjja/";
   //"/uscms/home/jfaulkn3/WWG/CMSSW_5_3_2_patch4/src/aQGC_limit/";
   //"/uscms_data/d2/jdamgov/NTuples_53X_MORIOND13/CMSSW_5_3_2_patch4/src/ElectroWeakAnalysis/VPlusJets/test/Utilities/aQGC_limit/";
   //".";
-  "/uscms_data/d3/jfaulkn3/Limitsetter/CMSSW_6_1_1/src/ElectroWeakAnalysis/VPlusJets/test/Utilities/aQGC/Test";
+  //"/uscms_data/d3/jfaulkn3/Limitsetter/CMSSW_6_1_1/src/ElectroWeakAnalysis/VPlusJets/test/Utilities/aQGC/Test";
+  //"/uscms_data/d3/jfaulkn3/Limitsetter/CMSSW_6_1_1/src/ElectroWeakAnalysis/VPlusJets/test/Utilities/aQGC/Test/NewMethods/ROOTFiles/SM/";
+  "/uscms_data/d3/jfaulkn3/Limitsetter/CMSSW_6_1_1/src/ElectroWeakAnalysis/VPlusJets/test/Utilities/aQGC/Test/NewMethods/ROOTFiles/PhotonET";
 
-// ordered the same as the inputs
-//
-const char *a0winputfiles[NUMCHAN] = {
-  "sim_el_a0W_WWA_PhotonEt.root",
-  "sim_mu_a0W_WWA_PhotonEt.root"
-};
+inline TString parinputfiles(int chan,const TString& par) {
+  return "sim_"+TString(channames[chan>0])+"_"+par+"_WWA_PhotonEt.root";
+}
+inline TString a0winputfiles(int chan) {
+  return parinputfiles(chan,"a0W");
+}
+inline TString aCwinputfiles(int chan) {
+  return parinputfiles(chan,"aCW");
+}
+inline TString lt0inputfiles(int chan) {
+  return parinputfiles(chan,"LT0");
+}
+inline TString K0Winputfiles(int chan) {
+  return parinputfiles(chan,"K0W");
+}
 
-const char *aCwinputfiles[NUMCHAN] = {
-  "sim_el_aCW_WWA_PhotonEt.root",
-  "sim_mu_aCW_WWA_PhotonEt.root"
-};
-
-const char *lt0inputfiles[NUMCHAN] = {
-  "sim_el_LT0_WWA_PhotonEt.root",
-  "sim_mu_LT0_WWA_PhotonEt.root"
-};
-
-const char *SMinputfiles[NUMCHAN] = {
-  "sim_el_WWA_WZA_PhotonEt.root",
-  "sim_mu_WWA_WZA_PhotonEt.root"
-};
+// For SM limits with varying MVA cuts:
+#define NUMMVACUTS 6
+const char *MVAcuts4SM[NUMMVACUTS] = { "","_MVA000","_MVA010","_MVA020","_MVA021","_MVA0225" };
+inline TString SMinputfiles(int chan,const TString& mvacut) {
+  return TString(channames[chan>0])+"_WWA_WZA_PhotonEt"+mvacut+".root";
+}
 
 const char *zgamjet = "Zgamjet";
 const char *ttbgam  = "ttbgam";
