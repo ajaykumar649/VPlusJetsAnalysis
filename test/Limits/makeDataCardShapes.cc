@@ -204,12 +204,12 @@ makeDataCardContent(const TString& fname,
     } // existing masspoint
 
     if (procname.Contains("data"))
-      card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,hname));
+      card->addShapesFile(ShapesFile_t("data_obs",channame,fname,hname));
     else {
       addSystematics(massgev,card,procname,channame,ichan);
 
       if (!systname.Length())
-	card->addShapeFiles(ShapeFiles_t(procname,channame,fname,
+	card->addShapesFile(ShapesFile_t(procname,channame,fname,
 					 prefix+"_$PROCESS",prefix+"_$PROCESS_$SYSTEMATIC"));
 
     }
