@@ -353,6 +353,13 @@ std::cout << "Fake Photons: " << th1fkdata->GetBinError(1) << std::endl;
 std::cout << "Data: " << data_obs->GetBinError(1) << std::endl;
 */
 
+
+  ///////////////////////////////////////////////////////////////
+  // Combine SM WVA samples for Signal:
+  TH1D *signal_SM = (TH1D*)th1wwa->Clone("signal_SM");
+  signal_SM->Add(th1wza,1);
+
+
   ////////////////////////
   // Set histogram labels:
   const double BINWIDTH = ((pv.MAXRange-pv.MINRange)/pv.NBINS);
@@ -380,10 +387,9 @@ std::cout << "Data: " << data_obs->GetBinError(1) << std::endl;
   th1Top->Write();
   th1stop->Write();
   th1wajets->Write();
-  th1wwa->Write();
-  th1wza->Write();
   th1zz->Write();
   th1zajets->Write();
   th1qcd->Write();
+  signal_SM->Write();
 
 }// End Main function
