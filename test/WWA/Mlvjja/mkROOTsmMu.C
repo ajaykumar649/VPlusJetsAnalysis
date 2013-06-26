@@ -357,6 +357,8 @@ std::cout << "Data: " << data_obs->GetBinError(1) << std::endl;
   th1wajets->Write();
   th1zz->Write();
   th1zajets->Write();
+  th1wwa->Write();
+  th1wza->Write();
   signal_SM->Write();
 
 }// End Main function

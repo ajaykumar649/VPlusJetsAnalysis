@@ -390,6 +390,8 @@ std::cout << "Data: " << data_obs->GetBinError(1) << std::endl;
   th1zz->Write();
   th1zajets->Write();
   th1qcd->Write();
+  th1wwa->Write();
+  th1wza->Write();
   signal_SM->Write();
 
 }// End Main function
