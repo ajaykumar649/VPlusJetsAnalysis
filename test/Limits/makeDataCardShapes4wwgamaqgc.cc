@@ -30,6 +30,7 @@ using namespace std;
 
 Card *
 makeDataCardContent(TFile *fp,
+		    const TString& fname,
 		    int ichan,
 		    const TString& signame,
 		    bool doshape)
@@ -59,21 +60,13 @@ makeDataCardContent(TFile *fp,
     } else
       backhists[bakprochistonames[i][0]] = backhist;
   }
-#if 0
-  backhist = (TH1 *)fp->Get(bkgdobjname);
-  if (!backhist) {
-    cerr << "Fatal: Couldn't get background histogram from file for channel " << ichan << endl;
+
+  TH1 *shapesysthist = (TH1 *)fp->Get(TString(backhists[fkphoton]->GetName())+"Up");
+  if (!shapesysthist) {
+    cerr << "Fatal: Couldn't get fake photon shapeUp histogram from file for channel " << ichan << endl;
     exit(-1);
   }
 
-  TString shapesystname = Form("%s_backshape",channames[ichan]);
-
-  TH1 *shapehist = (TH1 *)fp->Get("background_"+shapesystname+"Up");
-  if (!shapehist) {
-    cerr << "Fatal: Couldn't get background shapeUp histogram from file for channel " << ichan << endl;
-    exit(-1);
-  }
-#endif
   TH1 *sighist = (TH1 *)fp->Get(signame);
 
   if (!sighist) {
@@ -85,9 +78,19 @@ makeDataCardContent(TFile *fp,
     card = new Card(-1,dataobjname,channame,"",false);
     card->addProcessChannel(sighist->Integral(),"signal",channame,"",true);
 
+    card->addShapesFile(ShapesFile_t(dataobjname,channame,fname,dataobjname));
+    card->addShapesFile(ShapesFile_t("signal",channame,fname,sighist->GetName()));
+
     std::map<TString,TH1 *>::const_iterator it;
-    for (it=backhists.begin(); it!=backhists.end(); it++)
-      card->addProcessChannel(it->second->Integral(),it->first,channame,"",false);
+    for (it=backhists.begin(); it!=backhists.end(); it++) {
+      const TString& procname = it->first;
+      TH1 *backhist = it->second;
+      card->addProcessChannel(backhist->Integral(),procname,channame,"",false);
+      card->addShapesFile(ShapesFile_t(procname,channame,fname,backhist->GetName()));
+    }
+
+    card->addSystematic("fkphotunc",fkphoton,channame,1.0,"shape1");
+    card->addSyst2ShapeFile(fkphoton,shapesysthist->GetName());
   }
   else {
     // cut-and-count
@@ -97,21 +100,21 @@ makeDataCardContent(TFile *fp,
     //cout << lobin<<"-"<<hibin<<endl;
 
     card = new Card(datahist->Integral(lobin,hibin),
-		    dataobjname,channame,"",false);
+                    dataobjname,channame,"",false);
 
     card->addProcessChannel(sighist->Integral(lobin,hibin),"signal",channame,"",true);
 
     std::map<TString,TH1 *>::const_iterator it;
     for (it=backhists.begin(); it!=backhists.end(); it++) {
+      const TString& procname = it->first;
       TH1 *backhist = it->second;
-      double nombakrate =  backhist->Integral( lobin, hibin );
-      card->addProcessChannel(nombakrate, it->first,channame,"",false);
-#if 0
-      // convert shape histo to a normal systematic
-      double hibakrate  = shapehist->Integral(shapehist->FindFixBin(photonptmingev),shapehist->GetNbinsX()+1);
-      //card->addSystematic("backshape", bkgdobjname,channame, 1+((hibakrate-nombakrate)/nombakrate));
-#endif
+      card->addProcessChannel(backhist->Integral(lobin, hibin), procname,channame,"",false);
     }
+    double nombakrate = backhists[fkphoton]->Integral(lobin, hibin);
+    double hibakrate  = shapesysthist->Integral(lobin,hibin);
+    // convert shape histo to a normal systematic
+    card->addSystematic("fkphotunc",fkphoton,channame, 1+((hibakrate-nombakrate)/nombakrate));
+
   }
 
   // (non-shape) Systematics:
@@ -134,17 +137,8 @@ makeDataCardContent(TFile *fp,
   card->addSystematic("lumi_8TeV",zgamjet,channame,1+lumi_unc);
   card->addSystematic("lumi_8TeV",ttbgam, channame,1+lumi_unc);
   card->addSystematic("lumi_8TeV",sngltop,channame,1+lumi_unc);
-  card->addSystematic("lumi_8TeV",wwgamsm,channame,1+lumi_unc);
-  card->addSystematic("lumi_8TeV",wzgamsm,channame,1+lumi_unc);
-
-  card->addSystematic("PDF",      wwgamsm,channame,1+pdf_unc);
-  card->addSystematic("PDF",      wzgamsm,channame,1+pdf_unc);
-
-  card->addSystematic("Scale",    wwgamsm,channame,1+scale_unc);
-  card->addSystematic("Scale",    wzgamsm,channame,1+scale_unc);
 
   card->addSystematic(Wgamjetsyst, wgamjet,channame,1+wgamjet_unc[ichan]);
-  card->addSystematic("FakePhUnc",fkphoton,channame,1+fkphoton_unc);
   card->addSystematic("Zgamjunc",  zgamjet,channame,1+zgamjet_unc);
   card->addSystematic("ttbgamunc",  ttbgam,channame,1+ttbgam_unc);
 
@@ -156,8 +150,7 @@ makeDataCardContent(TFile *fp,
 
 //================================================================================
 
-void makeCards4SM(const char *parfiles[],
-		  int ichan,
+void makeCards4SM(int ichan,
 		  bool doshape)
 {
   TString fname;
@@ -167,46 +160,49 @@ void makeCards4SM(const char *parfiles[],
   // loop through objects in the input root file and find histograms
   // that are shape inputs into the limit setting data card
   //
-  if (strlen(parfiles[ichan])) {
-    fname = TString(dir)+"/"+TString(parfiles[ichan]); // TString(argv[ichan+1]);
+  for (int i=0; i<NUMMVACUTS; i++) {
+    fname = TString(dir)+"/"+ SMinputfiles(ichan,MVAcuts4SM[i]);
     fp = new TFile(fname);
-  }
 
-  if (!fp) return;
-  if (fp->IsZombie()) {
-    cerr << "Fatal: Couldn't open file " << fname << endl;
-    exit(-1);
-  }
-
-  cout << "Reading root input file " << fname << endl;
-
-  Card *card = makeDataCardContent(fp,ichan,SMsigfmtstr,doshape);
-    
-  if (doshape) {
-    card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
-    card->addShapeFiles(ShapeFiles_t("signal",channame,fname,SMsigfmtstr));
-
-    for (int i=0; i<NUMBAKPROC; i++) {
-      TH1 *backhist = (TH1 *)fp->Get(bakprochistonames[i][1]);
-      if (backhist)
-	card->addShapeFiles(ShapeFiles_t(bakprochistonames[i][0],channame,fname,
-					 bakprochistonames[i][1]));
+    if (!fp) return;
+    if (fp->IsZombie()) {
+      cerr << "Fatal: Couldn't open file " << fname << endl;
+      exit(-1);
     }
-  }
 
-  TString cfgtag = Form("wwgamaqgc_%s_SM",channame.Data());
+    cout << "Reading root input file " << fname << endl;
 
-  TString dcardname("./datacard_"+cfgtag+".txt");
-  
-  card->Print(dcardname);
-      
-  delete card;
+    Card *card = makeDataCardContent(fp,fname,ichan,SMsigfmtstr,doshape);
+
+    //SM WZA/WWA treated as combined signal
+    card->addSystematic("lumi_8TeV","signal",channame,1+lumi_unc);
+    card->addSystematic("PDF",      "signal",channame,1+pdf_unc);
+    card->addSystematic("Scale",    "signal",channame,1+scale_unc);
+
+#if 0
+    if (doshape) {
+      card->addShapesFile(ShapesFile_t("signal",channame,fname,SMsigfmtstr));
+
+      for (int i=0; i<NUMBAKPROC; i++) {
+	TH1 *backhist = (TH1 *)fp->Get(bakprochistonames[i][1]);
+	if (backhist)
+	  card->addShapesFile(ShapesFile_t(bakprochistonames[i][0],channame,fname,
+					   bakprochistonames[i][1]));
+      }
+    }
+#endif
+    TString cfgtag = Form("wwgamaqgc_%s_SM%s",channame.Data(),MVAcuts4SM[i]);
+    TString dcardname("./datacard_"+cfgtag+".txt");
+    card->Print(dcardname);
+    
+    delete card;
+  } // MVA cuts loop
 }                                                                  // makeCards4SM
 
 //================================================================================
 
-void makeCards4param(const char *parname,
-		     const char *parfiles[],
+void makeCards4param(const char *parinfilename,
+		     const char *parinhistname,
 		     int  npts,
 		     const int parpts[],
 		     int ichan,
@@ -216,16 +212,15 @@ void makeCards4param(const char *parname,
   TFile *fp = NULL;
   TString channame(channames[ichan]);
 
-  if (strlen(parfiles[ichan])) {
-    fname = TString(dir)+"/"+TString(parfiles[ichan]);
-    fp = new TFile(fname);
+  assert(strlen(parinfilename));
 
-    if (fp->IsZombie()) {
-      cerr << "Fatal: Couldn't open file " << fname << endl;
-      exit(-1);
-    }
-  } else
-    return;
+  fname = TString(dir)+"/"+  parinputfiles(ichan,parinfilename);
+  fp = new TFile(fname);
+
+  if (fp->IsZombie()) {
+    cerr << "Fatal: Couldn't open file " << fname << endl;
+    exit(-1);
+  }
 
   cout << "Reading root input file " << fname << endl;
 
@@ -234,9 +229,18 @@ void makeCards4param(const char *parname,
     // that are shape inputs into the limit setting data card
     //
     int parval = parpts[i];
-    TString signame = Form(signalfmtstr,parname,(parval<0?"m":""),abs(parval));
-    Card *card = makeDataCardContent(fp,ichan,signame,doshape);
-    
+    TString signame = Form(signalfmtstr,parinhistname,(parval<0?"m":""),abs(parval));
+    Card *card = makeDataCardContent(fp,fname,ichan,signame,doshape);
+
+    //SM WZA/WWA treated as separate backgrounds
+    card->addSystematic("lumi_8TeV",wwgamsm,channame,1+lumi_unc);
+    card->addSystematic("lumi_8TeV",wzgamsm,channame,1+lumi_unc);
+    card->addSystematic("PDF",      wwgamsm,channame,1+pdf_unc);
+    card->addSystematic("PDF",      wzgamsm,channame,1+pdf_unc);
+    card->addSystematic("Scale",    wwgamsm,channame,1+scale_unc);
+    card->addSystematic("Scale",    wzgamsm,channame,1+scale_unc);
+
+#if 0    
     if (doshape) {
       card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
       card->addShapeFiles(ShapeFiles_t("signal",channame,fname,signame));
@@ -248,8 +252,9 @@ void makeCards4param(const char *parname,
 					   bakprochistonames[i][1]));
       }
     }
+#endif
 
-    TString cfgtag = Form("wwgamaqgc_%s_%s:%d",channame.Data(),parname,parval);
+    TString cfgtag = Form("wwgamaqgc_%s_%s:%d",channame.Data(),parinfilename,parval);
 
     TString dcardname("./datacard_"+cfgtag+".txt");
       
@@ -267,12 +272,12 @@ makeDataCardFiles(bool doshape)
 {
   for (int ichan=0; ichan<NUMCHAN; ichan++) {
     
-    makeCards4param("a0w",a0winputfiles,NUMA0WPTS,a0W_points,ichan,doshape);
-//    makeCards4param("aCw",aCwinputfiles,NUMACWPTS,aCW_points,ichan,doshape);
-//    makeCards4param("lt0",lt0inputfiles,NUMLT0PTS,lt0_points,ichan,doshape);
-//    makeCards4param("K0W",K0Winputfiles,NUMK0WPTS,K0W_points,ichan,doshape);
+    makeCards4param("a0W","a0w",NUMA0WPTS,a0W_points,ichan,doshape);
+//    makeCards4param("aCW","aCw",NUMACWPTS,aCW_points,ichan,doshape);
+//    makeCards4param("LT0","lt0",NUMLT0PTS,lt0_points,ichan,doshape);
+//    makeCards4param("K0W","KOW",NUMK0WPTS,K0W_points,ichan,doshape);
 
-//    makeCards4SM(SMinputfiles,ichan,doshape);
+//    makeCards4SM(ichan, false); // never do shape limits for SM
 
   } // channel loop
 }                                                             // makeDataCardFiles
