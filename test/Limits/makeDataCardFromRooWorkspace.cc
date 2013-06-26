@@ -48,11 +48,14 @@ bool issignal(const TString& procname)
 
 //================================================================================
 
-bool getYield(RooWorkspace*w, const TString& procname, double& yield)
+bool getYield(RooWorkspace*w, 
+	      const TString& procname,
+	      const TString& channelindicator,
+	      double& yield)
 {
   yield = 0;
 
-  RooRealVar * pdfint = w->var("n_"+procname);
+  RooRealVar * pdfint = w->var("n_"+procname+channelindicator);
 
   if (!pdfint) {
     cerr << "can't find integral for " << procname << endl;
@@ -144,7 +147,7 @@ makeDataCardContent(TFile *fp,
     for(RooRealVar* param = 0;
 	(param=(RooRealVar*)parit->Next());){
     
-      if (TString(param->GetName()).EqualTo("n_"+pdfname)) {
+      if (TString(param->GetName()).BeginsWith("n_"+pdfname)) {
 	isaprocess=true;
 	break;
       }
@@ -167,7 +170,7 @@ makeDataCardContent(TFile *fp,
       procname = pdfname;
 
     double yield=0;
-    if (getYield(w,procname,yield)) {
+    if (getYield(w,procname,elormu=='e' ? "_el":"_mu",yield)) {
       cout<<"Read process="<<setw(10)<<procname<<", channel="<<channame<<", mass="<<massgev;
       if (isinterp) cout << " (interpolated)";
       if (systname.Length()) cout << ", systname = " << systname;
@@ -244,7 +247,7 @@ makeDataCardContent(TFile *fp,
       (param=(RooRealVar*)parit->Next());){
     
     if (TString(param->GetName()).Contains("WpJ") &&
-	!TString(param->GetName()).EndsWith("_nrm") &&
+	!TString(param->GetName()).Contains("_nrm") &&
 	!param->isConstant()) {
       //param->Print();
       card->addModelParam(param->GetName(),"flatParam");
@@ -335,7 +338,7 @@ makeDataCardFiles(char *rootfn,
     
   Card *card = makeDataCardContent(fp,massgev,isinterp,ichan);
 
-  card->addShapeFiles(ShapeFiles_t("*","*",fname,
+  card->addShapesFile(ShapesFile_t("*","*",fname,
 				   TString(wkspacename)+":$PROCESS",
 				   TString(wkspacename)+":$PROCESS_$SYSTEMATIC")
 		      );
