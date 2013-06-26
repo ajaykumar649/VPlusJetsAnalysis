@@ -171,9 +171,9 @@ makeDataCardFiles(bool doshape) // int argc, char*argv[])
 	if (card)
 	{
 	  // assumes the channel filenames are in the same order as the channels!!
-	  card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
-	  card->addShapeFiles(ShapeFiles_t("signal",channame,fname,signame));
-	  card->addShapeFiles(ShapeFiles_t("background",channame,fname,
+	  card->addShapesFile(ShapesFile_t("data_obs",channame,fname,"data_obs"));
+	  card->addShapesFile(ShapesFile_t("signal",channame,fname,signame));
+	  card->addShapesFile(ShapesFile_t("background",channame,fname,
 					   "background","background_$SYSTEMATIC"));
 
 	  //+INC/1000 to avoid truncation
@@ -202,12 +202,12 @@ makeDataCardFiles(bool doshape) // int argc, char*argv[])
 	if (card)
 	{
 	  // assumes the channel filenames are in the same order as the channels!!
-	  card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
-	  card->addShapeFiles(ShapeFiles_t("signal",channame,fname,signame));
-	  card->addShapeFiles(ShapeFiles_t("background",channame,fname,
+	  card->addShapesFile(ShapesFile_t("data_obs",channame,fname,"data_obs"));
+	  card->addShapesFile(ShapesFile_t("signal",channame,fname,signame));
+	  card->addShapesFile(ShapesFile_t("background",channame,fname,
 					   "background","background_$SYSTEMATIC"));
 	  //+INC/1000 to avoid truncation
-	  cfgtag = Form("lz_%.3f_dg1_%.2f_%s",
+	  cfgtag = Form("lz_%.3f_dg1_%.3f_%s",
 			lambdaz+LAMBDAZ_INC/1000.,
 			deltaG1+dg1_INC/1000.,
 			channame.Data());
@@ -238,13 +238,13 @@ makeDataCardFiles(bool doshape) // int argc, char*argv[])
 	if (card)
 	{
 	  // assumes the channel filenames are in the same order as the channels!!
-	  card->addShapeFiles(ShapeFiles_t("data_obs",channame,fname,"data_obs"));
-	  card->addShapeFiles(ShapeFiles_t("signal",channame,fname,signame));
-	  card->addShapeFiles(ShapeFiles_t("background",channame,fname,
+	  card->addShapesFile(ShapesFile_t("data_obs",channame,fname,"data_obs"));
+	  card->addShapesFile(ShapesFile_t("signal",channame,fname,signame));
+	  card->addShapesFile(ShapesFile_t("background",channame,fname,
 					   "background","background_$SYSTEMATIC"));
 
 	  //+INC/1000 to avoid truncation
-	  cfgtag = Form("dkg_%.2f_dg1_%.2f_%s",
+	  cfgtag = Form("dkg_%.2f_dg1_%.3f_%s",
 			deltaKappaGamma+dKG_INC/1000.,
 			deltaG1+dg1_INC/1000.,
 			channame.Data());
