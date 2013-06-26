@@ -15,8 +15,8 @@ struct ProcData_t {
 							 */
 };
 
-struct ShapeFiles_t {
-  ShapeFiles_t(const TString& inproc,
+struct ShapesFile_t {
+  ShapesFile_t(const TString& inproc,
 	       const TString& inchan,
 	       const TString& infile,
 	       const TString& inhist,
@@ -56,7 +56,8 @@ class Card {
     addSystematic(const TString& systname,     // systematic name 
 		  const TString& procname,     // process name 
 		  const TString& channame,     // name of channel
-		  double         uncval
+		  double         uncval,       // uncertainty expressed as 1 + fractional uncertainty
+		  const TString& pdf="lnN"
 		  );
 
   void
@@ -65,11 +66,11 @@ class Card {
 		  );
 
   void
-    addShapeFiles(const ShapeFiles_t& shapesfile) { shapespecs_.push_back(shapesfile); }
+    addShapesFile(const ShapesFile_t& shapesfile) { shapespecs_.push_back(shapesfile); }
 
   void
     addSyst2ShapeFile(const TString& procname,
-		      const TString& systname);
+		      const TString& histname);
 
   void
     Print(const TString& dcardname=""
@@ -79,7 +80,7 @@ class Card {
   int nsigproc_;
   int nbackproc_;
   ProcData_t data_;   // data is identified separately as "observation"
-  std::vector<ShapeFiles_t> shapespecs_;
+  std::vector<ShapesFile_t> shapespecs_;
   std::vector<ModelParam_t> modelparams_;
   std::deque<ProcData_t> processes_; // push_front for signal, push_back for background
   std::map<TString,int> pname2index_;  // map from process name to the deque index in "processes"

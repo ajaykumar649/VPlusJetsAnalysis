@@ -19,7 +19,7 @@ Card::Card(double         procchanyield,
   nbackproc_ = 0;
   nsigproc_  = 0;
 
-  cout << "\tmake new card ";
+  cout << "\tmake new card with process "<<procname<<", channel "<<channame<<endl;
 
   ProcData_t pd;
 
@@ -64,7 +64,7 @@ Card::addProcessChannel(double         procchanyield,// process/channel yield
 			const bool     issignal
 			)
 {
-  cout << "\tadd to card ";
+  cout<<"\tadd to card "<<procname<<" "<<channame<<" "<<systname<<endl;;
 
   // With each input histogram one must:
   // 1. If a new process, update the process info in the card: "card.processes", "card.pname2index_",
@@ -180,9 +180,10 @@ void
 Card::addSystematic(const TString& systname,
 		    const TString& procname,
 		    const TString& channame,
-		    const double   unc)
+		    const double   unc,
+		    const TString& pdf)
 {
-  //cout<<"addSystematic "<<systname<<" to "<<procname<<endl;
+  cout<<"\taddSystematic "<<systname<<" to "<<procname<<endl;
 
   assert( !procname.Contains("data") );
 
@@ -190,7 +191,7 @@ Card::addSystematic(const TString& systname,
 
   std::map<TString,TString>::const_iterator sit = systematics_.find(systname);
   if (sit == systematics_.end())
-    systematics_[systname] = "lnN";
+    systematics_[systname] = pdf;
 
   std::map<TString,int>::const_iterator pit = pname2index_.find(procname);
   assert(pit != pname2index_.end());
@@ -205,12 +206,12 @@ Card::addSystematic(const TString& systname,
 
 void
 Card::addSyst2ShapeFile(const TString& procname,
-			const TString& systname)
+			const TString& histname)
 {
   size_t i;
   for (i=0; i<shapespecs_.size(); i++)
     if (shapespecs_[i].process == procname) {
-      shapespecs_[i].histo_with_syst = systname;
+      shapespecs_[i].histo_with_syst = histname;
       break;
     }
   assert(i<shapespecs_.size());
