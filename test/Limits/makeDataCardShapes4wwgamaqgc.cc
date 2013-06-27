@@ -61,7 +61,7 @@ makeDataCardContent(TFile *fp,
       backhists[bakprochistonames[i][0]] = backhist;
   }
 
-  TH1 *shapesysthist = (TH1 *)fp->Get(TString(backhists[fkphoton]->GetName())+"Up");
+  TH1 *shapesysthist = (TH1 *)fp->Get(TString(backhists[fkphoton]->GetName())+"_fkphotuncUp");
   if (!shapesysthist) {
     cerr << "Fatal: Couldn't get fake photon shapeUp histogram from file for channel " << ichan << endl;
     exit(-1);
@@ -90,7 +90,7 @@ makeDataCardContent(TFile *fp,
     }
 
     card->addSystematic("fkphotunc",fkphoton,channame,1.0,"shape1");
-    card->addSyst2ShapeFile(fkphoton,shapesysthist->GetName());
+    card->addSyst2ShapeFile(fkphoton,TString(backhists[fkphoton]->GetName())+"_$SYSTEMATIC");
   }
   else {
     // cut-and-count
