@@ -152,7 +152,7 @@ const char *bakprochistonames[NUMBAKPROC][2] = {
   {qcd,      "th1qcd"},
 };
 
-const char *signalfmtstr = "signal_%s_%s%2d"; //%s(1)="a0w"|"aCw|lt0", %s(2)="m" for minus or "" for plus
+const char *signalfmtstr = "signal_%s_%s%d"; //%s(1)="a0w"|"aCw|lt0", %s(2)="m" for minus or "" for plus
 const char *SMsigfmtstr = "signal_SM";
 
 const char *dataobjname = "data_obs";
