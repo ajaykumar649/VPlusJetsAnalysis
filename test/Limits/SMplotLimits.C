@@ -6,8 +6,8 @@ float MVA3[6] = {3.71051, 1.3344, 2.01792, 3.22259, 5.33897, 7.49388};
 float MVA4[6] = {5.44821, 1.39287, 2.13449, 3.54081, 5.66619, 7.67241};
 float MVA5[6] = {5.0584, 1.46049, 2.16707, 3.504, 5.59603, 8.02826};
 
-TH1F *h = new TH1F("h","WV#gamma Signal Strength",12,0,12);
-TH1F *h1 = new TH1F("h1","limits 2",12,0,12);
+TH1F *h = new TH1F("h","WV#gamma Signal Strength",25,0,25);
+TH1F *h1 = new TH1F("h1","limits 2",25,0,25);
 
 h->SetBinContent(2,(NoMVA[1]+NoMVA[5])/2);
 h->SetBinError(2,(NoMVA[1]-NoMVA[5])/2);
