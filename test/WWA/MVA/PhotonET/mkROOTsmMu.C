@@ -90,9 +90,9 @@ void mkROOTsmMu(){
 
   ////////////////////////////////
   // Specify event selection cuts:
-  TCut the_cut("effwt*puwt*(iPhoton12>-1&&Photon_Et[iPhoton12]>30.&&Photon_dRlep[iPhoton12]>0.5&&i12Jet2>-1&&i12Jet1>-1&&JetPFCor_dRpho12[i12Jet1]>0.5&&JetPFCor_dRpho12[i12Jet2]>0.5&&abs(W_muon_eta)<2.1&&abs(JetPFCor_dphiMET[i12Jet1])>0.4&& abs(JetPFCor_dphiMET[i12Jet2])>0.4&&JetPFCor_bDiscriminatorCSV[i12Jet1]<0.679&&JetPFCor_bDiscriminatorCSV[i12Jet2]<0.679&&abs(JetPFCor_Eta[i12Jet1]-JetPFCor_Eta[i12Jet2])<1.4&&abs(Photon_Eta[iPhoton12])<1.44421&&W_muon_pt>25&&event_met_pfmet>35.&&c2jMass12>70.&&c2jMass12<100.&&W_mt>30.&&abs(W_muon_dz000)<0.02&&abs(W_muon_dzPV)<0.5&&((i12Jet3>-1)? JetPFCor_dRpho12[i12Jet3]>0.5: 1 )&&((i12Jet4>-1)? JetPFCor_dRpho12[i12Jet4]>0.5: 1 ))");
+  TCut the_cut("effwt*puwt*(iPhoton12>-1&&Photon_Et[iPhoton12]>30.&&Photon_dRlep[iPhoton12]>0.5&&i12Jet2>-1&&i12Jet1>-1&&JetPFCor_dRpho12[i12Jet1]>0.5&&JetPFCor_dRpho12[i12Jet2]>0.5&&abs(W_muon_eta)<2.1&&abs(JetPFCor_dphiMET[i12Jet1])>0.4&& abs(JetPFCor_dphiMET[i12Jet2])>0.4&&JetPFCor_bDiscriminatorCSV[i12Jet1]<0.679&&JetPFCor_bDiscriminatorCSV[i12Jet2]<0.679&&abs(JetPFCor_Eta[i12Jet1]-JetPFCor_Eta[i12Jet2])<1.4&&abs(Photon_Eta[iPhoton12])<1.44421&&W_muon_pt>25&&event_met_pfmet>35.&&c2jMass12>70.&&c2jMass12<100.&&W_mt>30.&&abs(W_muon_dz000)<0.02&&abs(W_muon_dzPV)<0.5&&((i12Jet3>-1)? JetPFCor_dRpho12[i12Jet3]>0.5: 1 )&&((i12Jet4>-1)? JetPFCor_dRpho12[i12Jet4]>0.5: 1 )&& mva2jWWAmuA1>0.1)");
 //mva2jWWAmuA1>0.32
-  TCut the_cutPlj("effwt*puwt*(iPhoton12plj>-1&&Photon_Et[iPhoton12plj]>30.&&Photon_dRlep[iPhoton12plj]>0.5&&i12Jet2plj>-1&&i12Jet1plj>-1&&JetPFCor_dRpho12plj[i12Jet1plj]>0.5&&JetPFCor_dRpho12plj[i12Jet2plj]>0.5&&abs(W_muon_eta)<2.1&&abs(JetPFCor_dphiMET[i12Jet1plj])>0.4&& abs(JetPFCor_dphiMET[i12Jet2plj])>0.4&&JetPFCor_bDiscriminatorCSV[i12Jet1plj]<0.679&&JetPFCor_bDiscriminatorCSV[i12Jet2plj]<0.679&&abs(JetPFCor_Eta[i12Jet1plj]-JetPFCor_Eta[i12Jet2plj])<1.4&&abs(Photon_Eta[iPhoton12plj])<1.44421&&W_muon_pt>25&&event_met_pfmet>35.&&c2jMass12plj>70.&&c2jMass12plj<100.&&W_mt>30.&&abs(W_muon_dz000)<0.02&&abs(W_muon_dzPV)<0.5&&((i12Jet3plj>-1)? JetPFCor_dRpho12plj[i12Jet3plj]>0.5: 1 )&&((i12Jet4plj>-1)? JetPFCor_dRpho12plj[i12Jet4plj]>0.5: 1 ))");
+  TCut the_cutPlj("effwt*puwt*(iPhoton12plj>-1&&Photon_Et[iPhoton12plj]>30.&&Photon_dRlep[iPhoton12plj]>0.5&&i12Jet2plj>-1&&i12Jet1plj>-1&&JetPFCor_dRpho12plj[i12Jet1plj]>0.5&&JetPFCor_dRpho12plj[i12Jet2plj]>0.5&&abs(W_muon_eta)<2.1&&abs(JetPFCor_dphiMET[i12Jet1plj])>0.4&& abs(JetPFCor_dphiMET[i12Jet2plj])>0.4&&JetPFCor_bDiscriminatorCSV[i12Jet1plj]<0.679&&JetPFCor_bDiscriminatorCSV[i12Jet2plj]<0.679&&abs(JetPFCor_Eta[i12Jet1plj]-JetPFCor_Eta[i12Jet2plj])<1.4&&abs(Photon_Eta[iPhoton12plj])<1.44421&&W_muon_pt>25&&event_met_pfmet>35.&&c2jMass12plj>70.&&c2jMass12plj<100.&&W_mt>30.&&abs(W_muon_dz000)<0.02&&abs(W_muon_dzPV)<0.5&&((i12Jet3plj>-1)? JetPFCor_dRpho12plj[i12Jet3plj]>0.5: 1 )&&((i12Jet4plj>-1)? JetPFCor_dRpho12plj[i12Jet4plj]>0.5: 1 )&& mva2jWWAmuA1>0.1)");
 
 
   TCut WA23Jcut(TString(the_cut)+TString("*((W_Photon_pt_gen>115)? 0. : 1.) "));
@@ -107,7 +107,7 @@ void mkROOTsmMu(){
 
   ///////////////////////////
   // Create output ROOT file:
-  TFile f("mu_WWA_WZA_PhotonEt.root", "RECREATE");
+  TFile f("mu_WWA_WZA_PhotonEt_MVA01.root", "RECREATE");
 
 
   //////////////////////////////////////////////////

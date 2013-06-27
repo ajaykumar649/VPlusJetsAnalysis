@@ -161,8 +161,8 @@ void mkROOTsmEl(){
   // Create kinematic-distribution histograms for each sample:
   TH1* data_obs  = new TH1D("data_obs",  "data_obs",  pv.NBINS, pv.MINRange, pv.MAXRange);
   TH1* th1fkdata  = new TH1D("th1fkdata",  "th1fkdata",  pv.NBINS, pv.MINRange, pv.MAXRange);
-  TH1* th1fkdataUp  = new TH1D("th1fkdataUp",  "th1fkdataUp",  pv.NBINS, pv.MINRange, pv.MAXRange);
-  TH1* th1fkdataDown  = new TH1D("th1fkdataDown",  "th1fkdataDown",  pv.NBINS, pv.MINRange, pv.MAXRange);
+  TH1* th1fkdata_fkphotuncUp  = new TH1D("th1fkdata_fkphotuncUp",  "th1fkdata_fkphotuncUp",  pv.NBINS, pv.MINRange, pv.MAXRange);
+  TH1* th1fkdata_fkphotuncDown  = new TH1D("th1fkdata_fkphotuncDown",  "th1fkdata_fkphotuncDown",  pv.NBINS, pv.MINRange, pv.MAXRange);
   TH1* th1qcd  = new TH1D("th1qcd",  "th1qcd",  pv.NBINS, pv.MINRange, pv.MAXRange);
   TH1* th1wwa = new TH1D("th1wwa", "th1wwa", pv.NBINS, pv.MINRange, pv.MAXRange);
   TH1* th1wwa2 = new TH1D("th1wwa2", "th1wwa2", pv.NBINS, pv.MINRange, pv.MAXRange);
@@ -185,8 +185,8 @@ void mkROOTsmEl(){
   // Specify histograms to store Sum of Squares of Weights for each sample:
   data_obs->Sumw2();
   th1fkdata->Sumw2();
-  th1fkdataUp->Sumw2();
-  th1fkdataDown->Sumw2();
+  th1fkdata_fkphotuncUp->Sumw2();
+  th1fkdata_fkphotuncDown->Sumw2();
   th1qcd->Sumw2();
   th1wwa->Sumw2();
   th1wwa2->Sumw2();
@@ -214,11 +214,11 @@ void mkROOTsmEl(){
   treedata->Draw(TString("Photon_Et[iPhoton12plj]>>th1fkdata"), fkPhoton_cut, "goff");
   th1fkdata->AddBinContent(pv.NBINS,th1fkdata->GetBinContent(pv.NBINS+1));th1fkdata->SetBinContent(pv.NBINS+1,0.);
 
-  treedata->Draw(TString("Photon_Et[iPhoton12plj]>>th1fkdataUp"), fkPhoton_cutUp, "goff");
-  th1fkdataUp->AddBinContent(pv.NBINS,th1fkdataUp->GetBinContent(pv.NBINS+1));th1fkdataUp->SetBinContent(pv.NBINS+1,0.);
+  treedata->Draw(TString("Photon_Et[iPhoton12plj]>>th1fkdata_fkphotuncUp"), fkPhoton_cutUp, "goff");
+  th1fkdata_fkphotuncUp->AddBinContent(pv.NBINS,th1fkdata_fkphotuncUp->GetBinContent(pv.NBINS+1));th1fkdata_fkphotuncUp->SetBinContent(pv.NBINS+1,0.);
 
-  treedata->Draw(TString("Photon_Et[iPhoton12plj]>>th1fkdataDown"), fkPhoton_cutDown, "goff");
-  th1fkdataDown->AddBinContent(pv.NBINS,th1fkdataDown->GetBinContent(pv.NBINS+1));th1fkdataDown->SetBinContent(pv.NBINS+1,0.);
+  treedata->Draw(TString("Photon_Et[iPhoton12plj]>>th1fkdata_fkphotuncDown"), fkPhoton_cutDown, "goff");
+  th1fkdata_fkphotuncDown->AddBinContent(pv.NBINS,th1fkdata_fkphotuncDown->GetBinContent(pv.NBINS+1));th1fkdata_fkphotuncDown->SetBinContent(pv.NBINS+1,0.);
 
   std::cout<<"Fill QCD Histogram..."<<std::endl;
   treeqcd->Draw(TString(pv.plotvar)+TString(">>th1qcd"), the_cutQCD, "goff");
@@ -382,8 +382,8 @@ std::cout << "Data: " << data_obs->GetBinError(1) << std::endl;
   f.cd();
   data_obs->Write();
   th1fkdata->Write();
-  th1fkdataUp->Write();
-  th1fkdataDown->Write();
+  th1fkdata_fkphotuncUp->Write();
+  th1fkdata_fkphotuncDown->Write();
   th1Top->Write();
   th1stop->Write();
   th1wajets->Write();

@@ -14,8 +14,8 @@ Usage: Reads in multiple ROOT files (RD Trees) representing data, MC
 Output: ROOT file containing 1D histograms for:
 	(1) Observed data (data_obs)
 	(2) SM backgrounds + SM signal (background)
-	(3) Background + uncertainty (background_mudijet_backshapeUp)
-	(4) Background - uncertainty (background_mudijet_backshapeDown)
+	(3) Background + uncertainty (background_eldijet_backshapeUp)
+	(4) Background - uncertainty (background_eldijet_backshapeDown)
 	(5-?) Anomalous signal - SM signal (signal_??)
 
 Syntax: root -l -b -q mkROOTsm.C
@@ -54,16 +54,16 @@ struct plotVar_t {
 
 ///////////////////////
 // Begin Main function:
-void mkROOTsmMu(){
+void mkROOTsmEl(){
 
 
   //////////////////////////////////////
   // Set MC normalization scale factors:
-  const double intLUMI = 19297;
+  const double intLUMI = 19166;
 
-// WA+jets norm - data driven : 1.09896 +- 0.091
-  const double WAJets_scale = 1.09896 * 9.37246 * intLUMI/1049473;
-  const double WAJetsPT100_scale = 1.09896 * 0.423028445 *intLUMI/369309; // V
+// WA+jets norm - data driven : 1.07391 +- 0.137
+  const double WAJets_scale  = 1.07391 * 9.37246 * intLUMI/1049473;
+  const double WAJetsPT100_scale   = 1.07391 * 0.423028445 *intLUMI/369309; // V
   const double ZAJets_scale  = 0.63196 * intLUMI/979207;
   const double ZZ_scale      = 8.059 * intLUMI/9702850;
 
@@ -75,10 +75,9 @@ void mkROOTsmMu(){
   const double STopT_scale   = 55.531  * intLUMI/3758221;
   const double STopTW_scale  = 11.1773  * intLUMI/497657;
 
-  // PT dependent k-factor included (same for WWA,WZA aQGC)
-  const double WWA_scale     =  2.1* 0.01362 * intLUMI/198777;
-  const double WWA2_scale    =  2.1* 0.01409 * intLUMI/199183;
-  const double WZA_scale     =  2.1* 0.00578008 * intLUMI/497450;
+  const double WWA_scale     = 2.1*0.01362 * intLUMI/198777;
+  const double WWA2_scale    = 2.1*0.01409 * intLUMI/199183;
+  const double WZA_scale     = 2.1*0.00578008 * intLUMI/497450;
 
 
   ///////////////////////////////////////////////////////////////////////////////////
@@ -90,13 +89,16 @@ void mkROOTsmMu(){
 
   ////////////////////////////////
   // Specify event selection cuts:
-  TCut the_cut("effwt*puwt*(iPhoton12>-1&&Photon_Et[iPhoton12]>30.&&Photon_dRlep[iPhoton12]>0.5&&i12Jet2>-1&&i12Jet1>-1&&JetPFCor_dRpho12[i12Jet1]>0.5&&JetPFCor_dRpho12[i12Jet2]>0.5&&abs(W_muon_eta)<2.1&&abs(JetPFCor_dphiMET[i12Jet1])>0.4&& abs(JetPFCor_dphiMET[i12Jet2])>0.4&&JetPFCor_bDiscriminatorCSV[i12Jet1]<0.679&&JetPFCor_bDiscriminatorCSV[i12Jet2]<0.679&&abs(JetPFCor_Eta[i12Jet1]-JetPFCor_Eta[i12Jet2])<1.4&&abs(Photon_Eta[iPhoton12])<1.44421&&W_muon_pt>25&&event_met_pfmet>35.&&c2jMass12>70.&&c2jMass12<100.&&W_mt>30.&&abs(W_muon_dz000)<0.02&&abs(W_muon_dzPV)<0.5&&((i12Jet3>-1)? JetPFCor_dRpho12[i12Jet3]>0.5: 1 )&&((i12Jet4>-1)? JetPFCor_dRpho12[i12Jet4]>0.5: 1 ))");
-//mva2jWWAmuA1>0.32
-  TCut the_cutPlj("effwt*puwt*(iPhoton12plj>-1&&Photon_Et[iPhoton12plj]>30.&&Photon_dRlep[iPhoton12plj]>0.5&&i12Jet2plj>-1&&i12Jet1plj>-1&&JetPFCor_dRpho12plj[i12Jet1plj]>0.5&&JetPFCor_dRpho12plj[i12Jet2plj]>0.5&&abs(W_muon_eta)<2.1&&abs(JetPFCor_dphiMET[i12Jet1plj])>0.4&& abs(JetPFCor_dphiMET[i12Jet2plj])>0.4&&JetPFCor_bDiscriminatorCSV[i12Jet1plj]<0.679&&JetPFCor_bDiscriminatorCSV[i12Jet2plj]<0.679&&abs(JetPFCor_Eta[i12Jet1plj]-JetPFCor_Eta[i12Jet2plj])<1.4&&abs(Photon_Eta[iPhoton12plj])<1.44421&&W_muon_pt>25&&event_met_pfmet>35.&&c2jMass12plj>70.&&c2jMass12plj<100.&&W_mt>30.&&abs(W_muon_dz000)<0.02&&abs(W_muon_dzPV)<0.5&&((i12Jet3plj>-1)? JetPFCor_dRpho12plj[i12Jet3plj]>0.5: 1 )&&((i12Jet4plj>-1)? JetPFCor_dRpho12plj[i12Jet4plj]>0.5: 1 ))");
+  TCut the_cut("effwt*puwt*(iPhoton12>-1 && i12Jet1>-1 && i12Jet2>-1 && abs(W_electron_eta)<2.5 && W_electron_pt>30 && event_met_pfmet>35. && W_mt>30 && abs(Photon_Eta[iPhoton12])<1.4442 && Photon_Et[iPhoton12]>30.&& Photon_dRlep[iPhoton12] > 0.5 && JetPFCor_dRpho12[i12Jet1]>0.5 && JetPFCor_dRpho12[i12Jet2]>0.5 && abs(JetPFCor_dphiMET[i12Jet1])>0.4 && abs(JetPFCor_dphiMET[i12Jet2])>0.4 && JetPFCor_bDiscriminatorCSV[i12Jet1]<0.679 && JetPFCor_bDiscriminatorCSV[i12Jet2]<0.679 && abs(JetPFCor_Eta[i12Jet1]-JetPFCor_Eta[i12Jet2])<1.4 && c2jMass12>70. && c2jMass12<100. && abs(91.1876-massla)>10. &&((i12Jet3>-1)? JetPFCor_dRpho12[i12Jet3]>0.5: 1 )&&((i12Jet4>-1)? JetPFCor_dRpho12[i12Jet4]>0.5: 1 )&& mva2jWWAelA1>0.1)");
+//mva2jWWAelA1>0.2
+  TCut the_cutPlj("effwt*puwt*(iPhoton12plj>-1 && i12Jet1plj>-1 && i12Jet2plj>-1 && abs(W_electron_eta)<2.5 && W_electron_pt>30 && event_met_pfmet>35. && W_mt>30 &&  abs(Photon_Eta[iPhoton12plj])<1.44421 && Photon_Et[iPhoton12plj]>30. && Photon_dRlep[iPhoton12plj] > 0.5 && JetPFCor_dRpho12plj[i12Jet1plj]>0.5 && JetPFCor_dRpho12plj[i12Jet2plj]>0.5 &&  abs(JetPFCor_dphiMET[i12Jet1plj])>0.4 && abs(JetPFCor_dphiMET[i12Jet2plj])>0.4 && JetPFCor_bDiscriminatorCSV[i12Jet1plj]<0.679 &&  JetPFCor_bDiscriminatorCSV[i12Jet2plj]<0.679 && abs(JetPFCor_Eta[i12Jet1plj]-JetPFCor_Eta[i12Jet2plj])<1.4 && c2jMass12plj<100. && c2jMass12plj>70. && abs(91.1876-massla)>10. &&((i12Jet3plj>-1)? JetPFCor_dRpho12plj[i12Jet3plj]>0.5: 1 )&&((i12Jet4plj>-1)? JetPFCor_dRpho12plj[i12Jet4plj]>0.5: 1 )&& mva2jWWAelA1>0.1)");
 
+  TCut the_cutQCD(TString(the_cut)+TString("*(W_electron_pfIsoEA>0.3)"));
 
+ // ! no need for extra PUwt stat err. sumw2 is enough
   TCut WA23Jcut(TString(the_cut)+TString("*((W_Photon_pt_gen>115)? 0. : 1.) "));
   TCut WA23JPT100cut(TString(the_cut)+TString("*((W_Photon_pt_gen>115)? 1. : 0.) "));
+
 
   //////////////////////////////////////////////////////////////////
   // Specify Fake-Photon contribution function (fake rate function):
@@ -107,36 +109,38 @@ void mkROOTsmMu(){
 
   ///////////////////////////
   // Create output ROOT file:
-  TFile f("mu_WWA_WZA_PhotonEt.root", "RECREATE");
+  TFile f("el_WWA_WZA_PhotonEt_MVA01.root", "RECREATE");
 
 
   //////////////////////////////////////////////////
   // Create file pointers for each sample ROOT file:
-  TFile *fin2,*wwaShape_file,*wwa2Shape_file,*wzaShape_file,*zzShape_file,*wajetsShape_file,*wajetsPT100Shape_file,*ttbara_file,*zajets_file,*stops_file,*stopt_file,*stoptW_file,*stopps_file,*stoppt_file,*stopptW_file;
+  TFile *fin2,*fqcd,*wwaShape_file,*wwa2Shape_file,*wzaShape_file,*zzShape_file,*wajetsShape_file,*wajetsPT100Shape_file,*ttbara_file,*zajets_file,*stops_file,*stopt_file,*stoptW_file,*stopps_file,*stoppt_file,*stopptW_file;
 
 
   //////////////////////////////
   // Open each sample ROOT file:
-  fin2 = new TFile("InData_New/RD_WmunuJets_DataAll_GoldenJSON_19p3invfb.root");
-  wwaShape_file = new TFile("InData_New/RD_mu_qq_wpwma_wp_qq_wm_lvl.root");
-  wwa2Shape_file = new TFile("InData_New/RD_mu_qq_wpwma_wp_lvl_wm_qq.root");
-  wzaShape_file = new TFile("InData_New/RD_mu_WZA_CMSSW532.root");
-  zzShape_file = new TFile("InData_New/RD_mu_ZZ_CMSSW532.root");
-  wajetsShape_file = new TFile("InData_New/RD_mu_WGp23J_CMSSW532.root");
-  wajetsPT100Shape_file = new TFile("InData_New/RD_mu_WGp23J_PT100_CMSSW532.root");
-  ttbara_file = new TFile("InData_New/RD_mu_TTbarGpJets_CMSSW532.root");
-  zajets_file = new TFile("InData_New/RD_mu_ZAp23J_CMSSW532.root");
-  stops_file = new TFile("InData_New/RD_mu_STopS_T_CMSSW532.root");
-  stopt_file = new TFile("InData_New/RD_mu_STopT_T_CMSSW532.root");
-  stoptW_file = new TFile("InData_New/RD_mu_STopTW_T_CMSSW532.root");
-  stopps_file =  new TFile("InData_New/RD_mu_STopS_Tbar_CMSSW532.root");
-  stoppt_file =  new TFile("InData_New/RD_mu_STopT_Tbar_CMSSW532.root");
-  stopptW_file =  new TFile("InData_New/RD_mu_STopTW_Tbar_CMSSW532.root");
+  fin2 = new TFile("InData_New/RD_WenuJets_DataAllSingleElectronTrigger_GoldenJSON_19p2invfb.root");
+  fqcd = new TFile("InData_New/RDQCD_WenuJets_DataAll_GoldenJSON_19p2invfb.root");
+  wwaShape_file = new TFile("InData_New/RD_el_qq_wpwma_wp_qq_wm_lvl.root");
+  wwa2Shape_file = new TFile("InData_New/RD_el_qq_wpwma_wp_lvl_wm_qq.root");
+  wzaShape_file = new TFile("InData_New/RD_el_WZA_CMSSW532.root");
+  zzShape_file = new TFile("InData_New/RD_el_ZZ_CMSSW532.root");
+  wajetsShape_file = new TFile("InData_New/RD_el_WAp23Jets.root");
+  wajetsPT100Shape_file = new TFile("InData_New/RD_el_WAp23Jets_PT100_CMSSW532.root");
+  ttbara_file = new TFile("InData_New/RD_el_TTbarAJets.root");
+  zajets_file = new TFile("InData_New/RD_el_ZAp23J_CMSSW532.root");
+  stops_file = new TFile("InData_New/RD_el_STopS_T_CMSSW532.root");
+  stopt_file = new TFile("InData_New/RD_el_STopT_T_CMSSW532.root");
+  stoptW_file = new TFile("InData_New/RD_el_STopTW_T_CMSSW532.root");
+  stopps_file =  new TFile("InData_New/RD_el_STopS_Tbar_CMSSW532.root");
+  stoppt_file =  new TFile("InData_New/RD_el_STopT_Tbar_CMSSW532.root");
+  stopptW_file =  new TFile("InData_New/RD_el_STopTW_Tbar_CMSSW532.root");
 
 
   ///////////////////////////////////////////////////
   // Retrieve ROOT tree with kinematic distributions:
   TTree* treedata = (TTree*) fin2->Get("WJet");
+  TTree* treeqcd = (TTree*) fqcd->Get("WJet");
   TTree* treewwa    = (TTree*)    wwaShape_file->Get("WJet");
   TTree* treewwa2    = (TTree*)    wwa2Shape_file->Get("WJet");
   TTree* treewza    = (TTree*)    wzaShape_file->Get("WJet");
@@ -159,6 +163,7 @@ void mkROOTsmMu(){
   TH1* th1fkdata  = new TH1D("th1fkdata",  "th1fkdata",  pv.NBINS, pv.MINRange, pv.MAXRange);
   TH1* th1fkdata_fkphotuncUp  = new TH1D("th1fkdata_fkphotuncUp",  "th1fkdata_fkphotuncUp",  pv.NBINS, pv.MINRange, pv.MAXRange);
   TH1* th1fkdata_fkphotuncDown  = new TH1D("th1fkdata_fkphotuncDown",  "th1fkdata_fkphotuncDown",  pv.NBINS, pv.MINRange, pv.MAXRange);
+  TH1* th1qcd  = new TH1D("th1qcd",  "th1qcd",  pv.NBINS, pv.MINRange, pv.MAXRange);
   TH1* th1wwa = new TH1D("th1wwa", "th1wwa", pv.NBINS, pv.MINRange, pv.MAXRange);
   TH1* th1wwa2 = new TH1D("th1wwa2", "th1wwa2", pv.NBINS, pv.MINRange, pv.MAXRange);
   TH1* th1wza = new TH1D("th1wza", "th1wza", pv.NBINS, pv.MINRange, pv.MAXRange);
@@ -182,6 +187,7 @@ void mkROOTsmMu(){
   th1fkdata->Sumw2();
   th1fkdata_fkphotuncUp->Sumw2();
   th1fkdata_fkphotuncDown->Sumw2();
+  th1qcd->Sumw2();
   th1wwa->Sumw2();
   th1wwa2->Sumw2();
   th1wza->Sumw2();
@@ -213,6 +219,10 @@ void mkROOTsmMu(){
 
   treedata->Draw(TString("Photon_Et[iPhoton12plj]>>th1fkdata_fkphotuncDown"), fkPhoton_cutDown, "goff");
   th1fkdata_fkphotuncDown->AddBinContent(pv.NBINS,th1fkdata_fkphotuncDown->GetBinContent(pv.NBINS+1));th1fkdata_fkphotuncDown->SetBinContent(pv.NBINS+1,0.);
+
+  std::cout<<"Fill QCD Histogram..."<<std::endl;
+  treeqcd->Draw(TString(pv.plotvar)+TString(">>th1qcd"), the_cutQCD, "goff");
+  th1qcd->AddBinContent(pv.NBINS,th1qcd->GetBinContent(pv.NBINS+1));th1qcd->SetBinContent(pv.NBINS+1,0.);
 
   std::cout<<"Fill SM WWA Histogram..."<<std::endl;
   treewwa->Draw(TString(pv.plotvar)+TString(">>th1wwa"), the_cut, "goff");
@@ -299,6 +309,27 @@ void mkROOTsmMu(){
   th1wwa->Add(th1wwa2,1);
   th1wajets->Add(th1wajetsPT100,1);
 
+
+  ///////////////////////////////////////////////////////////////
+  // Combine all background + SM WWA samples for QCD Estimations:
+  TH1D *background = (TH1D*)th1wajets->Clone("background");
+  background->Reset();
+  background->Add(th1fkdata,1);
+  background->Add(th1Top,1);
+  background->Add(th1stop,1);
+  background->Add(th1wajets,1);
+  background->Add(th1zajets,1);
+  background->Add(th1zz,1);
+  background->Add(th1wwa,1);
+  background->Add(th1wza,1);
+
+  float qcd_scale=0;
+   if(th1qcd->Integral()>0 ){
+   qcd_scale = 0.0637*background->Integral()/th1qcd->Integral();
+   th1qcd->Scale(qcd_scale);
+   background->Add(th1qcd,1);
+  }
+
 /*
 std::cout << "\nSample Contribution:" << std::endl;
 std::cout << "WWA: " << th1wwa->Integral() << std::endl;
@@ -310,6 +341,7 @@ std::cout << "WZA: " << th1wza->Integral() << std::endl;
 std::cout << "ZZ: " << th1zz->Integral() << std::endl;
 std::cout << "Fake Photons: " << th1fkdata->Integral() << std::endl;
 std::cout << "Data: " << data_obs->Integral() << std::endl;
+std::cout << "QCD: " << th1qcd->Integral() << std::endl;
 
 std::cout << "\nSample Contribution:" << std::endl;
 std::cout << "Top: " << th1Top->GetBinError(1) << std::endl;
@@ -357,6 +389,7 @@ std::cout << "Data: " << data_obs->GetBinError(1) << std::endl;
   th1wajets->Write();
   th1zz->Write();
   th1zajets->Write();
+  th1qcd->Write();
   th1wwa->Write();
   th1wza->Write();
   signal_SM->Write();
