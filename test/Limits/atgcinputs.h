@@ -31,15 +31,15 @@ const double dijetptmingev  = 350.;
 
 const float LAMBDAZ_MIN = -0.03;
 const float LAMBDAZ_MAX =  0.03;
-const float LAMBDAZ_INC = 0.001; //  101 pts
+const float LAMBDAZ_INC = 0.001; //  61 pts
 
-const float dKG_MIN =  -0.10;
-const float dKG_MAX =   0.10;
-const float dKG_INC =   0.01;    // x21 pts
+const float dKG_MIN =  -0.15;
+const float dKG_MAX =   0.15;
+const float dKG_INC =   0.01;    // x31 pts
 
 const float dg1_MIN =  -0.10;
 const float dg1_MAX =   0.10;
-const float dg1_INC =   0.01;    // x21 pts
+const float dg1_INC =   0.002;   // x101 pts
 
 // FILE/HISTO STRUCTURE: assumed same name objects contained in different files for the different inputs
 
