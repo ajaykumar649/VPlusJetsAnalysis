@@ -418,7 +418,7 @@ void Card::Print(const TString& dcardname)
 	cerr << "couldn't find channel " << channame << " for process " << j << endl;
 	exit(-1);
       }
-      fprintf(dcFile,"%15.2f",max(it->second,0.001));
+      fprintf(dcFile,"%15.2f",it->second);
     }
   }
   fprintf(dcFile,"\n");
