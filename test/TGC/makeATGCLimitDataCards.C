@@ -461,12 +461,13 @@ TLegend* GetLegend(int channel)
 }
 
 
-//void SetupEmptyHistogram(int bins, double dm_min, double dm_max, char* xtitle)
-void SetupEmptyHistogram(int bins, double* ptbins, char* xtitle)
+void SetupEmptyHistogram(int bins, double dm_min, double dm_max, char* xtitle)
+//void SetupEmptyHistogram(int bins, double* ptbins, char* xtitle)
 {
-  th1totempty = new TH1D("th1totempty", "th1totempty", bins, ptbins); // dm_min, dm_max);
-  char tmpc[100];    // sprintf(tmpc,"Events / %d GeV", (int) (dm_max-dm_min)/bins);
-  th1totempty->SetYTitle("Events"); // tmpc);
+  //th1totempty = new TH1D("th1totempty", "th1totempty", bins, ptbins); // dm_min, dm_max);
+  th1totempty = new TH1D("th1totempty", "th1totempty", bins,dm_min, dm_max);
+  char tmpc[100];    sprintf(tmpc,"Events / %d GeV", (int) (dm_max-dm_min)/bins);
+  th1totempty->SetYTitle(tmpc);
   th1totempty->GetYaxis()->SetTitleOffset(1);
   th1totempty->GetYaxis()->SetLabelOffset(0.01);
   th1totempty->GetYaxis()->SetLabelSize(0.08);
@@ -479,7 +480,8 @@ void SetupEmptyHistogram(int bins, double* ptbins, char* xtitle)
   th1totempty->SetMinimum(0.0);
 
 
-  th1emptyclone = new TH1D("th1emptyclone", "th1emptyclone", bins, ptbins); // dm_min, dm_max);
+  //th1emptyclone = new TH1D("th1emptyclone", "th1emptyclone", bins, ptbins); // dm_min, dm_max);
+  th1emptyclone = new TH1D("th1emptyclone", "th1emptyclone", bins, dm_min, dm_max);
   th1emptyclone->GetYaxis()->SetRangeUser(yRatioMin, yRatioMax);
   th1emptyclone->GetXaxis()->SetTitle(xtitle);
   th1emptyclone->GetXaxis()->SetTitleOffset(0.9);
@@ -602,7 +604,7 @@ void makeATGCLimitDataCards(int channel) {
   Int_t bins = 7; 
   Float_t dm_min = 100.; 
   Float_t dm_max = 275.;
-  if(channel>1) { bins = 14; dm_min = 200.; dm_max = 925; }
+  if(channel>1) { bins = 12; dm_min = 200.; dm_max = 500; }
 
 
   domu = true;
@@ -646,7 +648,8 @@ void makeATGCLimitDataCards(int channel) {
 
 
 
-  th1data  = new TH1D("th1data",  "th1data",  bins, ptbins_boosted); // bins, dm_min, dm_max);
+  //th1data  = new TH1D("th1data",  "th1data",  bins, ptbins_boosted); // bins, dm_min, dm_max);
+  th1data  = new TH1D("th1data",  "th1data",  bins, dm_min, dm_max);
   th1data->Sumw2();
   th1data->SetMarkerStyle(20);
   th1data->SetMarkerSize(1.25);
@@ -655,39 +658,39 @@ void makeATGCLimitDataCards(int channel) {
   treedata->Draw(TString(observable)+TString(">>th1data"), the_cut, "goff");
 
   // ------- Get WW/WZ ------- 
-    th1ww = new TH1D("th1ww", "th1ww", bins, ptbins_boosted); // bins, dm_min, dm_max);
-    th1wz = new TH1D("th1wz", "th1wz", bins, ptbins_boosted); // bins, dm_min, dm_max);
+    th1ww = new TH1D("th1ww", "th1ww", bins, dm_min, dm_max);
+    th1wz = new TH1D("th1wz", "th1wz", bins, dm_min, dm_max);
     th1ww->Sumw2();
     th1wz->Sumw2();
     treeww->Draw(TString(observable)+TString(">>th1ww"), the_cut, "goff");
     treewz->Draw(TString(observable)+TString(">>th1wz"), the_cut, "goff");
 
     // ------- Get WJets ------- 
-    th1wjets  = new TH1D("th1wjets",  "th1wjets", bins, ptbins_boosted); // bins, dm_min, dm_max);
+    th1wjets  = new TH1D("th1wjets",  "th1wjets", bins, dm_min, dm_max);
     th1wjets->Sumw2();
     treewj->Draw(TString(observable)+TString(">>th1wjets"), the_cut, "goff");
 
 
     // ------- Get ttbar ------- 
-    th1Top = new TH1D("th1Top", "th1Top", bins, ptbins_boosted); // bins, dm_min, dm_max);
+    th1Top = new TH1D("th1Top", "th1Top", bins, dm_min, dm_max);
     th1Top->Sumw2();
     treettb->Draw(TString(observable)+TString(">>th1Top"), the_cut, "goff");
 
     // ------- Get QCD ------- 
-    th1qcd = new TH1D("th1qcd", "th1qcd", bins, ptbins_boosted); // bins, dm_min, dm_max);
+    th1qcd = new TH1D("th1qcd", "th1qcd", bins, dm_min, dm_max);
     th1qcd->Sumw2();
     treeqcd->Draw(TString(observable)+TString(">>th1qcd"), the_cut, "goff");
 
     // ------- Get Z+Jets ------- 
-    th1zjets = new TH1D("th1zjets", "th1zjets", bins, ptbins_boosted); // bins, dm_min, dm_max);
+    th1zjets = new TH1D("th1zjets", "th1zjets", bins, dm_min, dm_max);
     th1zjets->Sumw2();
     treezj->Draw(TString(observable)+TString(">>th1zjets"), the_cut, "goff");
 
 
     // ------- Get Single top ------- 
-    th1stops = new TH1D("th1stops", "th1stops", bins, ptbins_boosted); // bins, dm_min, dm_max);
-    th1stopt = new TH1D("th1stopt", "th1stopt", bins, ptbins_boosted); // bins, dm_min, dm_max);
-    th1stoptw = new TH1D("th1stoptw", "th1stoptw", bins, ptbins_boosted); // bins, dm_min, dm_max);
+    th1stops = new TH1D("th1stops", "th1stops", bins, dm_min, dm_max);
+    th1stopt = new TH1D("th1stopt", "th1stopt", bins, dm_min, dm_max);
+    th1stoptw = new TH1D("th1stoptw", "th1stoptw", bins, dm_min, dm_max);
     th1stops->Sumw2();
     th1stopt->Sumw2();
     th1stoptw->Sumw2();
@@ -696,9 +699,9 @@ void makeATGCLimitDataCards(int channel) {
     treestt->Draw(TString(observable)+TString(">>th1stopt"), the_cut, "goff");
     treestw->Draw(TString(observable)+TString(">>th1stoptw"), the_cut, "goff");
  
-    th1stopps = new TH1D("th1stopps", "th1stopps", bins, ptbins_boosted); // bins, dm_min, dm_max);
-    th1stoppt = new TH1D("th1stoppt", "th1stoppt", bins, ptbins_boosted); // bins, dm_min, dm_max);
-    th1stopptw = new TH1D("th1stopptw", "th1stopptw", bins, ptbins_boosted); // bins, dm_min, dm_max);
+    th1stopps = new TH1D("th1stopps", "th1stopps", bins, dm_min, dm_max);
+    th1stoppt = new TH1D("th1stoppt", "th1stoppt", bins, dm_min, dm_max);
+    th1stopptw = new TH1D("th1stopptw", "th1stopptw", bins, dm_min, dm_max);
     th1stopps->Sumw2();
     th1stoppt->Sumw2();
     th1stopptw->Sumw2();
@@ -718,8 +721,8 @@ void makeATGCLimitDataCards(int channel) {
     th1wwclone->Fit(gaus2,"I0","");
     
     // ---- Empty histograms for display/plotting ---- 
-    //SetupEmptyHistogram(bins, dm_min, dm_max, xtitle);
-    SetupEmptyHistogram(bins, ptbins_boosted, xtitle);
+    SetupEmptyHistogram(bins, dm_min, dm_max, xtitle);
+    //SetupEmptyHistogram(bins, ptbins_boosted, xtitle);
 
     // ---- Sum all backgrounds ----------
     TH1D* th1ww_no_overflow = (TH1D *)th1ww->Clone("th1ww_no_overflow");
@@ -731,7 +734,7 @@ void makeATGCLimitDataCards(int channel) {
 
     TCut newcut = the_cut*sigratio;
 
-    TH1D *signalForDisplay = new TH1D("signalForDisplay","signalForDisplay",bins,ptbins_boosted); // dm_min,dm_max);
+    TH1D *signalForDisplay = new TH1D("signalForDisplay","signalForDisplay",bins,dm_min,dm_max);
 
     TString drawstr = TString(observable)+TString(">>signalForDisplay");
 
@@ -953,7 +956,7 @@ void makeATGCLimitDataCards(int channel) {
 
 	  TCut newcut = the_cut*sigratio;
 
-	  TH1D *stackhist = new TH1D(mysighistname,mysighistname,bins,ptbins_boosted); // dm_min,dm_max);
+	  TH1D *stackhist = new TH1D(mysighistname,mysighistname,bins,dm_min,dm_max);
 	  //TH1D *stackhist = new TH1D(mysighistname,mysighistname,55,-1,10);
 
 	  stackhist->Sumw2();
@@ -1000,7 +1003,7 @@ void makeATGCLimitDataCards(int channel) {
 
 	  TCut newcut = the_cut*sigratio;
 
-	  TH1D *stackhist = new TH1D(mysighistname,mysighistname,bins,ptbins_boosted); //dm_min,dm_max);
+	  TH1D *stackhist = new TH1D(mysighistname,mysighistname,bins,dm_min,dm_max);
 	  //TH1D *stackhist = new TH1D(mysighistname,mysighistname,55,-1,10);
 
 	  stackhist->Sumw2();
@@ -1046,7 +1049,7 @@ void makeATGCLimitDataCards(int channel) {
 
 	  TCut newcut = the_cut*sigratio;
 
-	  TH1D *stackhist = new TH1D(mysighistname,mysighistname,bins,ptbins_boosted); //dm_min,dm_max);
+	  TH1D *stackhist = new TH1D(mysighistname,mysighistname,bins,dm_min,dm_max);
 	  //TH1D *stackhist = new TH1D(mysighistname,mysighistname,55,-1,10);
 
 	  stackhist->Sumw2();
