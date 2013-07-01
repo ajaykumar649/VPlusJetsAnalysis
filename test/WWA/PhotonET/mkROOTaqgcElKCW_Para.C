@@ -389,9 +389,9 @@ void mkROOTaqgcElKCW_Para(){
 
   /////////////////////
   // Simulate new aQGC:
-  TH1* signal_KCW_02 = new TH1D("signal_KCW_02","signal_KCW_0p2",pv.NBINS,pv.MINRange,pv.MAXRange);
-  TH1* signal_KCW_05 = new TH1D("signal_KCW_05","signal_KCW_0p5",pv.NBINS,pv.MINRange,pv.MAXRange);
-  TH1* signal_KCW_08 = new TH1D("signal_KCW_08","signal_KCW_0p8",pv.NBINS,pv.MINRange,pv.MAXRange);
+  TH1* signal_KCW_2 = new TH1D("signal_KCW_2","signal_KCW_0p2",pv.NBINS,pv.MINRange,pv.MAXRange);
+  TH1* signal_KCW_5 = new TH1D("signal_KCW_5","signal_KCW_0p5",pv.NBINS,pv.MINRange,pv.MAXRange);
+  TH1* signal_KCW_8 = new TH1D("signal_KCW_8","signal_KCW_0p8",pv.NBINS,pv.MINRange,pv.MAXRange);
   TH1* signal_KCW_12 = new TH1D("signal_KCW_12","signal_KCW_1p2",pv.NBINS,pv.MINRange,pv.MAXRange);
   TH1* signal_KCW_15 = new TH1D("signal_KCW_15","signal_KCW_1p5",pv.NBINS,pv.MINRange,pv.MAXRange);
   TH1* signal_KCW_18 = new TH1D("signal_KCW_18","signal_KCW_1p8",pv.NBINS,pv.MINRange,pv.MAXRange);
@@ -400,9 +400,9 @@ void mkROOTaqgcElKCW_Para(){
   TH1* signal_KCW_28 = new TH1D("signal_KCW_28","signal_KCW_2p8",pv.NBINS,pv.MINRange,pv.MAXRange);
   TH1* signal_KCW_32 = new TH1D("signal_KCW_32","signal_KCW_3p2",pv.NBINS,pv.MINRange,pv.MAXRange);
 
-  TH1* signal_KCW_m02 = new TH1D("signal_KCW_m02","signal_KCW_-0p2",pv.NBINS,pv.MINRange,pv.MAXRange);
-  TH1* signal_KCW_m05 = new TH1D("signal_KCW_m05","signal_KCW_-0p5",pv.NBINS,pv.MINRange,pv.MAXRange);
-  TH1* signal_KCW_m08 = new TH1D("signal_KCW_m08","signal_KCW_-0p8",pv.NBINS,pv.MINRange,pv.MAXRange);
+  TH1* signal_KCW_m2 = new TH1D("signal_KCW_m2","signal_KCW_-0p2",pv.NBINS,pv.MINRange,pv.MAXRange);
+  TH1* signal_KCW_m5 = new TH1D("signal_KCW_m5","signal_KCW_-0p5",pv.NBINS,pv.MINRange,pv.MAXRange);
+  TH1* signal_KCW_m8 = new TH1D("signal_KCW_m8","signal_KCW_-0p8",pv.NBINS,pv.MINRange,pv.MAXRange);
   TH1* signal_KCW_m12 = new TH1D("signal_KCW_m12","signal_KCW_-1p2",pv.NBINS,pv.MINRange,pv.MAXRange);
   TH1* signal_KCW_m15 = new TH1D("signal_KCW_m15","signal_KCW_-1p5",pv.NBINS,pv.MINRange,pv.MAXRange);
   TH1* signal_KCW_m18 = new TH1D("signal_KCW_m18","signal_KCW_-1p8",pv.NBINS,pv.MINRange,pv.MAXRange);
@@ -411,9 +411,9 @@ void mkROOTaqgcElKCW_Para(){
   TH1* signal_KCW_m28 = new TH1D("signal_KCW_m28","signal_KCW_-2p8",pv.NBINS,pv.MINRange,pv.MAXRange);
   TH1* signal_KCW_m32 = new TH1D("signal_KCW_m32","signal_KCW_-3p2",pv.NBINS,pv.MINRange,pv.MAXRange);
 
-  signal_KCW_02->Sumw2();
-  signal_KCW_05->Sumw2();
-  signal_KCW_08->Sumw2();
+  signal_KCW_2->Sumw2();
+  signal_KCW_5->Sumw2();
+  signal_KCW_8->Sumw2();
   signal_KCW_12->Sumw2();
   signal_KCW_15->Sumw2();
   signal_KCW_18->Sumw2();
@@ -421,9 +421,9 @@ void mkROOTaqgcElKCW_Para(){
   signal_KCW_25->Sumw2();
   signal_KCW_28->Sumw2();
   signal_KCW_32->Sumw2();
-  signal_KCW_m02->Sumw2();
-  signal_KCW_m05->Sumw2();
-  signal_KCW_m08->Sumw2();
+  signal_KCW_m2->Sumw2();
+  signal_KCW_m5->Sumw2();
+  signal_KCW_m8->Sumw2();
   signal_KCW_m12->Sumw2();
   signal_KCW_m15->Sumw2();
   signal_KCW_m18->Sumw2();
@@ -446,9 +446,9 @@ void mkROOTaqgcElKCW_Para(){
      signal_KCW_m18->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-1.8E-5)+p[2][j-1]*pow(-1.8E-5,2));
      signal_KCW_m15->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-1.5E-5)+p[2][j-1]*pow(-1.5E-5,2));
      signal_KCW_m12->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-1.2E-5)+p[2][j-1]*pow(-1.2E-5,2));
-     signal_KCW_m08->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-0.8E-5)+p[2][j-1]*pow(-0.8E-5,2));
-     signal_KCW_m02->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-0.2E-5)+p[2][j-1]*pow(-0.2E-5,2));
-     signal_KCW_m05->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-0.5E-5)+p[2][j-1]*pow(-0.5E-5,2));
+     signal_KCW_m8->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-0.8E-5)+p[2][j-1]*pow(-0.8E-5,2));
+     signal_KCW_m2->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-0.2E-5)+p[2][j-1]*pow(-0.2E-5,2));
+     signal_KCW_m5->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-0.5E-5)+p[2][j-1]*pow(-0.5E-5,2));
      signal_KCW_m22->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-2.2E-5)+p[2][j-1]*pow(-2.2E-5,2));
      signal_KCW_m25->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-2.5E-5)+p[2][j-1]*pow(-2.5E-5,2));
      signal_KCW_m28->SetBinContent(j,p[0][j-1]+p[1][j-1]*(-2.8E-5)+p[2][j-1]*pow(-2.8E-5,2));
@@ -461,9 +461,9 @@ void mkROOTaqgcElKCW_Para(){
      signal_KCW_18->SetBinContent(j,p[0][j-1]+p[1][j-1]*(1.8E-5)+p[2][j-1]*pow(1.8E-5,2));
      signal_KCW_15->SetBinContent(j,p[0][j-1]+p[1][j-1]*(1.5E-5)+p[2][j-1]*pow(1.5E-5,2));
      signal_KCW_12->SetBinContent(j,p[0][j-1]+p[1][j-1]*(1.2E-5)+p[2][j-1]*pow(1.2E-5,2));
-     signal_KCW_08->SetBinContent(j,p[0][j-1]+p[1][j-1]*(0.8E-5)+p[2][j-1]*pow(0.8E-5,2));
-     signal_KCW_05->SetBinContent(j,p[0][j-1]+p[1][j-1]*(0.5E-5)+p[2][j-1]*pow(0.5E-5,2));
-     signal_KCW_02->SetBinContent(j,p[0][j-1]+p[1][j-1]*(0.2E-5)+p[2][j-1]*pow(0.2E-5,2));
+     signal_KCW_8->SetBinContent(j,p[0][j-1]+p[1][j-1]*(0.8E-5)+p[2][j-1]*pow(0.8E-5,2));
+     signal_KCW_5->SetBinContent(j,p[0][j-1]+p[1][j-1]*(0.5E-5)+p[2][j-1]*pow(0.5E-5,2));
+     signal_KCW_2->SetBinContent(j,p[0][j-1]+p[1][j-1]*(0.2E-5)+p[2][j-1]*pow(0.2E-5,2));
      signal_KCW_22->SetBinContent(j,p[0][j-1]+p[1][j-1]*(2.2E-5)+p[2][j-1]*pow(2.2E-5,2));
      signal_KCW_25->SetBinContent(j,p[0][j-1]+p[1][j-1]*(2.5E-5)+p[2][j-1]*pow(2.5E-5,2));
      signal_KCW_28->SetBinContent(j,p[0][j-1]+p[1][j-1]*(2.8E-5)+p[2][j-1]*pow(2.8E-5,2));
@@ -479,9 +479,9 @@ void mkROOTaqgcElKCW_Para(){
   signal_KCW_m18->Multiply(th1wwa);
   signal_KCW_m15->Multiply(th1wwa);
   signal_KCW_m12->Multiply(th1wwa);
-  signal_KCW_m08->Multiply(th1wwa);
-  signal_KCW_m05->Multiply(th1wwa);
-  signal_KCW_m02->Multiply(th1wwa);
+  signal_KCW_m8->Multiply(th1wwa);
+  signal_KCW_m5->Multiply(th1wwa);
+  signal_KCW_m2->Multiply(th1wwa);
   signal_KCW_m22->Multiply(th1wwa);
   signal_KCW_m25->Multiply(th1wwa);
   signal_KCW_m28->Multiply(th1wwa);
@@ -494,9 +494,9 @@ void mkROOTaqgcElKCW_Para(){
   signal_KCW_18->Multiply(th1wwa);
   signal_KCW_15->Multiply(th1wwa);
   signal_KCW_12->Multiply(th1wwa);
-  signal_KCW_08->Multiply(th1wwa);
-  signal_KCW_05->Multiply(th1wwa);
-  signal_KCW_02->Multiply(th1wwa);
+  signal_KCW_8->Multiply(th1wwa);
+  signal_KCW_5->Multiply(th1wwa);
+  signal_KCW_2->Multiply(th1wwa);
   signal_KCW_22->Multiply(th1wwa);
   signal_KCW_25->Multiply(th1wwa);
   signal_KCW_28->Multiply(th1wwa);
@@ -510,9 +510,9 @@ void mkROOTaqgcElKCW_Para(){
   signal_KCW_m18->Add(th1wwa,-1);
   signal_KCW_m15->Add(th1wwa,-1);
   signal_KCW_m12->Add(th1wwa,-1);
-  signal_KCW_m08->Add(th1wwa,-1);
-  signal_KCW_m05->Add(th1wwa,-1);
-  signal_KCW_m02->Add(th1wwa,-1);
+  signal_KCW_m8->Add(th1wwa,-1);
+  signal_KCW_m5->Add(th1wwa,-1);
+  signal_KCW_m2->Add(th1wwa,-1);
   signal_KCW_m22->Add(th1wwa,-1);
   signal_KCW_m25->Add(th1wwa,-1);
   signal_KCW_m28->Add(th1wwa,-1);
@@ -525,9 +525,9 @@ void mkROOTaqgcElKCW_Para(){
   signal_KCW_18->Add(th1wwa,-1);
   signal_KCW_15->Add(th1wwa,-1);
   signal_KCW_12->Add(th1wwa,-1);
-  signal_KCW_08->Add(th1wwa,-1);
-  signal_KCW_05->Add(th1wwa,-1);
-  signal_KCW_02->Add(th1wwa,-1);
+  signal_KCW_8->Add(th1wwa,-1);
+  signal_KCW_5->Add(th1wwa,-1);
+  signal_KCW_2->Add(th1wwa,-1);
   signal_KCW_22->Add(th1wwa,-1);
   signal_KCW_25->Add(th1wwa,-1);
   signal_KCW_28->Add(th1wwa,-1);
@@ -541,9 +541,9 @@ void mkROOTaqgcElKCW_Para(){
   signal_KCW_m18->Scale(1.185/2.1);
   signal_KCW_m15->Scale(1.185/2.1);
   signal_KCW_m12->Scale(1.185/2.1);
-  signal_KCW_m08->Scale(1.185/2.1);
-  signal_KCW_m05->Scale(1.185/2.1);
-  signal_KCW_m02->Scale(1.185/2.1);
+  signal_KCW_m8->Scale(1.185/2.1);
+  signal_KCW_m5->Scale(1.185/2.1);
+  signal_KCW_m2->Scale(1.185/2.1);
   signal_KCW_m22->Scale(1.185/2.1);
   signal_KCW_m25->Scale(1.185/2.1);
   signal_KCW_m28->Scale(1.185/2.1);
@@ -556,9 +556,9 @@ void mkROOTaqgcElKCW_Para(){
   signal_KCW_18->Scale(1.185/2.1);
   signal_KCW_15->Scale(1.185/2.1);
   signal_KCW_12->Scale(1.185/2.1);
-  signal_KCW_08->Scale(1.185/2.1);
-  signal_KCW_05->Scale(1.185/2.1);
-  signal_KCW_02->Scale(1.185/2.1);
+  signal_KCW_8->Scale(1.185/2.1);
+  signal_KCW_5->Scale(1.185/2.1);
+  signal_KCW_2->Scale(1.185/2.1);
   signal_KCW_22->Scale(1.185/2.1);
   signal_KCW_25->Scale(1.185/2.1);
   signal_KCW_28->Scale(1.185/2.1);
@@ -631,9 +631,9 @@ void mkROOTaqgcElKCW_Para(){
   signal_KCW_m18->Write();
   signal_KCW_m15->Write();
   signal_KCW_m12->Write();
-  signal_KCW_m08->Write();
-  signal_KCW_m05->Write();
-  signal_KCW_m02->Write();
+  signal_KCW_m8->Write();
+  signal_KCW_m5->Write();
+  signal_KCW_m2->Write();
   signal_KCW_m22->Write();
   signal_KCW_m25->Write();
   signal_KCW_m28->Write();
@@ -642,9 +642,9 @@ void mkROOTaqgcElKCW_Para(){
   signal_KCW_18->Write();
   signal_KCW_15->Write();
   signal_KCW_12->Write();
-  signal_KCW_08->Write();
-  signal_KCW_05->Write();
-  signal_KCW_02->Write();
+  signal_KCW_8->Write();
+  signal_KCW_5->Write();
+  signal_KCW_2->Write();
   signal_KCW_22->Write();
   signal_KCW_25->Write();
   signal_KCW_28->Write();
