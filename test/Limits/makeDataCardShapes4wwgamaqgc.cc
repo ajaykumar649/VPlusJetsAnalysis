@@ -272,10 +272,11 @@ makeDataCardFiles(bool doshape)
 {
   for (int ichan=0; ichan<NUMCHAN; ichan++) {
     
-    makeCards4param("a0W","a0w",NUMA0WPTS,a0W_points,ichan,doshape);
+//    makeCards4param("a0W","a0w",NUMA0WPTS,a0W_points,ichan,doshape);
 //    makeCards4param("aCW","aCw",NUMACWPTS,aCW_points,ichan,doshape);
 //    makeCards4param("LT0","lt0",NUMLT0PTS,lt0_points,ichan,doshape);
-//    makeCards4param("K0W","KOW",NUMK0WPTS,K0W_points,ichan,doshape);
+//    makeCards4param("K0W","K0W",NUMK0WPTS,K0W_points,ichan,doshape);
+    makeCards4param("KCW","KCW",NUMKCWPTS,KCW_points,ichan,doshape);
 
 //    makeCards4SM(ichan, false); // never do shape limits for SM
 

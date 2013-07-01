@@ -91,6 +91,10 @@ const int lt0_points[NUMLT0PTS] = { -80,-50,-38,-36,-34,-32,-30,-28,-26,-24,-22,
 const int K0W_points[NUMACWPTS] = { -20,-17,-16,-15,-14,-13,-12,-11,-10,-5,                  // times 1e-6
 				    5,10,11,12,13,14,15,16,17,20 };
 
+#define NUMKCWPTS 26
+const int KCW_points[NUMACWPTS] = { -32,-30,-28,-25,-22,-20,-18,-15,-12,-10,-8,-5,-2,        // times 1e-6
+                                    2,5,8,10,12,15,18,20,22,25,28,30,32 };
+
 //======================================================================
 #endif
 //======================================================================
@@ -106,7 +110,7 @@ const char *dir =
   //".";
   //"/uscms_data/d3/jfaulkn3/Limitsetter/CMSSW_6_1_1/src/ElectroWeakAnalysis/VPlusJets/test/Utilities/aQGC/Test";
   //"/uscms_data/d3/jfaulkn3/Limitsetter/CMSSW_6_1_1/src/ElectroWeakAnalysis/VPlusJets/test/Utilities/aQGC/Test/NewMethods/ROOTFiles/SM/";
-  "/uscms_data/d3/jfaulkn3/Limitsetter/CMSSW_6_1_1/src/ElectroWeakAnalysis/VPlusJets/test/Utilities/aQGC/Test/NewMethods/ROOTFiles/PhotonET";
+  "/uscms_data/d3/jfaulkn3/Limitsetter/CMSSW_6_1_1/src/ElectroWeakAnalysis/VPlusJets/test/Utilities/aQGC/Test/NewMethods/ROOTFiles/PhotonET/";
 
 inline TString parinputfiles(int chan,const TString& par) {
   return "sim_"+TString(channames[chan>0])+"_"+par+"_WWA_PhotonEt.root";
@@ -122,6 +126,9 @@ inline TString lt0inputfiles(int chan) {
 }
 inline TString K0Winputfiles(int chan) {
   return parinputfiles(chan,"K0W");
+}
+inline TString KCWinputfiles(int chan) {
+  return parinputfiles(chan,"KCW");
 }
 
 // For SM limits with varying MVA cuts:
