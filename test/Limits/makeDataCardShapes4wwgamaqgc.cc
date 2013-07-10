@@ -127,7 +127,6 @@ makeDataCardContent(TFile *fp,
   card->addSystematic("JER",      "signal",channame,1+jer_unc);
   card->addSystematic("JES",      "signal",channame,1+jes_unc);
   card->addSystematic("PHES",     "signal",channame,1+phes_unc);
-  card->addSystematic("antibtag", "signal",channame,1+antibtag_unc);
   card->addSystematic("pileup",   "signal",channame,1+pileup_unc);
 
   /* DISABLE if no MVA applied, or otherwise not relevant:
@@ -141,6 +140,8 @@ makeDataCardContent(TFile *fp,
   card->addSystematic(Wgamjetsyst, wgamjet,channame,1+wgamjet_unc[ichan]);
   card->addSystematic("Zgamjunc",  zgamjet,channame,1+zgamjet_unc);
   card->addSystematic("ttbgamunc",  ttbgam,channame,1+ttbgam_unc);
+  card->addSystematic("abtagttgamunc", ttbgam, channame, 1+antibtag_ttgam_unc);
+  card->addSystematic("abtagstopunc", sngltop, channame, 1+antibtag_stop_unc);
 
   if (!ichan)
     card->addSystematic("QCDunc_e",    qcd,channame,1+qcd_e_unc);

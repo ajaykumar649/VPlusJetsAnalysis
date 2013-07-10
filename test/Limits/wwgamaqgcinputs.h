@@ -28,7 +28,11 @@ const double scale_unc    = 0.234;
 const double jer_unc      = 0.01;
 const double jes_unc      = 0.043;
 const double phes_unc     = 0.01;
-const double antibtag_unc = 0.02;
+
+//const double antibtag_unc = 0.02;
+const double antibtag_ttgam_unc = 0.11;
+const double antibtag_stop_unc  = 0.05;
+
 const double pileup_unc   = 0.01;
 
 const double sigmvaseleffunc = 0.10;
@@ -36,7 +40,7 @@ const double sigmvaseleffunc = 0.10;
 // Background-specific uncertainties:
 //
 const double wgamjet_unc[NUMCHAN] = {
-  0.12, 0.08
+  0.079, 0.067
 };
 const double zgamjet_unc = 0.20;
 const double ttbgam_unc = 0.20;
