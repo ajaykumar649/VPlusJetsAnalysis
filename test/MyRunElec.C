@@ -104,6 +104,7 @@ void MyRunElec(double myflag=20112250, bool isQCD=false, int runflag)
   gROOT->ProcessLine(".L ClassifierOut/TMVAClassification_500_VBF_el_Likelihood.class.C+");
   gROOT->ProcessLine(".L ClassifierOut/TMVAClassification_550_VBF_el_Likelihood.class.C+");
   gROOT->ProcessLine(".L ClassifierOut/TMVAClassification_600_VBF_el_Likelihood.class.C+");
+  gROOT->ProcessLine(".L ClassifierOut/TMVAClassification_126_VBF_el_Likelihood.class.C+");
   gROOT->ProcessLine(".L kanaelec.C+");
   gROOT->ProcessLine("kanaelec runover");
   //Set true/false for isQCD
