@@ -121,6 +121,7 @@
 #include "ClassifierOut/TMVAClassification_500_VBF_mu_Likelihood.class.C"
 #include "ClassifierOut/TMVAClassification_550_VBF_mu_Likelihood.class.C"
 #include "ClassifierOut/TMVAClassification_600_VBF_mu_Likelihood.class.C"
+#include "ClassifierOut/TMVAClassification_126_VBF_mu_Likelihood.class.C"
 
 #include "EffTableReader.h"
 #include "EffTableLoader.h"
@@ -167,7 +168,10 @@ const TString inQCDDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples
 //const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/EWKW2jetsSample_2013_3_23/";
 
 //const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/ajay/EWKW2jetsSample_2013_5_23/";
-const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/ajay/VBF_Higgs_28May_v2/";
+const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/ajay/VBF_Higgs_5Aug_v1/";
+//const TString outDataDir   = "/uscms_data/d3/lnujj/VBF_Higgs_5Aug_v1/";
+
+//const TString outDataDir   = "/uscms_data/d3/lnujj/VBF_Higgs_27July_v1/";
 
 //const TString outDataDir   = "/eos/uscms/store/user/lnujj/HCP2012/ReducedTrees/";
 //const std::string fDir   = "EffTableDir/";
@@ -236,13 +240,12 @@ void kanamuon::myana(double myflag, bool isQCD, int runflag)
          */
 
 //         InitCounters( inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb.root", h_events, h_events_weighted);
-//         myChain->Add(                    inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb.root");
-//         Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_19p3invfb");
+ //        myChain->Add(                    inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_19p3invfb.root");
+   //      Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_19p3invfb");
 
-
-         InitCounters( inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_v1_fb.root", h_events, h_events_weighted);
-         myChain->Add(                    inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_v1_fb.root");
-         Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_v1_fb");
+         InitCounters( inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_v2_fb.root", h_events, h_events_weighted);
+         myChain->Add(                    inDataDir + "WmunuJets_DataAllSingleMuonTrigger_GoldenJSON_v2_fb.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20120000,runflag, outDataDir + "RD_WmunuJets_DataAll_GoldenJSON_v2_fb");
 
 
 
@@ -982,6 +985,12 @@ void kanamuon::myana(double myflag, bool isQCD, int runflag)
          Init(myChain);Loop( h_events, h_events_weighted, 201231000,runflag, outDataDir + "RD_mu_VBFHWWMH1000_CMSSW532_private");
       }
 
+      if (myflag == 20123126 || myflag == -300){
+         InitCounters( inDataDir + "mu_mh126_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add(                    inDataDir + "mu_mh126_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20123126,runflag, outDataDir + "RD_mu_mh126_CMSSW532");
+      }
 
       // HTauTau MC Signal
       if (myflag == 20114150 || myflag == -400){
@@ -1704,7 +1713,9 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    Float_t hvbf_aj_e =-999,   hvbf_aj_pt =-999,   hvbf_aj_eta=-999,  hvbf_aj_phi =-999, hvbf_aj_m =-999;
    Float_t hvbf_bj_e =-999,   hvbf_bj_pt =-999,   hvbf_bj_eta=-999,  hvbf_bj_phi =-999, hvbf_bj_m =-999;
    Float_t hvbf_jj_deta=-999; Float_t hvbf_jj_dphi=-999;  Int_t   hvbf_jj_type=0,   hvbf_n_excj=0,   hvbf_n_exfj=0,   hvbf_n_gdjj=0;
+	Float_t mva126mu=-999;
 
+   TBranch *branch_mva126mu    = newtree->Branch("mva126mu",    &mva126mu,     "mva126mu/F");
 
    TBranch *branch_vbf_jj_e    = newtree->Branch("vbf_jj_e",    &vbf_jj_e,     "vbf_jj_e/F");
    TBranch *branch_vbf_jj_pt   = newtree->Branch("vbf_jj_pt",   &vbf_jj_pt,    "vbf_jj_pt/F");
@@ -1781,7 +1792,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    Float_t hvbf_wjj_deta=-999, hvbf_wjj_dphi=-999;
    Float_t hvbf_lv_e=-999,   hvbf_lv_pt=-999,   hvbf_lv_eta=-999,   hvbf_lv_phi=-999,  hvbf_lv_Rapidity=-999,  hvbf_lv_m=-999,   hvbf_lv_mT=-999;
    Float_t hvbf_l_e=-999,   hvbf_l_pt=-999,   hvbf_l_eta=-999,   hvbf_l_phi=-999;
-   Float_t hvbf_l_MET_deltaphi=-999, hvbf_lW_hW_deltaphi=-999, hvbf_event_met_pfmet=-999,hvbf_event_met_pfmetPhi =-999 ;
+   Float_t hvbf_l_MET_deltaphi=-999, hvbf_lW_hW_deltaphi=-999, hvbf_event_met_pfmet=-999,hvbf_event_met_pfmetPhi =-999, WJets_weight=1.0; 
 
 
    TBranch *branch_vbf_wjj_e     = newtree->Branch("vbf_wjj_e",     &vbf_wjj_e,      "vbf_wjj_e/F");
@@ -1859,10 +1870,30 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_hvbf_event_met_pfmet  = newtree->Branch("hvbf_event_met_pfmet",  &hvbf_event_met_pfmet,   "hvbf_event_met_pfmet/F");
    TBranch *branch_hvbf_event_met_pfmetPhi  = newtree->Branch("hvbf_event_met_pfmetPhi",  &hvbf_event_met_pfmetPhi,   "hvbf_event_met_pfmetPhi/F");
 
+   TBranch *branch_WJets_weight  = newtree->Branch("WJets_weight",  &WJets_weight,   "WJets_weight/F");
 
    TBranch *branch_hvbf_l_MET_deltaphi  = newtree->Branch("hvbf_l_MET_deltaphi",  &hvbf_l_MET_deltaphi,   "hvbf_l_MET_deltaphi/F");
    TBranch *branch_hvbf_lW_hW_deltaphi  = newtree->Branch("hvbf_lW_hW_deltaphi",  &hvbf_lW_hW_deltaphi,   "hvbf_lW_hW_deltaphi/F");
 
+   Float_t hvbf_tagjet1_QGd = -999;
+   Float_t hvbf_tagjet2_QGd = -999;
+   TBranch *branch_hvbf_tagjet1_QGd = newtree->Branch("hvbf_tagjet1_QGd", &hvbf_tagjet1_QGd, "hvbf_tagjet1_QGd/F");
+   TBranch *branch_hvbf_tagjet2_QGd = newtree->Branch("hvbf_tagjet2_QGd", &hvbf_tagjet2_QGd, "hvbf_tagjet2_QGd/F");
+
+   Float_t hvbf_tagjet1_btagCSV = -999;
+   Float_t hvbf_tagjet2_btagCSV = -999;
+   TBranch *branch_hvbf_tagjet1_btagCSV = newtree->Branch("hvbf_tagjet1_btagCSV", &hvbf_tagjet1_btagCSV, "hvbf_tagjet1_btagCSV/F");
+   TBranch *branch_hvbf_tagjet2_btagCSV = newtree->Branch("hvbf_tagjet2_btagCSV", &hvbf_tagjet2_btagCSV, "hvbf_tagjet2_btagCSV/F");
+
+   Float_t hvbf_wjet1_QGd = -999;
+   Float_t hvbf_wjet2_QGd = -999;
+   TBranch *branch_hvbf_wjet1_QGd = newtree->Branch("hvbf_wjet1_QGd", &hvbf_wjet1_QGd, "hvbf_wjet1_QGd/F");
+   TBranch *branch_hvbf_wjet2_QGd = newtree->Branch("hvbf_wjet2_QGd", &hvbf_wjet2_QGd, "hvbf_wjet2_QGd/F");
+
+   Float_t hvbf_wjet1_btagCSV = -999;
+   Float_t hvbf_wjet2_btagCSV = -999;
+   TBranch *branch_hvbf_wjet1_btagCSV = newtree->Branch("hvbf_wjet1_btagCSV", &hvbf_wjet1_btagCSV, "hvbf_wjet1_btagCSV/F");
+   TBranch *branch_hvbf_wjet2_btagCSV = newtree->Branch("hvbf_wjet2_btagCSV", &hvbf_wjet2_btagCSV, "hvbf_wjet2_btagCSV/F");
 
    Int_t vbf_event = 0, vbf_aj_id = -1, vbf_bj_id = -1, vbf_waj_id = -1, vbf_wbj_id = -1;
 
@@ -2180,7 +2211,20 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_ttH_topjjjdijet_deltaphi =  newtree->Branch("ttH_topjjjdijet_deltaphi", &ttH_topjjjdijet_deltaphi, "ttH_topjjjdijet_deltaphi/F");  
    //End for the ttH analysis
 
+
+
+
+
    // For MVA analysis
+
+      // the training input variables
+      const char* hvbf_inputVars[] = { "hvbf_lvjj_Rapidity", "hvbf_aj_pt", "hvbf_bj_pt", "hvbf_waj_pt", "hvbf_wbj_pt", "hvbf_event_met_pfmet", "hvbf_wjj_ang_hs", "hvbf_wjj_ang_phib", "hvbf_jj_deta", "hvbf_jj_dphi", "hvbf_jj_m" };
+
+  std::vector<std::string> hvbf_inputVarsMVA;
+   for (int i=0; i<11; ++i) hvbf_inputVarsMVA.push_back( hvbf_inputVars[i] );
+  ReadLikelihoodvbf126mu mvaReader126mu( hvbf_inputVarsMVA );
+
+
    const char* inputVars[] = { "ptlvjj", "ylvjj", "W_muon_charge", "ang_ha", "ang_hb", "ang_hs", "ang_phi", "ang_phib" };
    std::vector<std::string> inputVarsMVA;
    for (int i=0; i<8; ++i) inputVarsMVA.push_back( inputVars[i] );
@@ -3498,7 +3542,6 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
          GroomedJet_AK7_planarflow08 = GroomedJet_AK7_planarflow[7][0];
 
          GroomedJet_AK7_rcores09 = GroomedJet_AK7_rcores[8][0];
-         GroomedJet_AK7_ptcores09 = GroomedJet_AK7_ptcores[8][0];
          GroomedJet_AK7_planarflow09 = GroomedJet_AK7_planarflow[8][0];
 
          GroomedJet_AK7_rcores10 = GroomedJet_AK7_rcores[9][0];
@@ -3562,9 +3605,29 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 
       }
       //###############End Boosted W Analysis########################################
+
 // VBF Higgs Analysis starts
 //      if(isgendevtnojetevt)//One good muon, no jet requirement
 //	
+
+               //Int_t NWJets  = 76102995;
+   //            Int_t NW1Jets = 23141598;
+     //          Int_t NW2Jets = 34044921;
+       //        Int_t NW3Jets = 15539503;
+         //      Int_t NW4Jets = 4369420;
+//Float_t WJets_weight =1.0;
+if (wda==20121031)
+               { WJets_weight = 5400.0 / 23141598.0; }//w1 jet
+if (wda==20121030)
+	      {  WJets_weight =1750.0 /34044921.0;} //w 2 jets
+if (wda==20121022)
+	{ WJets_weight = 1750.0 /15539503.0;} //w3 jets
+if (wda==20121023)
+		{ WJets_weight =214.0 /4369420.0;} // w4 jets
+
+
+//cout<<"wda  =   "<<wda<<"   WJets_weight = "<<WJets_weight<<endl;
+
         int numFwdJets = 0 ;
         for (int i = 0 ; i < 8 ; ++i) if (JetPFCorVBFTag_Pt[i] > 20.) ++numFwdJets ;
         int numGFwdJets = 0 ;
@@ -3572,6 +3635,9 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
         //if (jetsNum < 3) //continue ;
 	//{
          vector<TLorentzVector*> jets;
+         TMap jetsQGd;//Quark-Gluon Discriminator Map
+         TMap jetsbtagCSV; //B-tag Discriminator Map
+
          for(unsigned int i = 0; i < numPFCorJets; ++i)
          {     
             if(JetPFCor_Pt[i] > 20.0)
@@ -3579,6 +3645,11 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                TLorentzVector *dummy = new TLorentzVector(0,0,0,0);
                dummy->SetPtEtaPhiE(jess * JetPFCor_Pt[i], JetPFCor_Eta[i], JetPFCor_Phi[i], jess * JetPFCor_E[i]);
                jets.push_back(dummy);
+               Float_t *tmp_qgd = &JetPFCor_QGLikelihood[i];
+               jetsQGd.Add(dummy,(TObject*)tmp_qgd);
+               Float_t *tmp_btagCSV = &JetPFCor_bDiscriminatorCSV[i];
+               jetsbtagCSV.Add(dummy,(TObject*)tmp_btagCSV);
+
             }
          }
 
@@ -3589,9 +3660,13 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                TLorentzVector *dummy = new TLorentzVector(0,0,0,0);
                dummy->SetPtEtaPhiE(jess * JetPFCorVBFTag_Pt[j], JetPFCorVBFTag_Eta[j], JetPFCorVBFTag_Phi[j], jess * JetPFCorVBFTag_E[j]);
                jets.push_back(dummy);
+               Float_t *tmp_qgd = &JetPFCorVBFTag_QGLikelihood[j];
+               jetsQGd.Add(dummy,(TObject*)tmp_qgd);
+               Float_t *tmp_btagCSV = &JetPFCorVBFTag_bDiscriminatorCSV[j];
+               jetsbtagCSV.Add(dummy,(TObject*)tmp_btagCSV);
+
             }
          }
-        
 	sort (jets.begin (), jets.end (), mysortPt);  //Sort the jet according to Jet Pt
 	for (int i=0;i<jets.size();i++)
 	{
@@ -3615,6 +3690,8 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    float hvbf_wjj_deta=-999; Float_t hvbf_wjj_dphi=-999;
    float hvbf_lvjj_e =-999,   hvbf_lvjj_pt =-999,   hvbf_lvjj_eta=-999,  hvbf_lvjj_phi =-999, hvbf_lvjj_m =-999, hvbf_lvj_m=-999;
 */
+
+
 
  	 float hjess = 1.0; 
          int   hn_excj =0, hn_exfj = 0, hn_gdjj = 0, hjj_type = 0, htag_i_id = -1, htag_j_id = -1, hwjj_a_id = -1, hwjj_b_id = -1;
@@ -3761,6 +3838,69 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             }
             hvbf_wjj_ang_ha = a_costheta1; hvbf_wjj_ang_hb = fabs(a_costheta2); hvbf_wjj_ang_hs = a_costhetastar;  hvbf_wjj_ang_phi = a_phi; hvbf_wjj_ang_phia = a_phistar1; hvbf_wjj_ang_phib = a_phistar2;
 
+            //Tag jet pair Q-G information
+     if (htag_i_id!=-1&& htag_j_id!=-1)
+	{
+            if((jetsQGd.FindObject(jets[htag_i_id]) != 0) && (jetsQGd.FindObject(jets[htag_j_id]) != 0))
+            {
+               Float_t *tmp1qg = (Float_t*) jetsQGd.GetValue(jets[htag_i_id]);
+               Float_t *tmp2qg = (Float_t*) jetsQGd.GetValue(jets[htag_j_id]);
+               hvbf_tagjet1_QGd = *tmp1qg;
+               hvbf_tagjet2_QGd = *tmp2qg;
+            }
+            if((jetsbtagCSV.FindObject(jets[htag_i_id]) != 0) && (jetsbtagCSV.FindObject(jets[htag_j_id]) != 0))
+            {
+               Float_t *tmp1btagCSV = (Float_t*) jetsbtagCSV.GetValue(jets[htag_i_id]);
+               Float_t *tmp2btagCSV = (Float_t*) jetsbtagCSV.GetValue(jets[htag_j_id]);
+               hvbf_tagjet1_btagCSV = *tmp1btagCSV;
+               hvbf_tagjet2_btagCSV = *tmp2btagCSV;
+            }
+	}
+
+
+          //W jet pair Q-G information
+     if (hwjj_a_id!=-1&& hwjj_b_id!=-1)
+        {
+            if((jetsQGd.FindObject(jets[hwjj_a_id]) != 0) && (jetsQGd.FindObject(jets[hwjj_b_id]) != 0))
+            {
+               Float_t *tmp1qg = (Float_t*) jetsQGd.GetValue(jets[hwjj_a_id]);
+               Float_t *tmp2qg = (Float_t*) jetsQGd.GetValue(jets[hwjj_b_id]);
+               hvbf_wjet1_QGd = *tmp1qg;
+               hvbf_wjet2_QGd = *tmp2qg;
+            }
+            if((jetsbtagCSV.FindObject(jets[hwjj_a_id]) != 0) && (jetsbtagCSV.FindObject(jets[hwjj_b_id]) != 0))
+            {
+               Float_t *tmp1btagCSV = (Float_t*) jetsbtagCSV.GetValue(jets[hwjj_a_id]);
+               Float_t *tmp2btagCSV = (Float_t*) jetsbtagCSV.GetValue(jets[hwjj_b_id]);
+               hvbf_wjet1_btagCSV = *tmp1btagCSV;
+               hvbf_wjet2_btagCSV = *tmp2btagCSV;
+            }
+        }
+
+
+//cout<<"     "<<wda<<"   "<<"tmps"<<endl;
+
+         // Fill the trained MVA output 
+//if(hvbf_event==1){
+         std::vector<double> hvbf_mvaInputVal;
+         hvbf_mvaInputVal.push_back( hvbf_lvjj_Rapidity );
+         hvbf_mvaInputVal.push_back( hvbf_aj_pt);
+         hvbf_mvaInputVal.push_back( hvbf_bj_pt );  
+         //mvaInputVal.push_back( JetPFCor_QGLikelihood[0] );
+         //mvaInputVal.push_back( JetPFCor_QGLikelihood[1] );
+         hvbf_mvaInputVal.push_back( hvbf_waj_pt );
+         hvbf_mvaInputVal.push_back( hvbf_wbj_pt );
+         hvbf_mvaInputVal.push_back( hvbf_event_met_pfmet );
+         hvbf_mvaInputVal.push_back( hvbf_wjj_ang_hs );
+         hvbf_mvaInputVal.push_back( hvbf_wjj_ang_phib );
+         hvbf_mvaInputVal.push_back( hvbf_jj_deta );
+         hvbf_mvaInputVal.push_back( hvbf_jj_dphi );
+         hvbf_mvaInputVal.push_back( hvbf_jj_m );
+
+         mva126mu = (float) mvaReader126mu.GetMvaValue( hvbf_mvaInputVal );
+//cout<<"  mva126mu "<<mva126mu<<endl;
+//}
+
 
 // VBF Higgs Analysis end
 
@@ -3835,11 +3975,6 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                   if (i> 5&&j<=5) jj_type = 4; // impossible
                   vbf_jj_type = jj_type;
                }
-
-
-
-
-
 
 
             }
@@ -4883,6 +5018,7 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_vbf_wjj_ang_phib->Fill();
 
 // VBF Higgs Analysis
+      branch_mva126mu->Fill();
       branch_hvbf_jj_e->Fill();
       branch_hvbf_jj_pt->Fill();
       branch_hvbf_jj_eta->Fill();
@@ -4957,6 +5093,8 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_hvbf_lW_hW_deltaphi->Fill();
 
       branch_hvbf_event->Fill();
+      branch_WJets_weight->Fill();
+
       branch_hvbf_wjj_ang_ha->Fill();
       branch_hvbf_wjj_ang_hb->Fill();
       branch_hvbf_wjj_ang_hs->Fill();
@@ -4968,6 +5106,15 @@ void kanamuon::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_hvbf_bj_id->Fill();
       branch_hvbf_waj_id->Fill();
       branch_hvbf_wbj_id->Fill();
+      branch_hvbf_tagjet1_QGd->Fill();
+      branch_hvbf_tagjet2_QGd->Fill();
+      branch_hvbf_tagjet1_btagCSV->Fill();
+      branch_hvbf_tagjet2_btagCSV->Fill();
+      branch_hvbf_wjet1_QGd->Fill();
+      branch_hvbf_wjet2_QGd->Fill();
+      branch_hvbf_wjet1_btagCSV->Fill();
+      branch_hvbf_wjet2_btagCSV->Fill();
+
 
 // VBF Higgs Analysis ends 
 
@@ -5779,8 +5926,6 @@ bool kanamuon::dottHKinematicFit(const TLorentzVector mup, const TLorentzVector 
    delete fitter;
 
    return OK;
-
-
 }
 
 // function used to fill the counters with preselction level cuts
@@ -5790,6 +5935,7 @@ void kanamuon::InitCounters( const char* input_file_name, TH1F* h_events, TH1F* 
    std::vector<float> events;
 
    //get the counters from the FNAL NT
+
    events.push_back(((TH1F*) f->Get("AllEventsStep/totalEvents"))->GetEntries());
    events.push_back(((TH1F*) f->Get("noscrapingStep/totalEvents"))->GetEntries());
    events.push_back(((TH1F*) f->Get("HBHENoiseStep/totalEvents"))->GetEntries());
@@ -5807,5 +5953,4 @@ void kanamuon::InitCounters( const char* input_file_name, TH1F* h_events, TH1F* 
    }
    f -> Close();
 }
-
 
