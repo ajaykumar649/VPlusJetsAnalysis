@@ -120,6 +120,7 @@
 #include "ClassifierOut/TMVAClassification_500_VBF_el_Likelihood.class.C"
 #include "ClassifierOut/TMVAClassification_550_VBF_el_Likelihood.class.C"
 #include "ClassifierOut/TMVAClassification_600_VBF_el_Likelihood.class.C"
+#include "ClassifierOut/TMVAClassification_126_VBF_el_Likelihood.class.C"
 
 #include "EffTableReader.h"
 #include "EffTableLoader.h"
@@ -150,8 +151,9 @@ const TString inQCDDir  = "/eos/uscms/store/user/lnujj/Moriond2013/MergedNtuples
 //const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/ttHsample/";
 //const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/BoostedWSample_v2/";
 //const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/EWKW2jetsSample_2013_3_23/";
-const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/ajay/VBF_Higgs_28May_v2/";
-
+const TString outDataDir   = "/uscmst1b_scratch/lpc1/3DayLifetime/ajay/VBF_Higgs_5Aug_v1/";
+//const TString outDataDir   = "/uscms_data/d3/lnujj/VBF_Higgs_27July_v1/";
+//const TString outDataDir   = "/uscms_data/d3/lnujj/VBF_Higgs_5Aug_v1/";
 
 //const TString outDataDir = "/uscmst1b_scratch/lpc1/3DayLifetime/weizou/ttHsample_New_v14/";
 const std::string fDir   = "EffTable2012/";
@@ -992,6 +994,13 @@ void kanaelec::myana(double myflag, bool isQCD, int runflag)
          myChain->Add(                    inDataDir + "el_VBFHWWMH1000_CMSSW532_private.root"); 
          Init(myChain);Loop( h_events, h_events_weighted, 201231000,runflag, outDataDir + "RD_el_VBFHWWMH1000_CMSSW532_private");
       }
+      if (myflag == 20123126 || myflag == -300){
+         InitCounters( inDataDir + "el_mh126_CMSSW532.root", h_events, h_events_weighted);
+         myChain = new TChain("WJet");
+         myChain->Add(                    inDataDir + "el_mh126_CMSSW532.root");
+         Init(myChain);Loop( h_events, h_events_weighted, 20123126,runflag, outDataDir + "RD_el_mh126_CMSSW532");
+      }
+
 
       // HTauTau MC Signal
       if (myflag == 20114150 || myflag == -400){
@@ -1713,6 +1722,9 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    Float_t hvbf_aj_e =-999,   hvbf_aj_pt =-999,   hvbf_aj_eta=-999,  hvbf_aj_phi =-999, hvbf_aj_m =-999;
    Float_t hvbf_bj_e =-999,   hvbf_bj_pt =-999,   hvbf_bj_eta=-999,  hvbf_bj_phi =-999, hvbf_bj_m =-999;
    Float_t hvbf_jj_deta=-999; Float_t hvbf_jj_dphi=-999;  Int_t   hvbf_jj_type=0,   hvbf_n_excj=0,   hvbf_n_exfj=0,   hvbf_n_gdjj=0;
+        Float_t mva126el=-999;
+
+   TBranch *branch_mva126el    = newtree->Branch("mva126el",    &mva126el,     "mva126el/F");
 
 
    TBranch *branch_vbf_jj_e    = newtree->Branch("vbf_jj_e",    &vbf_jj_e,     "vbf_jj_e/F");
@@ -1793,7 +1805,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    Float_t hvbf_wjj_deta=-999, hvbf_wjj_dphi=-999;
    Float_t hvbf_lv_e=-999,   hvbf_lv_pt=-999,   hvbf_lv_eta=-999, hvbf_lv_Rapidity=-999, hvbf_lv_phi=-999,   hvbf_lv_m=-999,   hvbf_lv_mT=-999;
    Float_t hvbf_l_e=-999,   hvbf_l_pt=-999,   hvbf_l_eta=-999,   hvbf_l_phi=-999;
-   Float_t hvbf_l_MET_deltaphi=-999, hvbf_lW_hW_deltaphi=-999, hvbf_event_met_pfmet=-999, hvbf_event_met_pfmetPhi=-999 ;
+   Float_t hvbf_l_MET_deltaphi=-999, hvbf_lW_hW_deltaphi=-999, hvbf_event_met_pfmet=-999, hvbf_event_met_pfmetPhi=-999,WJets_weight=1.0;
 
 
    TBranch *branch_vbf_wjj_e     = newtree->Branch("vbf_wjj_e",     &vbf_wjj_e,      "vbf_wjj_e/F");
@@ -1869,10 +1881,31 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    TBranch *branch_hvbf_l_phi  = newtree->Branch("hvbf_l_phi",  &hvbf_l_phi,   "hvbf_l_phi/F");
    TBranch *branch_hvbf_event_met_pfmet  = newtree->Branch("hvbf_event_met_pfmet",  &hvbf_event_met_pfmet,   "hvbf_event_met_pfmet/F");
    TBranch *branch_hvbf_event_met_pfmetPhi  = newtree->Branch("hvbf_event_met_pfmetPhi",  &hvbf_event_met_pfmetPhi,   "hvbf_event_met_pfmetPhi/F");
+   TBranch *branch_WJets_weight  = newtree->Branch("WJets_weight",  &WJets_weight,   "WJets_weight/F");
 
 
    TBranch *branch_hvbf_l_MET_deltaphi  = newtree->Branch("hvbf_l_MET_deltaphi",  &hvbf_l_MET_deltaphi,   "hvbf_l_MET_deltaphi/F");
    TBranch *branch_hvbf_lW_hW_deltaphi  = newtree->Branch("hvbf_lW_hW_deltaphi",  &hvbf_lW_hW_deltaphi,   "hvbf_lW_hW_deltaphi/F");
+
+   Float_t hvbf_tagjet1_QGd = -999;
+   Float_t hvbf_tagjet2_QGd = -999;
+   TBranch *branch_hvbf_tagjet1_QGd = newtree->Branch("hvbf_tagjet1_QGd", &hvbf_tagjet1_QGd, "hvbf_tagjet1_QGd/F");
+   TBranch *branch_hvbf_tagjet2_QGd = newtree->Branch("hvbf_tagjet2_QGd", &hvbf_tagjet2_QGd, "hvbf_tagjet2_QGd/F");
+
+   Float_t hvbf_tagjet1_btagCSV = -999;
+   Float_t hvbf_tagjet2_btagCSV = -999;
+   TBranch *branch_hvbf_tagjet1_btagCSV = newtree->Branch("hvbf_tagjet1_btagCSV", &hvbf_tagjet1_btagCSV, "hvbf_tagjet1_btagCSV/F");
+   TBranch *branch_hvbf_tagjet2_btagCSV = newtree->Branch("hvbf_tagjet2_btagCSV", &hvbf_tagjet2_btagCSV, "hvbf_tagjet2_btagCSV/F");
+
+   Float_t hvbf_wjet1_QGd = -999;
+   Float_t hvbf_wjet2_QGd = -999;
+   TBranch *branch_hvbf_wjet1_QGd = newtree->Branch("hvbf_wjet1_QGd", &hvbf_wjet1_QGd, "hvbf_wjet1_QGd/F");
+   TBranch *branch_hvbf_wjet2_QGd = newtree->Branch("hvbf_wjet2_QGd", &hvbf_wjet2_QGd, "hvbf_wjet2_QGd/F");
+
+   Float_t hvbf_wjet1_btagCSV = -999;
+   Float_t hvbf_wjet2_btagCSV = -999;
+   TBranch *branch_hvbf_wjet1_btagCSV = newtree->Branch("hvbf_wjet1_btagCSV", &hvbf_wjet1_btagCSV, "hvbf_wjet1_btagCSV/F");
+   TBranch *branch_hvbf_wjet2_btagCSV = newtree->Branch("hvbf_wjet2_btagCSV", &hvbf_wjet2_btagCSV, "hvbf_wjet2_btagCSV/F");
 
 
    Int_t vbf_event = 0, vbf_aj_id = -1, vbf_bj_id = -1, vbf_waj_id = -1, vbf_wbj_id = -1;
@@ -2195,6 +2228,14 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
    //End for the ttH analysis
 
    // For MVA analysis
+      // the training input variables
+      const char* hvbf_inputVars[] = { "hvbf_lvjj_Rapidity", "hvbf_aj_pt", "hvbf_bj_pt", "hvbf_waj_pt", "hvbf_wbj_pt", "hvbf_event_met_pfmet", "hvbf_wjj_ang_hs", "hvbf_wjj_ang_phib", "hvbf_jj_deta", "hvbf_jj_dphi", "hvbf_jj_m" };
+
+  std::vector<std::string> hvbf_inputVarsMVA;
+   for (int i=0; i<11; ++i) hvbf_inputVarsMVA.push_back( hvbf_inputVars[i] );
+  ReadLikelihoodvbf126el mvaReader126el( hvbf_inputVarsMVA );
+
+
    const char* inputVars[] = { "ptlvjj", "ylvjj", "W_muon_charge", "ang_ha", "ang_hb", "ang_hs", "ang_phi", "ang_phib" };
    const char* inputVars_v2[] = { "ptlvjj", "ylvjj", "W_electron_charge", "ang_ha", "ang_hb", "ang_hs", "ang_phi", "ang_phib" };
    std::vector<std::string> inputVarsMVA;
@@ -2789,7 +2830,7 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       //for(unsigned int iJet=0; iJet<jetsize;iJet++){
       //   if (JetPFCor_Pt[iJet]<0) continue;
       //      qgld_Spring11[iJet]= qglikeli_Spring11->computeQGLikelihoodPU( JetPFCor_Pt[iJet], event_RhoForLeptonIsolation, 
-      //								     JetPFCor_ChargedMultiplicity[iJet], 
+      //   							     JetPFCor_ChargedMultiplicity[iJet], 
       //								     JetPFCor_NeutralMultiplicity[iJet], 
       //								     JetPFCor_PtD[iJet]);	 
       //      qgld_Summer11[iJet]= qglikeli_Summer11->computeQGLikelihoodPU( JetPFCor_Pt[iJet], event_RhoForLeptonIsolation, 
@@ -3001,6 +3042,20 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
 // VBF Higgs Analysis starts
 //      if(isgendevtnojetevt)//One good electron, no jet requirement
 //      
+
+if (wda==20121031)
+               { WJets_weight = 5400.0 / 23141598.0; }//w1 jet
+if (wda==20121030)
+              {  WJets_weight =1750.0 /34044921.0;} //w 2 jets
+if (wda==20121022)
+        { WJets_weight = 1750.0 /15539503.0;} //w3 jets
+if (wda==20121023)
+                { WJets_weight =214.0 /4369420.0;} // w4 jets
+
+
+//cout<<"wda  =   "<<wda<<"   WJets_weight = "<<WJets_weight<<endl;
+
+
         int numFwdJets = 0 ;
         for (int i = 0 ; i < 8 ; ++i) if (JetPFCorVBFTag_Pt[i] > 20.) ++numFwdJets ;
         int numGFwdJets = 0 ;
@@ -3008,6 +3063,9 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
         //if (jetsNum < 3) //continue ;
         //{
          vector<TLorentzVector*> jets;
+         TMap jetsQGd;//Quark-Gluon Discriminator Map
+         TMap jetsbtagCSV; //B-tag Discriminator Map
+
          for(unsigned int i = 0; i < numPFCorJets; ++i)
          {
             if(JetPFCor_Pt[i] > 20.0)
@@ -3015,6 +3073,11 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                TLorentzVector *dummy = new TLorentzVector(0,0,0,0);
                dummy->SetPtEtaPhiE(jess * JetPFCor_Pt[i], JetPFCor_Eta[i], JetPFCor_Phi[i], jess * JetPFCor_E[i]);
                jets.push_back(dummy);
+               Float_t *tmp_qgd = &JetPFCor_QGLikelihood[i];
+               jetsQGd.Add(dummy,(TObject*)tmp_qgd);
+               Float_t *tmp_btagCSV = &JetPFCor_bDiscriminatorCSV[i];
+               jetsbtagCSV.Add(dummy,(TObject*)tmp_btagCSV);
+
             }
          }
 
@@ -3025,6 +3088,10 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
                TLorentzVector *dummy = new TLorentzVector(0,0,0,0);
                dummy->SetPtEtaPhiE(jess * JetPFCorVBFTag_Pt[j], JetPFCorVBFTag_Eta[j], JetPFCorVBFTag_Phi[j], jess * JetPFCorVBFTag_E[j]);
                jets.push_back(dummy);
+              Float_t *tmp_qgd = &JetPFCorVBFTag_QGLikelihood[j];
+               jetsQGd.Add(dummy,(TObject*)tmp_qgd);
+               Float_t *tmp_btagCSV = &JetPFCorVBFTag_bDiscriminatorCSV[j];
+               jetsbtagCSV.Add(dummy,(TObject*)tmp_btagCSV);
             }
          }
 
@@ -3200,6 +3267,65 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
             }
             hvbf_wjj_ang_ha = a_costheta1; hvbf_wjj_ang_hb = fabs(a_costheta2); hvbf_wjj_ang_hs = a_costhetastar;  hvbf_wjj_ang_phi = a_phi; hvbf_wjj_ang_phia = a_phistar1; hvbf_wjj_ang_phib = a_phistar2;
 
+           //Tag jet pair Q-G information
+     if (htag_i_id!=-1&& htag_j_id!=-1)
+        {
+            if((jetsQGd.FindObject(jets[htag_i_id]) != 0) && (jetsQGd.FindObject(jets[htag_j_id]) != 0))
+            {
+               Float_t *tmp1qg = (Float_t*) jetsQGd.GetValue(jets[htag_i_id]);
+               Float_t *tmp2qg = (Float_t*) jetsQGd.GetValue(jets[htag_j_id]);
+               hvbf_tagjet1_QGd = *tmp1qg;
+               hvbf_tagjet2_QGd = *tmp2qg;
+            }
+            if((jetsbtagCSV.FindObject(jets[htag_i_id]) != 0) && (jetsbtagCSV.FindObject(jets[htag_j_id]) != 0))
+            {
+               Float_t *tmp1btagCSV = (Float_t*) jetsbtagCSV.GetValue(jets[htag_i_id]);
+               Float_t *tmp2btagCSV = (Float_t*) jetsbtagCSV.GetValue(jets[htag_j_id]);
+               hvbf_tagjet1_btagCSV = *tmp1btagCSV;
+               hvbf_tagjet2_btagCSV = *tmp2btagCSV;
+            }
+        }
+
+           //W jet pair Q-G information
+     if (hwjj_a_id!=-1&& hwjj_b_id!=-1)
+        {
+            if((jetsQGd.FindObject(jets[hwjj_a_id]) != 0) && (jetsQGd.FindObject(jets[hwjj_b_id]) != 0))
+            {
+               Float_t *tmp1qg = (Float_t*) jetsQGd.GetValue(jets[hwjj_a_id]);
+               Float_t *tmp2qg = (Float_t*) jetsQGd.GetValue(jets[hwjj_b_id]);
+               hvbf_wjet1_QGd = *tmp1qg;
+               hvbf_wjet2_QGd = *tmp2qg;
+            }
+            if((jetsbtagCSV.FindObject(jets[hwjj_a_id]) != 0) && (jetsbtagCSV.FindObject(jets[hwjj_b_id]) != 0))
+            {
+               Float_t *tmp1btagCSV = (Float_t*) jetsbtagCSV.GetValue(jets[hwjj_a_id]);
+               Float_t *tmp2btagCSV = (Float_t*) jetsbtagCSV.GetValue(jets[hwjj_b_id]);
+               hvbf_wjet1_btagCSV = *tmp1btagCSV;
+               hvbf_wjet2_btagCSV = *tmp2btagCSV;
+            }
+        }
+
+
+         // Fill the trained MVA output 
+//if(hvbf_event==1){
+         std::vector<double> hvbf_mvaInputVal;
+         hvbf_mvaInputVal.push_back( hvbf_lvjj_Rapidity );
+         hvbf_mvaInputVal.push_back( hvbf_aj_pt);
+         hvbf_mvaInputVal.push_back( hvbf_bj_pt );
+         //mvaInputVal.push_back( JetPFCor_QGLikelihood[0] );
+         //mvaInputVal.push_back( JetPFCor_QGLikelihood[1] );
+         hvbf_mvaInputVal.push_back( hvbf_waj_pt );
+         hvbf_mvaInputVal.push_back( hvbf_wbj_pt );
+         hvbf_mvaInputVal.push_back( hvbf_event_met_pfmet );
+         hvbf_mvaInputVal.push_back( hvbf_wjj_ang_hs );
+         hvbf_mvaInputVal.push_back( hvbf_wjj_ang_phib );
+         hvbf_mvaInputVal.push_back( hvbf_jj_deta );
+         hvbf_mvaInputVal.push_back( hvbf_jj_dphi );
+         hvbf_mvaInputVal.push_back( hvbf_jj_m );
+
+         mva126el = (float) mvaReader126el.GetMvaValue( hvbf_mvaInputVal );
+//cout<<"  mva126el "<<mva126el<<endl;
+//}
 
 // VBF Higgs Analysis end
 
@@ -4898,6 +5024,8 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_vbf_wjj_ang_phib->Fill();
 
 // VBF Higgs Analysis
+      branch_mva126el->Fill();
+
       branch_hvbf_jj_e->Fill();
       branch_hvbf_jj_pt->Fill();
       branch_hvbf_jj_eta->Fill();
@@ -4974,6 +5102,8 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_hvbf_lW_hW_deltaphi->Fill();
 
       branch_hvbf_event->Fill();
+      branch_WJets_weight->Fill();
+
       branch_hvbf_wjj_ang_ha->Fill();
       branch_hvbf_wjj_ang_hb->Fill();
       branch_hvbf_wjj_ang_hs->Fill();
@@ -4984,6 +5114,14 @@ void kanaelec::Loop(TH1F* h_events, TH1F* h_events_weighted, int wda, int runfla
       branch_hvbf_bj_id->Fill();
       branch_hvbf_waj_id->Fill();
       branch_hvbf_wbj_id->Fill();
+      branch_hvbf_tagjet1_QGd->Fill();
+      branch_hvbf_tagjet2_QGd->Fill();
+      branch_hvbf_tagjet1_btagCSV->Fill();
+      branch_hvbf_tagjet2_btagCSV->Fill();
+      branch_hvbf_wjet1_QGd->Fill();
+      branch_hvbf_wjet2_QGd->Fill();
+      branch_hvbf_wjet1_btagCSV->Fill();
+      branch_hvbf_wjet2_btagCSV->Fill();
 
 // VBF Higgs Analysis ends 
 
@@ -5822,4 +5960,3 @@ void kanaelec::InitCounters( const char* input_file_name, TH1F* h_events, TH1F* 
    }
    f -> Close();
 }
-
